@@ -1,0 +1,101 @@
+<div class="container mt-5 mb-5" style="max-width: 500px;">
+
+  <div class="card border-0 shadow-sm rounded-4 p-4">
+
+    <h3 class="fw-bold text-center mb-4">Welcome Back</h3>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+
+      <!-- Email -->
+      <div class="mb-3">
+        <label class="form-label fw-bold">Email</label>
+        <input type="email" class="form-control"
+          formControlName="Email"
+          [class.is-valid]="loginForm.get('Email')?.valid && loginForm.get('Email')?.touched"
+          [class.is-invalid]="loginForm.get('Email')?.invalid && loginForm.get('Email')?.touched"
+          placeholder="Enter your email" />
+
+        @if (hasError('Email', 'required')) {
+          <div class="invalid-feedback">Email is required.</div>
+        }
+        @if (hasError('Email', 'email') || hasError('Email', 'pattern')) {
+          <div class="invalid-feedback">Enter a valid email address.</div>
+        }
+      </div>
+
+      <!-- Password -->
+      <div class="mb-4">
+        <label class="form-label fw-bold">Password</label>
+        <input type="password" class="form-control"
+          formControlName="Password"
+          [class.is-valid]="loginForm.get('Password')?.valid && loginForm.get('Password')?.touched"
+          [class.is-invalid]="loginForm.get('Password')?.invalid && loginForm.get('Password')?.touched"
+          placeholder="Enter your password" />
+
+        @if (hasError('Password', 'required')) {
+          <div class="invalid-feedback">Password is required.</div>
+        }
+        @if (hasError('Password', 'minlength')) {
+          <div class="invalid-feedback">Minimum 6 characters.</div>
+        }
+      </div>
+
+      <!-- Buttons -->
+      <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-dark flex-fill">
+          Login
+        </button>
+        <button type="button" class="btn btn-outline-secondary flex-fill"
+          (click)="onReset()">
+          Reset
+        </button>
+      </div>
+
+      <!-- Register Link -->
+      <p class="text-center text-muted mt-3 mb-0">
+        Don't have an account?
+        <a routerLink="/register" class="text-dark fw-bold">Register</a>
+      </p>
+
+    </form>
+  </div>
+
+  <!-- ═══ Submitted Data Card ═══ -->
+  @if (submittedUser) {
+    <div class="card border-0 shadow-sm rounded-4 p-4 mt-4">
+
+      <div class="d-flex align-items-center gap-3 mb-3">
+        <div style="width:48px; height:48px; background:#1a0a00; border-radius:50%;
+                    display:flex; align-items:center; justify-content:center;
+                    color:white; font-size:20px;">
+          U
+        </div>
+        <div>
+          <h6 class="fw-bold mb-0">Logged in Successfully!</h6>
+          <small class="text-muted">Welcome back</small>
+        </div>
+      </div>
+
+      <hr />
+
+      <table class="table table-borderless mb-0">
+        <tbody>
+          <tr>
+            <td class="text-muted fw-bold">Email</td>
+            <td>{{ submittedUser.Email }}</td>
+          </tr>
+          <tr>
+            <td class="text-muted fw-bold">Password</td>
+            <td>
+              <span class="font-monospace">
+                {{ '*'.repeat(submittedUser.Password?.length || 6) }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+  }
+
+</div>

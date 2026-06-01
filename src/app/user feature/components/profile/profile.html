@@ -1,0 +1,47 @@
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+
+      <div class="card shadow-sm border-0 rounded-4 p-4 text-center">
+
+        <img
+          [src]="MyUser.Image"
+          alt="User Image"
+          class="rounded-circle mx-auto d-block mb-3"
+          width="150"
+          height="150"
+          style="object-fit: cover; border: 4px solid #0d6efd;"
+        />
+
+        <h3 class="fw-bold">{{ MyUser.Name | titlecase }}</h3>
+
+        <p class="text-muted">{{ MyUser.Email | uppercase }}</p>
+
+        <hr />
+
+        <div class="mb-3">
+          <span class="fw-bold">Today's Date: </span>
+          <span class="text-primary">
+            {{ Today | date:'EEEE, MMMM d, y' }}
+          </span>
+        </div>
+
+        <div class="mb-3">
+          <span class="fw-bold">💳 Credit Card: </span>
+          <span class="text-success font-monospace">
+            {{ MyUser.CreditCard | creditCard:hideCard }}
+          </span>
+        </div>
+
+        <!-- زرار لإخفاء/إظهار الأرقام -->
+        <button
+          class="btn btn-outline-primary btn-sm"
+          (click)="hideCard = !hideCard">
+          {{ hideCard ? 'Show Card' : 'Hide Digits' }}
+        </button>
+
+      </div>
+
+    </div>
+  </div>
+</div>
