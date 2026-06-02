@@ -1,8 +1,4 @@
 export const environment = {
-
-    production: true,
-
-    domain: 'https://api.escuelajs.co/api/v1/',  //هتحط الدومين الاصلى اللى باسم المشروع
-
-
+  production: true,
+  apiUrl: 'https://localhost:5216'
 };
