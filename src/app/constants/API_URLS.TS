@@ -1,7 +1,7 @@
 import { environment } from '../../environments/environment.development';
 
 
-const base_domain = environment.domain;
+const base_domain = environment.domain;  // استخدمي الدومين من ملف البيئة بدلاً من hardcoding في كل URL
 
 export const API_URLS = {
 

@@ -1,4 +1,5 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://localhost:5216'
+  apiUrl: 'http://localhost:5216',
+  domain: 'http://localhost:5216'  // ← أضيفي السطر ده
 };

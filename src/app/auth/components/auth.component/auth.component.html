@@ -1,0 +1,218 @@
+<div class="auth-wrap">
+
+  <!-- Side panel -->
+  <div class="auth-side">
+    <div class="side-deco" aria-hidden="true">
+      <svg width="200" height="200" viewBox="0 0 200 200" fill="none">
+        <circle cx="100" cy="100" r="80" stroke="#C4B09A" stroke-width="0.5" opacity="0.4"/>
+        <circle cx="100" cy="100" r="55" stroke="#C4B09A" stroke-width="0.5" opacity="0.3"/>
+        <circle cx="100" cy="100" r="30" stroke="#C4B09A" stroke-width="0.5" opacity="0.2"/>
+        <line x1="20" y1="100" x2="180" y2="100" stroke="#C4B09A" stroke-width="0.5" opacity="0.3"/>
+        <line x1="100" y1="20" x2="100" y2="180" stroke="#C4B09A" stroke-width="0.5" opacity="0.3"/>
+      </svg>
+    </div>
+    <div class="side-content">
+      <p class="brand-label">Handmade marketplace</p>
+      <h1 class="brand-name">Handora</h1>
+      <p class="brand-sub">Where every piece is crafted with intention, and every purchase supports an artisan.</p>
+      <div class="side-feats">
+        <div class="feat"><span class="feat-line"></span><span class="feat-text">Unique handcrafted goods from local makers</span></div>
+        <div class="feat"><span class="feat-line"></span><span class="feat-text">Sell your creations to a passionate community</span></div>
+        <div class="feat"><span class="feat-line"></span><span class="feat-text">Secure and trusted transactions</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main panel -->
+  <div class="auth-main">
+
+    <!-- Tabs — hidden on OTP step -->
+    @if (activeTab() !== 'otp') {
+      <div class="tabs" role="tablist">
+        <button class="tab" [class.active]="activeTab() === 'login'"
+                (click)="switchTab('login')" role="tab">Sign in</button>
+        <button class="tab" [class.active]="activeTab() === 'register'"
+                (click)="switchTab('register')" role="tab">Register</button>
+      </div>
+    }
+
+    <!-- Error message -->
+    @if (errorMsg()) {
+      <div class="error-msg" role="alert">
+        <i class="ti ti-alert-circle" aria-hidden="true"></i>
+        {{ errorMsg() }}
+      </div>
+    }
+
+    <!-- ── LOGIN ── -->
+    @if (activeTab() === 'login') {
+      <h2 class="form-title">Welcome back</h2>
+      <p class="form-sub">Sign in to your account</p>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onLogin()" novalidate>
+
+        <div class="fg">
+          <label class="fl" for="l-email">Email address</label>
+          <div class="iw">
+            <input id="l-email" class="fi" type="email"
+                   placeholder="you@example.com" formControlName="email"/>
+            <i class="ti ti-mail iico" aria-hidden="true"></i>
+          </div>
+          @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched) {
+            <span class="field-err">Valid email is required.</span>
+          }
+        </div>
+
+        <div class="fg">
+          <label class="fl" for="l-pass">Password</label>
+          <div class="iw">
+            <input id="l-pass" class="fi"
+                   [type]="showPass() ? 'text' : 'password'"
+                   placeholder="••••••••" formControlName="password"/>
+            <i class="iico" [class]="showPass() ? 'ti ti-eye-off' : 'ti ti-eye'"
+               (click)="togglePass()" style="cursor:pointer;" aria-hidden="true"></i>
+          </div>
+        </div>
+
+        <div class="forgot">
+          <a tabindex="0">Forgot password?</a>
+        </div>
+
+        <button class="btn" type="submit" [disabled]="isLoading()">
+          @if (isLoading()) { <i class="ti ti-loader-2" style="animation:spin 1s linear infinite;" aria-hidden="true"></i> }
+          @else { Sign in }
+        </button>
+
+      </form>
+
+      <p class="sw">Don't have an account?
+        <a (click)="switchTab('register')">Create one</a>
+      </p>
+    }
+
+    <!-- ── REGISTER ── -->
+    @if (activeTab() === 'register') {
+      <h2 class="form-title">Create account</h2>
+      <p class="form-sub">Join the Handora community</p>
+
+      <form [formGroup]="registerForm" (ngSubmit)="onRegister()" novalidate>
+
+        <div class="frow">
+          <div class="fg">
+            <label class="fl" for="r-name">Full name</label>
+            <input id="r-name" class="fi" type="text"
+                   placeholder="Sara Ahmed" formControlName="name"/>
+            @if (registerForm.get('name')?.invalid && registerForm.get('name')?.touched) {
+              <span class="field-err">Name is required.</span>
+            }
+          </div>
+          <div class="fg">
+            <label class="fl" for="r-phone">Phone</label>
+            <input id="r-phone" class="fi" type="tel"
+                   placeholder="01xxxxxxxxx" formControlName="phoneNumber"/>
+          </div>
+        </div>
+
+        <div class="fg">
+          <label class="fl" for="r-email">Email address</label>
+          <div class="iw">
+            <input id="r-email" class="fi" type="email"
+                   placeholder="you@example.com" formControlName="email"/>
+            <i class="ti ti-mail iico" aria-hidden="true"></i>
+          </div>
+          @if (registerForm.get('email')?.invalid && registerForm.get('email')?.touched) {
+            <span class="field-err">Valid email is required.</span>
+          }
+        </div>
+
+        <div class="frow">
+          <div class="fg">
+            <label class="fl" for="r-pass">Password</label>
+            <div class="iw">
+              <input id="r-pass" class="fi"
+                     [type]="showPass() ? 'text' : 'password'"
+                     placeholder="••••••••" formControlName="password"/>
+              <i class="iico" [class]="showPass() ? 'ti ti-eye-off' : 'ti ti-eye'"
+                 (click)="togglePass()" style="cursor:pointer;" aria-hidden="true"></i>
+            </div>
+            @if (registerForm.get('password')?.invalid && registerForm.get('password')?.touched) {
+              <span class="field-err">Min 8 characters.</span>
+            }
+          </div>
+          <div class="fg">
+            <label class="fl" for="r-confirm">Confirm password</label>
+            <div class="iw">
+              <input id="r-confirm" class="fi"
+                     [type]="showConfirm() ? 'text' : 'password'"
+                     placeholder="••••••••" formControlName="confirmPassword"/>
+              <i class="iico" [class]="showConfirm() ? 'ti ti-eye-off' : 'ti ti-eye'"
+                 (click)="toggleConfirm()" style="cursor:pointer;" aria-hidden="true"></i>
+            </div>
+            @if (registerForm.hasError('mismatch') && registerForm.get('confirmPassword')?.touched) {
+              <span class="field-err">Passwords do not match.</span>
+            }
+          </div>
+        </div>
+
+        <div class="fg">
+          <label class="fl">I want to</label>
+          <div class="roles">
+            <div class="role" [class.sel]="registerForm.get('role')?.value === 'Buyer'"
+                 (click)="selectRole('Buyer')">
+              <i class="ti ti-shopping-bag role-icon" aria-hidden="true"></i>
+              <div class="role-name">Shop</div>
+              <div class="role-desc">Buy handmade goods</div>
+            </div>
+            <div class="role" [class.sel]="registerForm.get('role')?.value === 'Seller'"
+                 (click)="selectRole('Seller')">
+              <i class="ti ti-needle-thread role-icon" aria-hidden="true"></i>
+              <div class="role-name">Sell</div>
+              <div class="role-desc">Share my creations</div>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn" type="submit" [disabled]="isLoading()">
+          @if (isLoading()) { <i class="ti ti-loader-2" style="animation:spin 1s linear infinite;" aria-hidden="true"></i> }
+          @else { Create account }
+        </button>
+
+      </form>
+
+      <p class="sw">Already have an account?
+        <a (click)="switchTab('login')">Sign in</a>
+      </p>
+    }
+
+    <!-- ── OTP ── -->
+    @if (activeTab() === 'otp') {
+      <div class="otp-wrap">
+        <i class="ti ti-mail-check otp-icon" aria-hidden="true"></i>
+        <h2 class="form-title">Verify your email</h2>
+        <p class="form-sub">We sent a 6-digit code to</p>
+        <p class="otp-email">{{ otpEmail() }}</p>
+
+        <form [formGroup]="otpForm" (ngSubmit)="onVerifyOtp()" novalidate>
+          <div class="fg" style="text-align:center;">
+            <input class="fi otp-input" type="text" maxlength="6"
+                   placeholder="000000" formControlName="otp"/>
+          </div>
+
+          <button class="btn" type="submit" [disabled]="isLoading()">
+            @if (isLoading()) { <i class="ti ti-loader-2" style="animation:spin 1s linear infinite;" aria-hidden="true"></i> }
+            @else { Verify }
+          </button>
+        </form>
+
+        <p class="sw" style="margin-top:16px;">
+          @if (canResend()) {
+            <a (click)="onResendOtp()">Resend code</a>
+          } @else {
+            Resend in <strong>{{ otpTimer() }}s</strong>
+          }
+        </p>
+      </div>
+    }
+
+  </div>
+</div>

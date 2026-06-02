@@ -7,14 +7,14 @@ import { IShopStats } from '../models/ishop-stats';
 import { IShopFilter } from '../models/ishop-filter';
 import { ICreateShop } from '../models/icreate-shop';
 import { IUpdateShop } from '../models/iupdate-shop';
-import { Auth } from '../../auth/Services/auth';
+import { AuthService } from '../../auth/Services/auth';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ShopService {
   private http = inject(HttpClient);
-  private auth = inject(Auth);
+  private auth = inject(AuthService);
 
   private getAuthHeaders(): HttpHeaders {
     return new HttpHeaders({
