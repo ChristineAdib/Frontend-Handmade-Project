@@ -6,6 +6,7 @@ import { LoginRequest } from '../models/login-request.model';
 import { RegisterRequest } from '../models/register-request.model';
 import { AuthResponse } from '../models/auth-response.mode';
 import { ApiResponse } from '../models/api-response.model';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -13,7 +14,7 @@ import { ApiResponse } from '../models/api-response.model';
 export class AuthService {
 
   private http = inject(HttpClient);
-  private apiUrl = 'https://localhost:5001/api/auth';
+private apiUrl = `${environment.apiUrl}/api/auth`;
 
   private logoutTimer: any;
 

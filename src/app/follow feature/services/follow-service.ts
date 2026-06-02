@@ -4,14 +4,14 @@ import { Observable } from 'rxjs';
 import { API_URLS } from '../../constants/API_URLS';
 import { IFollow } from '../models/ifollow';
 import { IShopFollower } from '../models/ishop-follower';
-import { Auth } from '../../auth/Services/auth';
+import { AuthService } from '../../auth/Services/auth';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FollowService {
   private http = inject(HttpClient);
-  private auth = inject(Auth);
+  private auth = inject(AuthService);
 
   private getAuthHeaders(): HttpHeaders {
     return new HttpHeaders({
