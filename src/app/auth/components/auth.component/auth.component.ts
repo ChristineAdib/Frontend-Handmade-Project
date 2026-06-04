@@ -39,7 +39,9 @@ export class AuthComponent {
     email:           ['', [Validators.required, Validators.email]],
     password:        ['', [Validators.required, Validators.minLength(8)]],
     confirmPassword: ['', Validators.required],
-    role:            ['Buyer', Validators.required]
+    role:            ['Buyer', Validators.required],
+    bio:             [''],                      
+    profileImage:    [null as File | null]      
   }, { validators: this.passwordMatchValidator });
 
   otpForm = this.fb.group({
@@ -149,5 +151,24 @@ export class AuthComponent {
         return v - 1;
       });
     }, 1000);
+  }
+  // ── Signals ────────────────────────────────────────────────
+  imagePreview = signal<string | null>(null);
+
+  // ── Image methods ──────────────────────────────────────────
+  onImageSelected(event: Event) {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+
+    this.registerForm.patchValue({ profileImage: file });
+
+    const reader = new FileReader();
+    reader.onload = () => this.imagePreview.set(reader.result as string);
+    reader.readAsDataURL(file);
+  }
+
+  onRemoveImage() {
+    this.registerForm.patchValue({ profileImage: null });
+    this.imagePreview.set(null);
   }
 }
