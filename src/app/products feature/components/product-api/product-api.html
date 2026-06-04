@@ -16,17 +16,15 @@
     <div class="col-lg-3 col-md-4 col-sm-6" *ngFor="let product of products">
       <div class="card h-100 shadow-sm">
         <img
-          [src]="product.images[0]"
+          [src]="product.mainImageUrl"
           class="card-img-top"
           style="height: 200px; object-fit: cover;"
-          [alt]="product.title"
+          [alt]="product.titleEn"
         >
         <div class="card-body">
-          <span class="badge bg-secondary mb-2">{{ product.category.name }}</span>
-          <h6 class="card-title">{{ product.title }}</h6>
-          <p class="card-text text-muted small">
-            {{ product.description | slice:0:80 }}...
-          </p>
+          <span class="badge bg-secondary mb-2">{{ product.categoryNameEn }}</span>
+          <h6 class="card-title">{{ product.titleEn }}</h6>
+          <p class="card-text text-muted small">{{ product.titleAr }}</p>
         </div>
         <div class="card-footer d-flex justify-content-between align-items-center">
           <strong class="text-success">${{ product.price }}</strong>

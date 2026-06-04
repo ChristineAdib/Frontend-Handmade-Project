@@ -1,7 +1,6 @@
 import { Component, inject } from '@angular/core';
-import { ProductsService } from '../../services/products-service';
-import { ProductApiService } from '../../services/product-api-service';
-import { IProductAPI } from '../../models/iproductAPI';
+import { ProductService } from '../../services/product-api-service';
+import { IPagedResult, IProductSummaryDto } from '../../models/iproductAPI';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
@@ -13,10 +12,10 @@ import { ToastrService } from 'ngx-toastr';
   styleUrl: './search-products.css',
 })
 export class SearchProducts {
-  private ProductsService = inject(ProductApiService)
+  private ProductsService = inject(ProductService);
   private toastr = inject(ToastrService);
 
-  products: IProductAPI[] = [];
+  products: IProductSummaryDto[] = [];
   isLoading = false;
   errorMessage = '';
   hasSearched = false;
@@ -32,19 +31,19 @@ export class SearchProducts {
     this.hasSearched = true;
     this.products = [];
 
-    this.ProductsService.searchProducts(title).subscribe({
-      next: (data) => {
-        this.products = data;
+    this.ProductsService.getProducts({ search: title }).subscribe({
+      next: (data: IPagedResult<IProductSummaryDto>) => {
+        this.products = data.items;
         this.isLoading = false;
 
-        if (data.length > 0) {
-          this.toastr.success(`Found ${data.length} products!`, 'Search Complete');
+        if (data.items.length > 0) {
+          this.toastr.success(`Found ${data.items.length} products!`, 'Search Complete');
         } else {
           this.toastr.warning('No products found!', 'Search Complete');
         }
       },
 
-      error: (err) => {
+      error: (err: Error) => {
         this.toastr.error('Something went wrong!', 'Error');
         this.isLoading = false;
       }

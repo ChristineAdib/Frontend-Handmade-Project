@@ -55,10 +55,10 @@
 
         <!-- Image -->
         <img
-          [src]="product.images[0]"
+          [src]="product.mainImageUrl"
           class="card-img-top"
           style="height: 200px; object-fit: cover;"
-          [alt]="product.title"
+          [alt]="product.titleEn"
         >
 
         <div class="card-body d-flex flex-column">
@@ -66,11 +66,11 @@
           <!-- Category Badge -->
           <span class="badge mb-2 align-self-start"
             style="background-color: #1a0a00; color: #e8c9a0;">
-            {{ product.category.name }}
+            {{ product.categoryNameEn }}
           </span>
 
           <!-- Title -->
-          <h6 class="card-title fw-bold">{{ product.title }}</h6>
+          <h6 class="card-title fw-bold">{{ product.titleEn }}</h6>
 
           <!-- Price -->
           <p class="mt-auto mb-0 fw-bold fs-5"
