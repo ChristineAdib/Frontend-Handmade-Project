@@ -1,0 +1,134 @@
+<div class="detail-page">
+  <a routerLink="/orders" class="back-link">&larr; Back to Orders</a>
+
+  @if (orderService.isLoading()) {
+    <div class="loading-state">
+      <div class="custom-spinner"></div>
+      <p>Loading order details...</p>
+    </div>
+  }
+
+  @if (orderService.error()) {
+    <div class="alert alert-danger">{{ orderService.error() }}</div>
+  }
+
+  @if (orderService.selectedOrder(); as order) {
+    <div class="detail-card">
+      <div class="detail-header">
+        <h2>Order #{{ order.id | slice:0:8 }}</h2>
+        <div class="status-group">
+          <span class="order-badge" [ngClass]="{
+            'badge-pending': order.status === 1,
+            'badge-processing': order.status === 2,
+            'badge-shipped': order.status === 3,
+            'badge-delivered': order.status === 4,
+            'badge-cancelled': order.status === 5,
+            'badge-refunded': order.status === 6
+          }">{{ OrderStatusLabel[order.status] }}</span>
+          <span class="order-badge" [ngClass]="{
+            'badge-pending': order.paymentStatus === 1,
+            'badge-delivered': order.paymentStatus === 2,
+            'badge-cancelled': order.paymentStatus === 3
+          }">{{ PaymentStatusLabel[order.paymentStatus] }}</span>
+        </div>
+      </div>
+
+      <div class="detail-grid">
+        <div class="detail-field">
+          <div class="label">Shipping Address</div>
+          <p class="value">{{ order.firstName }} {{ order.lastName }}<br>
+          {{ order.street }}<br>
+          {{ order.city }}, {{ order.country }}</p>
+        </div>
+        <div class="detail-field">
+          <div class="label">Delivery Method</div>
+          <p class="value">{{ order.deliveryMethodName }}<br>
+          <small>{{ order.deliveryMethodCost | currency:'EGP':'symbol' }}</small></p>
+        </div>
+        <div class="detail-field">
+          <div class="label">Order Date</div>
+          <p class="value">{{ order.orderDate | date:'medium' }}</p>
+        </div>
+        <div class="detail-field">
+          <div class="label">Buyer</div>
+          <p class="value">{{ order.buyerEmail }}</p>
+        </div>
+      </div>
+
+      @if (order.notes) {
+        <div class="alert alert-info" style="font-size: 13px; background: #f2ebe0; border-color: #e0d5c1; color: #6b5a4a;">
+          <strong>Notes:</strong> {{ order.notes }}
+        </div>
+      }
+
+      @if (order.couponCode) {
+        <div style="margin-bottom: 1rem; font-size: 13px; color: #6b5a4a;">
+          Coupon applied: <strong>{{ order.couponCode }}</strong>
+        </div>
+      }
+
+      <div class="items-section">
+        <h3>Items</h3>
+        <table class="items-table">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Price</th>
+              <th>Qty</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of order.items; track item.id) {
+              <tr>
+                <td>
+                  <div class="product-cell">
+                    <img [src]="item.pictureUrl" [alt]="item.productName" class="product-img">
+                    <span>{{ item.productName }}</span>
+                  </div>
+                </td>
+                <td>{{ item.price | currency:'EGP':'symbol' }}</td>
+                <td>{{ item.quantity }}</td>
+                <td><strong>{{ item.total | currency:'EGP':'symbol' }}</strong></td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="summary-section">
+        <div class="summary-row">
+          <span>Subtotal</span>
+          <span>{{ order.subTotal | currency:'EGP':'symbol' }}</span>
+        </div>
+        @if (order.discountAmount) {
+          <div class="summary-row discount">
+            <span>Discount</span>
+            <span>-{{ order.discountAmount | currency:'EGP':'symbol' }}</span>
+          </div>
+        }
+        <div class="summary-row">
+          <span>Delivery</span>
+          <span>{{ order.deliveryMethodCost | currency:'EGP':'symbol' }}</span>
+        </div>
+        <div class="summary-row total">
+          <span>Total</span>
+          <span>{{ order.total | currency:'EGP':'symbol' }}</span>
+        </div>
+      </div>
+
+      <div class="detail-actions">
+        @if (order.status === 1 && order.paymentStatus !== 2) {
+          <button (click)="goToPayment()"
+                  class="btn-pay"
+                  [disabled]="paymentService.isLoading()">
+            {{ paymentService.isLoading() ? 'Processing...' : 'Pay Now' }}
+          </button>
+        }
+        @if (order.status === 1) {
+          <button (click)="orderService.cancelOrder(order.id)" class="btn-cancel-order">Cancel Order</button>
+        }
+      </div>
+    </div>
+  }
+</div>

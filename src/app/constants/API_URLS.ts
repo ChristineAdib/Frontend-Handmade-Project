@@ -3,7 +3,7 @@ import { environment } from '../../environments/environment.development';
 
 const base_domain = environment.domain;  // استخدمي الدومين من ملف البيئة بدلاً من hardcoding في كل URL
 
-export const API_URLS = {
+export  const API_URLS = {
 
     getAllProducts: `${base_domain}products`,
     getProductById: (id: number) => `${base_domain}products/${id}`,
@@ -39,5 +39,20 @@ export const API_URLS = {
     isFollowing: (shopId: string) => `${base_domain}api/Follows/${shopId}/isFollowing`,
     getFollowedShops: `${base_domain}api/Follows/myShops`,
     getShopFollowers: (shopId: string) => `${base_domain}api/Follows/${shopId}/followers`,
+
+    // Orders
+    createOrder: `${base_domain}api/orders`,
+    getOrderById: (id: string) => `${base_domain}api/orders/${id}`,
+    getMyOrders: `${base_domain}api/orders`,
+    updateOrderStatus: (id: string) => `${base_domain}api/orders/${id}/status`,
+    cancelOrder: (id: string) => `${base_domain}api/orders/${id}/cancel`,
+
+    // Payments
+    createPaymentIntent: (orderId: string) => `${base_domain}api/payments/create-intent/${orderId}`,
+    paymentWebhook: `${base_domain}api/payments/webhook`,
+
+    // Payouts
+    requestWithdrawal: `${base_domain}api/payouts/request`,
+    processPendingPayouts: `${base_domain}api/payouts/process-pending`,
 
 };
