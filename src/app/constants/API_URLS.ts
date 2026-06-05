@@ -55,4 +55,13 @@ export  const API_URLS = {
     requestWithdrawal: `${base_domain}api/payouts/request`,
     processPendingPayouts: `${base_domain}api/payouts/process-pending`,
 
+
+    //wishlist
+
+
+getWishList: `${base_domain}api/wishlist`,
+  addToWishList: `${base_domain}api/wishlist`,
+  removeFromWishList: (productId: string) => 
+    `${base_domain}api/wishlist/${productId}`,
+
 };
