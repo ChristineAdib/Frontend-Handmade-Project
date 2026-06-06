@@ -20,14 +20,14 @@ export class WishlistService {
     return this.http.post<IWishList>(
       API_URLS.addToWishList,
       { productId },
-      { withCredentials: true }
+      // { withCredentials: true }
     );
   }
 
   removeItem(productId: string): Observable<IWishList> {
     return this.http.delete<IWishList>(
       API_URLS.removeFromWishList(productId),
-      { withCredentials: true }
+      // { withCredentials: true }
     );
   }
 }
