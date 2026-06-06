@@ -42,6 +42,8 @@ export  const API_URLS = {
     getSellerProfile: (id: string) => `${base_domain}api/Sellers/${id}`,
     getMySellerProfile: `${base_domain}/api/Sellers/MyProfile`,
     updateMyProfile: `${base_domain}/api/Sellers/me`,
+    getMyProducts: (shopId: string, page: number, pageSize: number) => 
+  `${base_domain}/api/Products?shopId=${shopId}&pageNumber=${page}&pageSize=${pageSize}`,
 
     // Follow
     followShop: (shopId: string) => `${base_domain}/api/Follows/${shopId}`,
@@ -73,6 +75,8 @@ getWishList: `${base_domain}api/wishlist`,
   addToWishList: `${base_domain}api/wishlist`,
   removeFromWishList: (productId: string) => 
     `${base_domain}api/wishlist/${productId}`,
+  
+  
   
 
 };

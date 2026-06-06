@@ -5,6 +5,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { ProductService } from '../../../seller feature/services/product-service';
 import { ShopService } from '../../../shop feature/services/shop-service';
 import { CategorySummary } from '../../../Categories/Models/CategorySummary';
+import { Input } from '@angular/core';
 
 @Component({
   selector: 'app-add-product',
@@ -141,6 +142,32 @@ export class AddProduct implements OnInit {
     });
   }
 
+  private loadProductData(id: string) {
+  this.productService.getProductById(id).subscribe({
+    next: (product: any) => {
+      this.form.patchValue({
+        titleEn: product.titleEn,
+        titleAr: product.titleAr,
+        descriptionEn: product.descriptionEn ?? '',
+        descriptionAr: product.descriptionAr ?? '',
+        price: product.price,
+        quantity: product.quantity,
+        categoryId: product.categoryId,
+      });
+      if (product.images?.length) this.imagePreviews.set(product.images);
+      if (product.tags?.length) this.tags.set(product.tags);
+    }
+  });
+}
+
+@Input() set editProductId(id: string | null) {
+  if (id) {
+    this.isEditMode.set(true);
+    this.productId.set(id);
+    this.loadProductData(id);
+  }
+}
+  
   onCancel() {
     this.router.navigate(['/seller/products']);
   }

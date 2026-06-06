@@ -5,6 +5,8 @@ import { API_URLS } from '../../constants/API_URLS';
 import { AuthService } from '../../auth/Services/auth';
 import { IProduct } from '../../models/iproduct';
 import { ICategory } from '../../seller feature/models/icategory'
+import { IProductSummary } from '../../shop feature/models/ishop-with-products';
+import { PagedResult } from '../../models/paged-result';
 
 @Injectable({ providedIn: 'root' })
 export class ProductService {
@@ -38,4 +40,15 @@ export class ProductService {
       headers: this.getAuthHeaders()
     });
   }
+  getMyProducts(shopId: string, page: number = 1, pageSize: number = 10): Observable<PagedResult<IProductSummary>> {
+  return this.http.get<PagedResult<IProductSummary>>(
+    API_URLS.getMyProducts(shopId, page, pageSize),
+    { headers: this.getAuthHeaders() }
+  );
+}
+getProductById(id: string): Observable<any> {
+  return this.http.get<any>(API_URLS.getProductById(id), {
+    headers: this.getAuthHeaders()
+  });
+}
 }
