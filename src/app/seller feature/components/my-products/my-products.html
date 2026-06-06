@@ -1,1 +1,96 @@
-<p>my-products works!</p>
+<div class="products-wrap">
+
+  <!-- Sub Tabs -->
+  <div class="sub-tabs">
+    <button class="sub-tab" [class.active]="activeTab() === 'list'" (click)="setTab('list')">
+      My Products
+    </button>
+    <button class="sub-tab" [class.active]="activeTab() === 'add'" (click)="setTab('add')">
+      + Add Product
+    </button>
+  </div>
+
+  <!-- My Products Tab -->
+  @if (activeTab() === 'list') {
+
+    <div class="list-header">
+      <div>
+        <h2 class="list-title">My Products</h2>
+        <p class="list-sub">{{ totalCount() }} products in your shop</p>
+      </div>
+    </div>
+
+    @if (isLoading()) {
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <p>Loading products...</p>
+      </div>
+    }
+
+    @if (error()) {
+      <div class="error-state">⚠️ {{ error() }}</div>
+    }
+
+    @if (!isLoading() && !error()) {
+      @if (products().length === 0) {
+        <div class="empty-state">
+          <span class="empty-icon">📦</span>
+          <h3>No products yet</h3>
+          <p>Add your first product to start selling!</p>
+          <button class="add-first-btn" (click)="setTab('add')">+ Add Product</button>
+        </div>
+      } @else {
+        <div class="products-grid">
+          @for (product of products(); track product.id) {
+            <div class="product-card">
+              <div class="product-img-wrap">
+                @if (product.mainImageUrl) {
+                  <img [src]="product.mainImageUrl" [alt]="product.titleEn" class="product-img" />
+                } @else {
+                  <div class="product-img-ph">🧵</div>
+                }
+                @if (product.discountPrice) {
+                  <span class="sale-badge">Sale</span>
+                }
+              </div>
+              <div class="product-info">
+                <p class="product-title">{{ product.titleEn }}</p>
+                <p class="product-cat">{{ product.categoryNameEn }}</p>
+                <div class="product-footer">
+                  <div class="price-wrap">
+                    @if (product.discountPrice) {
+                      <span class="price-old">{{ product.price | currency:'EGP ':'code' }}</span>
+                    }
+                    <span class="price-final">{{ product.finalPrice | currency:'EGP ':'code' }}</span>
+                  </div>
+                  <div class="product-rating">
+                    <span class="star">★</span>
+                    <span>{{ product.averageRating | number:'1.1-1' }}</span>
+                  </div>
+                </div>
+                <div class="product-actions">
+                  <button class="edit-btn" (click)="editProduct(product.id)"> Edit</button>
+                  <button class="delete-btn" (click)="deleteProduct(product.id)"> Delete</button>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- Pagination -->
+        @if (totalPages() > 1) {
+          <div class="pagination">
+            <button class="page-btn" [disabled]="currentPage() === 1" (click)="prevPage()">← Prev</button>
+            <span class="page-info">{{ currentPage() }} / {{ totalPages() }}</span>
+            <button class="page-btn" [disabled]="currentPage() === totalPages()" (click)="nextPage()">Next →</button>
+          </div>
+        }
+      }
+    }
+  }
+
+  <!-- Add Product Tab -->
+@if (activeTab() === 'add') {
+  <app-add-product [editProductId]="editingProductId()" />
+}
+</div>

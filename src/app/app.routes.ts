@@ -39,7 +39,7 @@ export const routes: Routes = [
       { path: '', redirectTo: 'overview', pathMatch: 'full' },
       { path: 'overview', component: Overview },
       { path: 'products', component: MyProducts },
-      { path: 'products/add', component: AddProduct },
+      
       { path: 'products/edit/:id', component: AddProduct },
       { path: 'orders', component: Orders },
       { path: 'followers', component: Followers },
@@ -48,7 +48,11 @@ export const routes: Routes = [
       { path: 'settings', component: Settings },
       { path: 'profile', component: MyProfile },
     ]
-  }
+  },
+
+  // Public shop page
+
+  { path: 'shop/:id', loadComponent: () => import('./shop feature/components/shop-public/shop-public').then(c => c.ShopPublic) },
 ];
 
 
