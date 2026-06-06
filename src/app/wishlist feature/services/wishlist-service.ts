@@ -12,7 +12,7 @@ export class WishlistService {
 
   getWishList(): Observable<IWishList> {
     return this.http.get<IWishList>(API_URLS.getWishList, {
-      withCredentials: true,
+      // withCredentials: true,
     });
   }
 
