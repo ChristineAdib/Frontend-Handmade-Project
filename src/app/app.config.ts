@@ -12,7 +12,7 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    provideHttpClient(),
+    provideHttpClient(withInterceptors([authInterceptor])),
     provideAnimations(),
     provideToastr({
       timeOut: 3000,
@@ -20,8 +20,5 @@ export const appConfig: ApplicationConfig = {
       preventDuplicates: true,
       progressBar: true,
     }),
-    provideHttpClient(
-      withInterceptors([authInterceptor])
-    )
   ]
 };

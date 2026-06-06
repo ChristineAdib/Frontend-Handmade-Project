@@ -1,0 +1,23 @@
+<div class="callback-page">
+  <div class="callback-card">
+    <div *ngIf="status === 'success'" class="cb-result cb-success">
+      <div class="cb-icon">&#x2714;</div>
+      <h2>Payment Confirmed</h2>
+      <p>Your payment was successful. Redirecting...</p>
+      <a [routerLink]="['/orders', orderId]" class="cb-btn">View Order</a>
+    </div>
+
+    <div *ngIf="status === 'failed'" class="cb-result cb-failed">
+      <div class="cb-icon">&#x2718;</div>
+      <h2>Payment Failed</h2>
+      <p>Unfortunately your payment could not be processed.</p>
+      <a [routerLink]="['/payment', orderId]" class="cb-btn">Try Again</a>
+    </div>
+
+    <div *ngIf="status === 'pending'" class="cb-result cb-pending">
+      <div class="spinner"></div>
+      <h2>Processing...</h2>
+      <p>Please wait while we confirm your payment.</p>
+    </div>
+  </div>
+</div>

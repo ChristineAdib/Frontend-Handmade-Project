@@ -1,0 +1,184 @@
+.checkout-page {
+  background: #f5f0eb;
+  min-height: 80vh;
+  padding: 2rem 1.5rem 4rem;
+}
+.checkout-container {
+  max-width: 1060px;
+  margin: 0 auto;
+}
+
+/* ── Header ── */
+.checkout-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+.checkout-header h2 {
+  font-family: Georgia, serif;
+  font-style: italic;
+  color: #1a0a00;
+  font-weight: 400;
+  font-size: 26px;
+  margin: 0;
+}
+.btn-back {
+  font-size: 12px;
+  color: #8b6a4a;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.btn-back:hover { color: #c8813a; }
+
+/* ── Layout ── */
+.checkout-layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 2rem;
+  align-items: start;
+}
+@media (max-width: 850px) {
+  .checkout-layout { grid-template-columns: 1fr; }
+}
+
+/* ── Main Form ── */
+.checkout-main {
+  background: #fffaf3;
+  border: 1px solid #e0d5c1;
+  border-radius: 12px;
+  padding: 2rem;
+}
+
+.form-section { margin-bottom: 2rem; }
+.form-section h4 {
+  font-family: Georgia, serif;
+  font-style: italic;
+  color: #8b6a4a;
+  font-weight: 400;
+  font-size: 15px;
+  margin: 0 0 1rem;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #f2ebe0;
+}
+
+.form-label {
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #8b6a4a;
+  margin-bottom: 6px;
+  display: block;
+}
+.form-control {
+  width: 100%;
+  height: 44px;
+  padding: 0 14px;
+  border: 1px solid #d4c5b0;
+  border-radius: 6px;
+  background: #fff;
+  font-size: 14px;
+  color: #1a0a00;
+  outline: none;
+  transition: border 0.2s;
+}
+.form-control:focus { border-color: #c8813a; }
+.form-control::placeholder { color: #c4b8a8; }
+textarea.form-control { height: auto; padding: 10px 14px; resize: vertical; }
+
+.delivery-options { display: flex; flex-direction: column; gap: 8px; }
+.delivery-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid #e0d5c1;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.delivery-option:hover { background: #f8f4ef; }
+.delivery-option.selected { border-color: #c8813a; background: #fdf6ee; }
+.delivery-option input[type="radio"] { margin-top: 3px; accent-color: #c8813a; }
+.delivery-info { flex: 1; }
+.delivery-name { font-size: 14px; color: #1a0a00; font-weight: 500; }
+.delivery-desc { font-size: 12px; color: #8b6a4a; margin: 2px 0; }
+.delivery-cost { font-size: 13px; color: #c8813a; font-weight: 600; }
+
+.btn-place-order {
+  width: 100%;
+  height: 48px;
+  background: #c8813a;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 12px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-top: 0.5rem;
+}
+.btn-place-order:hover:not(:disabled) { background: #b06e2e; }
+.btn-place-order:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ── Summary Sidebar ── */
+.checkout-summary {
+  background: #fffaf3;
+  border: 1px solid #e0d5c1;
+  border-radius: 12px;
+  padding: 1.5rem;
+  position: sticky;
+  top: 2rem;
+}
+.checkout-summary h3 {
+  font-family: Georgia, serif;
+  font-style: italic;
+  color: #1a0a00;
+  font-weight: 400;
+  font-size: 17px;
+  margin: 0 0 0.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #f2ebe0;
+}
+.summary-note {
+  font-size: 13px;
+  color: #8b6a4a;
+  line-height: 1.5;
+  margin-bottom: 1.25rem;
+}
+.btn-edit-cart {
+  display: block;
+  text-align: center;
+  padding: 10px;
+  border: 1px solid #c8813a;
+  border-radius: 6px;
+  color: #c8813a;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+.btn-edit-cart:hover { background: #c8813a; color: #fff; }
+
+.loading-state { text-align: center; padding: 2rem 0; color: #8b6a4a; }
+.custom-spinner {
+  width: 32px; height: 32px;
+  border: 3px solid #e0d5c1;
+  border-top-color: #c8813a;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 1rem;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.alert-danger {
+  background: #fdf0ef;
+  border: 1px solid #f5c6cb;
+  color: #721c24;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin-bottom: 1rem;
+}
