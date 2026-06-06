@@ -1,0 +1,89 @@
+<div class="profile-wrap">
+
+  <div class="page-header">
+    <h1 class="page-title">My Profile</h1>
+    <p class="page-sub">Manage your personal information</p>
+  </div>
+
+  @if (isLoading()) {
+  <div class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading...</p>
+  </div>
+  }
+
+  @if (!isLoading()) {
+  <div class="profile-card">
+
+    <!-- Profile Image -->
+    <div class="section">
+      <h3 class="section-title">Profile Photo</h3>
+      <div class="image-area">
+        @if (imagePreview()) {
+          <div class="image-preview-wrap">
+            <img [src]="imagePreview()!" alt="Profile" class="profile-img" />
+            <button type="button" class="remove-btn" (click)="onRemoveImage()">✕ Remove</button>
+          </div>
+        } @else {
+          <div class="image-placeholder" (click)="imgInput.click()">
+            <span class="upload-icon">👤</span>
+            <span>Click to upload photo</span>
+            <small>JPG, PNG — max 5MB</small>
+          </div>
+        }
+        <div class="profile-meta">
+          <p class="meta-item">
+            <span class="meta-label">Member since</span>
+            <span class="meta-value">{{ profile()?.memberSince | date:'MMMM yyyy' }}</span>
+          </p>
+          <p class="meta-item">
+            <span class="meta-label">Shop</span>
+            <span class="meta-value">{{ profile()?.shopName || 'No shop yet' }}</span>
+          </p>
+          @if (profile()?.isVerified) {
+            <span class="verified-badge">✓ Verified Seller</span>
+          }
+        </div>
+        <input #imgInput type="file" accept="image/*" (change)="onImageSelected($event)" hidden />
+      </div>
+    </div>
+
+    <!-- Form -->
+    <form [formGroup]="form" (ngSubmit)="onSave()">
+      <div class="section">
+        <h3 class="section-title">Personal Details</h3>
+
+        <div class="fg">
+          <label class="fl">Full Name *</label>
+          <input class="fi" type="text" formControlName="name" placeholder="Your full name" />
+          @if (form.get('name')?.invalid && form.get('name')?.touched) {
+            <span class="field-err">Name is required.</span>
+          }
+        </div>
+
+        <div class="fg">
+          <label class="fl">Bio</label>
+          <textarea class="fi ta" formControlName="bio"
+            placeholder="Tell customers about yourself..."
+            rows="4"></textarea>
+        </div>
+      </div>
+
+      @if (successMsg()) {
+        <div class="success-msg">✅ {{ successMsg() }}</div>
+      }
+      @if (errorMsg()) {
+        <div class="error-msg">⚠️ {{ errorMsg() }}</div>
+      }
+
+      <div class="form-actions">
+        <button class="save-btn" type="submit" [disabled]="isSaving() || form.invalid">
+          @if (isSaving()) { <span class="spinner-sm"></span> Saving... }
+          @else { Save Changes }
+        </button>
+      </div>
+    </form>
+
+  </div>
+  }
+</div>
