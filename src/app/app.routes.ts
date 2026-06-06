@@ -45,7 +45,11 @@ export const routes: Routes = [
       { path: 'settings', component: Settings },
       { path: 'profile', component: MyProfile },
     ]
-  }
+  },
+
+  // Public shop page
+
+  { path: 'shop/:id', loadComponent: () => import('./shop feature/components/shop-public/shop-public').then(c => c.ShopPublic) },
 ];
 
 
