@@ -1,0 +1,78 @@
+<div class="wishlist-page">
+  <div class="wishlist-container">
+
+    <!-- Header -->
+    <div class="wishlist-header">
+      <h2>My Wishlist</h2>
+      @if (wishlist) {
+        <span class="wishlist-count">{{ wishlist.totalItems }} {{ wishlist.totalItems === 1 ? 'item' : 'items' }}</span>
+      }
+    </div>
+
+    <!-- Error -->
+    @if (errorMessage) {
+      <div class="alert-danger">{{ errorMessage }}</div>
+    }
+
+    <!-- Loading -->
+    @if (isLoading) {
+      <div class="empty-state">
+        <div class="custom-spinner"></div>
+        <p>Loading wishlist...</p>
+      </div>
+    }
+
+    <!-- Items -->
+    @if (!isLoading && wishlist) {
+      @if (wishlist.items.length > 0) {
+        <div class="wishlist-grid">
+          @for (item of wishlist.items; track item.productId) {
+            <div class="wishlist-card">
+
+              <!-- Remove Button -->
+              <button class="btn-remove" (click)="removeItem(item.productId)" title="Remove from wishlist">
+                &times;
+              </button>
+
+              <!-- Image -->
+              <div class="card-image">
+                @if (getImageUrl(item)) {
+                  <img [src]="getImageUrl(item)" [alt]="item.titleEn" loading="lazy">
+                } @else {
+                  <div class="img-placeholder"></div>
+                }
+              </div>
+
+              <!-- Details -->
+              <div class="card-body">
+                <h4 class="item-title">{{ item.titleEn }}</h4>
+                <p class="item-subtitle">{{ item.titleAr }}</p>
+
+                <div class="item-price">
+                  @if (item.discountPrice) {
+                    <span class="old-price">{{ item.price | currency:'EGP':'symbol' }}</span>
+                    <span class="sale-price">{{ item.discountPrice | currency:'EGP':'symbol' }}</span>
+                  } @else {
+                    <span class="sale-price">{{ item.price | currency:'EGP':'symbol' }}</span>
+                  }
+                </div>
+
+                <button class="btn-cart">Add to Cart</button>
+              </div>
+
+            </div>
+          }
+        </div>
+      } @else {
+        <!-- Empty State -->
+        <div class="empty-state">
+          <div class="empty-icon">♡</div>
+          <h3>Your wishlist is empty</h3>
+          <p>Save your favorite handmade items here and come back to them anytime.</p>
+          <a routerLink="/products" class="btn-browse">Browse Products</a>
+        </div>
+      }
+    }
+
+  </div>
+</div>

@@ -58,10 +58,8 @@ export  const API_URLS = {
 
     //wishlist
 
-
-getWishList: `${base_domain}api/wishlist`,
-  addToWishList: `${base_domain}api/wishlist`,
-  removeFromWishList: (productId: string) => 
-    `${base_domain}api/wishlist/${productId}`,
+getWishList: `${base_domain}/api/WishList`,
+addToWishList: `${base_domain}/api/WishList`,
+removeFromWishList: (productId: string) => `${base_domain}/api/WishList/${productId}`,
 
 };
