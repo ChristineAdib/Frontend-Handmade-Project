@@ -1,0 +1,90 @@
+<div class="overview-wrap">
+
+  <!-- Loading -->
+  @if (isLoading()) {
+  <div class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading your shop...</p>
+  </div>
+  }
+
+  <!-- Error -->
+  @if (error()) {
+  <div class="error-state">
+    <span class="error-icon">⚠️</span>
+    <p>{{ error() }}</p>
+  </div>
+  }
+
+  <!-- Content -->
+  @if (!isLoading() && !error() && shop()) {
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="shop-identity">
+      @if (shop()?.logo) {
+        <img [src]="shop()!.logo" alt="shop logo" class="shop-logo" />
+      } @else {
+        <div class="shop-logo-placeholder">{{ shop()!.name[0] }}</div>
+      }
+      <div>
+        <h1 class="shop-name">{{ shop()!.name }}</h1>
+        <p class="shop-owner">by {{ shop()!.ownerName }}
+          @if (shop()!.isVerified) {
+            <span class="verified-badge">✓ Verified</span>
+          }
+        </p>
+      </div>
+    </div>
+    <div class="shop-rating">
+      <span class="stars">★</span>
+      <span class="rating-val">{{ shop()!.rating | number:'1.1-1' }}</span>
+      <span class="review-count">({{ shop()!.reviewCount }} reviews)</span>
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon sales-icon">💰</div>
+      <div class="stat-info">
+        <span class="stat-label">Total Sales</span>
+        <span class="stat-value">{{ stats()?.totalSales ?? 0 }}</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon products-icon">📦</div>
+      <div class="stat-info">
+        <span class="stat-label">Total Products</span>
+        <span class="stat-value">{{ stats()?.productCount ?? 0 }}</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon active-icon">✅</div>
+      <div class="stat-info">
+        <span class="stat-label">Active Products</span>
+        <span class="stat-value">{{ stats()?.activeProductCount ?? 0 }}</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon rating-icon">⭐</div>
+      <div class="stat-info">
+        <span class="stat-label">Rating</span>
+        <span class="stat-value">{{ stats()?.rating | number:'1.1-1' }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Description -->
+  @if (shop()!.descriptionEn) {
+  <div class="desc-card">
+    <h3 class="desc-title">About your shop</h3>
+    <p class="desc-text">{{ shop()!.descriptionEn }}</p>
+  </div>
+  }
+
+  }
+</div>

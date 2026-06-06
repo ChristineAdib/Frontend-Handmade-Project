@@ -8,6 +8,12 @@ import { IShopFilter } from '../models/ishop-filter';
 import { ICreateShop } from '../models/icreate-shop';
 import { IUpdateShop } from '../models/iupdate-shop';
 import { AuthService } from '../../auth/Services/auth';
+import { map } from 'rxjs/operators';
+
+
+
+
+
 
 @Injectable({
   providedIn: 'root'
@@ -42,17 +48,18 @@ export class ShopService {
     return this.http.get<IShop[]>(API_URLS.searchShops(params));
   }
 
-  getMyShop(): Observable<IShop> {
-    return this.http.get<IShop>(API_URLS.getMyShop, {
-      headers: this.getAuthHeaders()
-    });
-  }
+getMyShop(): Observable<IShop> {
+  return this.http.get<IShop>(API_URLS.getMyShop, {
+    headers: this.getAuthHeaders()
+  });
+}
 
-  getMyShopStats(): Observable<IShopStats> {
-    return this.http.get<IShopStats>(API_URLS.getMyShopStats, {
-      headers: this.getAuthHeaders()
-    });
-  }
+getMyShopStats(): Observable<IShopStats> {
+  return this.http.get<IShopStats>(API_URLS.getMyShopStats, {
+    headers: this.getAuthHeaders()
+  }).pipe(map(res => res));
+}
+
 
   createShop(dto: ICreateShop): Observable<IShop> {
     return this.http.post<IShop>(API_URLS.createShop, dto, {
@@ -60,11 +67,11 @@ export class ShopService {
     });
   }
 
-  updateShop(id: string, dto: IUpdateShop): Observable<IShop> {
-    return this.http.put<IShop>(API_URLS.updateShop(id), dto, {
-      headers: this.getAuthHeaders()
-    });
-  }
+ updateShop(id: string, formData: FormData): Observable<IShop> {
+  return this.http.put<IShop>(API_URLS.updateShop(id), formData, {
+    headers: this.getAuthHeaders()
+  });
+}
 
   deleteShop(id: string): Observable<void> {
     return this.http.delete<void>(API_URLS.deleteShop(id), {

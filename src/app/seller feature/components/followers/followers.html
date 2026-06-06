@@ -1,0 +1,55 @@
+<div class="followers-wrap">
+
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Followers</h1>
+      <p class="page-sub">People following your shop</p>
+    </div>
+    @if (!isLoading() && !error()) {
+      <div class="followers-count">
+        <span class="count-num">{{ followers().length }}</span>
+        <span class="count-label">Followers</span>
+      </div>
+    }
+  </div>
+
+  @if (isLoading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading followers...</p>
+    </div>
+  }
+
+  @if (error()) {
+    <div class="error-state">⚠️ {{ error() }}</div>
+  }
+
+  @if (!isLoading() && !error()) {
+    @if (followers().length === 0) {
+      <div class="empty-state">
+        <span class="empty-icon">👥</span>
+        <h3>No followers yet</h3>
+        <p>Share your shop to attract followers!</p>
+      </div>
+    } @else {
+      <div class="followers-grid">
+        @for (follower of followers(); track follower.userId) {
+          <div class="follower-card">
+            @if (follower.profileImage) {
+              <img [src]="follower.profileImage" alt="follower" class="follower-avatar" />
+            } @else {
+              <div class="follower-avatar-placeholder">
+                {{ follower.userName[0].toUpperCase() }}
+              </div>
+            }
+            <div class="follower-info">
+              <span class="follower-name">{{ follower.userName }}</span>
+              <span class="follower-date">Followed {{ follower.followedAt | date:'MMM d, yyyy' }}</span>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  }
+
+</div>

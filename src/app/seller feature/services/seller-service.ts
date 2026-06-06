@@ -23,15 +23,15 @@ export class SellerService {
     return this.http.get<ISellerProfile>(API_URLS.getSellerProfile(sellerId));
   }
 
-  getMyProfile(): Observable<ISellerProfile> {
-    return this.http.get<ISellerProfile>(API_URLS.getMySellerProfile, {
-      headers: this.getAuthHeaders()
-    });
-  }
+getMyProfile(): Observable<ISellerProfile> {
+  return this.http.get<ISellerProfile>(API_URLS.getMySellerProfile, {
+    headers: this.getAuthHeaders()
+  });
+}
 
-  updateMyProfile(dto: IUpdateSeller): Observable<ISellerProfile> {
-    return this.http.put<ISellerProfile>(API_URLS.updateMyProfile, dto, {
-      headers: this.getAuthHeaders()
-    });
-  }
+ updateMyProfile(formData: FormData): Observable<ISellerProfile> {
+  return this.http.put<ISellerProfile>(API_URLS.updateMyProfile, formData, {
+    headers: this.getAuthHeaders()
+  });
+}
 }
