@@ -1,0 +1,24 @@
+.products-wrap { max-width: 1000px; }
+
+.sub-tabs {
+  display: flex; gap: 0;
+  border-bottom: 2px solid #F0E8E0;
+  margin-bottom: 2rem;
+}
+
+.sub-tab {
+  padding: 12px 24px;
+  background: none; border: none;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px; font-weight: 500;
+  color: #8B6F5C; cursor: pointer;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  transition: all 0.2s;
+}
+.sub-tab:hover { color: #3D2B1F; }
+.sub-tab.active {
+  color: #3D2B1F;
+  border-bottom-color: #C17B5C;
+  font-weight: 600;
+}

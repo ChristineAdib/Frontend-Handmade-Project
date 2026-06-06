@@ -1,1 +1,143 @@
-<p>add-product works!</p>
+<div class="add-product-wrap">
+
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">{{ isEditMode() ? 'Edit Product' : 'Add New Product' }}</h1>
+      <p class="page-sub">{{ isEditMode() ? 'Update your product details' : 'List a new handmade product' }}</p>
+    </div>
+    <button class="cancel-btn" (click)="onCancel()">← Back to Products</button>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="onSave()">
+    <div class="form-grid">
+
+      <!-- Left Column -->
+      <div class="col-main">
+
+        <!-- Titles -->
+        <div class="card">
+          <h3 class="card-title">Product Title</h3>
+          <div class="fg">
+            <label class="fl">Title (English) *</label>
+            <input class="fi" type="text" formControlName="titleEn" placeholder="e.g. Handmade Ceramic Mug" />
+            @if (form.get('titleEn')?.invalid && form.get('titleEn')?.touched) {
+              <span class="field-err">Title in English is required.</span>
+            }
+          </div>
+          <div class="fg">
+            <label class="fl">Title (Arabic) *</label>
+            <input class="fi" type="text" formControlName="titleAr" placeholder="مثال: كوب سيراميك يدوي" dir="rtl" />
+            @if (form.get('titleAr')?.invalid && form.get('titleAr')?.touched) {
+              <span class="field-err">Title in Arabic is required.</span>
+            }
+          </div>
+        </div>
+
+        <!-- Descriptions -->
+        <div class="card">
+          <h3 class="card-title">Description</h3>
+          <div class="fg">
+            <label class="fl">Description (English)</label>
+            <textarea class="fi ta" formControlName="descriptionEn"
+              placeholder="Describe your product in English..." rows="4"></textarea>
+          </div>
+          <div class="fg">
+            <label class="fl">Description (Arabic)</label>
+            <textarea class="fi ta" formControlName="descriptionAr"
+              placeholder="اوصف منتجك بالعربي..." rows="4" dir="rtl"></textarea>
+          </div>
+        </div>
+
+        <!-- Images -->
+        <div class="card">
+          <h3 class="card-title">Product Images</h3>
+          <div class="images-grid">
+            @for (preview of imagePreviews(); track $index) {
+              <div class="img-thumb">
+                <img [src]="preview" alt="Product image" />
+                <button type="button" class="img-remove" (click)="removeImage($index)">✕</button>
+              </div>
+            }
+            <div class="img-add" (click)="imgInput.click()">
+              <span>+</span>
+              <small>Add Image</small>
+            </div>
+          </div>
+          <input #imgInput type="file" accept="image/*" multiple (change)="onImagesSelected($event)" hidden />
+        </div>
+
+      </div>
+
+      <!-- Right Column -->
+      <div class="col-side">
+
+        <!-- Pricing -->
+        <div class="card">
+          <h3 class="card-title">Pricing & Stock</h3>
+          <div class="fg">
+            <label class="fl">Price (EGP) *</label>
+            <input class="fi" type="number" formControlName="price" placeholder="0.00" min="0" />
+            @if (form.get('price')?.invalid && form.get('price')?.touched) {
+              <span class="field-err">Valid price is required.</span>
+            }
+          </div>
+          <div class="fg">
+            <label class="fl">Quantity *</label>
+            <input class="fi" type="number" formControlName="quantity" placeholder="1" min="1" />
+          </div>
+        </div>
+
+        <!-- Category -->
+        <div class="card">
+          <h3 class="card-title">Category</h3>
+          <div class="fg">
+            <label class="fl">Select Category *</label>
+            <select class="fi" formControlName="categoryId">
+              <option value="">-- Choose a category --</option>
+              @for (cat of categories(); track cat.id) {
+                <option [value]="cat.id">{{ cat.nameEn }}</option>
+              }
+            </select>
+            @if (form.get('categoryId')?.invalid && form.get('categoryId')?.touched) {
+              <span class="field-err">Category is required.</span>
+            }
+          </div>
+        </div>
+
+        <!-- Tags -->
+        <div class="card">
+          <h3 class="card-title">Tags</h3>
+          <div class="tag-input-wrap">
+            <input class="fi" type="text" placeholder="Add a tag..."
+              [value]="tagInput()"
+              (input)="tagInput.set($any($event.target).value)"
+              (keydown)="onTagKeydown($event)" />
+            <button type="button" class="add-tag-btn" (click)="addTag()">Add</button>
+          </div>
+          <div class="tags-list">
+            @for (tag of tags(); track tag) {
+              <span class="tag">{{ tag }} <button type="button" (click)="removeTag(tag)">✕</button></span>
+            }
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    @if (successMsg()) {
+      <div class="success-msg">✅ {{ successMsg() }}</div>
+    }
+    @if (errorMsg()) {
+      <div class="error-msg">⚠️ {{ errorMsg() }}</div>
+    }
+
+    <div class="form-actions">
+      <button type="button" class="cancel-btn" (click)="onCancel()">Cancel</button>
+      <button type="submit" class="save-btn" [disabled]="isSaving() || form.invalid">
+        @if (isSaving()) { <span class="spinner-sm"></span> Saving... }
+        @else { {{ isEditMode() ? 'Update Product' : 'Publish Product' }} }
+      </button>
+    </div>
+
+  </form>
+</div>

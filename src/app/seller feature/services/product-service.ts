@@ -1,0 +1,41 @@
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { API_URLS } from '../../constants/API_URLS';
+import { AuthService } from '../../auth/Services/auth';
+import { IProduct } from '../../models/iproduct';
+import { ICategory } from '../../seller feature/models/icategory'
+
+@Injectable({ providedIn: 'root' })
+export class ProductService {
+  private http = inject(HttpClient);
+  private auth = inject(AuthService);
+
+  private getAuthHeaders(): HttpHeaders {
+    return new HttpHeaders({
+      Authorization: `Bearer ${this.auth.getToken()}`
+    });
+  }
+
+  getCategories(): Observable<ICategory[]> {
+    return this.http.get<ICategory[]>(API_URLS.getAllCategories);
+  }
+
+  createProduct(formData: FormData): Observable<IProduct> {
+    return this.http.post<IProduct>(API_URLS.createProduct, formData, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  updateProduct(id: string, formData: FormData): Observable<IProduct> {
+    return this.http.put<IProduct>(API_URLS.updateProduct(id), formData, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  deleteProduct(id: string): Observable<void> {
+    return this.http.delete<void>(API_URLS.deleteProduct(id), {
+      headers: this.getAuthHeaders()
+    });
+  }
+}

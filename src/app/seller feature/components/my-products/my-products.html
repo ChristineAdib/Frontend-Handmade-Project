@@ -1,1 +1,23 @@
-<p>my-products works!</p>
+<div class="products-wrap">
+
+  <!-- Sub Tabs -->
+  <div class="sub-tabs">
+    <button class="sub-tab" [class.active]="activeTab() === 'list'" (click)="setTab('list')">
+      My Products
+    </button>
+    <button class="sub-tab" [class.active]="activeTab() === 'add'" (click)="setTab('add')">
+      + Add Product
+    </button>
+  </div>
+
+  <!-- My Products Tab -->
+  @if (activeTab() === 'list') {
+    <p>My Products list here...</p>
+  }
+
+  <!-- Add Product Tab -->
+  @if (activeTab() === 'add') {
+    <app-add-product />
+  }
+
+</div>
