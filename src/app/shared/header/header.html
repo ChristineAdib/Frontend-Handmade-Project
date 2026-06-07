@@ -197,6 +197,17 @@
               routerLink="/profile" routerLinkActive="active-nav">Profile</a>
           </li>
           <li class="nav-item">
+            <a class="nav-link px-3 py-2 rounded-3 position-relative" style="color: #e8c9a0;"
+              routerLink="/chat" routerLinkActive="active-nav">
+              Chat
+              @if (chatService.totalUnread() > 0) {
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.7rem;">
+                  {{ chatService.totalUnread() }}
+                </span>
+              }
+            </a>
+          </li>
+          <li class="nav-item">
             <button class="btn btn-sm px-3 py-2 rounded-3"
               style="background-color: #c8813a; color: white; border: none;"
               (click)="logout()">

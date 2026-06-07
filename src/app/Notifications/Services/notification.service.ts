@@ -23,6 +23,27 @@ export class NotificationService implements OnDestroy {
   private hubConnection: signalr.HubConnection | null = null;
 
   async startConnection(token: string): Promise<void> {
+    if (this.hubConnection) {
+      const state = this.hubConnection.state;
+      if (state === signalr.HubConnectionState.Connected ||
+          state === signalr.HubConnectionState.Connecting ||
+          state === signalr.HubConnectionState.Reconnecting) {
+        return;
+      }
+
+      if (state === signalr.HubConnectionState.Disconnected) {
+        try {
+          await this.hubConnection.start();
+          this.isConnected.set(true);
+          console.log('Notification SignalR connection restarted.');
+          return;
+        } catch (err) {
+          console.error('Notification SignalR connection restart failed:', err);
+          return;
+        }
+      }
+    }
+
     this.hubConnection = new signalr.HubConnectionBuilder()
       .withUrl(this.hubUrl, { accessTokenFactory: () => token })
       .withAutomaticReconnect()
@@ -36,6 +57,8 @@ export class NotificationService implements OnDestroy {
       this.isConnected.set(true);
     } catch (err) {
       console.error('Notification hub connection failed:', err);
+      this.isConnected.set(false);
+      this.hubConnection = null;
     }
   }
 

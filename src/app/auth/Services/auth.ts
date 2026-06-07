@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 
@@ -8,14 +8,19 @@ import { AuthResponse } from '../models/auth-response.mode';
 import { ApiResponse } from '../models/api-response.model';
 import { environment } from '../../../environments/environment';
 
+type AuthTab = 'login' | 'register' | 'otp';
+
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
 
   private http = inject(HttpClient);
-private apiUrl = `${environment.apiUrl}/api/auth`;
-
+  private apiUrl = `${environment.apiUrl}/api/auth`;
+  // ── Shared UI state ────────────────────────────────────────
+  activeTab  = signal<AuthTab>('login');
+  otpEmail   = signal<string>('');
+  errorMsg   = signal<string | null>(null);
   private logoutTimer: any;
 
   login(model: LoginRequest): Observable<ApiResponse<AuthResponse>> {

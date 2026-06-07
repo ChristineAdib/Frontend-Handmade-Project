@@ -1,0 +1,27 @@
+<div class="chat-layout-wrapper">
+  <!-- Left Column: Sidebar (hidden-mobile if conversation active) -->
+  <div class="chat-sidebar-pane" [class.hidden-mobile]="chatService.activeConversation() !== null">
+    <app-conversation-list></app-conversation-list>
+  </div>
+  
+  <!-- Right Column: Chat Window (visible-mobile if conversation active) -->
+  <div class="chat-main-pane" [class.visible-mobile]="chatService.activeConversation() !== null">
+    @if (chatService.activeConversation()) {
+      <app-chat-window></app-chat-window>
+    } @else {
+      <!-- Fallback empty/welcome state -->
+      <div class="welcome-screen">
+        <div class="welcome-card">
+          <div class="welcome-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" fill="currentColor" class="bi bi-chat-heart" viewBox="0 0 16 16">
+              <path fill-rule="evenodd" d="M2.965 12.595a.5.5 0 0 0-.5-.5H1.5a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-2a.5.5 0 0 0-.314.11l-2.73 2.185a.25.25 0 0 1-.312 0l-2.73-2.185a.5.5 0 0 0-.313-.11H2.965zM2 11h1.5a1.5 1.5 0 0 1 1.5 1.5v.793l1.854-1.854A1.5 1.5 0 0 1 7.914 11H14a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1"/>
+              <path d="M8 4.485c1.84-1.04 4.467.28 3 3.033l-3 3.1-3-3.1c-1.467-2.753 1.16-4.073 3-3.033"/>
+            </svg>
+          </div>
+          <h3>Handora Direct Messages</h3>
+          <p>Select a buyer or seller from the sidebar list to start chatting in real-time.</p>
+        </div>
+      </div>
+    }
+  </div>
+</div>
