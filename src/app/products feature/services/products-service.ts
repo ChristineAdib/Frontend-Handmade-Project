@@ -57,5 +57,6 @@ export class ProductsService {
       return matchName && matchCat;
     });
   }
+  
 
 }

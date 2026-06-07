@@ -1,0 +1,194 @@
+<div class="shop-page">
+
+  @if (isLoading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading shop...</p>
+    </div>
+  }
+
+  @if (error()) {
+    <div class="error-state">⚠️ {{ error() }}</div>
+  }
+
+  @if (!isLoading() && !error() && shop()) {
+
+  <!-- Shop Header -->
+  <section class="shop-hero">
+    <div class="hero-inner">
+      <div class="hero-top">
+
+        <!-- Avatar -->
+        <div class="avatar-wrap">
+          @if (shop()!.logo) {
+            <img [src]="shop()!.logo" alt="shop" class="shop-avatar" />
+          } @else {
+            <div class="shop-avatar-placeholder">{{ shop()!.name[0] }}</div>
+          }
+          @if (shop()!.isVerified) {
+            <div class="verified-dot">
+              <span class="material-symbols-outlined">verified</span>
+            </div>
+          }
+        </div>
+
+        <!-- Info -->
+        <div class="hero-info">
+          <div class="hero-info-left">
+            <div class="badges-row">
+              <span class="role-badge">Artisan</span>
+              <div class="rating-inline">
+                <span class="material-symbols-outlined star-icon">star</span>
+                <span>{{ shop()!.rating | number:'1.1-1' }} ({{ shop()!.products.length }} products)</span>
+              </div>
+            </div>
+            <h1 class="shop-name">{{ shop()!.name }}</h1>
+            <p class="shop-desc">
+              {{ shop()!.descriptionEn || 'A unique handmade shop crafted with love and intention.' }}
+            </p>
+          </div>
+
+          <!-- Actions -->
+          <div class="hero-actions">
+            <button class="follow-btn"
+              [class.following]="isFollowing()"
+              [disabled]="isFollowLoading()"
+              (click)="toggleFollow()">
+              @if (isFollowLoading()) { ... }
+              @else if (isFollowing()) { Following }
+              @else { Follow Shop }
+            </button>
+            <button class="share-btn">
+              <span class="material-symbols-outlined">chat</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats Bar -->
+      <div class="stats-bar">
+        <div class="stat-item">
+          <span class="stat-val">{{ shop()!.products.length }}</span>
+          <span class="stat-lbl">Products</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-val">{{ shop()!.rating | number:'1.1-1' }}</span>
+          <span class="stat-lbl">Rating</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-val">{{ shop()!.isVerified ? 'Verified' : 'Unverified' }}</span>
+          <span class="stat-lbl">Status</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-val">{{ shop()!.ownerName }}</span>
+          <span class="stat-lbl">Owner</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tabs -->
+  <section class="tabs-section">
+    <div class="tabs-inner">
+      <div class="tabs">
+        <button class="tab" [class.active]="activeTab() === 'products'" (click)="setTab('products')">All Creations</button>
+        <button class="tab" [class.active]="activeTab() === 'about'" (click)="setTab('about')">About</button>
+        <button class="tab" [class.active]="activeTab() === 'reviews'" (click)="setTab('reviews')">Reviews</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tab Content -->
+  <section class="content-section">
+    <div class="content-inner">
+
+      <!-- Products -->
+      @if (activeTab() === 'products') {
+        @if (shop()!.products.length === 0) {
+          <div class="empty-state">
+            <span style="font-size:48px">🧶</span>
+            <p>No products yet.</p>
+          </div>
+        } @else {
+          <div class="products-bento">
+
+            <!-- First product: featured large -->
+            <div class="product-featured">
+              <div class="product-card-inner">
+                <div class="product-img-wrap">
+                  @if (shop()!.products[0].mainImageUrl) {
+                    <img [src]="shop()!.products[0].mainImageUrl" [alt]="shop()!.products[0].titleEn" class="product-img" />
+                  } @else {
+                    <div class="product-img-ph">🧵</div>
+                  }
+                  <span class="featured-badge">Featured Piece</span>
+                </div>
+                <div class="product-body featured-body">
+                  <div class="product-title-row">
+                    <h3 class="product-title">{{ shop()!.products[0].titleEn }}</h3>
+                    <span class="product-price-lg">{{ shop()!.products[0].finalPrice | currency:'EGP ':'code' }}</span>
+                  </div>
+                  <p class="product-cat">{{ shop()!.products[0].categoryNameEn }}</p>
+                  <button class="view-btn">View Detail</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Rest of products -->
+            @for (product of shop()!.products.slice(1); track product.id) {
+              <div class="product-card">
+                <div class="product-img-wrap">
+                  @if (product.mainImageUrl) {
+                    <img [src]="product.mainImageUrl" [alt]="product.titleEn" class="product-img" />
+                  } @else {
+                    <div class="product-img-ph">🧵</div>
+                  }
+                  @if (product.discountPrice) {
+                    <span class="small-badge">Sale</span>
+                  }
+                  <button class="quick-add">
+                    <span class="material-symbols-outlined">shopping_bag</span>
+                  </button>
+                </div>
+                <div class="product-body">
+                  <h3 class="product-title">{{ product.titleEn }}</h3>
+                  <p class="product-price">{{ product.finalPrice | currency:'EGP ':'code' }}</p>
+                  @if (product.discountPrice) {
+                    <p class="product-price-old">{{ product.price | currency:'EGP ':'code' }}</p>
+                  }
+                </div>
+              </div>
+            }
+
+          </div>
+
+          <div class="load-more-wrap">
+            <button class="load-more-btn">Load More Creations</button>
+          </div>
+        }
+      }
+
+      <!-- About -->
+      @if (activeTab() === 'about') {
+        <div class="about-wrap">
+          <h2 class="about-title">About {{ shop()!.name }}</h2>
+          <p class="about-text">{{ shop()!.descriptionEn || 'No description provided yet.' }}</p>
+          @if (shop()!.descriptionAr) {
+            <p class="about-text about-ar" dir="rtl">{{ shop()!.descriptionAr }}</p>
+          }
+        </div>
+      }
+
+      <!-- Reviews -->
+      @if (activeTab() === 'reviews') {
+        <div class="empty-state">
+          <span style="font-size:48px">⭐</span>
+          <p>Reviews coming soon.</p>
+        </div>
+      }
+
+    </div>
+  </section>
+
+  }
+</div>

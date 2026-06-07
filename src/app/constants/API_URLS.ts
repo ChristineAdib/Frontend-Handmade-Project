@@ -5,40 +5,52 @@ const base_domain = environment.domain;  // استخدمي الدومين من �
 
 export  const API_URLS = {
 
-    getAllProducts: `${base_domain}products`,
-    getProductById: (id: number) => `${base_domain}products/${id}`,
-    addProduct: `${base_domain}products/add`,
-    deleteProduct: (id: number) => `${base_domain}products/${id}`,
+    getAllProducts: `${base_domain}/products`,
+    // getProductById: (id: number) => `${base_domain}products/${id}`,
+    addProduct: `${base_domain}/products/add`,
+    // deleteProduct: (id: number) => `${base_domain}products/${id}`,
+
+    // Categories
+    getAllCategories: `${base_domain}/api/Categories`,
+
+// Products
+    createProduct: `${base_domain}/api/Products`,
+    updateProduct: (id: string) => `${base_domain}/api/Products/${id}`,
+    deleteProduct: (id: string) => `${base_domain}/api/Products/${id}`,
+    getProducts: `${base_domain}/api/Products`,
+    getProductById: (id: string) => `${base_domain}/api/Products/${id}`,
 
     // Auth
-    login: `${base_domain}auth/login`,
-    profile: `${base_domain}auth/profile`,
+    login: `${base_domain}/auth/login`,
+    profile: `${base_domain}/auth/profile`,
 
     searchProducts: (title: string) =>
-        `${base_domain}products/?title=${title}`,
+        `${base_domain}/products/?title=${title}`,
 
     // Shop
-    getShopById: (id: string) => `${base_domain}api/Shops/${id}`,
-    getShopWithProducts: (id: string) => `${base_domain}api/Shops/${id}/products`,
-    getTopRatedShops: (count: number) => `${base_domain}api/Shops/top?count=${count}`,
-    searchShops: (params: string) => `${base_domain}api/Shops/search?${params}`,
-    getMyShop: `${base_domain}api/Shops/myShop`,
-    getMyShopStats: `${base_domain}api/Shops/myShop/stats`,
-    createShop: `${base_domain}api/Shops`,
-    updateShop: (id: string) => `${base_domain}api/Shops/${id}`,
-    deleteShop: (id: string) => `${base_domain}api/Shops/${id}`,
+    getShopById: (id: string) => `${base_domain}/api/Shops/${id}`,
+    getShopWithProducts: (id: string) => `${base_domain}/api/Shops/${id}/products`,
+    getTopRatedShops: (count: number) => `${base_domain}/api/Shops/top?count=${count}`,
+    searchShops: (params: string) => `${base_domain}/api/Shops/search?${params}`,
+    getMyShop: `${base_domain}/api/Shops/myShop`,
+    getMyShopStats: `${base_domain}/api/Shops/myShop/stats`,
+    createShop: `${base_domain}/api/Shops`,
+    updateShop: (id: string) => `${base_domain}/api/Shops/${id}`,
+    deleteShop: (id: string) => `${base_domain}/api/Shops/${id}`,
 
     // Seller
     getSellerProfile: (id: string) => `${base_domain}api/Sellers/${id}`,
-    getMySellerProfile: `${base_domain}api/Sellers/me`,
-    updateMyProfile: `${base_domain}api/Sellers/me`,
+    getMySellerProfile: `${base_domain}/api/Sellers/MyProfile`,
+    updateMyProfile: `${base_domain}/api/Sellers/me`,
+    getMyProducts: (shopId: string, page: number, pageSize: number) => 
+  `${base_domain}/api/Products?shopId=${shopId}&pageNumber=${page}&pageSize=${pageSize}`,
 
     // Follow
-    followShop: (shopId: string) => `${base_domain}api/Follows/${shopId}`,
-    unfollowShop: (shopId: string) => `${base_domain}api/Follows/${shopId}`,
-    isFollowing: (shopId: string) => `${base_domain}api/Follows/${shopId}/isFollowing`,
-    getFollowedShops: `${base_domain}api/Follows/myShops`,
-    getShopFollowers: (shopId: string) => `${base_domain}api/Follows/${shopId}/followers`,
+    followShop: (shopId: string) => `${base_domain}/api/Follows/${shopId}`,
+    unfollowShop: (shopId: string) => `${base_domain}/api/Follows/${shopId}`,
+    isFollowing: (shopId: string) => `${base_domain}/api/Follows/${shopId}/isFollowing`,
+    getFollowedShops: `${base_domain}/api/Follows/myShops`,
+    getShopFollowers: (shopId: string) => `${base_domain}/api/Follows/${shopId}/followers`,
 
     // Orders
     createOrder: `${base_domain}api/orders`,
@@ -54,5 +66,17 @@ export  const API_URLS = {
     // Payouts
     requestWithdrawal: `${base_domain}api/payouts/request`,
     processPendingPayouts: `${base_domain}api/payouts/process-pending`,
+
+
+    //wishlist
+
+
+getWishList: `${base_domain}api/wishlist`,
+  addToWishList: `${base_domain}api/wishlist`,
+  removeFromWishList: (productId: string) => 
+    `${base_domain}api/wishlist/${productId}`,
+  
+  
+  
 
 };
