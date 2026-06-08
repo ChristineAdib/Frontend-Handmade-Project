@@ -38,7 +38,11 @@
           <!-- Avatar -->
           <div class="avatar-col">
             <div class="avatar-circle">
-              {{ getOtherParticipantName(c)[0] | uppercase }}
+              @if (getOtherParticipantImage(c)) {
+                <img [src]="getOtherParticipantImage(c)" alt="Avatar" class="avatar-img" />
+              } @else {
+                {{ getOtherParticipantName(c)[0] | uppercase }}
+              }
             </div>
             <!-- Role indicator -->
             <span class="role-badge" [class.seller]="getOtherParticipantRole(c) === 'Seller'">

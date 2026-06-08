@@ -10,7 +10,11 @@
       </button>
 
       <div class="avatar-circle header-avatar">
-        {{ getOtherParticipantName()[0] | uppercase }}
+        @if (getOtherParticipantImage()) {
+          <img [src]="getOtherParticipantImage()" alt="Avatar" class="avatar-img" />
+        } @else {
+          {{ getOtherParticipantName()[0] | uppercase }}
+        }
       </div>
 
       <div class="recipient-meta">

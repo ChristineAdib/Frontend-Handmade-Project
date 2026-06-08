@@ -45,6 +45,12 @@ export class ChatWindowComponent implements AfterViewChecked {
     return c.buyerId === this.currentUserId() ? c.sellerName : c.buyerName;
   }
 
+  getOtherParticipantImage(): string | undefined {
+    const c = this.activeConversation();
+    if (!c) return undefined;
+    return c.buyerId === this.currentUserId() ? c.sellerImage : c.buyerImage;
+  }
+
   getOtherParticipantRole(): string {
     const c = this.activeConversation();
     if (!c) return '';

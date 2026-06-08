@@ -38,6 +38,10 @@ export class ConversationListComponent {
     return c.buyerId === this.currentUserId() ? c.sellerName : c.buyerName;
   }
 
+  getOtherParticipantImage(c: Conversation): string | undefined {
+    return c.buyerId === this.currentUserId() ? c.sellerImage : c.buyerImage;
+  }
+
   getOtherParticipantRole(c: Conversation): string {
     return c.buyerId === this.currentUserId() ? 'Seller' : 'Buyer';
   }

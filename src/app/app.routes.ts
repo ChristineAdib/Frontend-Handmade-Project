@@ -11,6 +11,7 @@ import { CustomRequests } from './seller feature/components/custom-requests/cust
 import { Settings } from './seller feature/components/settings/settings';
 import { MyProfile } from './seller feature/components/my-profile/my-profile';
 import { authGuard } from './auth/guards/authGard';
+import { roleGuard } from './auth/guards/roleGard';
 import { WishlistPageComponent } from './wishlist feature/components/wishlist-page/wishlist-page';
 
 
@@ -20,6 +21,8 @@ export const routes: Routes = [
   { path: 'login', component: AuthComponent },
   { path: 'register', component: AuthComponent },
   { path: 'wishlist', component: WishlistPageComponent , canActivate: [authGuard] },
+  { path: 'dashboard', loadComponent: () => import('./user feature/components/dashboard/dashboard.component').then(c => c.DashboardComponent), canActivate: [authGuard, roleGuard], data: { roles: ['Buyer'] } },
+  { path: 'profile/edit', loadComponent: () => import('./user feature/components/edit-profile/edit-profile.component').then(c => c.EditProfileComponent), canActivate: [authGuard, roleGuard], data: { roles: ['Buyer'] } },
 
   // Orders & Cart
   { path: 'orders', loadComponent: () => import('./orders/components/order-list/order-list.component').then(c => c.OrderListComponent), canActivate: [authGuard] },

@@ -71,12 +71,15 @@ export  const API_URLS = {
     //wishlist
 
 
-getWishList: `${base_domain}api/wishlist`,
+  getWishList: `${base_domain}api/wishlist`,
   addToWishList: `${base_domain}api/wishlist`,
   removeFromWishList: (productId: string) => 
     `${base_domain}api/wishlist/${productId}`,
-  
-  
-  
 
+  // User Profile Dashboard Endpoints
+  getProfile: `${base_domain}/api/Profile`,
+  getProfileFollowedShops: `${base_domain}/api/Profile/followed-shops`,
+  getProfileOrders: `${base_domain}/api/Profile/orders`,
+  getMyReviews: `${base_domain}/api/Reviews/my-reviews`,
+  updateUserProfile: (id: string) => `${base_domain}/api/auth/users/${id}`
 };
