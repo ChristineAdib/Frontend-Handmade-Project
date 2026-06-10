@@ -61,11 +61,17 @@
                   <span class="sale-price">EGP {{ item.price }}</span>
                 }
               </div>
-
-              <button class="btn-cart">
-                <i class="ti ti-shopping-cart" aria-hidden="true"></i>
-                Add to cart
-              </button>
+<button class="btn-cart" 
+        (click)="addToCart(item.productId)"
+        [disabled]="addingToCart === item.productId">
+  @if (addingToCart === item.productId) {
+    <i class="ti ti-loader" aria-hidden="true" style="animation: spin 0.8s linear infinite;"></i>
+    Adding...
+  } @else {
+    <i class="ti ti-shopping-cart" aria-hidden="true"></i>
+    Add to cart
+  }
+</button>
             </div>
 
           </div>

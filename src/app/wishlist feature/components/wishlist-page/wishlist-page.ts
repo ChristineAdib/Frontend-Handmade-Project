@@ -21,8 +21,7 @@ export class WishlistPageComponent implements OnInit {
   wishlist: IWishList | null = null;
   isLoading = true;
   errorMessage = '';
-  addingToCart: string | null = null; // عشان نعمل loading على الزرار
-
+  addingToCart: string | null = null; 
   ngOnInit(): void {
     this.loadWishList();
   }
