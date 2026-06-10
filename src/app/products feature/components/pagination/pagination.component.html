@@ -1,0 +1,36 @@
+<div class="pagination-container" *ngIf="totalPages > 1">
+  <!-- Previous Button -->
+  <button 
+    type="button" 
+    class="nav-btn" 
+    [disabled]="!hasPrevious" 
+    (click)="onPrev()"
+    aria-label="Previous page"
+  >
+    <span class="material-symbols-outlined">chevron_left</span>
+  </button>
+
+  <!-- Page Numbers -->
+  <div class="pages-list">
+    <button 
+      type="button"
+      *ngFor="let page of getPagesArray()"
+      class="page-btn"
+      [class.active]="page === pageNumber"
+      (click)="onPageSelect(page)"
+    >
+      {{ page }}
+    </button>
+  </div>
+
+  <!-- Next Button -->
+  <button 
+    type="button" 
+    class="nav-btn" 
+    [disabled]="!hasNext" 
+    (click)="onNext()"
+    aria-label="Next page"
+  >
+    <span class="material-symbols-outlined">chevron_right</span>
+  </button>
+</div>

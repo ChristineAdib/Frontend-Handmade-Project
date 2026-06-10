@@ -5,6 +5,7 @@ import { Conversation } from '../../Models/conversation.model';
 import { ChatService } from '../../Services/chat.service';
 import { AuthService } from '../../../auth/Services/auth';
 import { MessageType } from '../../Models/MessageType';
+import { LanguageService } from '../../../core/services/language.service';
 
 @Component({
   selector: 'app-conversation-list',
@@ -16,6 +17,7 @@ import { MessageType } from '../../Models/MessageType';
 export class ConversationListComponent {
   protected chatService = inject(ChatService);
   private authService = inject(AuthService);
+  protected langService = inject(LanguageService);
 
   searchQuery = signal<string>('');
 
@@ -47,8 +49,8 @@ export class ConversationListComponent {
   }
 
   getLastMessageText(c: Conversation): string {
-    if (!c.lastMessage) return 'No messages yet';
-    if (c.lastMessage.type === MessageType.Image) return '📷 Photo';
+    if (!c.lastMessage) return this.langService.translate('noMessages');
+    if (c.lastMessage.type === MessageType.Image) return this.langService.translate('photoAttachment');
     return c.lastMessage.content;
   }
 
@@ -64,7 +66,7 @@ export class ConversationListComponent {
     const yesterday = new Date(now);
     yesterday.setDate(now.getDate() - 1);
     if (msgDate.toDateString() === yesterday.toDateString()) {
-      return 'Yesterday';
+      return this.langService.translate('yesterday');
     }
     // Otherwise show date
     return msgDate.toLocaleDateString([], { month: 'short', day: 'numeric' });

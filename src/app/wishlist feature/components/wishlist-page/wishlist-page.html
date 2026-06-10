@@ -3,9 +3,9 @@
 
     <!-- Header -->
     <div class="wishlist-header">
-      <h2>My Wishlist</h2>
+      <h2>{{ langService.translate('myWishlist') }}</h2>
       @if (wishlist) {
-        <span class="wishlist-count">{{ wishlist.totalItems }} {{ wishlist.totalItems === 1 ? 'item' : 'items' }}</span>
+        <span class="wishlist-count">{{ wishlist.totalItems }} {{ wishlist.totalItems === 1 ? langService.translate('item') : langService.translate('items') }}</span>
       }
     </div>
 
@@ -18,7 +18,7 @@
     @if (isLoading) {
       <div class="empty-state">
         <div class="custom-spinner"></div>
-        <p>Loading wishlist...</p>
+        <p>{{ langService.translate('loadingWishlist') }}</p>
       </div>
     }
 
@@ -30,14 +30,14 @@
             <div class="wishlist-card">
 
               <!-- Remove Button -->
-              <button class="btn-remove" (click)="removeItem(item.productId)" title="Remove from wishlist">
+              <button class="btn-remove" (click)="removeItem(item.productId)" [title]="langService.currentLang() === 'ar' ? 'إزالة من قائمة الأمنيات' : 'Remove from wishlist'">
                 &times;
               </button>
 
               <!-- Image -->
-              <div class="card-image">
+              <div class="card-image" [routerLink]="['/products', item.productId]" style="cursor: pointer;">
                 @if (getImageUrl(item)) {
-                  <img [src]="getImageUrl(item)" [alt]="item.titleEn" loading="lazy">
+                  <img [src]="getImageUrl(item)" [alt]="langService.currentLang() === 'ar' ? (item.titleAr || item.titleEn) : item.titleEn" loading="lazy">
                 } @else {
                   <div class="img-placeholder"></div>
                 }
@@ -45,8 +45,7 @@
 
               <!-- Details -->
               <div class="card-body">
-                <h4 class="item-title">{{ item.titleEn }}</h4>
-                <p class="item-subtitle">{{ item.titleAr }}</p>
+                <h4 class="item-title" [routerLink]="['/products', item.productId]" style="cursor: pointer;">{{ langService.currentLang() === 'ar' ? (item.titleAr || item.titleEn) : item.titleEn }}</h4>
 
                 <div class="item-price">
                   @if (item.discountPrice) {
@@ -57,7 +56,7 @@
                   }
                 </div>
 
-                <button class="btn-cart">Add to Cart</button>
+                <button class="btn-cart" (click)="addToCart(item.productId)">{{ langService.translate('addToCart') }}</button>
               </div>
 
             </div>
@@ -67,9 +66,9 @@
         <!-- Empty State -->
         <div class="empty-state">
           <div class="empty-icon">♡</div>
-          <h3>Your wishlist is empty</h3>
-          <p>Save your favorite handmade items here and come back to them anytime.</p>
-          <a routerLink="/products" class="btn-browse">Browse Products</a>
+          <h3>{{ langService.translate('wishlistIsEmptyTitle') }}</h3>
+          <p>{{ langService.translate('wishlistEmptyText') }}</p>
+          <a routerLink="/products" class="btn-browse">{{ langService.translate('browseProducts') }}</a>
         </div>
       }
     }

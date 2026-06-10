@@ -1,101 +1,336 @@
-<div class="container mt-5">
+<div class="luxury-detail-page container py-5">
+  <!-- Back navigation button -->
+  <div class="mb-4">
+    <a routerLink="/products" class="back-link d-inline-flex align-items-center gap-2">
+      <span class="material-symbols-outlined">arrow_back</span>
+      {{ langService.translate('backToProducts') }}
+    </a>
+  </div>
 
-  <!-- لو المنتج مش موجود -->
-  @if (!product) {
-    <div class="alert alert-warning text-center">
-      <h4>Product not found!</h4>
-      <a routerLink="/products" class="btn btn-dark mt-2">
-        Back to Products
+  <!-- Loading state -->
+  @if (loadingProduct) {
+    <div class="loading-state text-center py-5">
+      <div class="spinner-border text-primary" role="status"></div>
+      <p class="mt-3 text-muted">{{ langService.translate('loadingProducts') }}</p>
+    </div>
+  }
+
+  <!-- Error / Not Found state -->
+  @else if (!product) {
+    <div class="error-state text-center py-5">
+      <span class="material-symbols-outlined error-icon">sentiment_dissatisfied</span>
+      <h2 class="mt-3">{{ langService.translate('productNotFound') }}</h2>
+      <a routerLink="/products" class="btn btn-luxury-primary mt-4">
+        {{ langService.translate('backToProducts') }}
       </a>
     </div>
   }
 
-  <!-- لو المنتج موجود -->
-  @if (product) {
-    <div class="row justify-content-center">
-      <div class="col-md-8">
+  <!-- Product Details display -->
+  @else {
+    <div class="row g-5">
+      <!-- Image Showcase Column -->
+      <div class="col-12 col-md-6">
+        <div class="gallery-container">
+          <!-- Main display image -->
+          <div class="main-image-display">
+            <img [src]="activeImageUrl" [alt]="langService.currentLang() === 'ar' ? (product.titleAr || product.titleEn) : (product.titleEn || product.titleAr)" />
+          </div>
 
-        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
-          <div class="row g-0">
-
-            <!-- صورة المنتج -->
-            <div class="col-md-5">
-              <img
-                [src]="product.Img"
-                [alt]="product.Name"
-                class="img-fluid h-100 w-100"
-                style="object-fit: cover; min-height: 350px;"
-              />
+          <!-- Thumbnail scrollbar -->
+          @if (product.images.length > 1) {
+            <div class="thumbnail-row">
+              @for (img of product.images; track img.id) {
+                <button 
+                  type="button" 
+                  class="thumb-btn" 
+                  [class.active]="activeImageUrl === img.imageUrl"
+                  (click)="changeActiveImage(img.imageUrl)"
+                >
+                  <img [src]="img.imageUrl" alt="Thumbnail" />
+                </button>
+              }
             </div>
+          }
+        </div>
+      </div>
 
-            <!-- تفاصيل المنتج -->
-            <div class="col-md-7">
-              <div class="card-body p-4 d-flex flex-column h-100">
+      <!-- Text Details Column -->
+      <div class="col-12 col-md-6">
+        <div class="product-info-panel">
+          <!-- Shop details -->
+          <div class="shop-badge mb-2">
+            <span class="material-symbols-outlined">storefront</span>
+            <span class="shop-name">{{ product.shopName }}</span>
+          </div>
 
-                <h2 class="fw-bold mb-1">
-                  {{ product.Name | titlecase }}
-                </h2>
+          <!-- Title -->
+          <h1 class="product-title mb-2">
+            {{ langService.currentLang() === 'ar' ? (product.titleAr || product.titleEn) : (product.titleEn || product.titleAr) }}
+          </h1>
 
-                <p class="text-success fw-bold fs-4 mb-3">
-                  {{ product.Price | currency:'EGP':'symbol':'1.2-2' }}
-                </p>
+          <!-- Rating summary -->
+          <div class="rating-row mb-3" *ngIf="product.reviewCount > 0; else noRating">
+            <div class="stars">
+              <span class="material-symbols-outlined fill-star" *ngFor="let star of getStarsArray(product.averageRating)">star</span>
+              <span class="material-symbols-outlined empty-star" *ngFor="let star of getEmptyStarsArray(product.averageRating)">star</span>
+            </div>
+            <span class="rating-value">{{ product.averageRating | number:'1.1-1' }}</span>
+            <span class="review-count">({{ product.reviewCount }} {{ langService.translate('reviews') }})</span>
+          </div>
+          <ng-template #noRating>
+            <div class="rating-row mb-3">
+              <span class="no-rating text-muted">{{ langService.currentLang() === 'ar' ? 'لا توجد تقييمات بعد' : 'No ratings yet' }}</span>
+            </div>
+          </ng-template>
 
-                <!-- Stock Badge -->
-                <div class="mb-3">
-                  @if (product.Quantity === 0) {
-                    <span class="badge bg-danger fs-6">Out of Stock</span>
-                  } @else if (product.Quantity === 1) {
-                    <span class="badge bg-warning text-dark fs-6">Last One Item!</span>
-                  } @else if (product.Quantity === 2) {
-                    <span class="badge bg-secondary fs-6">Last Two Items!</span>
-                  } @else {
-                    <span class="badge bg-success fs-6">In Stock</span>
-                  }
-                </div>
-
-                <!-- تفاصيل -->
-                <table class="table table-borderless mb-4">
-                  <tbody>
-                    <tr>
-                      <td class="text-muted fw-bold">Product ID</td>
-                      <td># {{ product.ID }}</td>
-                    </tr>
-                    <tr>
-                      <td class="text-muted fw-bold">Quantity</td>
-                      <td>{{ product.Quantity }} pieces</td>
-                    </tr>
-                    <tr>
-                      <td class="text-muted fw-bold">Category ID</td>
-                      <td>{{ product.CategoryID }}</td>
-                    </tr>
-                  </tbody>
-                </table>
-
-                <!-- Buttons -->
-                <div class="mt-auto d-flex gap-2">
-                  @if (product.Quantity > 0) {
-                    <button class="btn btn-primary flex-fill">
-                      Buy Now
-                    </button>
-                  } @else {
-                    <button class="btn btn-secondary flex-fill" disabled>
-                      Unavailable
-                    </button>
-                  }
-                  <a routerLink="/products"
-                    class="btn btn-outline-dark">
-                    Back
-                  </a>
-                </div>
-
+          <!-- Price -->
+          <div class="price-box mb-4">
+            @if (product.discountPrice && product.discountPrice < product.price) {
+              <div class="price-discount-wrapper">
+                <span class="price-discount">
+                  {{ langService.currentLang() === 'ar' ? (product.discountPrice + ' ج.م') : ('EGP ' + product.discountPrice) }}
+                </span>
+                <span class="price-original">
+                  {{ langService.currentLang() === 'ar' ? (product.price + ' ج.م') : ('EGP ' + product.price) }}
+                </span>
               </div>
-            </div>
+            } @else {
+              <span class="price-final">
+                {{ langService.currentLang() === 'ar' ? (product.price + ' ج.م') : ('EGP ' + product.price) }}
+              </span>
+            }
+          </div>
 
+          <!-- Description -->
+          <div class="description-section mb-4">
+            <h5 class="section-heading">{{ langService.currentLang() === 'ar' ? 'الوصف' : 'Description' }}</h5>
+            <p class="description-text">
+              {{ langService.currentLang() === 'ar' ? (product.descriptionAr || product.descriptionEn) : (product.descriptionEn || product.descriptionAr) }}
+            </p>
+          </div>
+
+          <!-- Specs list -->
+          <div class="specs-section mb-4">
+            <table class="table table-borderless luxury-specs-table">
+              <tbody>
+                <tr>
+                  <td class="spec-label">{{ langService.translate('productIdLabel') }}</td>
+                  <td class="spec-value">#{{ product.id.substring(0, 8) }}</td>
+                </tr>
+                <tr>
+                  <td class="spec-label">{{ langService.translate('quantityLabel') }}</td>
+                  <td class="spec-value">
+                    {{ product.quantity }} {{ langService.translate('pieces') }}
+                    <span class="ms-2">
+                      @if (product.quantity === 0) {
+                        <span class="badge bg-danger">{{ langService.translate('outOfStock') }}</span>
+                      } @else if (product.quantity === 1) {
+                        <span class="badge bg-warning text-dark">{{ langService.translate('lastOneItem') }}</span>
+                      } @else {
+                        <span class="badge bg-success">{{ langService.translate('inStock') }}</span>
+                      }
+                    </span>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="spec-label">{{ langService.currentLang() === 'ar' ? 'الفئة' : 'Category' }}</td>
+                  <td class="spec-value">
+                    {{ langService.currentLang() === 'ar' ? (product.categoryNameAr || product.categoryNameEn) : (product.categoryNameEn || product.categoryNameAr) }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Tags list -->
+          <div class="tags-section mb-4" *ngIf="product.tags && product.tags.length > 0">
+            <div class="d-flex flex-wrap gap-2">
+              @for (tag of product.tags; track tag) {
+                <span class="tag-badge">#{{ tag }}</span>
+              }
+            </div>
+          </div>
+
+          <!-- CTA Buttons -->
+          <div class="action-buttons-row">
+            @if (product.quantity > 0) {
+              <button class="btn btn-luxury-primary btn-lg flex-fill" (click)="buyNow()">
+                <span class="material-symbols-outlined">shopping_bag</span>
+                {{ langService.translate('buyNow') }}
+              </button>
+            } @else {
+              <button class="btn btn-secondary btn-lg flex-fill" disabled>
+                {{ langService.translate('unavailable') }}
+              </button>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reviews & Ratings Section -->
+    <div class="reviews-section mt-5 pt-5 border-top">
+      <h2 class="reviews-title mb-4">
+        {{ langService.currentLang() === 'ar' ? 'آراء المشترين والتقييمات' : 'Customer Reviews & Ratings' }}
+      </h2>
+
+      <div class="row g-5">
+        <!-- Rating Distribution Summary -->
+        <div class="col-12 col-lg-4">
+          <div class="rating-summary-card p-4 text-center rounded shadow-sm">
+            <h3 class="summary-score">{{ product.averageRating | number:'1.1-1' }}</h3>
+            <div class="stars justify-content-center mb-2">
+              <span class="material-symbols-outlined fill-star" *ngFor="let star of getStarsArray(product.averageRating)">star</span>
+              <span class="material-symbols-outlined empty-star" *ngFor="let star of getEmptyStarsArray(product.averageRating)">star</span>
+            </div>
+            <p class="summary-meta text-muted">
+              {{ langService.currentLang() === 'ar' ? 'بناءً على ' : 'Based on ' }}
+              <strong>{{ product.reviewCount }}</strong> 
+              {{ langService.currentLang() === 'ar' ? ' تقييم' : ' reviews' }}
+            </p>
+          </div>
+
+          <!-- Review writing section -->
+          <div class="write-review-card mt-4 p-4 rounded shadow-sm">
+            @if (isUserLoggedIn) {
+              <h4 class="card-title mb-3">
+                {{ langService.currentLang() === 'ar' ? 'اكتب تقييمك للمنتج' : 'Write a Product Review' }}
+              </h4>
+              
+              <form (ngSubmit)="submitReview()" #reviewForm="ngForm">
+                <!-- Interactive Star Selector -->
+                <div class="star-selector mb-3">
+                  <label class="form-label text-muted d-block">{{ langService.currentLang() === 'ar' ? 'تقييمك بالنجوم:' : 'Your Rating:' }}</label>
+                  <div class="stars-input">
+                    <button 
+                      type="button" 
+                      *ngFor="let star of [1,2,3,4,5]" 
+                      class="star-btn"
+                      (click)="setNewRating(star)"
+                      (mouseenter)="onStarMouseEnter(star)"
+                      (mouseleave)="onStarMouseLeave()"
+                      aria-label="Rate star"
+                    >
+                      <span 
+                        class="material-symbols-outlined"
+                        [class.filled]="hoveredRating ? star <= hoveredRating : star <= newRating"
+                      >
+                        star
+                      </span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Textarea Comment -->
+                <div class="mb-3">
+                  <label for="reviewComment" class="form-label text-muted">{{ langService.currentLang() === 'ar' ? 'ملاحظاتك تعليقاً:' : 'Your Review Comment:' }}</label>
+                  <textarea 
+                    id="reviewComment"
+                    name="comment"
+                    [(ngModel)]="newComment"
+                    rows="4" 
+                    class="form-control luxury-textarea" 
+                    [placeholder]="langService.currentLang() === 'ar' ? 'اكتب تجربتك للمنتج بالتفصيل...' : 'Tell us about your experience with this handmade item...'"
+                    required
+                  ></textarea>
+                </div>
+
+                <button 
+                  type="submit" 
+                  class="btn btn-luxury-primary w-100"
+                  [disabled]="isSubmittingReview || !newComment.trim()"
+                >
+                  <span class="spinner-border spinner-border-sm me-2" role="status" *ngIf="isSubmittingReview"></span>
+                  <span class="material-symbols-outlined btn-icon" *ngIf="!isSubmittingReview">rate_review</span>
+                  {{ langService.currentLang() === 'ar' ? 'تقديم التقييم' : 'Submit Review' }}
+                </button>
+              </form>
+            } @else {
+              <!-- Login prompt -->
+              <div class="login-prompt text-center py-3">
+                <span class="material-symbols-outlined login-prompt-icon mb-2">lock_open</span>
+                <h5>{{ langService.currentLang() === 'ar' ? 'شاركنا برأيك الحرفي' : 'Share Your Experience' }}</h5>
+                <p class="text-muted small mb-3">
+                  {{ langService.currentLang() === 'ar' ? 'يجب عليك تسجيل الدخول أولاً لتتمكن من كتابة مراجعة للمنتج.' : 'You must log in to your account to submit a review for this product.' }}
+                </p>
+                <a routerLink="/login" class="btn btn-outline-dark btn-sm px-4">
+                  {{ langService.translate('login') }}
+                </a>
+              </div>
+            }
           </div>
         </div>
 
+        <!-- Reviews Logs List Column -->
+        <div class="col-12 col-lg-8">
+          @if (loadingReviews) {
+            <div class="loading-reviews text-center py-4">
+              <div class="spinner-border text-secondary spinner-border-sm" role="status"></div>
+            </div>
+          }
+          @else {
+            <!-- Empty state for reviews -->
+            @if (reviews.length === 0) {
+              <div class="empty-reviews p-5 text-center border rounded">
+                <span class="material-symbols-outlined empty-reviews-icon mb-2">reviews</span>
+                <p class="text-muted mb-0">
+                  {{ langService.currentLang() === 'ar' ? 'لا توجد مراجعات مكتوبة بعد. كن أول من يشارك رأيه!' : 'No written reviews yet for this product. Be the first to share your thoughts!' }}
+                </p>
+              </div>
+            }
+            @else {
+              <div class="reviews-list">
+                @for (rev of reviews; track rev.id) {
+                  <div class="review-item-card p-4 mb-3 rounded shadow-sm border-0">
+                    <div class="review-header d-flex justify-content-between align-items-center mb-2">
+                      <div class="reviewer-meta">
+                        <h5 class="reviewer-name mb-0">{{ rev.userName }}</h5>
+                        <small class="review-date text-muted">{{ rev.createdAt | date:'mediumDate' }}</small>
+                      </div>
+                      <div class="review-score">
+                        <div class="stars">
+                          <span class="material-symbols-outlined fill-star" *ngFor="let star of getStarsArray(rev.rating)">star</span>
+                          <span class="material-symbols-outlined empty-star" *ngFor="let star of getEmptyStarsArray(rev.rating)">star</span>
+                        </div>
+                      </div>
+                    </div>
+                    <p class="review-comment-text mb-0">{{ rev.comment || langService.translate('noComment') }}</p>
+                  </div>
+                }
+
+                <!-- Mini pagination controls for reviews -->
+                <div class="reviews-pagination-row d-flex justify-content-between align-items-center mt-4" *ngIf="reviewsTotalPages > 1">
+                  <button 
+                    type="button" 
+                    class="btn btn-outline-dark btn-sm d-flex align-items-center gap-1"
+                    [disabled]="!reviewsHasPrevious"
+                    (click)="onReviewsPageChange(reviewsPageIndex - 1)"
+                  >
+                    <span class="material-symbols-outlined">chevron_left</span>
+                    {{ langService.currentLang() === 'ar' ? 'السابق' : 'Previous' }}
+                  </button>
+                  <span class="text-muted small">
+                    {{ langService.currentLang() === 'ar' ? 'صفحة ' : 'Page ' }}
+                    <strong>{{ reviewsPageIndex }}</strong>
+                    {{ langService.currentLang() === 'ar' ? ' من ' : ' of ' }}
+                    <strong>{{ reviewsTotalPages }}</strong>
+                  </span>
+                  <button 
+                    type="button" 
+                    class="btn btn-outline-dark btn-sm d-flex align-items-center gap-1"
+                    [disabled]="!reviewsHasNext"
+                    (click)="onReviewsPageChange(reviewsPageIndex + 1)"
+                  >
+                    {{ langService.currentLang() === 'ar' ? 'التالي' : 'Next' }}
+                    <span class="material-symbols-outlined">chevron_right</span>
+                  </button>
+                </div>
+              </div>
+            }
+          }
+        </div>
       </div>
     </div>
   }
-
 </div>

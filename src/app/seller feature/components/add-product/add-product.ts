@@ -6,6 +6,7 @@ import { ProductService } from '../../../seller feature/services/product-service
 import { ShopService } from '../../../shop feature/services/shop-service';
 import { CategorySummary } from '../../../Categories/Models/CategorySummary';
 import { Input } from '@angular/core';
+import { LanguageService } from '../../../core/services/language.service';
 
 @Component({
   selector: 'app-add-product',
@@ -20,6 +21,7 @@ export class AddProduct implements OnInit {
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  protected readonly langService = inject(LanguageService);
 
   categories = signal<CategorySummary[]>([]);
   isLoading = signal(false);
@@ -55,7 +57,7 @@ export class AddProduct implements OnInit {
     // Load categories
     this.productService.getCategories().subscribe({
       next: cats => this.categories.set(cats as unknown as CategorySummary[]),
-      error: () => this.errorMsg.set('Failed to load categories')
+      error: () => this.errorMsg.set(this.langService.currentLang() === 'ar' ? 'فشل تحميل الفئات' : 'Failed to load categories')
     });
 
     // Get shopId
@@ -132,12 +134,16 @@ export class AddProduct implements OnInit {
     request$.subscribe({
       next: () => {
         this.isSaving.set(false);
-        this.successMsg.set(this.isEditMode() ? 'Product updated!' : 'Product created!');
+        this.successMsg.set(
+          this.isEditMode()
+            ? (this.langService.currentLang() === 'ar' ? 'تم تحديث المنتج!' : 'Product updated!')
+            : (this.langService.currentLang() === 'ar' ? 'تم إنشاء المنتج!' : 'Product created!')
+        );
         setTimeout(() => this.router.navigate(['/seller/products']), 1500);
       },
       error: () => {
         this.isSaving.set(false);
-        this.errorMsg.set('Failed to save product. Please try again.');
+        this.errorMsg.set(this.langService.currentLang() === 'ar' ? 'فشل حفظ المنتج. يرجى المحاولة مرة أخرى.' : 'Failed to save product. Please try again.');
       }
     });
   }

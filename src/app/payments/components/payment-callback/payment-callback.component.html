@@ -1,23 +1,23 @@
-<div class="callback-page">
+<div class="callback-page" [dir]="langService.currentLang() === 'ar' ? 'rtl' : 'ltr'">
   <div class="callback-card">
     <div *ngIf="status === 'success'" class="cb-result cb-success">
       <div class="cb-icon">&#x2714;</div>
-      <h2>Payment Confirmed</h2>
-      <p>Your payment was successful. Redirecting...</p>
-      <a [routerLink]="['/orders', orderId]" class="cb-btn">View Order</a>
+      <h2>{{ langService.currentLang() === 'ar' ? 'تم تأكيد الدفع' : 'Payment Confirmed' }}</h2>
+      <p>{{ langService.currentLang() === 'ar' ? 'عملية الدفع تمت بنجاح. جاري إعادة التوجيه...' : 'Your payment was successful. Redirecting...' }}</p>
+      <a [routerLink]="['/orders', orderId]" class="cb-btn">{{ langService.translate('viewOrder') }}</a>
     </div>
 
     <div *ngIf="status === 'failed'" class="cb-result cb-failed">
       <div class="cb-icon">&#x2718;</div>
-      <h2>Payment Failed</h2>
-      <p>Unfortunately your payment could not be processed.</p>
-      <a [routerLink]="['/payment', orderId]" class="cb-btn">Try Again</a>
+      <h2>{{ langService.currentLang() === 'ar' ? 'فشلت عملية الدفع' : 'Payment Failed' }}</h2>
+      <p>{{ langService.currentLang() === 'ar' ? 'للأسف تعذر معالجة دفعتك.' : 'Unfortunately your payment could not be processed.' }}</p>
+      <a [routerLink]="['/payment', orderId]" class="cb-btn">{{ langService.translate('tryAgain') }}</a>
     </div>
 
     <div *ngIf="status === 'pending'" class="cb-result cb-pending">
       <div class="spinner"></div>
-      <h2>Processing...</h2>
-      <p>Please wait while we confirm your payment.</p>
+      <h2>{{ langService.translate('processing') }}...</h2>
+      <p>{{ langService.currentLang() === 'ar' ? 'يرجى الانتظار بينما نؤكد دفعتك.' : 'Please wait while we confirm your payment.' }}</p>
     </div>
   </div>
 </div>

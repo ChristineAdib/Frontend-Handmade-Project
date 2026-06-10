@@ -1,0 +1,17 @@
+<div class="search-container">
+  <span class="material-symbols-outlined search-icon">search</span>
+  
+  <input
+    type="text"
+    [value]="value"
+    (input)="onInput($event)"
+    [placeholder]="placeholder || langService.translate('searchPlaceholder')"
+    class="luxury-search-input"
+  />
+
+  @if (value) {
+    <button type="button" class="clear-button" (click)="clearSearch()" aria-label="Clear search">
+      <span class="material-symbols-outlined">close</span>
+    </button>
+  }
+</div>

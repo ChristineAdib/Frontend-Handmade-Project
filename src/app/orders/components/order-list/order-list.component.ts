@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { OrderService } from '../../services/order.service';
 import { OrderStatus, OrderStatusLabel } from '../../models/order-status';
 import { PaymentStatus, PaymentStatusLabel } from '../../../payments/models/payment-status';
+import { LanguageService } from '../../../core/services/language.service';
 
 @Component({
   selector: 'app-order-list',
@@ -14,6 +15,7 @@ import { PaymentStatus, PaymentStatusLabel } from '../../../payments/models/paym
 })
 export class OrderListComponent implements OnInit {
   readonly orderService = inject(OrderService);
+  protected readonly langService = inject(LanguageService);
 
   OrderStatus = OrderStatus;
   OrderStatusLabel = OrderStatusLabel;
@@ -23,16 +25,32 @@ export class OrderListComponent implements OnInit {
     this.orderService.loadMyOrders();
   }
 
-  getStatusClass(status: OrderStatus): string {
-    switch (status) {
-      case OrderStatus.Pending: return 'status-pending';
-      case OrderStatus.Processing: return 'status-processing';
-      case OrderStatus.Shipped: return 'status-shipped';
-      case OrderStatus.Delivered: return 'status-delivered';
-      case OrderStatus.Cancelled: return 'status-cancelled';
-      case OrderStatus.Refunded: return 'status-refunded';
-      default: return '';
-    }
+  private getStatusLabel(status: any, enumType: any): string {
+    if (status === null || status === undefined) return '';
+    if (typeof status === 'number') return enumType[status] || '';
+    const parsed = Number(status);
+    if (!isNaN(parsed) && enumType[parsed]) return enumType[parsed];
+    return status.toString();
+  }
+
+  getStatusClass(status: any): string {
+    const label = this.getStatusLabel(status, OrderStatus).toLowerCase();
+    return `status-${label}`;
+  }
+
+  getPaymentStatusClass(status: any): string {
+    const label = this.getStatusLabel(status, PaymentStatus).toLowerCase();
+    return `pay-${label}`;
+  }
+
+  translateOrderStatus(status: any): string {
+    const label = this.getStatusLabel(status, OrderStatus).toLowerCase();
+    return this.langService.translate(label as any);
+  }
+
+  translatePaymentStatus(status: any): string {
+    const label = this.getStatusLabel(status, PaymentStatus).toLowerCase();
+    return this.langService.translate(label as any);
   }
 
   onPageChange(page: number): void {
@@ -40,7 +58,10 @@ export class OrderListComponent implements OnInit {
   }
 
   cancelOrder(id: string): void {
-    if (confirm('Are you sure you want to cancel this order?')) {
+    const confirmMsg = this.langService.currentLang() === 'ar' 
+      ? 'هل أنت متأكد أنك تريد إلغاء هذا الطلب؟' 
+      : 'Are you sure you want to cancel this order?';
+    if (confirm(confirmMsg)) {
       this.orderService.cancelOrder(id);
     }
   }

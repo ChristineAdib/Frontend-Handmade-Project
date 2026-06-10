@@ -1,9 +1,11 @@
-<div class="checkout-page">
+<div class="checkout-page" [dir]="langService.currentLang() === 'ar' ? 'rtl' : 'ltr'">
   <div class="checkout-container">
 
     <div class="checkout-header">
-      <h2>Checkout</h2>
-      <a routerLink="/cart" class="btn-back">&larr; Back to Cart</a>
+      <h2>{{ langService.translate('secureCheckout') }}</h2>
+      <a routerLink="/cart" class="btn-back">
+        {{ langService.currentLang() === 'ar' ? '&rarr;' : '&larr;' }} {{ langService.translate('backToCart') }}
+      </a>
     </div>
 
     @if (orderService.error()) {
@@ -17,37 +19,37 @@
         <div class="checkout-main">
 
           <div class="form-section">
-            <h4>Shipping Address</h4>
+            <h4>{{ langService.translate('shippingAddress') }}</h4>
             <div class="row g-3">
               <div class="col-sm-6">
-                <label class="form-label">First Name</label>
-                <input formControlName="firstName" class="form-control" placeholder="John">
+                <label class="form-label">{{ langService.translate('firstName') }}</label>
+                <input formControlName="firstName" class="form-control" [placeholder]="langService.translate('firstName')">
               </div>
               <div class="col-sm-6">
-                <label class="form-label">Last Name</label>
-                <input formControlName="lastName" class="form-control" placeholder="Doe">
+                <label class="form-label">{{ langService.translate('lastName') }}</label>
+                <input formControlName="lastName" class="form-control" [placeholder]="langService.translate('lastName')">
               </div>
               <div class="col-12">
-                <label class="form-label">Street</label>
-                <input formControlName="street" class="form-control" placeholder="123 Main St">
+                <label class="form-label">{{ langService.translate('street') }}</label>
+                <input formControlName="street" class="form-control" [placeholder]="langService.translate('street')">
               </div>
               <div class="col-sm-6">
-                <label class="form-label">City</label>
-                <input formControlName="city" class="form-control" placeholder="Cairo">
+                <label class="form-label">{{ langService.translate('city') }}</label>
+                <input formControlName="city" class="form-control" [placeholder]="langService.translate('city')">
               </div>
               <div class="col-sm-6">
-                <label class="form-label">Country</label>
-                <input formControlName="country" class="form-control" placeholder="Egypt">
+                <label class="form-label">{{ langService.translate('country') }}</label>
+                <input formControlName="country" class="form-control" [placeholder]="langService.translate('country')">
               </div>
             </div>
           </div>
 
           <div class="form-section">
-            <h4>Delivery Method</h4>
+            <h4>{{ langService.translate('deliveryMethod') }}</h4>
             @if (orderService.deliveryMethods().length === 0) {
               <div class="loading-state">
                 <div class="custom-spinner"></div>
-                <p>Loading delivery options...</p>
+                <p>{{ langService.translate('loadingDeliveryOptions') }}</p>
               </div>
             }
             <div class="delivery-options">
@@ -56,7 +58,11 @@
                   <input type="radio" formControlName="deliveryMethodId" [value]="method.id">
                   <div class="delivery-info">
                     <div class="delivery-name">{{ method.shortName }}</div>
-                    <div class="delivery-desc">{{ method.descriptionEn }} &middot; {{ method.deliveryTimeEn }}</div>
+                    <div class="delivery-desc">
+                      {{ langService.currentLang() === 'ar' ? (method.descriptionAr || method.descriptionEn) : method.descriptionEn }} 
+                      &middot; 
+                      {{ langService.currentLang() === 'ar' ? (method.deliveryTimeAr || method.deliveryTimeEn) : method.deliveryTimeEn }}
+                    </div>
                   </div>
                   <div class="delivery-cost">{{ method.cost | currency:'EGP':'symbol' }}</div>
                 </label>
@@ -65,27 +71,29 @@
           </div>
 
           <div class="form-section">
-            <h4>Coupon (Optional)</h4>
-            <input formControlName="couponCode" class="form-control" placeholder="Enter coupon code">
+            <h4>{{ langService.translate('couponOptional') }}</h4>
+            <input formControlName="couponCode" class="form-control" [placeholder]="langService.translate('couponOptional')">
           </div>
 
           <div class="form-section">
-            <h4>Order Notes (Optional)</h4>
-            <textarea formControlName="notes" class="form-control" rows="3" placeholder="Any special instructions..."></textarea>
+            <h4>{{ langService.translate('orderNotesOptional') }}</h4>
+            <textarea formControlName="notes" class="form-control" rows="3" [placeholder]="langService.translate('orderNotesOptional')"></textarea>
           </div>
 
           <button type="submit" class="btn-place-order"
                   [disabled]="checkoutForm.invalid || orderService.isCreating()">
-            {{ orderService.isCreating() ? 'Placing Order...' : 'Place Order' }}
+            {{ orderService.isCreating() ? langService.translate('placingOrder') : langService.translate('placeOrder') }}
           </button>
 
         </div>
 
         <!-- RIGHT: Summary -->
         <div class="checkout-summary">
-          <h3>Summary</h3>
-          <p class="summary-note">Items in your cart will be calculated when you place the order.</p>
-          <a routerLink="/cart" class="btn-edit-cart">Edit Cart &rarr;</a>
+          <h3>{{ langService.translate('summary') }}</h3>
+          <p class="summary-note">{{ langService.translate('checkoutSummaryNote') }}</p>
+          <a routerLink="/cart" class="btn-edit-cart">
+            {{ langService.translate('editCart') }} {{ langService.currentLang() === 'ar' ? '&larr;' : '&rarr;' }}
+          </a>
         </div>
       </div>
 

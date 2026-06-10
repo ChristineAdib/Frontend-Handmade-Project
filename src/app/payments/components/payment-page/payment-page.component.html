@@ -1,63 +1,67 @@
-<div class="payment-page">
+<div class="payment-page" [dir]="langService.currentLang() === 'ar' ? 'rtl' : 'ltr'">
   <div class="payment-card">
 
     <div class="payment-header">
       <div class="payment-icon">
         <i class="bi bi-credit-card"></i>
       </div>
-      <h2>Complete Payment</h2>
-      <p class="payment-sub">Secure payment via Paymob</p>
+      <h2>{{ langService.translate('completePayment') }}</h2>
+      <p class="payment-sub">{{ langService.translate('securePaymentPaymob') }}</p>
     </div>
 
     <!-- Loading -->
     <div *ngIf="paymentService.isLoading() && !showIframe()" class="payment-loading">
       <div class="spinner"></div>
-      <p>Preparing payment gateway...</p>
+      <p>{{ langService.translate('preparingPaymentGateway') }}</p>
     </div>
 
     <!-- Error -->
     <div *ngIf="paymentService.error() && !paymentDone()" class="payment-error">
       <i class="bi bi-exclamation-circle"></i>
       <p>{{ paymentService.error() }}</p>
-      <a [routerLink]="['/orders', orderId]" class="btn-back">Back to Order</a>
+      <a [routerLink]="['/orders', orderId]" class="btn-back">
+        {{ langService.currentLang() === 'ar' ? '&rarr;' : '&larr;' }} {{ langService.translate('backToOrder') }}
+      </a>
     </div>
 
     <!-- Iframe -->
     <div *ngIf="showIframe()" class="iframe-wrap">
       <div class="iframe-header">
         <span class="lock-icon">&#x1F512;</span>
-        <span>Secured by Paymob</span>
+        <span>{{ langService.translate('securedByPaymob') }}</span>
       </div>
       <iframe [src]="iframeUrl() | safeUrl" class="payment-iframe"
               title="Paymob Payment" allow="payment" frameborder="0">
       </iframe>
       <div class="iframe-footer">
-        <span>Processing payment... Please do not reload the page.</span>
+        <span>{{ langService.translate('processingPaymentDoNotReload') }}</span>
       </div>
     </div>
 
     <!-- Polling indicator -->
     <div *ngIf="showIframe()" class="poll-indicator">
       <div class="poll-dot"></div>
-      <span>Waiting for payment confirmation...</span>
+      <span>{{ langService.translate('waitingPaymentConfirmation') }}</span>
     </div>
 
     <!-- Success -->
     <div *ngIf="paymentDone() && paymentSuccess()" class="payment-result success">
       <div class="result-icon">&#x2714;</div>
-      <h3>Payment Successful!</h3>
-      <p>Your order has been confirmed and is being processed.</p>
-      <a [routerLink]="['/orders', orderId]" class="btn-action">View Order</a>
-      <a routerLink="/orders" class="btn-link">All Orders</a>
+      <h3>{{ langService.translate('paymentSuccessful') }}</h3>
+      <p>{{ langService.translate('orderConfirmedProcessed') }}</p>
+      <a [routerLink]="['/orders', orderId]" class="btn-action">{{ langService.translate('viewOrder') }}</a>
+      <a routerLink="/orders" class="btn-link">{{ langService.translate('myOrders') }}</a>
     </div>
 
     <!-- Failed -->
     <div *ngIf="paymentDone() && paymentFailed()" class="payment-result failed">
       <div class="result-icon">&#x2718;</div>
-      <h3>Payment Failed</h3>
-      <p>Something went wrong. Please try again.</p>
-      <button (click)="initPayment()" class="btn-action">Try Again</button>
-      <a [routerLink]="['/orders', orderId]" class="btn-link">Back to Order</a>
+      <h3>{{ langService.currentLang() === 'ar' ? 'فشلت عملية الدفع' : 'Payment Failed' }}</h3>
+      <p>{{ langService.translate('somethingWentWrongTryAgain') }}</p>
+      <button (click)="initPayment()" class="btn-action">{{ langService.translate('tryAgain') }}</button>
+      <a [routerLink]="['/orders', orderId]" class="btn-link">
+        {{ langService.currentLang() === 'ar' ? '&rarr;' : '&larr;' }} {{ langService.translate('backToOrder') }}
+      </a>
     </div>
 
   </div>

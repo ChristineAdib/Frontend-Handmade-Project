@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ChatService } from '../../Services/chat.service';
 import { AuthService } from '../../../auth/Services/auth';
 import { MessageType } from '../../Models/MessageType';
+import { LanguageService } from '../../../core/services/language.service';
 
 @Component({
   selector: 'app-chat-window',
@@ -15,6 +16,7 @@ import { MessageType } from '../../Models/MessageType';
 export class ChatWindowComponent implements AfterViewChecked {
   protected chatService = inject(ChatService);
   private authService = inject(AuthService);
+  protected langService = inject(LanguageService);
 
   @ViewChild('scrollContainer') private scrollContainer!: ElementRef;
 
@@ -54,7 +56,9 @@ export class ChatWindowComponent implements AfterViewChecked {
   getOtherParticipantRole(): string {
     const c = this.activeConversation();
     if (!c) return '';
-    return c.buyerId === this.currentUserId() ? 'Seller' : 'Buyer';
+    return c.buyerId === this.currentUserId() 
+      ? this.langService.translate('seller') 
+      : this.langService.translate('buyer');
   }
 
   isSentByMe(senderId: string): boolean {
@@ -118,7 +122,7 @@ export class ChatWindowComponent implements AfterViewChecked {
       const uploadedUrl = await this.chatService.uploadImage(file);
       this.imageUrl.set(uploadedUrl);
     } catch (err: any) {
-      this.uploadError.set(err.message || 'Image upload failed. Please try again.');
+      this.uploadError.set(err.message || this.langService.translate('imageUploadFailed'));
     } finally {
       this.isUploading.set(false);
       element.value = '';

@@ -1,6 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
+import { LanguageService } from '../../../core/services/language.service';
 
 @Component({
   selector: 'app-payment-callback',
@@ -11,6 +12,7 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 })
 export class PaymentCallbackComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
+  protected readonly langService = inject(LanguageService);
 
   status: 'success' | 'failed' | 'pending' = 'pending';
   orderId = '';

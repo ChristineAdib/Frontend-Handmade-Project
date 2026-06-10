@@ -5,6 +5,7 @@ import { ConversationListComponent } from './conversation-list/conversation-list
 import { ChatWindowComponent } from './chat-window/chat-window.component';
 import { ChatService } from '../Services/chat.service';
 import { AuthService } from '../../auth/Services/auth';
+import { LanguageService } from '../../core/services/language.service';
 
 @Component({
   selector: 'app-chat',
@@ -16,6 +17,7 @@ import { AuthService } from '../../auth/Services/auth';
 export class ChatComponent implements OnInit, OnDestroy {
   protected chatService = inject(ChatService);
   private authService = inject(AuthService);
+  protected langService = inject(LanguageService);
 
   async ngOnInit(): Promise<void> {
     // Load existing chat history from server

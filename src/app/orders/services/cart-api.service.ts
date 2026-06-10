@@ -99,17 +99,4 @@ export class CartApiService {
     }
   }
 
-  async seedTestCart(): Promise<CartDto | null> {
-    const testProducts = [
-      { productId: 'bbbbbbbb-0000-0000-0000-000000000001', quantity: 1 },
-      { productId: 'bbbbbbbb-0000-0000-0000-000000000002', quantity: 2 },
-      { productId: 'bbbbbbbb-0000-0000-0000-000000000003', quantity: 1 },
-    ];
-
-    let cart: CartDto | null = null;
-    for (const item of testProducts) {
-      cart = await this.addItem(item.productId, item.quantity);
-    }
-    return cart;
-  }
 }

@@ -5,6 +5,7 @@ import {
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../Services/auth';
+import { LanguageService } from '../../../../core/services/language.service';
 
 @Component({
   selector: 'app-register',
@@ -16,6 +17,7 @@ import { AuthService } from '../../../Services/auth';
 export class RegisterComponent {
   private fb = inject(FormBuilder);
   auth = inject(AuthService);
+  protected readonly langService = inject(LanguageService);
 
   isLoading = signal(false);
   showPass = signal(false);
@@ -81,11 +83,11 @@ export class RegisterComponent {
 const msg: string = err.error?.message ?? err.error?.errors?.[0] ?? 'Registration failed.';console.log('full err.error:', JSON.stringify(err.error));
 
         if (msg.includes('already exists')) {
-          this.emailError.set('This email is already registered.');
+          this.emailError.set(this.langService.currentLang() === 'ar' ? 'هذا البريد الإلكتروني مسجل بالفعل.' : 'This email is already registered.');
         } else if (msg.includes('password') || msg.includes('Password')) {
           this.passwordError.set(msg);
         } else {
-          this.auth.errorMsg.set(msg);
+          this.auth.errorMsg.set(this.langService.currentLang() === 'ar' ? 'فشل التسجيل.' : 'Registration failed.');
         }
       }
     });

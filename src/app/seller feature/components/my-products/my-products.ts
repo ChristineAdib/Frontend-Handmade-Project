@@ -1,20 +1,23 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { AddProduct } from '../add-product/add-product';
 import { ProductService } from '../../../seller feature/services/product-service';
 import { ShopService } from '../../../shop feature/services/shop-service';
 import { IProductSummary } from '../../../seller feature/models/iproduct-summary';
+import { LanguageService } from '../../../core/services/language.service';
 
 @Component({
   selector: 'app-my-products',
   standalone: true,
-  imports: [CommonModule, AddProduct],
+  imports: [CommonModule, AddProduct, RouterModule],
   templateUrl: './my-products.html',
   styleUrl: './my-products.css',
 })
 export class MyProducts implements OnInit {
   private productService = inject(ProductService);
   private shopService = inject(ShopService);
+  protected readonly langService = inject(LanguageService);
 
   activeTab = signal<'list' | 'add'>('list');
   products = signal<IProductSummary[]>([]);
@@ -33,7 +36,7 @@ export class MyProducts implements OnInit {
         this.loadProducts();
       },
       error: () => {
-        this.error.set('Failed to load shop');
+        this.error.set(this.langService.currentLang() === 'ar' ? 'فشل تحميل المتجر' : 'Failed to load shop');
         this.isLoading.set(false);
       }
     });
@@ -49,7 +52,7 @@ export class MyProducts implements OnInit {
         this.isLoading.set(false);
       },
       error: () => {
-        this.error.set('Failed to load products');
+        this.error.set(this.langService.currentLang() === 'ar' ? 'فشل تحميل المنتجات' : 'Failed to load products');
         this.isLoading.set(false);
       }
     });
@@ -83,10 +86,19 @@ export class MyProducts implements OnInit {
   }
 
   deleteProduct(id: string) {
-    if (!confirm('Are you sure you want to delete this product?')) return;
+    const confirmMsg = this.langService.currentLang() === 'ar'
+      ? 'هل أنت متأكد أنك تريد حذف هذا المنتج؟'
+      : 'Are you sure you want to delete this product?';
+    if (!confirm(confirmMsg)) return;
+
     this.productService.deleteProduct(id).subscribe({
       next: () => this.loadProducts(),
-      error: () => alert('Failed to delete product')
+      error: () => {
+        const errorMsg = this.langService.currentLang() === 'ar'
+          ? 'فشل حذف المنتج'
+          : 'Failed to delete product';
+        alert(errorMsg);
+      }
     });
   }
 }

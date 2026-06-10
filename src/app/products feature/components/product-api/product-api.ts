@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { IProductAPI } from '../../models/iproductAPI';
 import { ProductApiService } from '../../services/product-api-service';
 import { CommonModule } from '@angular/common';
+import { LanguageService } from '../../../core/services/language.service';
 
 @Component({
   selector: 'app-product-api',
@@ -14,7 +15,8 @@ export class ProductApi implements OnInit{
   isLoading = true;
   errorMessage = '';
 
-  constructor(private ProductApiService: ProductApiService){}
+  public langService = inject(LanguageService);
+  private ProductApiService = inject(ProductApiService);
   
   ngOnInit(): void {
     this.ProductApiService.getProducts().subscribe({

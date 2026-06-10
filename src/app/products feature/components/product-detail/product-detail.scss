@@ -1,0 +1,420 @@
+.luxury-detail-page {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  color: #2c1810;
+
+  .back-link {
+    color: #8B4513;
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-decoration: none;
+    transition: color 0.3s ease;
+
+    &:hover {
+      color: #2c1810;
+    }
+  }
+
+  /* Gallery Styling */
+  .gallery-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    .main-image-display {
+      width: 100%;
+      padding-top: 100%; /* 1:1 Aspect ratio square */
+      position: relative;
+      background-color: #faf7f5;
+      border: 1px solid #f2e9e4;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(44, 24, 16, 0.03);
+
+      img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+
+    .thumbnail-row {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+
+      .thumb-btn {
+        width: 70px;
+        height: 70px;
+        border-radius: 10px;
+        border: 2px solid transparent;
+        background-color: #ffffff;
+        padding: 0;
+        overflow: hidden;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        &:hover {
+          transform: translateY(-2px);
+        }
+
+        &.active {
+          border-color: #8B4513;
+          box-shadow: 0 4px 10px rgba(139, 69, 19, 0.15);
+        }
+      }
+    }
+  }
+
+  /* Info Panel Styling */
+  .product-info-panel {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    .shop-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #8B4513;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+
+      span {
+        font-size: 1.1rem;
+      }
+    }
+
+    .product-title {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #2c1810;
+      line-height: 1.3;
+    }
+
+    .rating-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      .stars {
+        display: flex;
+        align-items: center;
+
+        span {
+          font-size: 1.1rem;
+        }
+
+        .fill-star {
+          color: #D4AF37;
+          font-variation-settings: 'FILL' 1, 'wght' 400;
+        }
+
+        .empty-star {
+          color: #e2d7d0;
+        }
+      }
+
+      .rating-value {
+        font-weight: 700;
+        font-size: 0.95rem;
+      }
+
+      .review-count {
+        font-size: 0.85rem;
+        color: #8a786d;
+      }
+    }
+
+    .price-box {
+      .price-final {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: #2c1810;
+      }
+
+      .price-discount-wrapper {
+        display: flex;
+        align-items: baseline;
+        gap: 12px;
+
+        .price-discount {
+          font-size: 1.8rem;
+          font-weight: 800;
+          color: #8B4513;
+        }
+
+        .price-original {
+          font-size: 1.1rem;
+          text-decoration: line-through;
+          color: #c4b5ac;
+        }
+      }
+    }
+
+    .section-heading {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #2c1810;
+      margin-bottom: 10px;
+    }
+
+    .description-text {
+      font-size: 0.98rem;
+      line-height: 1.7;
+      color: #5c4a3f;
+    }
+
+    /* Specs table */
+    .luxury-specs-table {
+      margin-bottom: 0;
+
+      tr {
+        border-bottom: 1px solid #fcf7f5;
+        
+        &:last-child {
+          border-bottom: none;
+        }
+      }
+
+      td {
+        padding: 12px 0;
+        font-size: 0.95rem;
+      }
+
+      .spec-label {
+        font-weight: 600;
+        color: #8a786d;
+        width: 35%;
+      }
+
+      .spec-value {
+        color: #2c1810;
+        font-weight: 500;
+      }
+    }
+
+    /* Tags */
+    .tag-badge {
+      background-color: #faf7f5;
+      color: #8B4513;
+      border: 1px solid #e2d7d0;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .action-buttons-row {
+      margin-top: auto;
+      padding-top: 1.5rem;
+      display: flex;
+      gap: 12px;
+    }
+  }
+
+  /* Reviews Summary Score Card */
+  .rating-summary-card {
+    background-color: #fcfaf7;
+    border: 1px solid #f2e9e4;
+    border-radius: 16px;
+
+    .summary-score {
+      font-size: 3.2rem;
+      font-weight: 800;
+      color: #2c1810;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .stars {
+      display: flex;
+      span {
+        font-size: 1.4rem;
+      }
+      .fill-star {
+        color: #D4AF37;
+        font-variation-settings: 'FILL' 1, 'wght' 400;
+      }
+      .empty-star {
+        color: #e2d7d0;
+      }
+    }
+  }
+
+  /* Write Review Form Card */
+  .write-review-card {
+    background-color: #ffffff;
+    border: 1px solid #f2e9e4;
+    border-radius: 16px;
+
+    .card-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #2c1810;
+    }
+
+    /* Interactive Stars Input */
+    .stars-input {
+      display: flex;
+      gap: 6px;
+
+      .star-btn {
+        background: none;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+        outline: none;
+        transition: transform 0.2s ease;
+
+        span {
+          font-size: 2rem;
+          color: #e2d7d0;
+          transition: color 0.2s ease;
+
+          &.filled {
+            color: #D4AF37;
+            font-variation-settings: 'FILL' 1, 'wght' 400;
+          }
+        }
+
+        &:hover {
+          transform: scale(1.15);
+        }
+      }
+    }
+
+    .luxury-textarea {
+      background-color: #fcfaf7;
+      border: 1px solid #e2d7d0;
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 0.9rem;
+      resize: none;
+      outline: none;
+      transition: all 0.3s ease;
+
+      &:focus {
+        border-color: #8B4513;
+        background-color: #ffffff;
+        box-shadow: 0 4px 12px rgba(139, 69, 19, 0.08);
+      }
+    }
+  }
+
+  /* Review Item Card */
+  .review-item-card {
+    background-color: #fbf9f6;
+    border: 1px solid #f2e9e4;
+    border-radius: 16px;
+    margin-bottom: 16px;
+
+    .reviewer-name {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #2c1810;
+    }
+
+    .review-date {
+      font-size: 0.75rem;
+    }
+
+    .stars {
+      display: flex;
+      span {
+        font-size: 1rem;
+      }
+      .fill-star {
+        color: #D4AF37;
+        font-variation-settings: 'FILL' 1, 'wght' 400;
+      }
+      .empty-star {
+        color: #e2d7d0;
+      }
+    }
+
+    .review-comment-text {
+      font-size: 0.92rem;
+      line-height: 1.6;
+      color: #5c4a3f;
+    }
+  }
+
+  /* Login Prompt */
+  .login-prompt {
+    .login-prompt-icon {
+      font-size: 2.2rem;
+      color: #8B4513;
+    }
+
+    h5 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #2c1810;
+    }
+
+    p {
+      line-height: 1.5;
+    }
+  }
+
+  /* Global luxury details primary button */
+  .btn-luxury-primary {
+    background-color: #8B4513;
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 12px 28px;
+    border-radius: 30px;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 4px 12px rgba(139, 69, 19, 0.2);
+    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+    cursor: pointer;
+
+    &:hover {
+      background-color: #2c1810;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(44, 24, 16, 0.25);
+      color: #ffffff;
+    }
+
+    &:disabled {
+      background-color: #c4b5ac;
+      box-shadow: none;
+      cursor: not-allowed;
+      transform: none;
+    }
+  }
+}
+
+/* RTL Chevron swap and gallery scroll fixes */
+[dir="rtl"] {
+  .luxury-detail-page {
+    .thumbnail-row {
+      flex-direction: row-reverse;
+    }
+    .reviews-pagination-row {
+      .btn {
+        span {
+          transform: rotate(180deg);
+        }
+      }
+    }
+  }
+}

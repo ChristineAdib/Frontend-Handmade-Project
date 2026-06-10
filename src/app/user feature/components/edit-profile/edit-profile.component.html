@@ -7,15 +7,15 @@
         <div class="mb-4">
           <a routerLink="/dashboard" class="back-link d-inline-flex align-items-center gap-2">
             <span class="material-symbols-outlined">arrow_back</span>
-            Back to Dashboard
+            {{ langService.translate('backToDashboard') }}
           </a>
         </div>
 
         <!-- Main Form Card -->
         <div class="card edit-profile-card shadow-sm border-0 rounded-4 overflow-hidden card-glow">
           <div class="card-header-accent p-4">
-            <h3 class="m-0 text-white fw-bold">Edit Profile</h3>
-            <p class="m-0 text-white-50 font-xs">Update your personal details and custom avatar</p>
+            <h3 class="m-0 text-white fw-bold">{{ langService.translate('editProfile') }}</h3>
+            <p class="m-0 text-white-50 font-xs">{{ langService.translate('updateProfileDesc') }}</p>
           </div>
 
           <!-- Loading Skeleton -->
@@ -37,7 +37,7 @@
               </div>
               <input type="file" id="profileImageInput" accept="image/*" class="d-none" (change)="onFileSelected($event)" />
               <div class="upload-hint mt-2 text-muted">
-                Allowed formats: JPG, PNG. Max size: 2MB.
+                {{ langService.translate('allowedFormats') }}
               </div>
             </div>
 
@@ -48,9 +48,9 @@
                 <div class="form-group-custom">
                   <label for="fullNameInput" class="form-label-custom">
                     <span class="material-symbols-outlined font-sm">person</span>
-                    Full Name
+                    {{ langService.translate('fullName') }}
                   </label>
-                  <input type="text" id="fullNameInput" class="form-control-custom" [value]="name()" (input)="name.set($any($event.target).value)" placeholder="Enter your full name" required />
+                  <input type="text" id="fullNameInput" class="form-control-custom" [value]="name()" (input)="name.set($any($event.target).value)" [placeholder]="langService.translate('fullNamePlaceholder')" required />
                 </div>
               </div>
 
@@ -59,9 +59,9 @@
                 <div class="form-group-custom">
                   <label for="phoneInput" class="form-label-custom">
                     <span class="material-symbols-outlined font-sm">phone</span>
-                    Phone Number
+                    {{ langService.translate('phoneNumber') }}
                   </label>
-                  <input type="tel" id="phoneInput" class="form-control-custom" [value]="phoneNumber()" (input)="phoneNumber.set($any($event.target).value)" placeholder="Enter your phone number (optional)" />
+                  <input type="tel" id="phoneInput" class="form-control-custom" [value]="phoneNumber()" (input)="phoneNumber.set($any($event.target).value)" [placeholder]="langService.translate('phonePlaceholder')" />
                 </div>
               </div>
 
@@ -70,9 +70,9 @@
                 <div class="form-group-custom">
                   <label for="bioInput" class="form-label-custom">
                     <span class="material-symbols-outlined font-sm">rate_review</span>
-                    Bio / Short description
+                    {{ langService.translate('bioDescription') }}
                   </label>
-                  <textarea id="bioInput" rows="4" class="form-control-custom" [value]="bio()" (input)="bio.set($any($event.target).value)" placeholder="Tell us about yourself, your passion for crafts, or what you look for in artisans..."></textarea>
+                  <textarea id="bioInput" rows="4" class="form-control-custom" [value]="bio()" (input)="bio.set($any($event.target).value)" [placeholder]="langService.translate('bioPlaceholder')"></textarea>
                 </div>
               </div>
             </div>
@@ -80,11 +80,11 @@
             <!-- Actions Bar -->
             <div class="actions-row mt-5 pt-4 d-flex justify-content-end gap-3 border-top">
               <a routerLink="/dashboard" class="btn btn-outline-custom">
-                Cancel
+                {{ langService.translate('cancel') }}
               </a>
               <button type="submit" class="btn btn-submit-custom" [disabled]="isSaving()">
                 <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true" *ngIf="isSaving()"></span>
-                {{ isSaving() ? 'Saving Changes...' : 'Save Changes' }}
+                {{ isSaving() ? langService.translate('savingChanges') : langService.translate('saveChanges') }}
               </button>
             </div>
 

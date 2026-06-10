@@ -5,6 +5,7 @@ import { AuthService } from '../../Services/auth';
 import { LoginComponent } from '../auth.component/loginComponent/login.component/login.component';
 import { RegisterComponent } from '../registerComponent/register.component/register.component';
 import { OtpComponent } from '../auth.component/otpComponent/otp.component/otp.component';
+import { LanguageService } from '../../../core/services/language.service';
 
 @Component({
   selector: 'app-auth',
@@ -16,6 +17,7 @@ import { OtpComponent } from '../auth.component/otpComponent/otp.component/otp.c
 export class AuthComponent {
   auth  = inject(AuthService);
   route = inject(ActivatedRoute);
+  protected readonly langService = inject(LanguageService);
 
   constructor() {
     const path = this.route.snapshot.routeConfig?.path;

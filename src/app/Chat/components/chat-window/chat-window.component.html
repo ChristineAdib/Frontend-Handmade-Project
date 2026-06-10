@@ -31,7 +31,7 @@
   <div #scrollContainer class="messages-container">
     @if (messages().length === 0) {
       <div class="empty-chat">
-        <p>No messages yet. Send a message to start the conversation!</p>
+        <p>{{ langService.translate('noMessagesYet') }}</p>
       </div>
     } @else {
       @for (m of messages(); track m.id) {
@@ -82,12 +82,12 @@
           <div class="spinner-ring small">
             <div></div><div></div><div></div><div></div>
           </div>
-          <span class="upload-status">Uploading photo...</span>
+          <span class="upload-status">{{ langService.translate('uploadingPhoto') }}</span>
         </div>
       } @else if (imageUrl()) {
         <div class="preview-thumbnail-wrapper">
           <img [src]="imageUrl()" alt="Selected attachment preview" class="preview-thumbnail" />
-          <button type="button" class="btn-remove-attachment" (click)="clearUploadedImage($event)" title="Remove attachment">&times;</button>
+          <button type="button" class="btn-remove-attachment" (click)="clearUploadedImage($event)" [title]="langService.translate('removeAttachment')">&times;</button>
         </div>
       }
       @if (uploadError()) {
@@ -102,8 +102,8 @@
     <button 
       class="icon-btn" 
       (click)="fileInput.click()"
-      title="Attach photo from device"
-      aria-label="Attach photo"
+      [title]="langService.translate('attachPhoto')"
+      [attr.aria-label]="langService.translate('attachPhoto')"
     >
       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
         <path d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm10.648 1.864a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3a.5.5 0 0 1 .5-.5"/>
@@ -124,7 +124,7 @@
         [ngModel]="newMessage()" 
         (ngModelChange)="newMessage.set($event)"
         name="messageText"
-        placeholder="Type a message..." 
+        [placeholder]="langService.translate('typeAMessage')" 
         autocomplete="off"
       />
       
@@ -140,7 +140,7 @@
   <!-- Lightbox Modal for Full Screen Image -->
   @if (activeLightboxImage()) {
     <div class="lightbox-overlay" (click)="closeLightbox()">
-      <button class="lightbox-close" (click)="closeLightbox()" aria-label="Close fullscreen view">&times;</button>
+      <button class="lightbox-close" (click)="closeLightbox()" [attr.aria-label]="langService.translate('closeFullscreen')">&times;</button>
       <div class="lightbox-content" (click)="$event.stopPropagation()">
         <img [src]="activeLightboxImage()" alt="Fullscreen view" />
       </div>

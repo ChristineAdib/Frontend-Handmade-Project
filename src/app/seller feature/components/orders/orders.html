@@ -1,24 +1,24 @@
-<div class="orders-wrap">
+<div class="orders-wrap" [dir]="langService.currentLang() === 'ar' ? 'rtl' : 'ltr'">
 
   <div class="page-header">
     <div>
-      <h1 class="page-title">Orders</h1>
-      <p class="page-sub">Manage incoming orders for your shop</p>
+      <h1 class="page-title">{{ langService.translate('myOrders') }}</h1>
+      <p class="page-sub">{{ langService.currentLang() === 'ar' ? 'إدارة الطلبات الواردة لمتجرك' : 'Manage incoming orders for your shop' }}</p>
     </div>
     <div class="orders-count">
       <span class="count-num">{{ filteredOrders().length }}</span>
-      <span class="count-label">Orders</span>
+      <span class="count-label">{{ langService.translate('myOrders') }}</span>
     </div>
   </div>
 
   <!-- Filter Tabs -->
   <div class="filter-tabs">
     <button class="filter-tab" [class.active]="selectedStatus() === null"
-      (click)="filterByStatus(null)">All</button>
+      (click)="filterByStatus(null)">{{ langService.currentLang() === 'ar' ? 'الكل' : 'All' }}</button>
     @for (status of statuses; track status) {
       <button class="filter-tab" [class.active]="selectedStatus() === status"
         (click)="filterByStatus(status)">
-        {{ OrderStatusLabel[status] }}
+        {{ translateOrderStatus(status) }}
       </button>
     }
   </div>
@@ -27,20 +27,20 @@
   @if (filteredOrders().length === 0) {
     <div class="empty-state">
       <span class="empty-icon">📦</span>
-      <h3>No orders found</h3>
-      <p>No orders match the selected filter.</p>
+      <h3>{{ langService.currentLang() === 'ar' ? 'لم يتم العثور على طلبات' : 'No orders found' }}</h3>
+      <p>{{ langService.currentLang() === 'ar' ? 'لا توجد طلبات تطابق الفلتر المحدد.' : 'No orders match the selected filter.' }}</p>
     </div>
   } @else {
     <div class="orders-table-wrap">
       <table class="orders-table">
         <thead>
           <tr>
-            <th>Order ID</th>
-            <th>Buyer</th>
-            <th>Date</th>
-            <th>Items</th>
-            <th>Total</th>
-            <th>Status</th>
+            <th>{{ langService.translate('orderId') }}</th>
+            <th>{{ langService.translate('buyer') }}</th>
+            <th>{{ langService.translate('orderDate') }}</th>
+            <th>{{ langService.translate('items') }}</th>
+            <th>{{ langService.translate('totalAmount') }}</th>
+            <th>{{ langService.translate('orderStatus') }}</th>
           </tr>
         </thead>
         <tbody>
@@ -49,11 +49,13 @@
               <td class="order-id">#{{ order.id }}</td>
               <td class="buyer-name">{{ order.buyerName }}</td>
               <td class="order-date">{{ order.orderDate | date:'MMM d, yyyy' }}</td>
-              <td class="item-count">{{ order.itemCount }} item{{ order.itemCount > 1 ? 's' : '' }}</td>
+              <td class="item-count">
+                {{ order.itemCount }} {{ order.itemCount > 1 ? langService.translate('items') : langService.translate('item') }}
+              </td>
               <td class="order-total">{{ order.total | currency:'EGP ':'code' }}</td>
               <td>
                 <span class="status-badge" [class]="getStatusClass(order.status)">
-                  {{ OrderStatusLabel[order.status] }}
+                  {{ translateOrderStatus(order.status) }}
                 </span>
               </td>
             </tr>
@@ -63,4 +65,4 @@
     </div>
   }
 
-</div>
+ </div>

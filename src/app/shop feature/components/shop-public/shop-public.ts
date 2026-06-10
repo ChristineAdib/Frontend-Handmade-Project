@@ -1,10 +1,14 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
+
 import { ShopService } from '../../services/shop-service';
 import { FollowService } from '../../../follow feature/services/follow-service';
 import { AuthService } from '../../../auth/Services/auth';
+import { CartApiService } from '../../../orders/services/cart-api.service';
 import { IShopWithProducts, IProductSummary } from '../../models/ishop-with-products';
+import { LanguageService } from '../../../core/services/language.service';
 
 type ActiveTab = 'products' | 'about' | 'reviews';
 
@@ -20,6 +24,9 @@ export class ShopPublic implements OnInit {
   private shopService = inject(ShopService);
   private followService = inject(FollowService);
   private auth = inject(AuthService);
+  private cartApi = inject(CartApiService);
+  private toastr = inject(ToastrService);
+  protected langService = inject(LanguageService);
 
   shop = signal<IShopWithProducts | null>(null);
   isLoading = signal(true);
@@ -39,7 +46,7 @@ export class ShopPublic implements OnInit {
         this.isLoading.set(false);
       },
       error: () => {
-        this.error.set('Failed to load shop');
+        this.error.set(this.langService.translate('failedToLoadShop'));
         this.isLoading.set(false);
       }
     });
@@ -71,6 +78,39 @@ export class ShopPublic implements OnInit {
         error: () => this.isFollowLoading.set(false)
       });
     }
+  }
+
+  quickAdd(productId: string, event: Event): void {
+    event.stopPropagation();
+    event.preventDefault();
+
+    if (!this.auth.isLoggedIn()) {
+      this.toastr.warning(
+        this.langService.currentLang() === 'ar'
+          ? 'الرجاء تسجيل الدخول أولاً لإضافة منتجات إلى السلة.'
+          : 'Please log in first to add items to your cart.'
+      );
+      return;
+    }
+
+    this.cartApi.addItem(productId, 1).then((res) => {
+      if (res) {
+        this.toastr.success(
+          this.langService.currentLang() === 'ar'
+            ? 'تمت إضافة المنتج إلى السلة!'
+            : 'Product added to cart!'
+        );
+      } else {
+        this.toastr.error(
+          this.langService.currentLang() === 'ar'
+            ? 'فشل إضافة المنتج إلى السلة.'
+            : 'Failed to add item to cart.'
+        );
+      }
+    }).catch(err => {
+      console.error('Quick add error:', err);
+      this.toastr.error('Failed to add item to cart.');
+    });
   }
 
   getStars(rating: number): number[] {

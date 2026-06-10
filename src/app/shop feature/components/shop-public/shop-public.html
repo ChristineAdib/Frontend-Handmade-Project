@@ -3,7 +3,7 @@
   @if (isLoading()) {
     <div class="loading-state">
       <div class="spinner"></div>
-      <p>Loading shop...</p>
+      <p>{{ langService.translate('loadingShop') }}</p>
     </div>
   }
 
@@ -36,15 +36,15 @@
         <div class="hero-info">
           <div class="hero-info-left">
             <div class="badges-row">
-              <span class="role-badge">Artisan</span>
+              <span class="role-badge">{{ langService.translate('artisan') }}</span>
               <div class="rating-inline">
                 <span class="material-symbols-outlined star-icon">star</span>
-                <span>{{ shop()!.rating | number:'1.1-1' }} ({{ shop()!.products.length }} products)</span>
+                <span>{{ shop()!.rating | number:'1.1-1' }} ({{ shop()!.products.length }} {{ langService.translate('products') }})</span>
               </div>
             </div>
             <h1 class="shop-name">{{ shop()!.name }}</h1>
             <p class="shop-desc">
-              {{ shop()!.descriptionEn || 'A unique handmade shop crafted with love and intention.' }}
+              {{ (langService.currentLang() === 'ar' ? (shop()!.descriptionAr || shop()!.descriptionEn) : (shop()!.descriptionEn || shop()!.descriptionAr)) || langService.translate('defaultShopDesc') }}
             </p>
           </div>
 
@@ -55,8 +55,8 @@
               [disabled]="isFollowLoading()"
               (click)="toggleFollow()">
               @if (isFollowLoading()) { ... }
-              @else if (isFollowing()) { Following }
-              @else { Follow Shop }
+              @else if (isFollowing()) { {{ langService.translate('following') }} }
+              @else { {{ langService.translate('followShop') }} }
             </button>
             <button class="share-btn">
               <span class="material-symbols-outlined">chat</span>
@@ -69,19 +69,19 @@
       <div class="stats-bar">
         <div class="stat-item">
           <span class="stat-val">{{ shop()!.products.length }}</span>
-          <span class="stat-lbl">Products</span>
+          <span class="stat-lbl">{{ langService.translate('products') }}</span>
         </div>
         <div class="stat-item">
           <span class="stat-val">{{ shop()!.rating | number:'1.1-1' }}</span>
-          <span class="stat-lbl">Rating</span>
+          <span class="stat-lbl">{{ langService.translate('rating') }}</span>
         </div>
         <div class="stat-item">
-          <span class="stat-val">{{ shop()!.isVerified ? 'Verified' : 'Unverified' }}</span>
-          <span class="stat-lbl">Status</span>
+          <span class="stat-val">{{ shop()!.isVerified ? langService.translate('verified') : langService.translate('unverified') }}</span>
+          <span class="stat-lbl">{{ langService.translate('status') }}</span>
         </div>
         <div class="stat-item">
           <span class="stat-val">{{ shop()!.ownerName }}</span>
-          <span class="stat-lbl">Owner</span>
+          <span class="stat-lbl">{{ langService.translate('owner') }}</span>
         </div>
       </div>
     </div>
@@ -91,9 +91,9 @@
   <section class="tabs-section">
     <div class="tabs-inner">
       <div class="tabs">
-        <button class="tab" [class.active]="activeTab() === 'products'" (click)="setTab('products')">All Creations</button>
-        <button class="tab" [class.active]="activeTab() === 'about'" (click)="setTab('about')">About</button>
-        <button class="tab" [class.active]="activeTab() === 'reviews'" (click)="setTab('reviews')">Reviews</button>
+        <button class="tab" [class.active]="activeTab() === 'products'" (click)="setTab('products')">{{ langService.translate('allCreations') }}</button>
+        <button class="tab" [class.active]="activeTab() === 'about'" (click)="setTab('about')">{{ langService.translate('aboutShop') }}</button>
+        <button class="tab" [class.active]="activeTab() === 'reviews'" (click)="setTab('reviews')">{{ langService.translate('reviews') }}</button>
       </div>
     </div>
   </section>
@@ -107,13 +107,13 @@
         @if (shop()!.products.length === 0) {
           <div class="empty-state">
             <span style="font-size:48px">🧶</span>
-            <p>No products yet.</p>
+            <p>{{ langService.translate('noProductsYetShop') }}</p>
           </div>
         } @else {
           <div class="products-bento">
 
             <!-- First product: featured large -->
-            <div class="product-featured">
+            <div class="product-featured" [routerLink]="['/products', shop()!.products[0].id]" style="cursor: pointer;">
               <div class="product-card-inner">
                 <div class="product-img-wrap">
                   @if (shop()!.products[0].mainImageUrl) {
@@ -121,37 +121,37 @@
                   } @else {
                     <div class="product-img-ph">🧵</div>
                   }
-                  <span class="featured-badge">Featured Piece</span>
+                  <span class="featured-badge">{{ langService.translate('featuredPiece') }}</span>
                 </div>
                 <div class="product-body featured-body">
                   <div class="product-title-row">
-                    <h3 class="product-title">{{ shop()!.products[0].titleEn }}</h3>
+                    <h3 class="product-title">{{ langService.currentLang() === 'ar' ? shop()!.products[0].titleAr : shop()!.products[0].titleEn }}</h3>
                     <span class="product-price-lg">{{ shop()!.products[0].finalPrice | currency:'EGP ':'code' }}</span>
                   </div>
                   <p class="product-cat">{{ shop()!.products[0].categoryNameEn }}</p>
-                  <button class="view-btn">View Detail</button>
+                  <button class="view-btn" [routerLink]="['/products', shop()!.products[0].id]">{{ langService.translate('viewDetail') }}</button>
                 </div>
               </div>
             </div>
 
             <!-- Rest of products -->
-            @for (product of shop()!.products.slice(1); track product.id) {
-              <div class="product-card">
+             @for (product of shop()!.products.slice(1); track product.id) {
+              <div class="product-card" [routerLink]="['/products', product.id]" style="cursor: pointer;">
                 <div class="product-img-wrap">
                   @if (product.mainImageUrl) {
-                    <img [src]="product.mainImageUrl" [alt]="product.titleEn" class="product-img" />
+                    <img [src]="product.mainImageUrl" [alt]="langService.currentLang() === 'ar' ? product.titleAr : product.titleEn" class="product-img" />
                   } @else {
                     <div class="product-img-ph">🧵</div>
                   }
                   @if (product.discountPrice) {
-                    <span class="small-badge">Sale</span>
+                    <span class="small-badge">{{ langService.translate('sale') }}</span>
                   }
-                  <button class="quick-add">
+                  <button class="quick-add" (click)="quickAdd(product.id, $event)">
                     <span class="material-symbols-outlined">shopping_bag</span>
                   </button>
                 </div>
                 <div class="product-body">
-                  <h3 class="product-title">{{ product.titleEn }}</h3>
+                  <h3 class="product-title">{{ langService.currentLang() === 'ar' ? product.titleAr : product.titleEn }}</h3>
                   <p class="product-price">{{ product.finalPrice | currency:'EGP ':'code' }}</p>
                   @if (product.discountPrice) {
                     <p class="product-price-old">{{ product.price | currency:'EGP ':'code' }}</p>
@@ -163,7 +163,7 @@
           </div>
 
           <div class="load-more-wrap">
-            <button class="load-more-btn">Load More Creations</button>
+            <button class="load-more-btn">{{ langService.translate('loadMoreCreations') }}</button>
           </div>
         }
       }
@@ -171,11 +171,10 @@
       <!-- About -->
       @if (activeTab() === 'about') {
         <div class="about-wrap">
-          <h2 class="about-title">About {{ shop()!.name }}</h2>
-          <p class="about-text">{{ shop()!.descriptionEn || 'No description provided yet.' }}</p>
-          @if (shop()!.descriptionAr) {
-            <p class="about-text about-ar" dir="rtl">{{ shop()!.descriptionAr }}</p>
-          }
+          <h2 class="about-title">{{ langService.translate('aboutShop') }} {{ shop()!.name }}</h2>
+          <p class="about-text" [dir]="langService.currentLang() === 'ar' ? 'rtl' : 'ltr'">
+            {{ (langService.currentLang() === 'ar' ? (shop()!.descriptionAr || shop()!.descriptionEn) : (shop()!.descriptionEn || shop()!.descriptionAr)) || langService.translate('noDescriptionYet') }}
+          </p>
         </div>
       }
 
@@ -183,7 +182,7 @@
       @if (activeTab() === 'reviews') {
         <div class="empty-state">
           <span style="font-size:48px">⭐</span>
-          <p>Reviews coming soon.</p>
+          <p>{{ langService.translate('reviewsComingSoon') }}</p>
         </div>
       }
 

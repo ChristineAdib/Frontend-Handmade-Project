@@ -3,6 +3,7 @@ import { Router, RouterLink, RouterLinkActive, NavigationEnd } from '@angular/ro
 import { AuthService } from '../../auth/Services/auth';
 import { ToastrService } from 'ngx-toastr';
 import { ChatService } from '../../Chat/Services/chat.service';
+import { LanguageService } from '../../core/services/language.service';
 import { filter } from 'rxjs';
 
 @Component({
@@ -17,6 +18,7 @@ export class Header implements OnInit {
   private router = inject(Router);
   private toastr = inject(ToastrService);
   protected chatService = inject(ChatService);
+  protected langService = inject(LanguageService);
 
   ngOnInit(): void {
     // 1. Initial connection if already logged in on load

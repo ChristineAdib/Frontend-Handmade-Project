@@ -1,0 +1,99 @@
+<div 
+  class="luxury-card"
+  productCard
+  appAppHoverCard
+  [routerLink]="['/products', product.id]"
+>
+  <!-- Image section with overlay controls -->
+  <div class="image-wrapper">
+    <img 
+      [src]="product.mainImageUrl || 'assets/images/placeholder.jpg'" 
+      [alt]="langService.currentLang() === 'ar' ? (product.titleAr || product.titleEn) : (product.titleEn || product.titleAr)" 
+      class="card-img" 
+      loading="lazy"
+    />
+    
+    <!-- Discount Badge -->
+    @if (hasDiscount()) {
+      <span class="badge-discount">
+        {{ langService.currentLang() === 'ar' ? 'خصم' : 'Sale' }}
+      </span>
+    }
+
+    <!-- Hover Action Buttons (Wishlist & Cart) -->
+    <div class="hover-actions-bar">
+      <button 
+        type="button" 
+        class="action-icon-btn wishlist-btn" 
+        (click)="onAddToWishlist($event)"
+        [title]="langService.currentLang() === 'ar' ? 'أضف للمفضلة' : 'Add to Wishlist'"
+      >
+        <span class="material-symbols-outlined">favorite</span>
+      </button>
+      
+      <button 
+        type="button" 
+        class="action-icon-btn cart-btn" 
+        (click)="onAddToCart($event)"
+        [title]="langService.translate('addToCart')"
+      >
+        <span class="material-symbols-outlined">shopping_cart</span>
+      </button>
+    </div>
+
+    <!-- Quick View Hover Trigger -->
+    <div class="hover-overlay">
+      <button 
+        type="button" 
+        class="quick-view-btn"
+        (click)="onQuickView($event)"
+      >
+        <span class="material-symbols-outlined btn-icon">visibility</span>
+        {{ langService.translate('viewDetail') }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Content Details -->
+  <div class="card-details">
+    <div class="meta-row">
+      <span class="shop-name">
+        <span class="material-symbols-outlined icon-shop">storefront</span>
+        {{ product.shopName }}
+      </span>
+      
+      <!-- Rating Stars -->
+      <div class="rating-stars" *ngIf="product.reviewCount > 0; else noRating">
+        <span class="stars">
+          <span class="material-symbols-outlined fill-star" *ngFor="let star of getStarsArray()">star</span>
+          <span class="material-symbols-outlined empty-star" *ngFor="let star of getEmptyStarsArray()">star</span>
+        </span>
+        <span class="review-count">({{ product.reviewCount }})</span>
+      </div>
+      <ng-template #noRating>
+        <span class="no-rating">{{ langService.currentLang() === 'ar' ? 'لا تقييمات' : 'No ratings' }}</span>
+      </ng-template>
+    </div>
+
+    <!-- Product Title -->
+    <h3 class="product-title">
+      {{ langService.currentLang() === 'ar' ? (product.titleAr || product.titleEn) : (product.titleEn || product.titleAr) }}
+    </h3>
+
+    <!-- Price Section -->
+    <div class="price-section">
+      @if (hasDiscount()) {
+        <span class="price-discount">
+          {{ langService.currentLang() === 'ar' ? (product.discountPrice + ' ج.م') : ('EGP ' + product.discountPrice) }}
+        </span>
+        <span class="price-original">
+          {{ langService.currentLang() === 'ar' ? (product.price + ' ج.م') : ('EGP ' + product.price) }}
+        </span>
+      } @else {
+        <span class="price-final">
+          {{ langService.currentLang() === 'ar' ? (product.price + ' ج.م') : ('EGP ' + product.price) }}
+        </span>
+      }
+    </div>
+  </div>
+</div>

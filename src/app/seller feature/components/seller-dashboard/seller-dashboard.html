@@ -1,4 +1,4 @@
-<div class="dashboard-layout">
+<div class="dashboard-layout" [dir]="langService.currentLang() === 'ar' ? 'rtl' : 'ltr'">
 
   <!-- Sidebar -->
   <aside class="sidebar">
@@ -8,41 +8,33 @@
 
     <nav class="sidebar-nav">
       <a routerLink="overview" routerLinkActive="active" class="nav-item">
-      
-        <span>Overview</span>
+        <span>{{ langService.translate('overview') }}</span>
       </a>
       <a routerLink="products" routerLinkActive="active" class="nav-item">
-     
-        <span>Products</span>
+        <span>{{ langService.translate('products') }}</span>
       </a>
       <a routerLink="orders" routerLinkActive="active" class="nav-item">
-       
-        <span>Orders</span>
+        <span>{{ langService.translate('myOrders') }}</span>
       </a>
       <a routerLink="custom-requests" routerLinkActive="active" class="nav-item">
-       
-        <span>Custom Requests</span>
+        <span>{{ langService.translate('customRequests') }}</span>
       </a>
       <a routerLink="followers" routerLinkActive="active" class="nav-item">
-       
-        <span>Followers</span>
+        <span>{{ langService.translate('followers') }}</span>
       </a>
       <a routerLink="earnings" routerLinkActive="active" class="nav-item">
-     
-        <span>Earnings</span>
+        <span>{{ langService.translate('earnings') }}</span>
       </a>
       <a routerLink="settings" routerLinkActive="active" class="nav-item">
-      
-        <span>Settings</span>
+        <span>{{ langService.translate('settings') }}</span>
       </a>
       <a routerLink="profile" routerLinkActive="active" class="nav-item">
-   
-        <span>My Profile</span>
+        <span>{{ langService.translate('profile') }}</span>
       </a>
     </nav>
 
     <div class="sidebar-footer">
-      <button class="logout-btn">Logout</button>
+      <button class="logout-btn">{{ langService.translate('logout') }}</button>
     </div>
   </aside>
 

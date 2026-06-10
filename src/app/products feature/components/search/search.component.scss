@@ -1,0 +1,88 @@
+.search-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+
+  .search-icon {
+    position: absolute;
+    left: 20px;
+    color: #8B4513;
+    font-size: 1.5rem;
+    pointer-events: none;
+    transition: color 0.3s ease;
+  }
+
+  .luxury-search-input {
+    width: 100%;
+    padding: 14px 50px 14px 55px;
+    font-size: 1rem;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: #2c1810;
+    background-color: #fcfaf7;
+    border: 1px solid #e0d5ce;
+    border-radius: 30px;
+    box-shadow: 0 4px 12px rgba(44, 24, 16, 0.04);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    outline: none;
+
+    &::placeholder {
+      color: #a09085;
+      font-weight: 400;
+    }
+
+    &:focus {
+      background-color: #ffffff;
+      border-color: #8B4513;
+      box-shadow: 0 4px 20px rgba(139, 69, 19, 0.12);
+
+      & ~ .search-icon {
+        color: #D4AF37;
+      }
+    }
+  }
+
+  .clear-button {
+    position: absolute;
+    right: 20px;
+    background: none;
+    border: none;
+    padding: 0;
+    color: #a09085;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s ease, transform 0.2s ease;
+
+    span {
+      font-size: 1.3rem;
+    }
+
+    &:hover {
+      color: #8B4513;
+      transform: scale(1.1);
+    }
+  }
+}
+
+/* RTL Support for Arabic direction */
+[dir="rtl"] {
+  .search-container {
+    .search-icon {
+      left: auto;
+      right: 20px;
+    }
+
+    .luxury-search-input {
+      padding: 14px 55px 14px 50px;
+    }
+
+    .clear-button {
+      right: auto;
+      left: 20px;
+    }
+  }
+}

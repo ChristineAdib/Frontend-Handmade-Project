@@ -1,23 +1,23 @@
 <div class="container mt-5" style="max-width: 600px;">
 
   <div class="text-center mb-5">
-    <h1 class="fw-bold">📞 Contact Us</h1>
-    <p class="text-muted">We'd love to hear from you!</p>
+    <h1 class="fw-bold">{{ langService.translate('contactUs') }}</h1>
+    <p class="text-muted">{{ langService.translate('contactSubtitle') }}</p>
   </div>
 
   <div class="card border-0 shadow-sm p-4 mb-4">
     <ul class="list-unstyled mb-0">
       <li class="mb-3">
-        <span class="fw-bold">📧 Email:</span>
+        <span class="fw-bold">{{ langService.translate('emailLabel') }}</span>
         <span class="text-muted ms-2">contact@handmadehub.com</span>
       </li>
       <li class="mb-3">
-        <span class="fw-bold">📱 Phone:</span>
+        <span class="fw-bold">{{ langService.translate('phoneLabel') }}</span>
         <span class="text-muted ms-2">+20 100 000 0000</span>
       </li>
       <li>
-        <span class="fw-bold">📍 Address:</span>
-        <span class="text-muted ms-2">Cairo, Egypt</span>
+        <span class="fw-bold">{{ langService.translate('addressLabel') }}</span>
+        <span class="text-muted ms-2">{{ langService.translate('cairoEgypt') }}</span>
       </li>
     </ul>
   </div>

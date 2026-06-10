@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { ProfileService } from '../../services/profile.service';
 import { UserProfile } from '../../models/user-profile';
+import { LanguageService } from '../../../core/services/language.service';
 
 @Component({
   selector: 'app-edit-profile',
@@ -17,6 +18,7 @@ export class EditProfileComponent implements OnInit {
   private readonly profileService = inject(ProfileService);
   private readonly toastr = inject(ToastrService);
   private readonly router = inject(Router);
+  protected readonly langService = inject(LanguageService);
 
   // Profile data signal
   profile = signal<UserProfile | null>(null);

@@ -1,0 +1,286 @@
+.luxury-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: #ffffff;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(44, 24, 16, 0.05) !important;
+  border: 1px solid #f2e9e4 !important;
+  transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.4s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
+  border-radius: 16px;
+  overflow: hidden;
+
+  &:hover {
+    transform: translateY(-4px) scale(1.01) !important;
+    box-shadow: 0 12px 30px rgba(44, 24, 16, 0.12) !important;
+
+    .image-wrapper .hover-overlay {
+      opacity: 1;
+
+      .quick-view-btn {
+        transform: translate(-50%, -50%) translateY(0);
+      }
+    }
+
+    .image-wrapper .hover-actions-bar {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .image-wrapper {
+    position: relative;
+    width: 100%;
+    padding-top: 100%; /* 1:1 Aspect Ratio square */
+    background-color: #faf7f5;
+    overflow: hidden;
+
+    .card-img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+
+    &:hover .card-img {
+      transform: scale(1.05);
+    }
+
+    .badge-discount {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background-color: #8B4513;
+      color: #ffffff;
+      padding: 6px 12px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      text-transform: uppercase;
+      border-radius: 20px;
+      box-shadow: 0 2px 8px rgba(139, 69, 19, 0.2);
+      z-index: 2;
+    }
+
+    /* Floating Action Bar (Wishlist & Cart) */
+    .hover-actions-bar {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 4; /* Stays above Quick View overlay */
+      opacity: 0;
+      transform: translateY(-10px);
+      transition: opacity 0.3s cubic-bezier(0.165, 0.84, 0.44, 1), transform 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+
+      .action-icon-btn {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        border: 1px solid #f2e9e4;
+        background-color: #ffffff;
+        color: #5c4a3f;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 4px 10px rgba(44, 24, 16, 0.1);
+        transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+        outline: none;
+
+        span {
+          font-size: 1.25rem;
+          transition: transform 0.2s ease;
+        }
+
+        &:hover {
+          background-color: #8B4513;
+          color: #ffffff;
+          border-color: #8B4513;
+          transform: scale(1.1);
+
+          span {
+            transform: scale(1.1);
+          }
+        }
+
+        &.wishlist-btn:hover {
+          background-color: #d63031; /* Beautiful red/pink for hover on wishlist heart */
+          border-color: #d63031;
+        }
+      }
+    }
+
+    .hover-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(44, 24, 16, 0.4);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 3;
+
+      .quick-view-btn {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) translateY(10px);
+        background-color: #ffffff;
+        color: #2c1810;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 30px;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 0.85rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+        white-space: nowrap;
+
+        .btn-icon {
+          font-size: 1.15rem;
+        }
+
+        &:hover {
+          background-color: #8B4513;
+          color: #ffffff;
+        }
+      }
+    }
+  }
+
+  .card-details {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+
+    .meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      font-size: 0.8rem;
+      color: #8a786d;
+
+      .shop-name {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-weight: 500;
+        max-width: 60%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+
+        .icon-shop {
+          font-size: 0.95rem;
+          color: #8B4513;
+        }
+      }
+
+      .rating-stars {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+
+        .stars {
+          display: flex;
+          align-items: center;
+
+          span {
+            font-size: 0.9rem;
+          }
+
+          .fill-star {
+            color: #D4AF37;
+            font-variation-settings: 'FILL' 1, 'wght' 400;
+          }
+
+          .empty-star {
+            color: #e2d7d0;
+          }
+        }
+
+        .review-count {
+          font-size: 0.75rem;
+          font-weight: 600;
+        }
+      }
+
+      .no-rating {
+        font-size: 0.75rem;
+        color: #c4b5ac;
+      }
+    }
+
+    .product-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: #2c1810;
+      line-height: 1.4;
+      margin: 0 0 12px 0;
+      height: 2.8em; /* Force exactly 2 lines height */
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .price-section {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      margin-top: auto;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+
+      .price-final {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: #2c1810;
+      }
+
+      .price-discount {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: #8B4513; /* Terracotta red for sale pricing */
+      }
+
+      .price-original {
+        font-size: 0.85rem;
+        text-decoration: line-through;
+        color: #c4b5ac;
+      }
+    }
+  }
+}
+
+/* RTL support */
+[dir="rtl"] {
+  .luxury-card {
+    .image-wrapper {
+      .badge-discount {
+        left: auto;
+        right: 12px;
+      }
+
+      .hover-actions-bar {
+        right: auto;
+        left: 12px;
+      }
+    }
+  }
+}

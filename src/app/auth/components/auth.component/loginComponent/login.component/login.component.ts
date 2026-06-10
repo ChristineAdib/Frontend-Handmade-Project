@@ -3,6 +3,7 @@ import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../../Services/auth';
+import { LanguageService } from '../../../../../core/services/language.service';
 
 @Component({
   selector: 'app-login',
@@ -15,6 +16,7 @@ export class LoginComponent {
   private fb     = inject(FormBuilder);
   private router = inject(Router);
   auth           = inject(AuthService);
+  protected readonly langService = inject(LanguageService);
 
   isLoading = signal(false);
   showPass  = signal(false);

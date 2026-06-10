@@ -1,11 +1,11 @@
-<div class="auth-container">
+<div class="auth-container" [dir]="langService.currentLang() === 'ar' ? 'rtl' : 'ltr'">
 
   <div class="narrative-panel">
     <div class="narrative-bg"></div>
     <div class="narrative-overlay"></div>
     <div class="narrative-content">
-      <h1 class="panel-main-title">Handora:<br>Crafted Connections.<br>Handmade Mastery.</h1>
-      <p class="panel-sub-title">Join our community of creators and collectors.</p>
+      <h1 class="panel-main-title" [innerHTML]="langService.translate('craftedConnections')"></h1>
+      <p class="panel-sub-title">{{ langService.translate('creatorsCollectors') }}</p>
     </div>
   </div>
 

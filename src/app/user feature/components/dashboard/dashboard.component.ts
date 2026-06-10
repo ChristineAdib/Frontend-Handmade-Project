@@ -15,6 +15,7 @@ import { OrderSummary } from '../../../orders/models/order-models';
 import { IWishListItem } from '../../../wishlist feature/models/iwish-list-item';
 import { OrderStatus, OrderStatusLabel } from '../../../orders/models/order-status';
 import { PaymentStatus, PaymentStatusLabel } from '../../../payments/models/payment-status';
+import { LanguageService } from '../../../core/services/language.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -30,6 +31,7 @@ export class DashboardComponent implements OnInit {
   private readonly http = inject(HttpClient);
   private readonly toastr = inject(ToastrService);
   private readonly router = inject(Router);
+  protected readonly langService = inject(LanguageService);
 
   // Constants for status mapping
   OrderStatus = OrderStatus;
@@ -190,15 +192,33 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  getStatusClass(status: OrderStatus): string {
-    switch (status) {
-      case OrderStatus.Pending: return 'status-pending';
-      case OrderStatus.Processing: return 'status-processing';
-      case OrderStatus.Shipped: return 'status-shipped';
-      case OrderStatus.Delivered: return 'status-delivered';
-      case OrderStatus.Cancelled: return 'status-cancelled';
-      case OrderStatus.Refunded: return 'status-refunded';
-      default: return '';
+  private getStatusLabel(status: any, enumType: any): string {
+    if (status === null || status === undefined) return '';
+    if (typeof status === 'number') return enumType[status] || '';
+    const parsed = Number(status);
+    if (!isNaN(parsed) && enumType[parsed]) return enumType[parsed];
+    return status.toString();
+  }
+
+  getStatusClass(status: any): string {
+    const label = this.getStatusLabel(status, OrderStatus).toLowerCase();
+    return `status-${label}`;
+  }
+
+  getPaymentStatusClass(status: any): string {
+    const label = this.getStatusLabel(status, PaymentStatus).toLowerCase();
+    return `payment-${label}`;
+  }
+
+  translateStatus(status: any): string {
+    if (status === null || status === undefined) return '';
+    let label = '';
+    if (typeof status === 'number') {
+      label = OrderStatus[status] || PaymentStatus[status] || '';
+    } else {
+      label = status.toString();
     }
+    const key = label.toLowerCase() as any;
+    return this.langService.translate(key);
   }
 }

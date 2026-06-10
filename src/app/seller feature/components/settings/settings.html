@@ -1,14 +1,14 @@
-<div class="settings-wrap">
+<div class="settings-wrap" [dir]="langService.currentLang() === 'ar' ? 'rtl' : 'ltr'">
 
   <div class="page-header">
-    <h1 class="page-title">Shop Settings</h1>
-    <p class="page-sub">Manage your shop information</p>
+    <h1 class="page-title">{{ langService.translate('settings') }}</h1>
+    <p class="page-sub">{{ langService.currentLang() === 'ar' ? 'إدارة معلومات متجرك' : 'Manage your shop information' }}</p>
   </div>
 
   @if (isLoading()) {
   <div class="loading-state">
     <div class="spinner"></div>
-    <p>Loading...</p>
+    <p>{{ langService.currentLang() === 'ar' ? 'جاري التحميل...' : 'Loading...' }}</p>
   </div>
   }
 
@@ -17,18 +17,20 @@
 
     <!-- Logo -->
     <div class="section">
-      <h3 class="section-title">Shop Logo</h3>
+      <h3 class="section-title">{{ langService.currentLang() === 'ar' ? 'شعار المتجر' : 'Shop Logo' }}</h3>
       <div class="logo-area">
         @if (logoPreview()) {
           <div class="logo-preview-wrap">
             <img [src]="logoPreview()!" alt="Shop logo" class="logo-preview" />
-            <button type="button" class="remove-btn" (click)="onRemoveLogo()">✕ Remove</button>
+            <button type="button" class="remove-btn" (click)="onRemoveLogo()">
+              ✕ {{ langService.currentLang() === 'ar' ? 'إزالة' : 'Remove' }}
+            </button>
           </div>
         } @else {
           <div class="logo-placeholder" (click)="logoInput.click()">
             <span class="upload-icon">🖼️</span>
-            <span>Click to upload logo</span>
-            <small>JPG, PNG — max 5MB</small>
+            <span>{{ langService.currentLang() === 'ar' ? 'اضغط لرفع الشعار' : 'Click to upload logo' }}</span>
+            <small>JPG, PNG — {{ langService.currentLang() === 'ar' ? 'الحد الأقصى 5 ميجابايت' : 'max 5MB' }}</small>
           </div>
         }
         <input #logoInput type="file" accept="image/*" (change)="onLogoSelected($event)" hidden />
@@ -39,25 +41,25 @@
     <form [formGroup]="form" (ngSubmit)="onSave()">
 
       <div class="section">
-        <h3 class="section-title">Shop Details</h3>
+        <h3 class="section-title">{{ langService.currentLang() === 'ar' ? 'تفاصيل المتجر' : 'Shop Details' }}</h3>
 
         <div class="fg">
-          <label class="fl">Shop Name *</label>
-          <input class="fi" type="text" formControlName="name" placeholder="Your shop name" />
+          <label class="fl">{{ langService.currentLang() === 'ar' ? 'اسم المتجر *' : 'Shop Name *' }}</label>
+          <input class="fi" type="text" formControlName="name" [placeholder]="langService.currentLang() === 'ar' ? 'اسم متجرك' : 'Your shop name'" />
           @if (form.get('name')?.invalid && form.get('name')?.touched) {
-            <span class="field-err">Shop name is required.</span>
+            <span class="field-err">{{ langService.currentLang() === 'ar' ? 'اسم المتجر مطلوب.' : 'Shop name is required.' }}</span>
           }
         </div>
 
         <div class="fg">
-          <label class="fl">Description (English)</label>
+          <label class="fl">{{ langService.currentLang() === 'ar' ? 'الوصف (بالإنجليزي)' : 'Description (English)' }}</label>
           <textarea class="fi ta" formControlName="descriptionEn"
-            placeholder="Tell customers about your shop..."
+            [placeholder]="langService.currentLang() === 'ar' ? 'أخبر العملاء عن متجرك...' : 'Tell customers about your shop...'"
             rows="3"></textarea>
         </div>
 
         <div class="fg">
-          <label class="fl">Description (Arabic)</label>
+          <label class="fl">{{ langService.currentLang() === 'ar' ? 'الوصف (بالعربي)' : 'Description (Arabic)' }}</label>
           <textarea class="fi ta" formControlName="descriptionAr"
             placeholder="اكتب وصف شوبك بالعربي..."
             rows="3" dir="rtl"></textarea>
@@ -73,8 +75,8 @@
 
       <div class="form-actions">
         <button class="save-btn" type="submit" [disabled]="isSaving() || form.invalid">
-          @if (isSaving()) { <span class="spinner-sm"></span> Saving... }
-          @else { Save Changes }
+          @if (isSaving()) { <span class="spinner-sm"></span> {{ langService.translate('savingChanges') || 'Saving...' }} }
+          @else { {{ langService.translate('saveChanges') }} }
         </button>
       </div>
 

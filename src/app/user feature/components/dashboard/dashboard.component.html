@@ -27,30 +27,30 @@
     <nav class="sidebar-menu">
       <button class="menu-item" [class.active]="activeTab() === 'Overview'" (click)="selectTab('Overview')">
         <span class="material-symbols-outlined">dashboard</span>
-        <span class="menu-text">Overview</span>
+        <span class="menu-text">{{ langService.translate('overview') }}</span>
       </button>
 
       <button class="menu-item" [class.active]="activeTab() === 'Orders'" (click)="selectTab('Orders')">
         <span class="material-symbols-outlined">shopping_bag</span>
-        <span class="menu-text">My Orders</span>
+        <span class="menu-text">{{ langService.translate('myOrders') }}</span>
         <span class="badge-count" *ngIf="totalOrdersCount() > 0">{{ totalOrdersCount() }}</span>
       </button>
 
       <button class="menu-item" [class.active]="activeTab() === 'Wishlist'" (click)="selectTab('Wishlist')">
         <span class="material-symbols-outlined">favorite</span>
-        <span class="menu-text">My Wishlist</span>
+        <span class="menu-text">{{ langService.translate('myWishlist') }}</span>
         <span class="badge-count" *ngIf="wishlistCount() > 0">{{ wishlistCount() }}</span>
       </button>
 
       <button class="menu-item" [class.active]="activeTab() === 'Shops'" (click)="selectTab('Shops')">
         <span class="material-symbols-outlined">storefront</span>
-        <span class="menu-text">Followed Shops</span>
+        <span class="menu-text">{{ langService.translate('followedShops') }}</span>
         <span class="badge-count" *ngIf="followedShopsCount() > 0">{{ followedShopsCount() }}</span>
       </button>
 
       <button class="menu-item" [class.active]="activeTab() === 'Reviews'" (click)="selectTab('Reviews')">
         <span class="material-symbols-outlined">rate_review</span>
-        <span class="menu-text">My Reviews</span>
+        <span class="menu-text">{{ langService.translate('myReviews') }}</span>
         <span class="badge-count" *ngIf="reviewsCount() > 0">{{ reviewsCount() }}</span>
       </button>
 
@@ -58,12 +58,12 @@
 
       <a class="menu-item" routerLink="/profile/edit">
         <span class="material-symbols-outlined">manage_accounts</span>
-        <span class="menu-text">Edit Profile</span>
+        <span class="menu-text">{{ langService.translate('editProfile') }}</span>
       </a>
 
       <button class="menu-item logout-btn" (click)="logout()">
         <span class="material-symbols-outlined">logout</span>
-        <span class="menu-text">Sign Out</span>
+        <span class="menu-text">{{ langService.translate('signOut') }}</span>
       </button>
     </nav>
   </aside>
@@ -100,8 +100,8 @@
           <!-- Cover Banner -->
           <div class="welcome-banner">
             <div class="banner-content">
-              <h1>Welcome back, {{ profile()?.name }}! ✨</h1>
-              <p>Your space to track your artisan experiences, orders, and favorite shops.</p>
+              <h1>{{ langService.translate('welcomeBack') }}, {{ profile()?.name }}! ✨</h1>
+              <p>{{ langService.translate('bannerDesc') }}</p>
             </div>
             <div class="banner-decor"></div>
           </div>
@@ -118,7 +118,7 @@
                   <div class="profile-actions ms-auto">
                     <a routerLink="/profile/edit" class="btn btn-primary-accent d-flex align-items-center gap-2">
                       <span class="material-symbols-outlined font-sm">edit</span>
-                      Edit Profile
+                      {{ langService.translate('editProfile') }}
                     </a>
                   </div>
                 </div>
@@ -130,7 +130,7 @@
                         <h2 class="user-fullname m-0">{{ profile()?.name }}</h2>
                         <span class="premium-badge d-flex align-items-center gap-1">
                           <span class="material-symbols-outlined">stars</span>
-                          Artisan Supporter
+                          {{ langService.translate('artisanSupporter') }}
                         </span>
                       </div>
                       <p class="user-email-text text-muted mt-1 d-flex align-items-center gap-1">
@@ -144,7 +144,7 @@
                     <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
                       <span class="join-date d-flex align-items-center justify-content-lg-end gap-1 text-muted">
                         <span class="material-symbols-outlined font-sm">calendar_today</span>
-                        Member since {{ profile()?.createdAt | date:'MMMM yyyy' }}
+                        {{ langService.translate('memberSince') }} {{ profile()?.createdAt | date:'MMMM yyyy' }}
                       </span>
                     </div>
                   </div>
@@ -153,7 +153,7 @@
                   <div class="bio-container mt-4" *ngIf="profile()?.bio">
                     <h6 class="bio-title d-flex align-items-center gap-1">
                       <span class="material-symbols-outlined font-sm">face</span>
-                      About Me
+                      {{ langService.translate('aboutMe') }}
                     </h6>
                     <blockquote class="bio-text">
                       "{{ profile()?.bio }}"
@@ -175,7 +175,7 @@
                   </div>
                   <div class="stat-details">
                     <h3 class="stat-number">{{ totalOrdersCount() }}</h3>
-                    <p class="stat-label">Total Orders</p>
+                    <p class="stat-label">{{ langService.translate('totalOrders') }}</p>
                   </div>
                 </div>
               </div>
@@ -188,7 +188,7 @@
                   </div>
                   <div class="stat-details">
                     <h3 class="stat-number">{{ wishlistCount() }}</h3>
-                    <p class="stat-label">Wishlist Items</p>
+                    <p class="stat-label">{{ langService.translate('wishlistItems') }}</p>
                   </div>
                 </div>
               </div>
@@ -201,7 +201,7 @@
                   </div>
                   <div class="stat-details">
                     <h3 class="stat-number">{{ followedShopsCount() }}</h3>
-                    <p class="stat-label">Shops Followed</p>
+                    <p class="stat-label">{{ langService.translate('shopsFollowed') }}</p>
                   </div>
                 </div>
               </div>
@@ -214,7 +214,7 @@
                   </div>
                   <div class="stat-details">
                     <h3 class="stat-number">{{ reviewsCount() }}</h3>
-                    <p class="stat-label">Reviews Written</p>
+                    <p class="stat-label">{{ langService.translate('reviewsWritten') }}</p>
                   </div>
                 </div>
               </div>
@@ -227,8 +227,8 @@
             <div class="col-lg-6">
               <div class="dashboard-sub-card">
                 <div class="card-head d-flex justify-content-between align-items-center mb-3">
-                  <h5 class="card-title-accent m-0">Recent Follows</h5>
-                  <button class="btn btn-text-link" (click)="selectTab('Shops')">View All</button>
+                  <h5 class="card-title-accent m-0">{{ langService.translate('recentFollows') }}</h5>
+                  <button class="btn btn-text-link" (click)="selectTab('Shops')">{{ langService.translate('viewAll') }}</button>
                 </div>
 
                 <div *ngIf="isLoadingShops()" class="skeleton-shops-snippet">
@@ -239,7 +239,7 @@
                 <div *ngIf="!isLoadingShops()">
                   <div *ngIf="followedShops().length === 0" class="empty-state-snippet">
                     <span class="material-symbols-outlined empty-icon">storefront</span>
-                    <p>Not following any shops yet</p>
+                    <p>{{ langService.translate('noRecentFollows') }}</p>
                   </div>
 
                   <div *ngIf="followedShops().length > 0" class="shop-list-snippet">
@@ -256,7 +256,7 @@
                         </div>
                       </div>
                       <button class="btn btn-unfollow-sm ms-auto" (click)="unfollowShop(shop.shopId, $event)">
-                        Unfollow
+                        {{ langService.translate('unfollow') }}
                       </button>
                     </div>
                   </div>
@@ -268,8 +268,8 @@
             <div class="col-lg-6">
               <div class="dashboard-sub-card">
                 <div class="card-head d-flex justify-content-between align-items-center mb-3">
-                  <h5 class="card-title-accent m-0">Recent Orders</h5>
-                  <button class="btn btn-text-link" (click)="selectTab('Orders')">View All</button>
+                  <h5 class="card-title-accent m-0">{{ langService.translate('recentOrders') }}</h5>
+                  <button class="btn btn-text-link" (click)="selectTab('Orders')">{{ langService.translate('viewAll') }}</button>
                 </div>
 
                 <div *ngIf="isLoadingOrders()" class="skeleton-orders-snippet">
@@ -280,11 +280,11 @@
                 <div *ngIf="!isLoadingOrders()">
                   <div *ngIf="recentOrders().length === 0" class="empty-state-snippet">
                     <span class="material-symbols-outlined empty-icon">shopping_bag</span>
-                    <p>No orders placed yet</p>
+                    <p>{{ langService.translate('noOrdersYet') }}</p>
                   </div>
 
                   <div *ngIf="recentOrders().length > 0" class="order-list-snippet">
-                    <div class="order-item-snippet d-flex align-items-center justify-content-between py-2 border-bottom" *ngFor="let order of recentOrders().slice(0, 3)">
+                    <div class="order-item-snippet d-flex align-items-center justify-content-between py-2 border-bottom" *ngFor="let order of recentOrders().slice(0, 3)" [routerLink]="['/orders', order.id]" style="cursor: pointer;">
                       <div>
                         <span class="order-id-sm fw-bold">#{{ order.id.substring(0, 8) }}</span>
                         <div class="order-date-sm text-muted">{{ order.orderDate | date:'shortDate' }}</div>
@@ -292,7 +292,7 @@
                       <div class="text-end">
                         <span class="order-total-sm d-block fw-semibold">{{ order.total | currency }}</span>
                         <span class="badge badge-status" [class]="getStatusClass(order.status)">
-                          {{ OrderStatusLabel[order.status] }}
+                          {{ translateStatus(order.status) }}
                         </span>
                       </div>
                     </div>
@@ -306,8 +306,8 @@
         <!-- ================= ORDERS TAB ================= -->
         <div *ngIf="activeTab() === 'Orders'" class="tab-view animate-fade">
           <div class="section-title-bar mb-4">
-            <h2>My Order History</h2>
-            <p class="text-muted">Track and review details of all purchases you have made.</p>
+            <h2>{{ langService.translate('orderHistory') }}</h2>
+            <p class="text-muted">{{ langService.translate('trackReviewPurchase') }}</p>
           </div>
 
           <div *ngIf="isLoadingOrders()" class="skeleton-wrapper">
@@ -317,9 +317,9 @@
           <div *ngIf="!isLoadingOrders()">
             <div *ngIf="recentOrders().length === 0" class="empty-state-card card-glow text-center p-5">
               <span class="material-symbols-outlined empty-icon-large">shopping_bag</span>
-              <h4>No Orders Yet</h4>
-              <p class="text-muted">You haven't placed any orders on Handora. Explore our unique collections of handmade items!</p>
-              <a routerLink="/" class="btn btn-primary-accent mt-3">Start Shopping</a>
+              <h4>{{ langService.translate('noOrdersYet') }}</h4>
+              <p class="text-muted">{{ langService.translate('noOrdersDesc') }}</p>
+              <a routerLink="/" class="btn btn-primary-accent mt-3">{{ langService.translate('startShopping') }}</a>
             </div>
 
             <div *ngIf="recentOrders().length > 0" class="card shadow-sm border-0 rounded-4 overflow-hidden card-glow">
@@ -327,36 +327,38 @@
                 <table class="table table-hover align-middle mb-0">
                   <thead class="table-light-cream">
                     <tr>
-                      <th class="ps-4">Order ID</th>
-                      <th>Date</th>
-                      <th>Items Count</th>
-                      <th>Total Amount</th>
-                      <th>Order Status</th>
-                      <th>Payment Status</th>
-                      <th class="text-end pe-4">Actions</th>
+                      <th class="ps-4">{{ langService.translate('orderId') }}</th>
+                      <th>{{ langService.translate('orderDate') }}</th>
+                      <th>{{ langService.translate('itemsCount') }}</th>
+                      <th>{{ langService.translate('totalAmount') }}</th>
+                      <th>{{ langService.translate('orderStatus') }}</th>
+                      <th>{{ langService.translate('paymentStatus') }}</th>
+                      <th class="text-end pe-4">{{ langService.translate('actions') }}</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr *ngFor="let order of recentOrders()">
+                    <tr *ngFor="let order of recentOrders()" [routerLink]="['/orders', order.id]" style="cursor: pointer;">
                       <td class="ps-4 fw-semibold text-primary-accent">
                         #{{ order.id.substring(0, 8) }}...
                       </td>
                       <td>{{ order.orderDate | date:'mediumDate' }}</td>
-                      <td>{{ order.itemCount }} {{ order.itemCount === 1 ? 'item' : 'items' }}</td>
+                      <td>
+                        {{ order.itemCount }} {{ order.itemCount === 1 ? langService.translate('item') : langService.translate('items') }}
+                      </td>
                       <td class="fw-semibold">{{ order.total | currency }}</td>
                       <td>
                         <span class="status-badge" [class]="getStatusClass(order.status)">
-                          {{ OrderStatusLabel[order.status] }}
+                          {{ translateStatus(order.status) }}
                         </span>
                       </td>
                       <td>
-                        <span class="payment-badge" [class]="'payment-' + PaymentStatusLabel[order.paymentStatus].toLowerCase()">
-                          {{ PaymentStatusLabel[order.paymentStatus] }}
+                        <span class="payment-badge" [class]="getPaymentStatusClass(order.paymentStatus)">
+                          {{ translateStatus(order.paymentStatus) }}
                         </span>
                       </td>
                       <td class="text-end pe-4">
                         <a [routerLink]="['/orders', order.id]" class="btn btn-outline-accent btn-sm">
-                          Details
+                          {{ langService.translate('details') }}
                         </a>
                       </td>
                     </tr>
@@ -370,8 +372,8 @@
         <!-- ================= WISHLIST TAB ================= -->
         <div *ngIf="activeTab() === 'Wishlist'" class="tab-view animate-fade">
           <div class="section-title-bar mb-4">
-            <h2>My Wishlist</h2>
-            <p class="text-muted">Keep track of the unique items you love.</p>
+            <h2>{{ langService.translate('myWishlist') }}</h2>
+            <p class="text-muted">{{ langService.translate('wishlistDesc') }}</p>
           </div>
 
           <div *ngIf="isLoadingWishlist()" class="skeleton-wrapper">
@@ -385,9 +387,9 @@
           <div *ngIf="!isLoadingWishlist()">
             <div *ngIf="wishlistItems().length === 0" class="empty-state-card card-glow text-center p-5">
               <span class="material-symbols-outlined empty-icon-large text-danger">favorite</span>
-              <h4>Wishlist is Empty</h4>
-              <p class="text-muted">Save your favorite handmade products here by clicking the heart icon on search or product details pages.</p>
-              <a routerLink="/" class="btn btn-primary-accent mt-3">Explore Products</a>
+              <h4>{{ langService.translate('wishlistIsEmpty') }}</h4>
+              <p class="text-muted">{{ langService.translate('wishlistEmptyDesc') }}</p>
+              <a routerLink="/" class="btn btn-primary-accent mt-3">{{ langService.translate('exploreProducts') }}</a>
             </div>
 
             <div *ngIf="wishlistItems().length > 0" class="row g-4">
@@ -401,7 +403,7 @@
                   </div>
                   <div class="product-info-wrapper p-3">
                     <h6 class="product-title-text" [routerLink]="['/products', item.productId]">
-                      {{ item.titleEn }}
+                      {{ langService.currentLang() === 'ar' ? (item.titleAr || item.titleEn) : item.titleEn }}
                     </h6>
                     <div class="price-row mt-2">
                       <span class="current-price" [class.discounted]="item.discountPrice">{{ (item.discountPrice || item.price) | currency }}</span>
@@ -412,7 +414,7 @@
                     <div class="product-card-actions mt-3">
                       <a [routerLink]="['/api/Products', item.productId]" class="btn btn-primary-accent w-100 d-flex align-items-center justify-content-center gap-2">
                         <span class="material-symbols-outlined font-sm">visibility</span>
-                        View Details
+                        {{ langService.translate('viewDetails') }}
                       </a>
                     </div>
                   </div>
@@ -425,8 +427,8 @@
         <!-- ================= FOLLOWED SHOPS TAB ================= -->
         <div *ngIf="activeTab() === 'Shops'" class="tab-view animate-fade">
           <div class="section-title-bar mb-4">
-            <h2>Followed Artisans & Shops</h2>
-            <p class="text-muted">Artisans whose craft you love. Be notified about their new collections!</p>
+            <h2>{{ langService.translate('followedArtisans') }}</h2>
+            <p class="text-muted">{{ langService.translate('followedArtisansDesc') }}</p>
           </div>
 
           <div *ngIf="isLoadingShops()" class="skeleton-wrapper">
@@ -440,9 +442,9 @@
           <div *ngIf="!isLoadingShops()">
             <div *ngIf="followedShops().length === 0" class="empty-state-card card-glow text-center p-5">
               <span class="material-symbols-outlined empty-icon-large">storefront</span>
-              <h4>No Followed Shops</h4>
-              <p class="text-muted">Follow artisan shops to support their craft and easily find them later.</p>
-              <a routerLink="/" class="btn btn-primary-accent mt-3">Discover Shops</a>
+              <h4>{{ langService.translate('noFollowedShops') }}</h4>
+              <p class="text-muted">{{ langService.translate('noFollowedShopsDesc') }}</p>
+              <a routerLink="/" class="btn btn-primary-accent mt-3">{{ langService.translate('discoverShops') }}</a>
             </div>
 
             <div *ngIf="followedShops().length > 0" class="row g-4">
@@ -455,7 +457,7 @@
                     </div>
                     <h5 class="shop-title mt-3 d-flex align-items-center justify-content-center gap-1">
                       {{ shop.shopName }}
-                      <span class="material-symbols-outlined verified-icon" *ngIf="shop.isVerified" title="Verified Artisan">verified</span>
+                      <span class="material-symbols-outlined verified-icon" *ngIf="shop.isVerified" [title]="langService.translate('verifiedArtisan')">verified</span>
                     </h5>
                     
                     <div class="shop-rating d-flex align-items-center justify-content-center gap-1 mt-1 text-warning">
@@ -469,10 +471,10 @@
 
                     <div class="d-flex gap-2 mt-4">
                       <a [routerLink]="['/shop', shop.shopId]" class="btn btn-outline-accent flex-grow-1">
-                        Visit Shop
+                        {{ langService.translate('visitShop') }}
                       </a>
                       <button class="btn btn-unfollow-action" (click)="unfollowShop(shop.shopId, $event)">
-                        Unfollow
+                        {{ langService.translate('unfollow') }}
                       </button>
                     </div>
                   </div>
@@ -485,8 +487,8 @@
         <!-- ================= REVIEWS TAB ================= -->
         <div *ngIf="activeTab() === 'Reviews'" class="tab-view animate-fade">
           <div class="section-title-bar mb-4">
-            <h2>My Product Reviews</h2>
-            <p class="text-muted">Feedback you have shared about products purchased.</p>
+            <h2>{{ langService.translate('myReviews') }}</h2>
+            <p class="text-muted">{{ langService.translate('reviewsDesc') }}</p>
           </div>
 
           <div *ngIf="isLoadingReviews()" class="skeleton-wrapper">
@@ -496,8 +498,8 @@
           <div *ngIf="!isLoadingReviews()">
             <div *ngIf="userReviews().length === 0" class="empty-state-card card-glow text-center p-5">
               <span class="material-symbols-outlined empty-icon-large text-warning">rate_review</span>
-              <h4>No Reviews Written Yet</h4>
-              <p class="text-muted">Share your thoughts! After receiving an order, you can review items to help other buyers and support sellers.</p>
+              <h4>{{ langService.translate('noReviewsYet') }}</h4>
+              <p class="text-muted">{{ langService.translate('noReviewsDesc') }}</p>
             </div>
 
             <div *ngIf="userReviews().length > 0" class="reviews-list-container d-flex flex-column gap-3">
@@ -524,7 +526,7 @@
                     </div>
 
                     <p class="review-comment-text mb-0 text-dark">
-                      "{{ review.comment || 'No comment provided.' }}"
+                      "{{ review.comment || langService.translate('noComment') }}"
                     </p>
                   </div>
                 </div>

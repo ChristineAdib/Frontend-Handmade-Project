@@ -1,14 +1,14 @@
-<div class="followers-wrap">
+<div class="followers-wrap" [dir]="langService.currentLang() === 'ar' ? 'rtl' : 'ltr'">
 
   <div class="page-header">
     <div>
-      <h1 class="page-title">Followers</h1>
-      <p class="page-sub">People following your shop</p>
+      <h1 class="page-title">{{ langService.translate('followers') }}</h1>
+      <p class="page-sub">{{ langService.currentLang() === 'ar' ? 'الأشخاص الذين يتابعون متجرك' : 'People following your shop' }}</p>
     </div>
     @if (!isLoading() && !error()) {
       <div class="followers-count">
         <span class="count-num">{{ followers().length }}</span>
-        <span class="count-label">Followers</span>
+        <span class="count-label">{{ langService.translate('followers') }}</span>
       </div>
     }
   </div>
@@ -16,7 +16,7 @@
   @if (isLoading()) {
     <div class="loading-state">
       <div class="spinner"></div>
-      <p>Loading followers...</p>
+      <p>{{ langService.currentLang() === 'ar' ? 'جاري تحميل المتابعين...' : 'Loading followers...' }}</p>
     </div>
   }
 
@@ -28,8 +28,8 @@
     @if (followers().length === 0) {
       <div class="empty-state">
         <span class="empty-icon">👥</span>
-        <h3>No followers yet</h3>
-        <p>Share your shop to attract followers!</p>
+        <h3>{{ langService.currentLang() === 'ar' ? 'لا يوجد متابعون بعد' : 'No followers yet' }}</h3>
+        <p>{{ langService.currentLang() === 'ar' ? 'شارك متجرك لجذب المتابعين!' : 'Share your shop to attract followers!' }}</p>
       </div>
     } @else {
       <div class="followers-grid">
@@ -44,7 +44,9 @@
             }
             <div class="follower-info">
               <span class="follower-name">{{ follower.userName }}</span>
-              <span class="follower-date">Followed {{ follower.followedAt | date:'MMM d, yyyy' }}</span>
+              <span class="follower-date">
+                {{ langService.currentLang() === 'ar' ? 'تابعك في ' : 'Followed ' }}{{ follower.followedAt | date:'MMM d, yyyy' }}
+              </span>
             </div>
           </div>
         }

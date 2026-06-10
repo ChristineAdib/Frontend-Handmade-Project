@@ -1,0 +1,167 @@
+.luxury-products-page {
+  padding-bottom: 4rem;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  color: #2c1810;
+
+  .products-header {
+    background-color: #faf7f5;
+    border-bottom: 1px solid #f0e6e0;
+    padding: 3rem 0;
+
+    .page-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: #2c1810;
+      margin-bottom: 10px;
+    }
+
+    .page-subtitle {
+      font-size: 1.05rem;
+      color: #8a786d;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+  }
+
+  .controls-section {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 10px 0;
+  }
+
+  .results-meta {
+    font-size: 0.95rem;
+
+    .results-count {
+      font-weight: 600;
+      color: #8B4513;
+    }
+  }
+
+  /* Shimmer Skeletons */
+  .skeleton-card {
+    background-color: #ffffff;
+    border: 1px solid #f2e9e4;
+    border-radius: 16px;
+    overflow: hidden;
+    height: 100%;
+
+    .skeleton-image {
+      width: 100%;
+      padding-top: 100%; /* 1:1 Aspect ratio */
+      background-color: #f6efe9;
+    }
+
+    .skeleton-body {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .skeleton-line {
+      height: 14px;
+      background-color: #f6efe9;
+      border-radius: 4px;
+
+      &.short {
+        width: 40%;
+      }
+      &.medium {
+        width: 60%;
+      }
+      &.long {
+        width: 85%;
+      }
+    }
+  }
+
+  .placeholder-shimmer {
+    position: relative;
+    overflow: hidden;
+
+    &::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      transform: translateX(-100%);
+      background-image: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.4) 20%,
+        rgba(255, 255, 255, 0.6) 60%,
+        rgba(255, 255, 255, 0) 100%
+      );
+      animation: shimmer 1.5s infinite;
+    }
+  }
+
+  @keyframes shimmer {
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  /* Error & Empty State Cards */
+  .error-container, .empty-state-container {
+    max-width: 500px;
+    margin: 4rem auto;
+
+    .error-card, .empty-state-card {
+      background-color: #ffffff;
+      border: 1px solid #f2e9e4 !important;
+      border-radius: 16px;
+
+      .error-icon, .empty-icon {
+        font-size: 3.5rem;
+        color: #c4b5ac;
+      }
+
+      .error-title, .empty-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #2c1810;
+      }
+
+      .error-desc, .empty-desc {
+        font-size: 0.95rem;
+        line-height: 1.6;
+      }
+    }
+  }
+
+  /* Premium Buttons */
+  .btn-luxury-primary {
+    background-color: #8B4513;
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 12px 28px;
+    border-radius: 30px;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 12px rgba(139, 69, 19, 0.2);
+    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+    cursor: pointer;
+
+    .btn-icon {
+      font-size: 1.2rem;
+    }
+
+    &:hover {
+      background-color: #2c1810;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(44, 24, 16, 0.25);
+      color: #ffffff;
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+}

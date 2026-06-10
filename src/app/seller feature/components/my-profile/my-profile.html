@@ -1,14 +1,14 @@
-<div class="profile-wrap">
+<div class="profile-wrap" [dir]="langService.currentLang() === 'ar' ? 'rtl' : 'ltr'">
 
   <div class="page-header">
-    <h1 class="page-title">My Profile</h1>
-    <p class="page-sub">Manage your personal information</p>
+    <h1 class="page-title">{{ langService.translate('profile') }}</h1>
+    <p class="page-sub">{{ langService.currentLang() === 'ar' ? 'إدارة معلوماتك الشخصية' : 'Manage your personal information' }}</p>
   </div>
 
   @if (isLoading()) {
   <div class="loading-state">
     <div class="spinner"></div>
-    <p>Loading...</p>
+    <p>{{ langService.currentLang() === 'ar' ? 'جاري التحميل...' : 'Loading...' }}</p>
   </div>
   }
 
@@ -17,31 +17,33 @@
 
     <!-- Profile Image -->
     <div class="section">
-      <h3 class="section-title">Profile Photo</h3>
+      <h3 class="section-title">{{ langService.currentLang() === 'ar' ? 'الصورة الشخصية' : 'Profile Photo' }}</h3>
       <div class="image-area">
         @if (imagePreview()) {
           <div class="image-preview-wrap">
             <img [src]="imagePreview()!" alt="Profile" class="profile-img" />
-            <button type="button" class="remove-btn" (click)="onRemoveImage()">✕ Remove</button>
+            <button type="button" class="remove-btn" (click)="onRemoveImage()">
+              ✕ {{ langService.currentLang() === 'ar' ? 'إزالة' : 'Remove' }}
+            </button>
           </div>
         } @else {
           <div class="image-placeholder" (click)="imgInput.click()">
             <span class="upload-icon">👤</span>
-            <span>Click to upload photo</span>
-            <small>JPG, PNG — max 5MB</small>
+            <span>{{ langService.currentLang() === 'ar' ? 'اضغط لرفع الصورة' : 'Click to upload photo' }}</span>
+            <small>JPG, PNG — {{ langService.currentLang() === 'ar' ? 'الحد الأقصى 5 ميجابايت' : 'max 5MB' }}</small>
           </div>
         }
         <div class="profile-meta">
           <p class="meta-item">
-            <span class="meta-label">Member since</span>
+            <span class="meta-label">{{ langService.translate('memberSince') }}</span>
             <span class="meta-value">{{ profile()?.memberSince | date:'MMMM yyyy' }}</span>
           </p>
           <p class="meta-item">
-            <span class="meta-label">Shop</span>
-            <span class="meta-value">{{ profile()?.shopName || 'No shop yet' }}</span>
+            <span class="meta-label">{{ langService.currentLang() === 'ar' ? 'المتجر' : 'Shop' }}</span>
+            <span class="meta-value">{{ profile()?.shopName || (langService.currentLang() === 'ar' ? 'لا يوجد متجر بعد' : 'No shop yet') }}</span>
           </p>
           @if (profile()?.isVerified) {
-            <span class="verified-badge">✓ Verified Seller</span>
+            <span class="verified-badge">✓ {{ langService.currentLang() === 'ar' ? 'بائع موثق' : 'Verified Seller' }}</span>
           }
         </div>
         <input #imgInput type="file" accept="image/*" (change)="onImageSelected($event)" hidden />
@@ -51,20 +53,20 @@
     <!-- Form -->
     <form [formGroup]="form" (ngSubmit)="onSave()">
       <div class="section">
-        <h3 class="section-title">Personal Details</h3>
+        <h3 class="section-title">{{ langService.currentLang() === 'ar' ? 'البيانات الشخصية' : 'Personal Details' }}</h3>
 
         <div class="fg">
-          <label class="fl">Full Name *</label>
-          <input class="fi" type="text" formControlName="name" placeholder="Your full name" />
+          <label class="fl">{{ langService.translate('fullName') }} *</label>
+          <input class="fi" type="text" formControlName="name" [placeholder]="langService.translate('fullNamePlaceholder')" />
           @if (form.get('name')?.invalid && form.get('name')?.touched) {
-            <span class="field-err">Name is required.</span>
+            <span class="field-err">{{ langService.translate('nameRequired') }}</span>
           }
         </div>
 
         <div class="fg">
-          <label class="fl">Bio</label>
+          <label class="fl">{{ langService.translate('bioDescription') }}</label>
           <textarea class="fi ta" formControlName="bio"
-            placeholder="Tell customers about yourself..."
+            [placeholder]="langService.translate('bioPlaceholder')"
             rows="4"></textarea>
         </div>
       </div>
@@ -78,8 +80,8 @@
 
       <div class="form-actions">
         <button class="save-btn" type="submit" [disabled]="isSaving() || form.invalid">
-          @if (isSaving()) { <span class="spinner-sm"></span> Saving... }
-          @else { Save Changes }
+          @if (isSaving()) { <span class="spinner-sm"></span> {{ langService.translate('savingChanges') || 'Saving...' }} }
+          @else { {{ langService.translate('saveChanges') }} }
         </button>
       </div>
     </form>

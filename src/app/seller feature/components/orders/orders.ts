@@ -1,6 +1,7 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { OrderStatus, OrderStatusLabel } from '../../../orders/models/order-status';
+import { LanguageService } from '../../../core/services/language.service';
 
 interface SellerOrder {
   id: string;
@@ -19,6 +20,7 @@ interface SellerOrder {
   styleUrl: './orders.css',
 })
 export class Orders {
+  protected readonly langService = inject(LanguageService);
   OrderStatus = OrderStatus;
   OrderStatusLabel = OrderStatusLabel;
 
@@ -33,6 +35,18 @@ export class Orders {
 
   selectedStatus = signal<OrderStatus | null>(null);
   statuses = Object.values(OrderStatus).filter(v => typeof v === 'number') as OrderStatus[];
+
+  translateOrderStatus(status: OrderStatus): string {
+    switch (status) {
+      case OrderStatus.Pending: return this.langService.translate('pending');
+      case OrderStatus.Processing: return this.langService.translate('processing');
+      case OrderStatus.Shipped: return this.langService.translate('shipped');
+      case OrderStatus.Delivered: return this.langService.translate('delivered');
+      case OrderStatus.Cancelled: return this.langService.translate('cancelled');
+      case OrderStatus.Refunded: return this.langService.translate('refunded');
+      default: return '';
+    }
+  }
 
   filteredOrders() {
     const status = this.selectedStatus();
@@ -53,6 +67,6 @@ export class Orders {
       [OrderStatus.Cancelled]:  'status-cancelled',
       [OrderStatus.Refunded]:   'status-refunded',
     };
-    return map[status];
+    return map[status] || '';
   }
 }

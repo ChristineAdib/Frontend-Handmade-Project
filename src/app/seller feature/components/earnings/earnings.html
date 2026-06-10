@@ -1,1 +1,3 @@
-<p>earnings works!</p>
+<p [dir]="langService.currentLang() === 'ar' ? 'rtl' : 'ltr'">
+  {{ langService.translate('earnings') }} {{ langService.currentLang() === 'ar' ? 'تعمل!' : 'works!' }}
+</p>

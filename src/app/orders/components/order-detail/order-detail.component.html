@@ -1,10 +1,12 @@
-<div class="detail-page">
-  <a routerLink="/orders" class="back-link">&larr; Back to Orders</a>
+<div class="detail-page" [dir]="langService.currentLang() === 'ar' ? 'rtl' : 'ltr'">
+  <a routerLink="/orders" class="back-link">
+    {{ langService.currentLang() === 'ar' ? '&rarr;' : '&larr;' }} {{ langService.translate('backToOrders') }}
+  </a>
 
   @if (orderService.isLoading()) {
     <div class="loading-state">
       <div class="custom-spinner"></div>
-      <p>Loading order details...</p>
+      <p>{{ langService.translate('loadingOrderDetails') }}</p>
     </div>
   }
 
@@ -15,67 +17,56 @@
   @if (orderService.selectedOrder(); as order) {
     <div class="detail-card">
       <div class="detail-header">
-        <h2>Order #{{ order.id | slice:0:8 }}</h2>
+        <h2>{{ langService.translate('order') }} #{{ order.id | slice:0:8 }}</h2>
         <div class="status-group">
-          <span class="order-badge" [ngClass]="{
-            'badge-pending': order.status === 1,
-            'badge-processing': order.status === 2,
-            'badge-shipped': order.status === 3,
-            'badge-delivered': order.status === 4,
-            'badge-cancelled': order.status === 5,
-            'badge-refunded': order.status === 6
-          }">{{ OrderStatusLabel[order.status] }}</span>
-          <span class="order-badge" [ngClass]="{
-            'badge-pending': order.paymentStatus === 1,
-            'badge-delivered': order.paymentStatus === 2,
-            'badge-cancelled': order.paymentStatus === 3
-          }">{{ PaymentStatusLabel[order.paymentStatus] }}</span>
+          <span class="order-badge" [ngClass]="getOrderStatusClass(order.status)">{{ translateOrderStatus(order.status) }}</span>
+          <span class="order-badge" [ngClass]="getPaymentStatusClass(order.paymentStatus)">{{ translatePaymentStatus(order.paymentStatus) }}</span>
         </div>
       </div>
 
       <div class="detail-grid">
         <div class="detail-field">
-          <div class="label">Shipping Address</div>
+          <div class="label">{{ langService.translate('shippingAddress') }}</div>
           <p class="value">{{ order.firstName }} {{ order.lastName }}<br>
           {{ order.street }}<br>
           {{ order.city }}, {{ order.country }}</p>
         </div>
         <div class="detail-field">
-          <div class="label">Delivery Method</div>
+          <div class="label">{{ langService.translate('deliveryMethod') }}</div>
           <p class="value">{{ order.deliveryMethodName }}<br>
           <small>{{ order.deliveryMethodCost | currency:'EGP':'symbol' }}</small></p>
         </div>
         <div class="detail-field">
-          <div class="label">Order Date</div>
+          <div class="label">{{ langService.translate('orderDate') }}</div>
           <p class="value">{{ order.orderDate | date:'medium' }}</p>
         </div>
         <div class="detail-field">
-          <div class="label">Buyer</div>
+          <div class="label">{{ langService.translate('buyer') }}</div>
           <p class="value">{{ order.buyerEmail }}</p>
         </div>
       </div>
 
       @if (order.notes) {
         <div class="alert alert-info" style="font-size: 13px; background: #f2ebe0; border-color: #e0d5c1; color: #6b5a4a;">
-          <strong>Notes:</strong> {{ order.notes }}
+          <strong>{{ langService.translate('notes') }}</strong> {{ order.notes }}
         </div>
       }
 
       @if (order.couponCode) {
         <div style="margin-bottom: 1rem; font-size: 13px; color: #6b5a4a;">
-          Coupon applied: <strong>{{ order.couponCode }}</strong>
+          {{ langService.translate('couponApplied') }} <strong>{{ order.couponCode }}</strong>
         </div>
       }
 
       <div class="items-section">
-        <h3>Items</h3>
+        <h3>{{ langService.translate('items') }}</h3>
         <table class="items-table">
           <thead>
             <tr>
-              <th>Product</th>
-              <th>Price</th>
-              <th>Qty</th>
-              <th>Total</th>
+              <th>{{ langService.translate('productTitle') }}</th>
+              <th>{{ langService.translate('priceLabel') }}</th>
+              <th>{{ langService.translate('qtyLabel') }}</th>
+              <th>{{ langService.translate('totalLabel') }}</th>
             </tr>
           </thead>
           <tbody>
@@ -98,21 +89,21 @@
 
       <div class="summary-section">
         <div class="summary-row">
-          <span>Subtotal</span>
+          <span>{{ langService.translate('subtotal') }}</span>
           <span>{{ order.subTotal | currency:'EGP':'symbol' }}</span>
         </div>
         @if (order.discountAmount) {
           <div class="summary-row discount">
-            <span>Discount</span>
+            <span>{{ langService.currentLang() === 'ar' ? 'خصم' : 'Discount' }}</span>
             <span>-{{ order.discountAmount | currency:'EGP':'symbol' }}</span>
           </div>
         }
         <div class="summary-row">
-          <span>Delivery</span>
+          <span>{{ langService.translate('delivery') }}</span>
           <span>{{ order.deliveryMethodCost | currency:'EGP':'symbol' }}</span>
         </div>
         <div class="summary-row total">
-          <span>Total</span>
+          <span>{{ langService.translate('totalLabel') }}</span>
           <span>{{ order.total | currency:'EGP':'symbol' }}</span>
         </div>
       </div>
@@ -122,11 +113,13 @@
           <button (click)="goToPayment()"
                   class="btn-pay"
                   [disabled]="paymentService.isLoading()">
-            {{ paymentService.isLoading() ? 'Processing...' : 'Pay Now' }}
+            {{ paymentService.isLoading() ? langService.translate('processing') : langService.translate('completePayment') }}
           </button>
         }
         @if (order.status === 1) {
-          <button (click)="orderService.cancelOrder(order.id)" class="btn-cancel-order">Cancel Order</button>
+          <button (click)="cancelOrder(order.id)" class="btn-cancel-order">
+            {{ langService.currentLang() === 'ar' ? 'إلغاء الطلب' : 'Cancel Order' }}
+          </button>
         }
       </div>
     </div>
