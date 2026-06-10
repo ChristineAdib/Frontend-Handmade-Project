@@ -1,6 +1,6 @@
 import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { OrderResponse, OrderSummary, CreateOrderRequest, UpdateOrderStatusRequest, OrderQuery } from '../models/order-models';
 import { PagedResult } from '../../models/paged-result';
@@ -124,4 +124,14 @@ export class OrderService {
       this.error.set('Failed to load delivery methods.');
     }
   }
+
+  getSellerOrders(shopId: string, page: number = 1): Observable<any> {
+  const params = new HttpParams()
+    .set('pageNumber', page)
+    .set('pageSize', 10);
+  return this.http.get<any>(`${this.apiUrl}/seller/${shopId}`, { params });
+}
+getOrderById(id: string): Observable<any> {
+  return this.http.get<any>(`${this.apiUrl}/${id}`);
+}
 }

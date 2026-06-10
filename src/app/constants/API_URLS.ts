@@ -58,6 +58,8 @@ export  const API_URLS = {
     getMyOrders: `${base_domain}api/orders`,
     updateOrderStatus: (id: string) => `${base_domain}api/orders/${id}/status`,
     cancelOrder: (id: string) => `${base_domain}api/orders/${id}/cancel`,
+    getSellerOrders: (shopId: string, page: number) => 
+  `${base_domain}/api/orders/seller/${shopId}?pageNumber=${page}&pageSize=10`,
 
     // Payments
     createPaymentIntent: (orderId: string) => `${base_domain}api/payments/create-intent/${orderId}`,
@@ -71,10 +73,10 @@ export  const API_URLS = {
     //wishlist
 
 
-getWishList: `${base_domain}api/wishlist`,
-  addToWishList: `${base_domain}api/wishlist`,
+getWishList: `${base_domain}/api/wishlist`,
+  addToWishList: `${base_domain}/api/wishlist`,
   removeFromWishList: (productId: string) => 
-    `${base_domain}api/wishlist/${productId}`,
+    `${base_domain}/api/wishlist/${productId}`,
   
   
   
