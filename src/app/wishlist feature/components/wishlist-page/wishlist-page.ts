@@ -14,18 +14,17 @@ import { LanguageService } from '../../../core/services/language.service';
   selector: 'app-wishlist-page',
   standalone: true,
   imports: [CommonModule, RouterModule],
-  templateUrl: './wishlist-page.html',  
-  styleUrl: './wishlist-page.css', 
+  templateUrl: './wishlist-page.html',
+  styleUrl: './wishlist-page.css',
 })
 export class WishlistPageComponent implements OnInit {
   private wishlistService = inject(WishlistService);
-  private cartApiService = inject(CartApiService);
-  private toastr = inject(ToastrService);
-  public langService = inject(LanguageService);
+  private cartApi = inject(CartApiService);
 
   wishlist: IWishList | null = null;
   isLoading = true;
   errorMessage = '';
+  addingToCart: string | null = null; // عشان نعمل loading على الزرار
 
   ngOnInit(): void {
     this.loadWishList();
@@ -48,37 +47,15 @@ export class WishlistPageComponent implements OnInit {
 
   removeItem(productId: string): void {
     this.wishlistService.removeItem(productId).subscribe({
-      next: (data) => {
-        this.wishlist = data;
-        this.toastr.success(
-          this.langService.currentLang() === 'ar' ? 'تمت الإزالة من قائمة الأمنيات' : 'Removed from wishlist'
-        );
-      },
-      error: () => {
-        this.errorMessage = 'Failed to remove item.';
-      },
+      next: (data) => { this.wishlist = data; },
+      error: () => { this.errorMessage = 'Failed to remove item.'; },
     });
   }
 
-  addToCart(productId: string): void {
-    this.cartApiService.addItem(productId, 1).then((res) => {
-      if (res) {
-        this.toastr.success(
-          this.langService.currentLang() === 'ar'
-            ? 'تمت إضافة المنتج إلى السلة!'
-            : 'Product added to cart!'
-        );
-      } else {
-        this.toastr.error(
-          this.langService.currentLang() === 'ar'
-            ? 'فشل إضافة المنتج إلى السلة.'
-            : 'Failed to add item to cart.'
-        );
-      }
-    }).catch(err => {
-      console.error('Add to cart from wishlist error:', err);
-      this.toastr.error('Failed to add item to cart.');
-    });
+  async addToCart(productId: string): Promise<void> {
+    this.addingToCart = productId;
+    await this.cartApi.addItem(productId, 1);
+    this.addingToCart = null;
   }
 
   getImageUrl(item: IWishListItem): string {
