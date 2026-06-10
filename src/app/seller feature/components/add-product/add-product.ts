@@ -4,7 +4,7 @@ import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ProductService } from '../../../seller feature/services/product-service';
 import { ShopService } from '../../../shop feature/services/shop-service';
-import { CategorySummary } from '../../../Categories/Models/CategorySummary';
+  import { CategorySummary } from '../../../Categories/Models/CategorySummary';
 import { Input } from '@angular/core';
 
 @Component({

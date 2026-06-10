@@ -1,0 +1,29 @@
+<p>categories works!</p>
+<section class="categories-section">
+  <div class="categories-header">
+    <span class="eyebrow">تسوق حسب الفئة</span>
+    <h2 class="section-title">اكتشفي الحرف اليدوية</h2>
+    <p class="section-subtitle">
+      كل قطعة تحكي قصة — من الفخار المشوي إلى خرز الألوان والكروشيه المنسوج بالحب
+    </p>
+  </div>
+
+  <div class="categories-grid">
+    <div class="category-card" *ngFor="let cat of categories" (click)="navigateTo(cat.slug)">
+      <div class="diamond-wrapper">
+        <div class="diamond-border"></div>
+        <div class="diamond-image">
+          <img [src]="cat.image" [alt]="cat.name" loading="lazy" />
+          <div class="diamond-overlay"></div>
+        </div>
+      </div>
+      <div class="category-info">
+        <h3>{{ cat.name }}</h3>
+        <span class="product-count">{{ cat.count }} منتج</span>
+        <a class="explore-link" [routerLink]="['/shop']" [queryParams]="{ category: cat.slug }">
+          تصفح الفئة <span class="arrow">←</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
