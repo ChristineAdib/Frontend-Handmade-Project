@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 import { HeroComponent } from '../hero/hero';
-import { FeaturesSectionComponent } from '../features-section/features-section';
+//import { FeaturesSectionComponent } from '../features-section/features-section';
 import { CategoriesComponent } from '../categories/categories';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [HeroComponent, FeaturesSectionComponent, CategoriesComponent],
+  imports: [HeroComponent, CategoriesComponent],
   templateUrl: './home.html',
   styleUrl: './home.css'
 })
