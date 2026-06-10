@@ -9,7 +9,7 @@ import { ICreateShop } from '../models/icreate-shop';
 import { IUpdateShop } from '../models/iupdate-shop';
 import { AuthService } from '../../auth/Services/auth';
 import { map } from 'rxjs/operators';
-
+import { IShopWithProducts } from '../models/ishop-with-products';
 
 
 
@@ -32,8 +32,10 @@ export class ShopService {
     return this.http.get<IShop>(API_URLS.getShopById(id));
   }
 
-  getShopWithProducts(id: string): Observable<IShop> {
-    return this.http.get<IShop>(API_URLS.getShopWithProducts(id));
+
+
+  getShopWithProducts(id: string): Observable<IShopWithProducts> {
+  return this.http.get<IShopWithProducts>(API_URLS.getShopWithProducts(id));
   }
 
   getTopRatedShops(count: number = 10): Observable<IShop[]> {

@@ -1,105 +1,78 @@
-<div class="wl-page">
-  <div class="wl-hero">
-    <div class="wl-hero-left">
-      <h1>My Wishlist</h1>
-      <p>YOUR SAVED PIECES</p>
+<div class="wishlist-page">
+  <div class="wishlist-container">
+
+    <!-- Header -->
+    <div class="wishlist-header">
+      <h2>My Wishlist</h2>
+      @if (wishlist) {
+        <span class="wishlist-count">{{ wishlist.totalItems }} {{ wishlist.totalItems === 1 ? 'item' : 'items' }}</span>
+      }
     </div>
-    @if (wishlist) {
-      <div class="wl-hero-badge">
-        <i class="ti ti-heart" aria-hidden="true"></i>
-        {{ wishlist.totalItems }} {{ wishlist.totalItems === 1 ? 'item' : 'items' }}
+
+    <!-- Error -->
+    @if (errorMessage) {
+      <div class="alert-danger">{{ errorMessage }}</div>
+    }
+
+    <!-- Loading -->
+    @if (isLoading) {
+      <div class="empty-state">
+        <div class="custom-spinner"></div>
+        <p>Loading wishlist...</p>
       </div>
     }
-  </div>
 
-  @if (errorMessage) {
-    <div class="alert-danger">{{ errorMessage }}</div>
-  }
+    <!-- Items -->
+    @if (!isLoading && wishlist) {
+      @if (wishlist.items.length > 0) {
+        <div class="wishlist-grid">
+          @for (item of wishlist.items; track item.productId) {
+            <div class="wishlist-card">
 
-  @if (isLoading) {
-    <div class="wl-empty">
-      <div class="custom-spinner"></div>
-      <p>Loading wishlist...</p>
-    </div>
-  }
-
-  @if (!isLoading && wishlist) {
-    @if (wishlist.items.length > 0) {
-      <div class="wl-grid">
-        @for (item of wishlist.items; track item.productId) {
-          <div class="wl-card">
-
-            <div class="wl-img">
-              @if (getImageUrl(item)) {
-                <img [src]="getImageUrl(item)" [alt]="item.titleEn" loading="lazy">
-              } @else {
-                <div class="wl-img-placeholder">
-                  <i class="ti ti-photo" aria-hidden="true"></i>
-                </div>
-              }
-
-              @if (item.discountPrice) {
-                <span class="wl-badge-discount">
-                  -{{ ((item.price - item.discountPrice) / item.price * 100) | number:'1.0-0' }}%
-                </span>
-              }
-
-              <button class="btn-remove" (click)="removeItem(item.productId)" aria-label="Remove from wishlist">
-                <i class="ti ti-x" aria-hidden="true"></i>
+              <!-- Remove Button -->
+              <button class="btn-remove" (click)="removeItem(item.productId)" title="Remove from wishlist">
+                &times;
               </button>
-            </div>
 
-            <div class="wl-body">
-              <p class="wl-title">{{ item.titleEn }}</p>
-              <p class="wl-subtitle">{{ item.titleAr }}</p>
-
-              <div class="wl-price">
-                @if (item.discountPrice) {
-                  <span class="old-price">EGP {{ item.price }}</span>
-                  <span class="sale-price">EGP {{ item.discountPrice }}</span>
+              <!-- Image -->
+              <div class="card-image">
+                @if (getImageUrl(item)) {
+                  <img [src]="getImageUrl(item)" [alt]="item.titleEn" loading="lazy">
                 } @else {
-                  <span class="sale-price">EGP {{ item.price }}</span>
+                  <div class="img-placeholder"></div>
                 }
               </div>
 
-              <button class="btn-cart" 
-        (click)="addToCart(item.productId)"
-        [disabled]="addingToCart === item.productId">
-  @if (addingToCart === item.productId) {
-    <i class="ti ti-loader" aria-hidden="true" style="animation: spin 0.8s linear infinite;"></i>
-    Adding...
-  } @else {
-    <i class="ti ti-shopping-cart" aria-hidden="true"></i>
-    Add to cart
-  }
-</button>
+              <!-- Details -->
+              <div class="card-body">
+                <h4 class="item-title">{{ item.titleEn }}</h4>
+                <p class="item-subtitle">{{ item.titleAr }}</p>
+
+                <div class="item-price">
+                  @if (item.discountPrice) {
+                    <span class="old-price">{{ item.price | currency:'EGP':'symbol' }}</span>
+                    <span class="sale-price">{{ item.discountPrice | currency:'EGP':'symbol' }}</span>
+                  } @else {
+                    <span class="sale-price">{{ item.price | currency:'EGP':'symbol' }}</span>
+                  }
+                </div>
+
+                <button class="btn-cart">Add to Cart</button>
+              </div>
+
             </div>
-
-          </div>
-        }
-
-        <div class="wl-card wl-card-browse">
-          <div class="browse-icon">
-            <i class="ti ti-plus" aria-hidden="true"></i>
-          </div>
-          <p>Discover more<br>handmade pieces</p>
-          <a routerLink="/products" class="btn-browse">Browse</a>
+          }
         </div>
-
-      </div>
-    } @else {
-      <div class="wl-empty">
-        <div class="empty-icon-wrap">
-          <i class="ti ti-heart" aria-hidden="true"></i>
+      } @else {
+        <!-- Empty State -->
+        <div class="empty-state">
+          <div class="empty-icon">♡</div>
+          <h3>Your wishlist is empty</h3>
+          <p>Save your favorite handmade items here and come back to them anytime.</p>
+          <a routerLink="/products" class="btn-browse">Browse Products</a>
         </div>
-        <h3>Your wishlist is empty</h3>
-        <p>Save your favorite handmade items here and come back to them anytime.</p>
-        <a routerLink="/products" class="btn-browse">
-          <i class="ti ti-arrow-right" aria-hidden="true"></i>
-          Browse products
-        </a>
-      </div>
+      }
     }
-  }
 
+  </div>
 </div>
