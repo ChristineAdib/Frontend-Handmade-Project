@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 
@@ -8,14 +8,19 @@ import { AuthResponse } from '../models/auth-response.mode';
 import { ApiResponse } from '../models/api-response.model';
 import { environment } from '../../../environments/environment';
 
+type AuthTab = 'login' | 'register' | 'otp';
+
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
 
   private http = inject(HttpClient);
-private apiUrl = `${environment.apiUrl}/api/auth`;
-
+  private apiUrl = `${environment.apiUrl}/api/auth`;
+  // ── Shared UI state ────────────────────────────────────────
+  activeTab  = signal<AuthTab>('login');
+  otpEmail   = signal<string>('');
+  errorMsg   = signal<string | null>(null);
   private logoutTimer: any;
 
   login(model: LoginRequest): Observable<ApiResponse<AuthResponse>> {
@@ -30,6 +35,28 @@ private apiUrl = `${environment.apiUrl}/api/auth`;
         }
       })
     );
+  }
+
+  loginWithGoogle(credential: string): Observable<ApiResponse<AuthResponse>> {
+    return this.http.post<ApiResponse<AuthResponse>>(
+      `${this.apiUrl}/google`,
+      { credential }
+    ).pipe(
+      tap(res => {
+        if (res.success && res.data) {
+          this.setSession(res.data);
+          this.startTokenTimer(res.data.tokenExpiry);
+        }
+      })
+    );
+  }
+
+  forgotPassword(email: string): Observable<ApiResponse<any>> {
+    return this.http.post<ApiResponse<any>>(`${this.apiUrl}/forgot-password`, { email });
+  }
+
+  resetPassword(model: any): Observable<ApiResponse<any>> {
+    return this.http.post<ApiResponse<any>>(`${this.apiUrl}/reset-password`, model);
   }
 
   register(model: RegisterRequest) {
@@ -75,6 +102,10 @@ private apiUrl = `${environment.apiUrl}/api/auth`;
     localStorage.setItem('token', auth.token);
     localStorage.setItem('user', JSON.stringify(auth));
     localStorage.setItem('expiry', auth.tokenExpiry);
+  }
+
+  updateSession(auth: AuthResponse) {
+    this.setSession(auth);
   }
 
   getToken(): string | null {

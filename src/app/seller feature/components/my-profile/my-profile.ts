@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { SellerService } from '../../../seller feature/services/seller-service';
 import { ISellerProfile } from '../../../seller feature/models/iseller-profile';
+import { LanguageService } from '../../../core/services/language.service';
 
 @Component({
   selector: 'app-my-profile',
@@ -14,6 +15,7 @@ import { ISellerProfile } from '../../../seller feature/models/iseller-profile';
 export class MyProfile implements OnInit {
   private sellerService = inject(SellerService);
   private fb = inject(FormBuilder);
+  protected readonly langService = inject(LanguageService);
 
   profile = signal<ISellerProfile | null>(null);
   isLoading = signal(true);
@@ -40,7 +42,7 @@ export class MyProfile implements OnInit {
         this.isLoading.set(false);
       },
       error: () => {
-        this.errorMsg.set('Failed to load profile');
+        this.errorMsg.set(this.langService.currentLang() === 'ar' ? 'فشل تحميل الملف الشخصي' : 'Failed to load profile');
         this.isLoading.set(false);
       }
     });
@@ -76,12 +78,12 @@ export class MyProfile implements OnInit {
       next: updated => {
         this.profile.set(updated);
         this.isSaving.set(false);
-        this.successMsg.set('Profile updated successfully!');
+        this.successMsg.set(this.langService.currentLang() === 'ar' ? 'تم تحديث الملف الشخصي بنجاح!' : 'Profile updated successfully!');
         setTimeout(() => this.successMsg.set(null), 3000);
       },
       error: () => {
         this.isSaving.set(false);
-        this.errorMsg.set('Failed to update profile. Please try again.');
+        this.errorMsg.set(this.langService.currentLang() === 'ar' ? 'فشل تحديث الملف الشخصي. يرجى المحاولة مرة أخرى.' : 'Failed to update profile. Please try again.');
       }
     });
   }

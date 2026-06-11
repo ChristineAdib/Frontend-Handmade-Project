@@ -4,12 +4,12 @@
   <div class="text-white text-center py-5"
     style="background: linear-gradient(135deg, #2c1810, #8B4513);">
     <div class="container py-3">
-      <h1 class="display-4 fw-bold mb-3">🧶 Welcome to Handoura</h1>
+      <h1 class="display-4 fw-bold mb-3">🧶 {{ langService.translate('welcomeToHandora') }}</h1>
       <p class="fs-5 mb-4 text-white-50">
-        Discover unique handmade products made with love in Egypt
+        {{ langService.translate('discoverUniqueProducts') }}
       </p>
       <a routerLink="/products" class="btn btn-light btn-lg fw-bold px-5">
-        Shop Now 🛍️
+        {{ langService.translate('shopNow') }}
       </a>
     </div>
   </div>
@@ -20,7 +20,7 @@
     <div class="text-center mb-5">
       <button class="btn btn-outline-dark mb-3"
         (click)="showClock = !showClock">
-        {{ showClock ? '🙈 Hide Clock' : '🕐 Show Clock' }}
+        {{ showClock ? langService.translate('hideClock') : langService.translate('showClock') }}
       </button>
 
       @if (showClock) {
@@ -33,16 +33,16 @@
     <!--  Search Section — Parent Input  -->
     <div class="row justify-content-center mb-2">
       <div class="col-md-6">
-        <h5 class="fw-bold text-center mb-3">🔍 Search Products</h5>
+        <h5 class="fw-bold text-center mb-3">{{ langService.translate('searchProducts') }}</h5>
         <input
           type="text"
           class="form-control form-control-lg shadow-sm"
-          placeholder="Search by product name..."
+          [placeholder]="langService.translate('searchPlaceholder')"
           [(ngModel)]="searchTerm"
         />
         @if (searchTerm) {
           <small class="text-muted ms-1">
-            Showing results for: <strong>{{ searchTerm }}</strong>
+            {{ langService.translate('showingResultsFor') }}: <strong>{{ searchTerm }}</strong>
           </small>
         }
       </div>

@@ -1,14 +1,14 @@
-<div class="orders-page">
+<div class="orders-page" [dir]="langService.currentLang() === 'ar' ? 'rtl' : 'ltr'">
   <div class="page-head">
-    <h2>My Orders</h2>
-    <a routerLink="/cart" class="btn-new-order">🛒 Cart</a>
+    <h2>{{ langService.translate('myOrders') }}</h2>
+    <a routerLink="/cart" class="btn-new-order">🛒 {{ langService.translate('cartLabel') }}</a>
   </div>
 
   <!-- Loading -->
   @if (orderService.isLoading()) {
     <div class="loading-state">
       <div class="custom-spinner"></div>
-      <p>Loading orders...</p>
+      <p>{{ langService.translate('loadingOrders') }}</p>
     </div>
   }
 
@@ -21,9 +21,9 @@
   @if (!orderService.isLoading() && orderService.orders().length === 0) {
     <div class="empty-state">
       <span class="empty-icon">&#x1F6D2;</span>
-      <h3>No orders yet</h3>
-      <p>Start shopping and your orders will appear here.</p>
-      <a routerLink="/products" class="btn-primary-custom">Start Shopping</a>
+      <h3>{{ langService.translate('noOrdersYetTitle') }}</h3>
+      <p>{{ langService.translate('noOrdersYetDesc') }}</p>
+      <a routerLink="/products" class="btn-primary-custom">{{ langService.translate('startShopping') }}</a>
     </div>
   }
 
@@ -35,26 +35,22 @@
           <span class="order-id">#{{ order.id | slice:0:8 }}</span>
           <span class="order-date">{{ order.orderDate | date:'mediumDate' }}</span>
           <span class="order-badge" [ngClass]="getStatusClass(order.status)">
-            {{ OrderStatusLabel[order.status] }}
+            {{ translateOrderStatus(order.status) }}
           </span>
         </div>
       </div>
 
       <div class="order-card-body">
         <div class="order-stats">
-          <span>{{ order.itemCount }} item(s)</span>
+          <span>{{ order.itemCount }} {{ langService.translate('itemLabel') }}</span>
           <span class="order-total">{{ order.total | currency:'EGP':'symbol' }}</span>
-          <span class="payment-badge" [ngClass]="{
-            'pay-pending': order.paymentStatus === 1,
-            'pay-paid': order.paymentStatus === 2,
-            'pay-failed': order.paymentStatus === 3
-          }">{{ PaymentStatusLabel[order.paymentStatus] }}</span>
+          <span class="payment-badge" [ngClass]="getPaymentStatusClass(order.paymentStatus)">{{ translatePaymentStatus(order.paymentStatus) }}</span>
         </div>
 
         <div class="order-actions">
-          <a [routerLink]="['/orders', order.id]" class="btn-detail">Details</a>
+          <a [routerLink]="['/orders', order.id]" class="btn-detail">{{ langService.translate('details') }}</a>
           @if (order.status === 1) {
-            <button (click)="cancelOrder(order.id)" class="btn-cancel">Cancel</button>
+            <button (click)="cancelOrder(order.id)" class="btn-cancel">{{ langService.translate('cancel') }}</button>
           }
         </div>
       </div>

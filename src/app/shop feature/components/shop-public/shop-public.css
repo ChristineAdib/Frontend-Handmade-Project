@@ -129,6 +129,25 @@
 }
 .follow-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
+.review-action-btn {
+  padding: 12px 24px;
+  border: 1.5px solid #7a5433;
+  color: #fff; background: #7a5433;
+  border-radius: 24px;
+  font-size: 14px; font-weight: 600;
+  cursor: pointer; transition: all 0.3s;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  letter-spacing: 0.05em;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.review-action-btn:hover {
+  background: #5d3f26; border-color: #5d3f26;
+  box-shadow: 0 4px 12px rgba(122, 84, 51, 0.2);
+}
+.review-action-btn .material-symbols-outlined { font-size: 20px; }
+
 .share-btn {
   width: 48px; height: 48px;
   border: 1.5px solid #d4c3b8;
@@ -352,6 +371,213 @@
   color: #5c5e63; font-size: 14px;
 }
 
+/* Reviews Tab Styling */
+.rating-summary-card {
+  background: #fff;
+  border: 1px solid #E5E1DC;
+  border-radius: 16px;
+  text-align: center;
+  padding: 32px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.rating-summary-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(139, 69, 19, 0.06);
+}
+
+.summary-score {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 52px;
+  font-weight: 800;
+  color: #2c1810;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.stars .fill-star, .stars .empty-star {
+  font-size: 24px;
+}
+
+.write-review-card {
+  background: #fff;
+  border: 1px solid #E5E1DC;
+  border-radius: 16px;
+  padding: 32px;
+  margin-top: 24px;
+}
+
+.write-review-card .card-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  color: #2c1810;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.stars-input {
+  display: flex;
+  gap: 6px;
+}
+
+.star-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  outline: none;
+  transition: transform 0.2s ease;
+}
+
+.star-btn:hover {
+  transform: scale(1.15);
+}
+
+.star-btn span {
+  font-size: 32px;
+  transition: color 0.2s ease;
+}
+
+.luxury-textarea {
+  background-color: #fdfcfb;
+  border: 1.5px solid #e5e1dc;
+  border-radius: 12px;
+  padding: 14px;
+  font-size: 14px;
+  color: #2c1810;
+  font-family: inherit;
+  transition: all 0.3s ease;
+  width: 100%;
+  resize: vertical;
+}
+
+.luxury-textarea:focus {
+  border-color: #8B4513;
+  background-color: #fff;
+  box-shadow: 0 0 0 4px rgba(139, 69, 19, 0.08);
+}
+
+/* Luxury button */
+.btn-luxury-primary {
+  background-color: #8B4513;
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 12px 24px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(139, 69, 19, 0.15);
+}
+
+.btn-luxury-primary:hover:not(:disabled) {
+  background-color: #70370f;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(139, 69, 19, 0.25);
+}
+
+.btn-luxury-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Review log list */
+.review-item-card {
+  background: #fdfcfb;
+  border: 1px solid #e5e1dc;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 16px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.review-item-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.03);
+}
+
+.reviewer-name {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #2c1810;
+}
+
+.review-date {
+  font-size: 12px;
+  color: #8a786d;
+}
+
+.review-comment-text {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #5c4a3f;
+  margin-top: 12px;
+}
+
+.empty-reviews {
+  background: #fff;
+  border: 1px solid #e5e1dc;
+  border-radius: 16px;
+  padding: 48px;
+  text-align: center;
+  color: #8a786d;
+}
+
+.empty-reviews-icon {
+  font-size: 48px;
+  color: #d5cbc4;
+  margin-bottom: 12px;
+}
+
+.reviews-pagination-row {
+  margin-top: 32px;
+  padding-top: 16px;
+  border-top: 1px solid #e5e1dc;
+}
+
+.reviews-pagination-row .btn-outline-dark {
+  border: 1.5px solid #1b1c1c;
+  background: transparent;
+  color: #1b1c1c;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 13px;
+  padding: 6px 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.reviews-pagination-row .btn-outline-dark:hover:not(:disabled) {
+  background: #1b1c1c;
+  color: #fff;
+}
+
+.reviews-pagination-row .btn-outline-dark:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Spinner border style for buttons */
+.spinner-border {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  vertical-align: text-bottom;
+  border: 0.2em solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spinner-border .75s linear infinite;
+}
+
+@keyframes spinner-border {
+  to { transform: rotate(360deg); }
+}
+
 @media (max-width: 768px) {
   .hero-inner { padding: 40px 16px 32px; }
   .shop-name { font-size: 32px; line-height: 40px; }
@@ -360,4 +586,11 @@
   .content-inner { padding: 0 16px; }
   .tabs-inner { padding: 0 16px; }
   .tab { font-size: 16px; padding: 16px 12px; }
+  
+  .rating-summary-card, .write-review-card {
+    padding: 20px;
+  }
+  .summary-score {
+    font-size: 42px;
+  }
 }

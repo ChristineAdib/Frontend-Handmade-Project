@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { OrderService } from '../../services/order.service';
+import { LanguageService } from '../../../core/services/language.service';
+import { CartApiService } from '../../services/cart-api.service';
 
 @Component({
   selector: 'app-checkout',
@@ -15,6 +17,8 @@ export class CheckoutComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
   readonly orderService = inject(OrderService);
+  protected readonly langService = inject(LanguageService);
+  private readonly cartApiService = inject(CartApiService);
 
   checkoutForm = this.fb.group({
     firstName: ['', Validators.required],
@@ -47,6 +51,7 @@ export class CheckoutComponent implements OnInit {
 
     const order = await this.orderService.createOrder(dto);
     if (order) {
+      await this.cartApiService.getCart();
       this.router.navigate(['/payment', order.id]);
     }
   }

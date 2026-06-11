@@ -1,0 +1,545 @@
+<div class="dashboard-container">
+  <!-- Sidebar Navigation -->
+  <aside class="dashboard-sidebar" [class.open]="sidebarOpen()">
+    <div class="sidebar-header">
+      <div class="brand-logo">
+        <span class="material-symbols-outlined logo-icon">flatware</span>
+        <span class="brand-name">Handora</span>
+      </div>
+      <button class="btn-close-sidebar d-md-none" (click)="toggleSidebar()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <!-- User Quick Info -->
+    <div class="sidebar-user-card" *ngIf="profile()">
+      <div class="avatar-wrapper">
+        <img [src]="profile()?.profileImage || 'assets/default-avatar.png'" alt="Avatar" class="user-avatar" onerror="this.src='https://api.dicebear.com/7.x/adventurer/svg?seed=handora'"/>
+        <span class="user-status-dot"></span>
+      </div>
+      <div class="user-info">
+        <h6 class="user-name">{{ profile()?.name }}</h6>
+        <span class="user-email">{{ profile()?.email }}</span>
+      </div>
+    </div>
+
+    <!-- Navigation Menu -->
+    <nav class="sidebar-menu">
+      <button class="menu-item" [class.active]="activeTab() === 'Overview'" (click)="selectTab('Overview')">
+        <span class="material-symbols-outlined">dashboard</span>
+        <span class="menu-text">{{ langService.translate('overview') }}</span>
+      </button>
+
+      <button class="menu-item" [class.active]="activeTab() === 'Orders'" (click)="selectTab('Orders')">
+        <span class="material-symbols-outlined">shopping_bag</span>
+        <span class="menu-text">{{ langService.translate('myOrders') }}</span>
+        <span class="badge-count" *ngIf="totalOrdersCount() > 0">{{ totalOrdersCount() }}</span>
+      </button>
+
+      <button class="menu-item" [class.active]="activeTab() === 'Wishlist'" (click)="selectTab('Wishlist')">
+        <span class="material-symbols-outlined">favorite</span>
+        <span class="menu-text">{{ langService.translate('myWishlist') }}</span>
+        <span class="badge-count" *ngIf="wishlistCount() > 0">{{ wishlistCount() }}</span>
+      </button>
+
+      <button class="menu-item" [class.active]="activeTab() === 'Shops'" (click)="selectTab('Shops')">
+        <span class="material-symbols-outlined">storefront</span>
+        <span class="menu-text">{{ langService.translate('followedShops') }}</span>
+        <span class="badge-count" *ngIf="followedShopsCount() > 0">{{ followedShopsCount() }}</span>
+      </button>
+
+      <button class="menu-item" [class.active]="activeTab() === 'Reviews'" (click)="selectTab('Reviews')">
+        <span class="material-symbols-outlined">rate_review</span>
+        <span class="menu-text">{{ langService.translate('myReviews') }}</span>
+        <span class="badge-count" *ngIf="reviewsCount() > 0">{{ reviewsCount() }}</span>
+      </button>
+
+      <hr class="menu-divider" />
+
+      <a class="menu-item" routerLink="/profile/edit">
+        <span class="material-symbols-outlined">manage_accounts</span>
+        <span class="menu-text">{{ langService.translate('editProfile') }}</span>
+      </a>
+
+      <button class="menu-item logout-btn" (click)="logout()">
+        <span class="material-symbols-outlined">logout</span>
+        <span class="menu-text">{{ langService.translate('signOut') }}</span>
+      </button>
+    </nav>
+  </aside>
+
+  <!-- Mobile Top Bar -->
+  <header class="mobile-top-bar d-md-none">
+    <button class="btn-toggle-sidebar" (click)="toggleSidebar()">
+      <span class="material-symbols-outlined">menu</span>
+    </button>
+    <div class="mobile-brand">
+      <span class="brand-name">Handora Hub</span>
+    </div>
+    <div class="mobile-avatar" routerLink="/profile/edit" *ngIf="profile()">
+      <img [src]="profile()?.profileImage || 'assets/default-avatar.png'" alt="Avatar" onerror="this.src='https://api.dicebear.com/7.x/adventurer/svg?seed=handora'"/>
+    </div>
+  </header>
+
+  <!-- Main Content Area -->
+  <main class="dashboard-main">
+    <div class="container-fluid py-4">
+      
+      <!-- LOADING STATE: PROFILE -->
+      <div *ngIf="isLoadingProfile() && !profile()" class="skeleton-wrapper">
+        <div class="skeleton skeleton-banner"></div>
+        <div class="skeleton skeleton-card mt-4"></div>
+      </div>
+
+      <!-- MAIN CONTENT WRAPPER -->
+      <div *ngIf="profile() && !isLoadingProfile()">
+        
+        <!-- ================= OVERVIEW TAB ================= -->
+        <div *ngIf="activeTab() === 'Overview'" class="tab-view animate-fade">
+          
+          <!-- Cover Banner -->
+          <div class="welcome-banner">
+            <div class="banner-content">
+              <h1>{{ langService.translate('welcomeBack') }}, {{ profile()?.name }}! ✨</h1>
+              <p>{{ langService.translate('bannerDesc') }}</p>
+            </div>
+            <div class="banner-decor"></div>
+          </div>
+
+          <!-- Profile Details Section -->
+          <section class="profile-card-section mt-4">
+            <div class="profile-detail-card card-glow">
+              <div class="card-header-bg"></div>
+              <div class="profile-body px-4 pb-4">
+                <div class="profile-avatar-row">
+                  <div class="avatar-circle">
+                    <img [src]="profile()?.profileImage || 'assets/default-avatar.png'" alt="Avatar" onerror="this.src='https://api.dicebear.com/7.x/adventurer/svg?seed=handora'"/>
+                  </div>
+                  <div class="profile-actions ms-auto d-flex gap-2">
+                    <a routerLink="/become-seller" class="btn btn-secondary-accent d-flex align-items-center gap-2" style="background-color: #c8813a; color: white; border: none; border-radius: 8px; padding: 8px 16px;">
+                      <span class="material-symbols-outlined font-sm">storefront</span>
+                      {{ langService.translate('becomeSeller') }}
+                    </a>
+                    <a routerLink="/profile/edit" class="btn btn-primary-accent d-flex align-items-center gap-2">
+                      <span class="material-symbols-outlined font-sm">edit</span>
+                      {{ langService.translate('editProfile') }}
+                    </a>
+                  </div>
+                </div>
+
+                <div class="profile-meta-info mt-3">
+                  <div class="row align-items-center">
+                    <div class="col-lg-8">
+                      <div class="d-flex align-items-center gap-2">
+                        <h2 class="user-fullname m-0">{{ profile()?.name }}</h2>
+                        <span class="premium-badge d-flex align-items-center gap-1">
+                          <span class="material-symbols-outlined">stars</span>
+                          {{ langService.translate('artisanSupporter') }}
+                        </span>
+                      </div>
+                      <p class="user-email-text text-muted mt-1 d-flex align-items-center gap-1">
+                        <span class="material-symbols-outlined font-sm">mail</span>
+                        {{ profile()?.email }}
+                        <span class="dot-separator" *ngIf="profile()?.phoneNumber"></span>
+                        <span class="material-symbols-outlined font-sm" *ngIf="profile()?.phoneNumber">phone</span>
+                        <span *ngIf="profile()?.phoneNumber">{{ profile()?.phoneNumber }}</span>
+                      </p>
+                    </div>
+                    <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+                      <span class="join-date d-flex align-items-center justify-content-lg-end gap-1 text-muted">
+                        <span class="material-symbols-outlined font-sm">calendar_today</span>
+                        {{ langService.translate('memberSince') }} {{ profile()?.createdAt | date:'MMMM yyyy' }}
+                      </span>
+                    </div>
+                  </div>
+
+                  <!-- Bio section -->
+                  <div class="bio-container mt-4" *ngIf="profile()?.bio">
+                    <h6 class="bio-title d-flex align-items-center gap-1">
+                      <span class="material-symbols-outlined font-sm">face</span>
+                      {{ langService.translate('aboutMe') }}
+                    </h6>
+                    <blockquote class="bio-text">
+                      "{{ profile()?.bio }}"
+                    </blockquote>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Stats Grid -->
+          <section class="stats-grid mt-4">
+            <div class="row g-4">
+              <!-- Orders Count -->
+              <div class="col-sm-6 col-lg-3">
+                <div class="stat-card" (click)="selectTab('Orders')">
+                  <div class="stat-icon-wrapper orders">
+                    <span class="material-symbols-outlined">shopping_bag</span>
+                  </div>
+                  <div class="stat-details">
+                    <h3 class="stat-number">{{ totalOrdersCount() }}</h3>
+                    <p class="stat-label">{{ langService.translate('totalOrders') }}</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Wishlist Count -->
+              <div class="col-sm-6 col-lg-3">
+                <div class="stat-card" (click)="selectTab('Wishlist')">
+                  <div class="stat-icon-wrapper wishlist">
+                    <span class="material-symbols-outlined">favorite</span>
+                  </div>
+                  <div class="stat-details">
+                    <h3 class="stat-number">{{ wishlistCount() }}</h3>
+                    <p class="stat-label">{{ langService.translate('wishlistItems') }}</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Followed Shops -->
+              <div class="col-sm-6 col-lg-3">
+                <div class="stat-card" (click)="selectTab('Shops')">
+                  <div class="stat-icon-wrapper shops">
+                    <span class="material-symbols-outlined">storefront</span>
+                  </div>
+                  <div class="stat-details">
+                    <h3 class="stat-number">{{ followedShopsCount() }}</h3>
+                    <p class="stat-label">{{ langService.translate('shopsFollowed') }}</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Reviews Count -->
+              <div class="col-sm-6 col-lg-3">
+                <div class="stat-card" (click)="selectTab('Reviews')">
+                  <div class="stat-icon-wrapper reviews">
+                    <span class="material-symbols-outlined">rate_review</span>
+                  </div>
+                  <div class="stat-details">
+                    <h3 class="stat-number">{{ reviewsCount() }}</h3>
+                    <p class="stat-label">{{ langService.translate('reviewsWritten') }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Row for followed shops & orders snippet -->
+          <div class="row mt-4 g-4">
+            <!-- Followed Shops Snippet -->
+            <div class="col-lg-6">
+              <div class="dashboard-sub-card">
+                <div class="card-head d-flex justify-content-between align-items-center mb-3">
+                  <h5 class="card-title-accent m-0">{{ langService.translate('recentFollows') }}</h5>
+                  <button class="btn btn-text-link" (click)="selectTab('Shops')">{{ langService.translate('viewAll') }}</button>
+                </div>
+
+                <div *ngIf="isLoadingShops()" class="skeleton-shops-snippet">
+                  <div class="skeleton-shop-row mb-2"></div>
+                  <div class="skeleton-shop-row"></div>
+                </div>
+
+                <div *ngIf="!isLoadingShops()">
+                  <div *ngIf="followedShops().length === 0" class="empty-state-snippet">
+                    <span class="material-symbols-outlined empty-icon">storefront</span>
+                    <p>{{ langService.translate('noRecentFollows') }}</p>
+                  </div>
+
+                  <div *ngIf="followedShops().length > 0" class="shop-list-snippet">
+                    <div class="shop-item-snippet" *ngFor="let shop of followedShops().slice(0, 3)">
+                      <img [src]="shop.shopLogo || 'assets/default-shop.png'" alt="Logo" class="shop-logo-sm" onerror="this.src='https://api.dicebear.com/7.x/identicon/svg?seed=' + shop.shopName"/>
+                      <div class="shop-snippet-meta">
+                        <span class="shop-name-sm d-flex align-items-center gap-1">
+                          {{ shop.shopName }}
+                          <span class="material-symbols-outlined verified-icon" *ngIf="shop.isVerified">verified</span>
+                        </span>
+                        <div class="shop-rating-sm d-flex align-items-center gap-1">
+                          <span class="material-symbols-outlined star-icon-sm">star</span>
+                          <span>{{ shop.rating | number:'1.1-1' }}</span>
+                        </div>
+                      </div>
+                      <button class="btn btn-unfollow-sm ms-auto" (click)="unfollowShop(shop.shopId, $event)">
+                        {{ langService.translate('unfollow') }}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Recent Orders Snippet -->
+            <div class="col-lg-6">
+              <div class="dashboard-sub-card">
+                <div class="card-head d-flex justify-content-between align-items-center mb-3">
+                  <h5 class="card-title-accent m-0">{{ langService.translate('recentOrders') }}</h5>
+                  <button class="btn btn-text-link" (click)="selectTab('Orders')">{{ langService.translate('viewAll') }}</button>
+                </div>
+
+                <div *ngIf="isLoadingOrders()" class="skeleton-orders-snippet">
+                  <div class="skeleton-order-row mb-2"></div>
+                  <div class="skeleton-order-row"></div>
+                </div>
+
+                <div *ngIf="!isLoadingOrders()">
+                  <div *ngIf="recentOrders().length === 0" class="empty-state-snippet">
+                    <span class="material-symbols-outlined empty-icon">shopping_bag</span>
+                    <p>{{ langService.translate('noOrdersYet') }}</p>
+                  </div>
+
+                  <div *ngIf="recentOrders().length > 0" class="order-list-snippet">
+                    <div class="order-item-snippet d-flex align-items-center justify-content-between py-2 border-bottom" *ngFor="let order of recentOrders().slice(0, 3)" [routerLink]="['/orders', order.id]" style="cursor: pointer;">
+                      <div>
+                        <span class="order-id-sm fw-bold">#{{ order.id.substring(0, 8) }}</span>
+                        <div class="order-date-sm text-muted">{{ order.orderDate | date:'shortDate' }}</div>
+                      </div>
+                      <div class="text-end">
+                        <span class="order-total-sm d-block fw-semibold">{{ order.total | currency }}</span>
+                        <span class="badge badge-status" [class]="getStatusClass(order.status)">
+                          {{ translateStatus(order.status) }}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= ORDERS TAB ================= -->
+        <div *ngIf="activeTab() === 'Orders'" class="tab-view animate-fade">
+          <div class="section-title-bar mb-4">
+            <h2>{{ langService.translate('orderHistory') }}</h2>
+            <p class="text-muted">{{ langService.translate('trackReviewPurchase') }}</p>
+          </div>
+
+          <div *ngIf="isLoadingOrders()" class="skeleton-wrapper">
+            <div class="skeleton skeleton-row mb-3" *ngFor="let i of [1, 2, 3]"></div>
+          </div>
+
+          <div *ngIf="!isLoadingOrders()">
+            <div *ngIf="recentOrders().length === 0" class="empty-state-card card-glow text-center p-5">
+              <span class="material-symbols-outlined empty-icon-large">shopping_bag</span>
+              <h4>{{ langService.translate('noOrdersYet') }}</h4>
+              <p class="text-muted">{{ langService.translate('noOrdersDesc') }}</p>
+              <a routerLink="/" class="btn btn-primary-accent mt-3">{{ langService.translate('startShopping') }}</a>
+            </div>
+
+            <div *ngIf="recentOrders().length > 0" class="card shadow-sm border-0 rounded-4 overflow-hidden card-glow">
+              <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                  <thead class="table-light-cream">
+                    <tr>
+                      <th class="ps-4">{{ langService.translate('orderId') }}</th>
+                      <th>{{ langService.translate('orderDate') }}</th>
+                      <th>{{ langService.translate('itemsCount') }}</th>
+                      <th>{{ langService.translate('totalAmount') }}</th>
+                      <th>{{ langService.translate('orderStatus') }}</th>
+                      <th>{{ langService.translate('paymentStatus') }}</th>
+                      <th class="text-end pe-4">{{ langService.translate('actions') }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let order of recentOrders()" [routerLink]="['/orders', order.id]" style="cursor: pointer;">
+                      <td class="ps-4 fw-semibold text-primary-accent">
+                        #{{ order.id.substring(0, 8) }}...
+                      </td>
+                      <td>{{ order.orderDate | date:'mediumDate' }}</td>
+                      <td>
+                        {{ order.itemCount }} {{ order.itemCount === 1 ? langService.translate('item') : langService.translate('items') }}
+                      </td>
+                      <td class="fw-semibold">{{ order.total | currency }}</td>
+                      <td>
+                        <span class="status-badge" [class]="getStatusClass(order.status)">
+                          {{ translateStatus(order.status) }}
+                        </span>
+                      </td>
+                      <td>
+                        <span class="payment-badge" [class]="getPaymentStatusClass(order.paymentStatus)">
+                          {{ translateStatus(order.paymentStatus) }}
+                        </span>
+                      </td>
+                      <td class="text-end pe-4">
+                        <a [routerLink]="['/orders', order.id]" class="btn btn-outline-accent btn-sm">
+                          {{ langService.translate('details') }}
+                        </a>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= WISHLIST TAB ================= -->
+        <div *ngIf="activeTab() === 'Wishlist'" class="tab-view animate-fade">
+          <div class="section-title-bar mb-4">
+            <h2>{{ langService.translate('myWishlist') }}</h2>
+            <p class="text-muted">{{ langService.translate('wishlistDesc') }}</p>
+          </div>
+
+          <div *ngIf="isLoadingWishlist()" class="skeleton-wrapper">
+            <div class="row g-4">
+              <div class="col-sm-6 col-lg-4" *ngFor="let i of [1, 2, 3]">
+                <div class="skeleton skeleton-card" style="height: 300px;"></div>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="!isLoadingWishlist()">
+            <div *ngIf="wishlistItems().length === 0" class="empty-state-card card-glow text-center p-5">
+              <span class="material-symbols-outlined empty-icon-large text-danger">favorite</span>
+              <h4>{{ langService.translate('wishlistIsEmpty') }}</h4>
+              <p class="text-muted">{{ langService.translate('wishlistEmptyDesc') }}</p>
+              <a routerLink="/" class="btn btn-primary-accent mt-3">{{ langService.translate('exploreProducts') }}</a>
+            </div>
+
+            <div *ngIf="wishlistItems().length > 0" class="row g-4">
+              <div class="col-sm-6 col-lg-4 col-xl-3" *ngFor="let item of wishlistItems()">
+                <div class="wishlist-product-card card-glow">
+                  <div class="product-image-wrapper">
+                    <img [src]="item.imageUrl || 'assets/default-product.png'" alt="Product Image" onerror="this.src='https://images.unsplash.com/photo-1513519245088-0e12902e5a38?q=80&w=400&auto=format&fit=crop'"/>
+                    <button class="btn btn-remove-wishlist" (click)="removeFromWishlist(item.productId, $event)" title="Remove from wishlist">
+                      <span class="material-symbols-outlined">close</span>
+                    </button>
+                  </div>
+                  <div class="product-info-wrapper p-3">
+                    <h6 class="product-title-text" [routerLink]="['/products', item.productId]">
+                      {{ langService.currentLang() === 'ar' ? (item.titleAr || item.titleEn) : item.titleEn }}
+                    </h6>
+                    <div class="price-row mt-2">
+                      <span class="current-price" [class.discounted]="item.discountPrice">{{ (item.discountPrice || item.price) | currency }}</span>
+                      <span class="old-price ms-2 text-decoration-line-through text-muted" *ngIf="item.discountPrice">
+                        {{ item.price | currency }}
+                      </span>
+                    </div>
+                    <div class="product-card-actions mt-3">
+                      <a [routerLink]="['/api/Products', item.productId]" class="btn btn-primary-accent w-100 d-flex align-items-center justify-content-center gap-2">
+                        <span class="material-symbols-outlined font-sm">visibility</span>
+                        {{ langService.translate('viewDetails') }}
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= FOLLOWED SHOPS TAB ================= -->
+        <div *ngIf="activeTab() === 'Shops'" class="tab-view animate-fade">
+          <div class="section-title-bar mb-4">
+            <h2>{{ langService.translate('followedArtisans') }}</h2>
+            <p class="text-muted">{{ langService.translate('followedArtisansDesc') }}</p>
+          </div>
+
+          <div *ngIf="isLoadingShops()" class="skeleton-wrapper">
+            <div class="row g-4">
+              <div class="col-sm-6 col-lg-4" *ngFor="let i of [1, 2, 3]">
+                <div class="skeleton skeleton-card" style="height: 150px;"></div>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="!isLoadingShops()">
+            <div *ngIf="followedShops().length === 0" class="empty-state-card card-glow text-center p-5">
+              <span class="material-symbols-outlined empty-icon-large">storefront</span>
+              <h4>{{ langService.translate('noFollowedShops') }}</h4>
+              <p class="text-muted">{{ langService.translate('noFollowedShopsDesc') }}</p>
+              <a routerLink="/" class="btn btn-primary-accent mt-3">{{ langService.translate('discoverShops') }}</a>
+            </div>
+
+            <div *ngIf="followedShops().length > 0" class="row g-4">
+              <div class="col-md-6 col-lg-4" *ngFor="let shop of followedShops()">
+                <div class="shop-display-card card-glow">
+                  <div class="card-bg-gradient"></div>
+                  <div class="shop-card-body p-4 text-center">
+                    <div class="shop-avatar-wrapper">
+                      <img [src]="shop.shopLogo || 'assets/default-shop.png'" alt="Logo" onerror="this.src='https://api.dicebear.com/7.x/identicon/svg?seed=' + shop.shopName"/>
+                    </div>
+                    <h5 class="shop-title mt-3 d-flex align-items-center justify-content-center gap-1">
+                      {{ shop.shopName }}
+                      <span class="material-symbols-outlined verified-icon" *ngIf="shop.isVerified" [title]="langService.translate('verifiedArtisan')">verified</span>
+                    </h5>
+                    
+                    <div class="shop-rating d-flex align-items-center justify-content-center gap-1 mt-1 text-warning">
+                      <span class="material-symbols-outlined">star</span>
+                      <span class="fw-semibold text-dark">{{ shop.rating | number:'1.1-1' }} / 5.0</span>
+                    </div>
+
+                    <p class="text-muted font-xs mt-2">
+                      Following since {{ shop.followedAt | date:'mediumDate' }}
+                    </p>
+
+                    <div class="d-flex gap-2 mt-4">
+                      <a [routerLink]="['/shop', shop.shopId]" class="btn btn-outline-accent flex-grow-1">
+                        {{ langService.translate('visitShop') }}
+                      </a>
+                      <button class="btn btn-unfollow-action" (click)="unfollowShop(shop.shopId, $event)">
+                        {{ langService.translate('unfollow') }}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= REVIEWS TAB ================= -->
+        <div *ngIf="activeTab() === 'Reviews'" class="tab-view animate-fade">
+          <div class="section-title-bar mb-4">
+            <h2>{{ langService.translate('myReviews') }}</h2>
+            <p class="text-muted">{{ langService.translate('reviewsDesc') }}</p>
+          </div>
+
+          <div *ngIf="isLoadingReviews()" class="skeleton-wrapper">
+            <div class="skeleton skeleton-row mb-3" *ngFor="let i of [1, 2, 3]"></div>
+          </div>
+
+          <div *ngIf="!isLoadingReviews()">
+            <div *ngIf="userReviews().length === 0" class="empty-state-card card-glow text-center p-5">
+              <span class="material-symbols-outlined empty-icon-large text-warning">rate_review</span>
+              <h4>{{ langService.translate('noReviewsYet') }}</h4>
+              <p class="text-muted">{{ langService.translate('noReviewsDesc') }}</p>
+            </div>
+
+            <div *ngIf="userReviews().length > 0" class="reviews-list-container d-flex flex-column gap-3">
+              <div class="review-display-card card-glow p-4 border-0 rounded-4" *ngFor="let review of userReviews()">
+                <div class="row align-items-start g-3">
+                  <div class="col-auto">
+                    <img [src]="review.productImage || 'assets/default-product.png'" alt="Product Image" class="review-product-image rounded-3" onerror="this.src='https://images.unsplash.com/photo-1513519245088-0e12902e5a38?q=80&w=200&auto=format&fit=crop'"/>
+                  </div>
+                  <div class="col">
+                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+                      <h6 class="product-link-title m-0" [routerLink]="['/products', review.productId]">
+                        {{ review.productTitle }}
+                      </h6>
+                      <span class="review-date-text text-muted font-xs">
+                        {{ review.createdAt | date:'mediumDate' }}
+                      </span>
+                    </div>
+
+                    <!-- Stars rating -->
+                    <div class="stars-row mt-2 mb-2 d-flex align-items-center gap-1">
+                      <span class="material-symbols-outlined star-icon" [class.filled]="n <= review.rating" *ngFor="let n of [1,2,3,4,5]">
+                        star
+                      </span>
+                    </div>
+
+                    <p class="review-comment-text mb-0 text-dark">
+                      "{{ review.comment || langService.translate('noComment') }}"
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+</div>

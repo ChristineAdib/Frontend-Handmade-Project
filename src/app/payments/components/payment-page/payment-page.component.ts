@@ -4,6 +4,7 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { SafeUrlPipe } from '../../../core/pipes/safe-url.pipe';
 import { PaymentService } from '../../services/payment.service';
 import { OrderService } from '../../../orders/services/order.service';
+import { LanguageService } from '../../../core/services/language.service';
 
 @Component({
   selector: 'app-payment-page',
@@ -16,6 +17,7 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   readonly paymentService = inject(PaymentService);
   readonly orderService = inject(OrderService);
+  protected readonly langService = inject(LanguageService);
 
   private pollTimer: any;
   readonly paymentDone = signal<boolean>(false);

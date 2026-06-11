@@ -1,1 +1,3 @@
-<p>custom-requests works!</p>
+<p [dir]="langService.currentLang() === 'ar' ? 'rtl' : 'ltr'">
+  {{ langService.translate('customRequests') }} {{ langService.currentLang() === 'ar' ? 'تعمل!' : 'works!' }}
+</p>

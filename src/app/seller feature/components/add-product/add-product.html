@@ -1,11 +1,17 @@
-<div class="add-product-wrap">
+<div class="add-product-wrap" [dir]="langService.currentLang() === 'ar' ? 'rtl' : 'ltr'">
 
   <div class="page-header">
     <div>
-      <h1 class="page-title">{{ isEditMode() ? 'Edit Product' : 'Add New Product' }}</h1>
-      <p class="page-sub">{{ isEditMode() ? 'Update your product details' : 'List a new handmade product' }}</p>
+      <h1 class="page-title">
+        {{ isEditMode() ? langService.translate('editProduct') : (langService.currentLang() === 'ar' ? 'إضافة منتج جديد' : 'Add New Product') }}
+      </h1>
+      <p class="page-sub">
+        {{ isEditMode() ? (langService.currentLang() === 'ar' ? 'تحديث تفاصيل منتجك' : 'Update your product details') : (langService.currentLang() === 'ar' ? 'إدراج منتج يدوي جديد' : 'List a new handmade product') }}
+      </p>
     </div>
-    <button class="cancel-btn" (click)="onCancel()">← Back to Products</button>
+    <button class="cancel-btn" (click)="onCancel()">
+      {{ langService.currentLang() === 'ar' ? 'العودة للمنتجات &rarr;' : '&larr; Back to Products' }}
+    </button>
   </div>
 
   <form [formGroup]="form" (ngSubmit)="onSave()">
@@ -16,33 +22,33 @@
 
         <!-- Titles -->
         <div class="card">
-          <h3 class="card-title">Product Title</h3>
+          <h3 class="card-title">{{ langService.translate('productTitle') }}</h3>
           <div class="fg">
-            <label class="fl">Title (English) *</label>
-            <input class="fi" type="text" formControlName="titleEn" placeholder="e.g. Handmade Ceramic Mug" />
+            <label class="fl">{{ langService.currentLang() === 'ar' ? 'الاسم (بالإنجليزي) *' : 'Title (English) *' }}</label>
+            <input class="fi" type="text" formControlName="titleEn" [placeholder]="langService.currentLang() === 'ar' ? 'مثال: كوب سيراميك يدوي' : 'e.g. Handmade Ceramic Mug'" />
             @if (form.get('titleEn')?.invalid && form.get('titleEn')?.touched) {
-              <span class="field-err">Title in English is required.</span>
+              <span class="field-err">{{ langService.currentLang() === 'ar' ? 'الاسم باللغة الإنجليزية مطلوب.' : 'Title in English is required.' }}</span>
             }
           </div>
           <div class="fg">
-            <label class="fl">Title (Arabic) *</label>
+            <label class="fl">{{ langService.currentLang() === 'ar' ? 'الاسم (بالعربي) *' : 'Title (Arabic) *' }}</label>
             <input class="fi" type="text" formControlName="titleAr" placeholder="مثال: كوب سيراميك يدوي" dir="rtl" />
             @if (form.get('titleAr')?.invalid && form.get('titleAr')?.touched) {
-              <span class="field-err">Title in Arabic is required.</span>
+              <span class="field-err">{{ langService.currentLang() === 'ar' ? 'الاسم باللغة العربية مطلوب.' : 'Title in Arabic is required.' }}</span>
             }
           </div>
         </div>
 
         <!-- Descriptions -->
         <div class="card">
-          <h3 class="card-title">Description</h3>
+          <h3 class="card-title">{{ langService.translate('description') }}</h3>
           <div class="fg">
-            <label class="fl">Description (English)</label>
+            <label class="fl">{{ langService.currentLang() === 'ar' ? 'الوصف (بالإنجليزي)' : 'Description (English)' }}</label>
             <textarea class="fi ta" formControlName="descriptionEn"
-              placeholder="Describe your product in English..." rows="4"></textarea>
+              [placeholder]="langService.currentLang() === 'ar' ? 'اصف منتجك بالإنجليزية...' : 'Describe your product in English...'" rows="4"></textarea>
           </div>
           <div class="fg">
-            <label class="fl">Description (Arabic)</label>
+            <label class="fl">{{ langService.currentLang() === 'ar' ? 'الوصف (بالعربي)' : 'Description (Arabic)' }}</label>
             <textarea class="fi ta" formControlName="descriptionAr"
               placeholder="اوصف منتجك بالعربي..." rows="4" dir="rtl"></textarea>
           </div>
@@ -50,7 +56,7 @@
 
         <!-- Images -->
         <div class="card">
-          <h3 class="card-title">Product Images</h3>
+          <h3 class="card-title">{{ langService.currentLang() === 'ar' ? 'صور المنتج' : 'Product Images' }}</h3>
           <div class="images-grid">
             @for (preview of imagePreviews(); track $index) {
               <div class="img-thumb">
@@ -60,7 +66,7 @@
             }
             <div class="img-add" (click)="imgInput.click()">
               <span>+</span>
-              <small>Add Image</small>
+              <small>{{ langService.currentLang() === 'ar' ? 'إضافة صورة' : 'Add Image' }}</small>
             </div>
           </div>
           <input #imgInput type="file" accept="image/*" multiple (change)="onImagesSelected($event)" hidden />
@@ -73,46 +79,48 @@
 
         <!-- Pricing -->
         <div class="card">
-          <h3 class="card-title">Pricing & Stock</h3>
+          <h3 class="card-title">{{ langService.currentLang() === 'ar' ? 'التسعير والمخزون' : 'Pricing & Stock' }}</h3>
           <div class="fg">
-            <label class="fl">Price (EGP) *</label>
+            <label class="fl">{{ langService.translate('price') }} (EGP) *</label>
             <input class="fi" type="number" formControlName="price" placeholder="0.00" min="0" />
             @if (form.get('price')?.invalid && form.get('price')?.touched) {
-              <span class="field-err">Valid price is required.</span>
+              <span class="field-err">{{ langService.currentLang() === 'ar' ? 'يرجى إدخال سعر صالح.' : 'Valid price is required.' }}</span>
             }
           </div>
           <div class="fg">
-            <label class="fl">Quantity *</label>
+            <label class="fl">{{ langService.translate('quantityLabel') }} *</label>
             <input class="fi" type="number" formControlName="quantity" placeholder="1" min="1" />
           </div>
         </div>
 
         <!-- Category -->
         <div class="card">
-          <h3 class="card-title">Category</h3>
+          <h3 class="card-title">{{ langService.translate('category') }}</h3>
           <div class="fg">
-            <label class="fl">Select Category *</label>
+            <label class="fl">{{ langService.currentLang() === 'ar' ? 'اختر الفئة *' : 'Select Category *' }}</label>
             <select class="fi" formControlName="categoryId">
-              <option value="">-- Choose a category --</option>
+              <option value="">{{ langService.currentLang() === 'ar' ? '-- اختر فئة --' : '-- Choose a category --' }}</option>
               @for (cat of categories(); track cat.id) {
-                <option [value]="cat.id">{{ cat.nameEn }}</option>
+                <option [value]="cat.id">
+                  {{ langService.currentLang() === 'ar' ? (cat.nameAr || cat.nameEn) : cat.nameEn }}
+                </option>
               }
             </select>
             @if (form.get('categoryId')?.invalid && form.get('categoryId')?.touched) {
-              <span class="field-err">Category is required.</span>
+              <span class="field-err">{{ langService.currentLang() === 'ar' ? 'الفئة مطلوبة.' : 'Category is required.' }}</span>
             }
           </div>
         </div>
 
         <!-- Tags -->
         <div class="card">
-          <h3 class="card-title">Tags</h3>
+          <h3 class="card-title">{{ langService.currentLang() === 'ar' ? 'الوسوم' : 'Tags' }}</h3>
           <div class="tag-input-wrap">
-            <input class="fi" type="text" placeholder="Add a tag..."
+            <input class="fi" type="text" [placeholder]="langService.currentLang() === 'ar' ? 'أضف وسماً...' : 'Add a tag...'"
               [value]="tagInput()"
               (input)="tagInput.set($any($event.target).value)"
               (keydown)="onTagKeydown($event)" />
-            <button type="button" class="add-tag-btn" (click)="addTag()">Add</button>
+            <button type="button" class="add-tag-btn" (click)="addTag()">{{ langService.currentLang() === 'ar' ? 'إضافة' : 'Add' }}</button>
           </div>
           <div class="tags-list">
             @for (tag of tags(); track tag) {
@@ -132,10 +140,10 @@
     }
 
     <div class="form-actions">
-      <button type="button" class="cancel-btn" (click)="onCancel()">Cancel</button>
+      <button type="button" class="cancel-btn" (click)="onCancel()">{{ langService.translate('cancel') }}</button>
       <button type="submit" class="save-btn" [disabled]="isSaving() || form.invalid">
-        @if (isSaving()) { <span class="spinner-sm"></span> Saving... }
-        @else { {{ isEditMode() ? 'Update Product' : 'Publish Product' }} }
+        @if (isSaving()) { <span class="spinner-sm"></span> {{ langService.translate('savingChanges') || 'Saving...' }} }
+        @else { {{ isEditMode() ? langService.translate('editProduct') : (langService.currentLang() === 'ar' ? 'نشر المنتج' : 'Publish Product') }} }
       </button>
     </div>
 

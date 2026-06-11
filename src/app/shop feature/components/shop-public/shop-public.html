@@ -3,7 +3,7 @@
   @if (isLoading()) {
     <div class="loading-state">
       <div class="spinner"></div>
-      <p>Loading shop...</p>
+      <p>{{ langService.translate('loadingShop') }}</p>
     </div>
   }
 
@@ -36,15 +36,15 @@
         <div class="hero-info">
           <div class="hero-info-left">
             <div class="badges-row">
-              <span class="role-badge">Artisan</span>
+              <span class="role-badge">{{ langService.translate('artisan') }}</span>
               <div class="rating-inline">
                 <span class="material-symbols-outlined star-icon">star</span>
-                <span>{{ shop()!.rating | number:'1.1-1' }} ({{ shop()!.products.length }} products)</span>
+                <span>{{ shop()!.rating | number:'1.1-1' }} ({{ shop()!.products.length }} {{ langService.translate('products') }})</span>
               </div>
             </div>
             <h1 class="shop-name">{{ shop()!.name }}</h1>
             <p class="shop-desc">
-              {{ shop()!.descriptionEn || 'A unique handmade shop crafted with love and intention.' }}
+              {{ (langService.currentLang() === 'ar' ? (shop()!.descriptionAr || shop()!.descriptionEn) : (shop()!.descriptionEn || shop()!.descriptionAr)) || langService.translate('defaultShopDesc') }}
             </p>
           </div>
 
@@ -55,10 +55,14 @@
               [disabled]="isFollowLoading()"
               (click)="toggleFollow()">
               @if (isFollowLoading()) { ... }
-              @else if (isFollowing()) { Following }
-              @else { Follow Shop }
+              @else if (isFollowing()) { {{ langService.translate('following') }} }
+              @else { {{ langService.translate('followShop') }} }
             </button>
-            <button class="share-btn">
+            <button class="review-action-btn" (click)="scrollToWriteReview()">
+              <span class="material-symbols-outlined">rate_review</span>
+              <span>{{ langService.translate('writeShopReview') }}</span>
+            </button>
+            <button class="share-btn" (click)="goToChat()">
               <span class="material-symbols-outlined">chat</span>
             </button>
           </div>
@@ -69,19 +73,19 @@
       <div class="stats-bar">
         <div class="stat-item">
           <span class="stat-val">{{ shop()!.products.length }}</span>
-          <span class="stat-lbl">Products</span>
+          <span class="stat-lbl">{{ langService.translate('products') }}</span>
         </div>
         <div class="stat-item">
           <span class="stat-val">{{ shop()!.rating | number:'1.1-1' }}</span>
-          <span class="stat-lbl">Rating</span>
+          <span class="stat-lbl">{{ langService.translate('rating') }}</span>
         </div>
         <div class="stat-item">
-          <span class="stat-val">{{ shop()!.isVerified ? 'Verified' : 'Unverified' }}</span>
-          <span class="stat-lbl">Status</span>
+          <span class="stat-val">{{ shop()!.isVerified ? langService.translate('verified') : langService.translate('unverified') }}</span>
+          <span class="stat-lbl">{{ langService.translate('status') }}</span>
         </div>
         <div class="stat-item">
           <span class="stat-val">{{ shop()!.ownerName }}</span>
-          <span class="stat-lbl">Owner</span>
+          <span class="stat-lbl">{{ langService.translate('owner') }}</span>
         </div>
       </div>
     </div>
@@ -91,9 +95,9 @@
   <section class="tabs-section">
     <div class="tabs-inner">
       <div class="tabs">
-        <button class="tab" [class.active]="activeTab() === 'products'" (click)="setTab('products')">All Creations</button>
-        <button class="tab" [class.active]="activeTab() === 'about'" (click)="setTab('about')">About</button>
-        <button class="tab" [class.active]="activeTab() === 'reviews'" (click)="setTab('reviews')">Reviews</button>
+        <button class="tab" [class.active]="activeTab() === 'products'" (click)="setTab('products')">{{ langService.translate('allCreations') }}</button>
+        <button class="tab" [class.active]="activeTab() === 'about'" (click)="setTab('about')">{{ langService.translate('aboutShop') }}</button>
+        <button class="tab" [class.active]="activeTab() === 'reviews'" (click)="setTab('reviews')">{{ langService.translate('reviews') }}</button>
       </div>
     </div>
   </section>
@@ -107,13 +111,13 @@
         @if (shop()!.products.length === 0) {
           <div class="empty-state">
             <span style="font-size:48px">🧶</span>
-            <p>No products yet.</p>
+            <p>{{ langService.translate('noProductsYetShop') }}</p>
           </div>
         } @else {
           <div class="products-bento">
 
             <!-- First product: featured large -->
-            <div class="product-featured">
+            <div class="product-featured" [routerLink]="['/products', shop()!.products[0].id]" style="cursor: pointer;">
               <div class="product-card-inner">
                 <div class="product-img-wrap">
                   @if (shop()!.products[0].mainImageUrl) {
@@ -121,37 +125,37 @@
                   } @else {
                     <div class="product-img-ph">🧵</div>
                   }
-                  <span class="featured-badge">Featured Piece</span>
+                  <span class="featured-badge">{{ langService.translate('featuredPiece') }}</span>
                 </div>
                 <div class="product-body featured-body">
                   <div class="product-title-row">
-                    <h3 class="product-title">{{ shop()!.products[0].titleEn }}</h3>
+                    <h3 class="product-title">{{ langService.currentLang() === 'ar' ? shop()!.products[0].titleAr : shop()!.products[0].titleEn }}</h3>
                     <span class="product-price-lg">{{ shop()!.products[0].finalPrice | currency:'EGP ':'code' }}</span>
                   </div>
                   <p class="product-cat">{{ shop()!.products[0].categoryNameEn }}</p>
-                  <button class="view-btn">View Detail</button>
+                  <button class="view-btn" [routerLink]="['/products', shop()!.products[0].id]">{{ langService.translate('viewDetail') }}</button>
                 </div>
               </div>
             </div>
 
             <!-- Rest of products -->
-            @for (product of shop()!.products.slice(1); track product.id) {
-              <div class="product-card">
+             @for (product of shop()!.products.slice(1); track product.id) {
+              <div class="product-card" [routerLink]="['/products', product.id]" style="cursor: pointer;">
                 <div class="product-img-wrap">
                   @if (product.mainImageUrl) {
-                    <img [src]="product.mainImageUrl" [alt]="product.titleEn" class="product-img" />
+                    <img [src]="product.mainImageUrl" [alt]="langService.currentLang() === 'ar' ? product.titleAr : product.titleEn" class="product-img" />
                   } @else {
                     <div class="product-img-ph">🧵</div>
                   }
                   @if (product.discountPrice) {
-                    <span class="small-badge">Sale</span>
+                    <span class="small-badge">{{ langService.translate('sale') }}</span>
                   }
-                  <button class="quick-add">
+                  <button class="quick-add" (click)="quickAdd(product.id, $event)">
                     <span class="material-symbols-outlined">shopping_bag</span>
                   </button>
                 </div>
                 <div class="product-body">
-                  <h3 class="product-title">{{ product.titleEn }}</h3>
+                  <h3 class="product-title">{{ langService.currentLang() === 'ar' ? product.titleAr : product.titleEn }}</h3>
                   <p class="product-price">{{ product.finalPrice | currency:'EGP ':'code' }}</p>
                   @if (product.discountPrice) {
                     <p class="product-price-old">{{ product.price | currency:'EGP ':'code' }}</p>
@@ -163,7 +167,7 @@
           </div>
 
           <div class="load-more-wrap">
-            <button class="load-more-btn">Load More Creations</button>
+            <button class="load-more-btn">{{ langService.translate('loadMoreCreations') }}</button>
           </div>
         }
       }
@@ -171,19 +175,222 @@
       <!-- About -->
       @if (activeTab() === 'about') {
         <div class="about-wrap">
-          <h2 class="about-title">About {{ shop()!.name }}</h2>
-          <p class="about-text">{{ shop()!.descriptionEn || 'No description provided yet.' }}</p>
-          @if (shop()!.descriptionAr) {
-            <p class="about-text about-ar" dir="rtl">{{ shop()!.descriptionAr }}</p>
-          }
+          <h2 class="about-title">{{ langService.translate('aboutShop') }} {{ shop()!.name }}</h2>
+          <p class="about-text" [dir]="langService.currentLang() === 'ar' ? 'rtl' : 'ltr'">
+            {{ (langService.currentLang() === 'ar' ? (shop()!.descriptionAr || shop()!.descriptionEn) : (shop()!.descriptionEn || shop()!.descriptionAr)) || langService.translate('noDescriptionYet') }}
+          </p>
         </div>
       }
 
       <!-- Reviews -->
       @if (activeTab() === 'reviews') {
-        <div class="empty-state">
-          <span style="font-size:48px">⭐</span>
-          <p>Reviews coming soon.</p>
+        <div class="row g-5 mt-2" [dir]="langService.currentLang() === 'ar' ? 'rtl' : 'ltr'">
+          <!-- Rating Distribution Summary -->
+          <div class="col-12 col-lg-4">
+            <div class="rating-summary-card p-4 text-center rounded shadow-sm">
+              <h3 class="summary-score" style="font-size: 3.2rem; font-weight: 800; color: #2c1810; line-height: 1; margin-bottom: 8px;">
+                {{ shop()!.rating | number:'1.1-1' }}
+              </h3>
+              <div class="stars d-flex justify-content-center mb-2" style="gap: 4px;">
+                <span class="material-symbols-outlined fill-star" *ngFor="let star of getStarsArray(shop()!.rating)" style="color: #D4AF37; font-variation-settings: 'FILL' 1, 'wght' 400;">star</span>
+                <span class="material-symbols-outlined empty-star" *ngFor="let star of getEmptyStarsArray(shop()!.rating)" style="color: #e2d7d0;">star</span>
+              </div>
+              <p class="summary-meta text-muted text-center mb-0">
+                {{ langService.currentLang() === 'ar' ? 'بناءً على ' : 'Based on ' }}
+                <strong>{{ shop()!.reviewCount }}</strong> 
+                {{ langService.translate('reviewsCountLabel') }}
+              </p>
+            </div>
+
+            <!-- Review writing/editing section -->
+            <div class="write-review-card mt-4 p-4 rounded shadow-sm border" style="background-color: #ffffff;">
+              @if (isUserLoggedIn()) {
+                
+                @if (myReview() && !isEditing()) {
+                  <!-- Already reviewed show state -->
+                  <h4 class="card-title mb-3" style="font-size: 1.15rem; font-weight: 700; color: #2c1810;">
+                    {{ langService.currentLang() === 'ar' ? 'تقييمك الحالي' : 'Your Current Review' }}
+                  </h4>
+                  <div class="mb-3">
+                    <div class="stars d-flex mb-2" style="gap: 4px;">
+                      <span class="material-symbols-outlined fill-star" *ngFor="let star of getStarsArray(myReview().rating)" style="color: #D4AF37; font-variation-settings: 'FILL' 1, 'wght' 400;">star</span>
+                      <span class="material-symbols-outlined empty-star" *ngFor="let star of getEmptyStarsArray(myReview().rating)" style="color: #e2d7d0;">star</span>
+                    </div>
+                    <blockquote class="text-muted mb-3" style="font-size: 0.92rem; border-left: 3px solid #8B4513; padding-left: 10px; font-style: italic;">
+                      "{{ myReview().comment || langService.translate('noComment') }}"
+                    </blockquote>
+                  </div>
+                  <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-luxury-primary flex-grow-1" (click)="isEditing.set(true)" style="background-color: #8B4513; color: white; border-radius: 30px; font-weight: 600; font-size: 0.9rem; border: none; padding: 8px 16px;">
+                      <span class="material-symbols-outlined font-sm align-middle me-1">edit</span>
+                      {{ langService.currentLang() === 'ar' ? 'تعديل التقييم' : 'Edit Review' }}
+                    </button>
+                    <button type="button" class="btn btn-outline-danger btn-sm px-3" (click)="deleteReview()" [disabled]="isSubmittingReview()" style="border-radius: 30px; font-size: 0.9rem;">
+                      <span class="material-symbols-outlined font-sm align-middle">delete</span>
+                    </button>
+                  </div>
+                }
+                @else {
+                  <!-- Edit form or Create form -->
+                  <h4 class="card-title mb-3" style="font-size: 1.15rem; font-weight: 700; color: #2c1810;">
+                    {{ myReview() ? langService.translate('updateShopReview') : langService.translate('writeShopReview') }}
+                  </h4>
+                  
+                  <form (submit)="submitReview()">
+                    <!-- Interactive Star Selector -->
+                    <div class="star-selector mb-3">
+                      <label class="form-label text-muted d-block" style="font-size: 0.85rem;">{{ langService.currentLang() === 'ar' ? 'تقييمك بالنجوم:' : 'Your Rating:' }}</label>
+                      <div class="stars-input d-flex gap-1">
+                        <button 
+                          type="button" 
+                          *ngFor="let star of [1,2,3,4,5]" 
+                          class="star-btn"
+                          (click)="setNewRating(star)"
+                          (mouseenter)="onStarMouseEnter(star)"
+                          (mouseleave)="onStarMouseLeave()"
+                          aria-label="Rate star"
+                          style="background: none; border: none; padding: 0; cursor: pointer; outline: none;"
+                        >
+                          <span 
+                            class="material-symbols-outlined"
+                            [class.filled]="hoveredRating() ? star <= hoveredRating() : star <= newRating()"
+                            [style.color]="(hoveredRating() ? star <= hoveredRating() : star <= newRating()) ? '#D4AF37' : '#e2d7d0'"
+                            [style.font-variation-settings]="(hoveredRating() ? star <= hoveredRating() : star <= newRating()) ? '\'FILL\' 1, \'wght\' 400' : 'none'"
+                            style="font-size: 2rem;"
+                          >
+                            star
+                          </span>
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- Textarea Comment -->
+                    <div class="mb-3">
+                      <label for="reviewComment" class="form-label text-muted" style="font-size: 0.85rem;">{{ langService.currentLang() === 'ar' ? 'ملاحظاتك تعليقاً:' : 'Your Review Comment:' }}</label>
+                      <textarea 
+                        id="reviewComment"
+                        name="comment"
+                        [value]="newComment()"
+                        (input)="newComment.set($any($event.target).value)"
+                        rows="4" 
+                        class="form-control luxury-textarea" 
+                        [placeholder]="langService.translate('reviewPlaceholderShop')"
+                        style="background-color: #fcfaf7; border: 1px solid #e2d7d0; border-radius: 12px; padding: 12px; font-size: 0.9rem; resize: none; outline: none; width: 100%;"
+                        required
+                      ></textarea>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                      <button 
+                        type="submit" 
+                        class="btn btn-luxury-primary flex-grow-1"
+                        [disabled]="isSubmittingReview() || !newComment().trim()"
+                        style="background-color: #8B4513; color: white; border-radius: 30px; font-weight: 600; font-size: 0.9rem; border: none; padding: 8px 16px; display: inline-flex; align-items: center; justify-content: center; gap: 4px;"
+                      >
+                        <span class="spinner-border spinner-border-sm me-2" role="status" *ngIf="isSubmittingReview()"></span>
+                        <span class="material-symbols-outlined btn-icon font-sm" *ngIf="!isSubmittingReview()">rate_review</span>
+                        {{ langService.currentLang() === 'ar' ? 'حفظ التقييم' : 'Save Review' }}
+                      </button>
+                      
+                      <button type="button" class="btn btn-outline-secondary btn-sm px-3" *ngIf="isEditing()" (click)="isEditing.set(false)" style="border-radius: 30px; font-size: 0.9rem;">
+                        {{ langService.translate('cancel') }}
+                      </button>
+                    </div>
+                  </form>
+                }
+              } @else {
+                <!-- Login prompt -->
+                <div class="login-prompt text-center py-3">
+                  <span class="material-symbols-outlined login-prompt-icon mb-2" style="font-size: 2.2rem; color: #8B4513;">lock_open</span>
+                  <h5 style="font-size: 1rem; font-weight: 700; color: #2c1810;">{{ langService.currentLang() === 'ar' ? 'شاركنا برأيك في المتجر' : 'Share Your Experience' }}</h5>
+                  <p class="text-muted small mb-3">
+                    {{ langService.currentLang() === 'ar' ? 'يجب عليك تسجيل الدخول أولاً لتتمكن من كتابة مراجعة للمتجر.' : 'You must log in to your account to submit a review for this shop.' }}
+                  </p>
+                  <a routerLink="/login" class="btn btn-outline-dark btn-sm px-4" style="border-radius: 30px;">
+                    {{ langService.translate('login') }}
+                  </a>
+                </div>
+              }
+            </div>
+            
+            <div class="mt-3 text-center text-muted" style="font-size: 11px;">
+              <span class="material-symbols-outlined align-middle me-1" style="font-size: 14px;">info</span>
+              {{ langService.translate('onlyPurchasedCanReview') }}
+            </div>
+          </div>
+
+          <!-- Reviews Logs List Column -->
+          <div class="col-12 col-lg-8">
+            @if (loadingReviews()) {
+              <div class="loading-reviews text-center py-4">
+                <div class="spinner-border text-secondary spinner-border-sm" role="status"></div>
+              </div>
+            }
+            @else {
+              <!-- Empty state for reviews -->
+              @if (reviews().length === 0) {
+                <div class="empty-reviews p-5 text-center border rounded" style="background-color: #ffffff; border-radius: 16px;">
+                  <span class="material-symbols-outlined empty-reviews-icon mb-2" style="font-size: 2.5rem; color: #8a786d;">reviews</span>
+                  <p class="text-muted mb-0">
+                    {{ langService.translate('noReviewsYetShop') }}
+                  </p>
+                </div>
+              }
+              @else {
+                <div class="reviews-list">
+                  @for (rev of reviews(); track rev.id) {
+                    <div class="review-item-card p-4 mb-3 rounded shadow-sm border" style="background-color: #fbf9f6; border-radius: 16px;">
+                      <div class="review-header d-flex justify-content-between align-items-center mb-2">
+                        <div class="reviewer-meta">
+                          <h5 class="reviewer-name mb-0" style="font-size: 1rem; font-weight: 700; color: #2c1810;">{{ rev.userName }}</h5>
+                          <small class="review-date text-muted" style="font-size: 0.75rem;">{{ rev.createdAt | date:'mediumDate' }}</small>
+                        </div>
+                        <div class="review-score">
+                          <div class="stars d-flex" style="gap: 2px;">
+                            <span class="material-symbols-outlined fill-star" *ngFor="let star of getStarsArray(rev.rating)" style="color: #D4AF37; font-size: 1rem; font-variation-settings: 'FILL' 1, 'wght' 400;">star</span>
+                            <span class="material-symbols-outlined empty-star" *ngFor="let star of getEmptyStarsArray(rev.rating)" style="color: #e2d7d0; font-size: 1rem;">star</span>
+                          </div>
+                        </div>
+                      </div>
+                      <p class="review-comment-text mb-0" style="font-size: 0.92rem; line-height: 1.6; color: #5c4a3f;">
+                        {{ rev.comment || langService.translate('noComment') }}
+                      </p>
+                    </div>
+                  }
+
+                  <!-- Mini pagination controls for reviews -->
+                  <div class="reviews-pagination-row d-flex justify-content-between align-items-center mt-4" *ngIf="reviewsTotalPages() > 1">
+                    <button 
+                      type="button" 
+                      class="btn btn-outline-dark btn-sm d-flex align-items-center gap-1"
+                      [disabled]="!reviewsHasPrevious()"
+                      (click)="onReviewsPageChange(reviewsPageIndex() - 1)"
+                      style="border-radius: 20px;"
+                    >
+                      <span class="material-symbols-outlined">chevron_left</span>
+                      {{ langService.currentLang() === 'ar' ? 'السابق' : 'Previous' }}
+                    </button>
+                    <span class="text-muted small">
+                      {{ langService.currentLang() === 'ar' ? 'صفحة ' : 'Page ' }}
+                      <strong>{{ reviewsPageIndex() }}</strong>
+                      {{ langService.currentLang() === 'ar' ? ' من ' : ' of ' }}
+                      <strong>{{ reviewsTotalPages() }}</strong>
+                    </span>
+                    <button 
+                      type="button" 
+                      class="btn btn-outline-dark btn-sm d-flex align-items-center gap-1"
+                      [disabled]="!reviewsHasNext()"
+                      (click)="onReviewsPageChange(reviewsPageIndex() + 1)"
+                      style="border-radius: 20px;"
+                    >
+                      {{ langService.currentLang() === 'ar' ? 'التالي' : 'Next' }}
+                      <span class="material-symbols-outlined">chevron_right</span>
+                    </button>
+                  </div>
+                </div>
+              }
+            }
+          </div>
         </div>
       }
 

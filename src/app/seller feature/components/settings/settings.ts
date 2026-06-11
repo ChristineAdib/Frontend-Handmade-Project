@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { ShopService } from '../../../shop feature/services/shop-service';
 import { IShop } from '../../../shop feature/models/ishop';
+import { LanguageService } from '../../../core/services/language.service';
 
 @Component({
   selector: 'app-settings',
@@ -14,6 +15,7 @@ import { IShop } from '../../../shop feature/models/ishop';
 export class Settings implements OnInit {
   private shopService = inject(ShopService);
   private fb = inject(FormBuilder);
+  protected readonly langService = inject(LanguageService);
 
   shop = signal<IShop | null>(null);
   isLoading = signal(true);
@@ -42,7 +44,7 @@ export class Settings implements OnInit {
         this.isLoading.set(false);
       },
       error: () => {
-        this.errorMsg.set('Failed to load shop data');
+        this.errorMsg.set(this.langService.currentLang() === 'ar' ? 'فشل تحميل بيانات المتجر' : 'Failed to load shop data');
         this.isLoading.set(false);
       }
     });
@@ -79,12 +81,12 @@ export class Settings implements OnInit {
       next: updated => {
         this.shop.set(updated);
         this.isSaving.set(false);
-        this.successMsg.set('Shop updated successfully!');
+        this.successMsg.set(this.langService.currentLang() === 'ar' ? 'تم تحديث المتجر بنجاح!' : 'Shop updated successfully!');
         setTimeout(() => this.successMsg.set(null), 3000);
       },
       error: () => {
         this.isSaving.set(false);
-        this.errorMsg.set('Failed to update shop. Please try again.');
+        this.errorMsg.set(this.langService.currentLang() === 'ar' ? 'فشل تحديث المتجر. يرجى المحاولة مرة أخرى.' : 'Failed to update shop. Please try again.');
       }
     });
   }

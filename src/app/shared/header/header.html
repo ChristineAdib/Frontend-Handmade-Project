@@ -124,7 +124,7 @@
                   display:flex; align-items:center; justify-content:center;
                   color:white; font-weight:500; font-size:16px;">H</div>
       <span style="color:white; font-size:18px; font-weight:500; letter-spacing:0.5px;">
-        Handoura
+        HandAura
       </span>
     </a>
 
@@ -140,62 +140,91 @@
 
         <li class="nav-item">
           <a class="nav-link px-3 py-2 rounded-3" style="color: #e8c9a0;"
-            routerLink="/home" routerLinkActive="active-nav">Home</a>
+            routerLink="/home" routerLinkActive="active-nav">{{ langService.translate('home') }}</a>
+        </li>
+
+        <!-- <li class="nav-item">
+          <a class="nav-link px-3 py-2 rounded-3" style="color: #e8c9a0;"
+            routerLink="/products-api" routerLinkActive="active-nav">{{ langService.translate('productsApi') }}</a>
+        </li> -->
+
+        <li class="nav-item">
+          <a class="nav-link px-3 py-2 rounded-3" style="color: #e8c9a0;"
+            routerLink="/products" routerLinkActive="active-nav">{{ langService.translate('products') }}</a>
         </li>
 
         <li class="nav-item">
           <a class="nav-link px-3 py-2 rounded-3" style="color: #e8c9a0;"
-            routerLink="/products-api" routerLinkActive="active-nav">ProductsAPI</a>
+            routerLink="/about" routerLinkActive="active-nav">{{ langService.translate('about') }}</a>
         </li>
 
         <li class="nav-item">
           <a class="nav-link px-3 py-2 rounded-3" style="color: #e8c9a0;"
-            routerLink="/products" routerLinkActive="active-nav">Products</a>
+            routerLink="/contact" routerLinkActive="active-nav">{{ langService.translate('contact') }}</a>
         </li>
 
-        <li class="nav-item">
-          <a class="nav-link px-3 py-2 rounded-3" style="color: #e8c9a0;"
-            routerLink="/about" routerLinkActive="active-nav">About</a>
-        </li>
-
-        <li class="nav-item">
-          <a class="nav-link px-3 py-2 rounded-3" style="color: #e8c9a0;"
-            routerLink="/contact" routerLinkActive="active-nav">Contact</a>
-        </li>
-
-        <li class="nav-item">
+        <!-- <li class="nav-item">
           <a class="nav-link px-3 py-2 rounded-3" style="color: #e8c9a0;"
             routerLink="/search-products" routerLinkActive="active-nav">
-            Search
+            {{ langService.translate('search') }}
           </a>
-        </li>
+        </li> -->
 
         <!-- ===== لو مش logged in ===== -->
         @if (!isLoggedIn()) {
           <li class="nav-item">
             <a class="nav-link px-3 py-2 rounded-3" style="color: #e8c9a0;"
-              routerLink="/register" routerLinkActive="active-nav">Register</a>
+              routerLink="/register" routerLinkActive="active-nav">{{ langService.translate('register') }}</a>
           </li>
           <li class="nav-item">
             <a class="nav-link px-3 py-2 rounded-3" style="color: #e8c9a0;"
-              routerLink="/login-api" routerLinkActive="active-nav">Login</a>
+              routerLink="/login-api" routerLinkActive="active-nav">{{ langService.translate('login') }}</a>
           </li>
         }
 
         <!-- ===== لو logged in ===== -->
         @if (isLoggedIn()) {
+          @if (!isSeller()) {
+            <li class="nav-item">
+              <a class="nav-link px-3 py-2 rounded-3" style="color: #e8c9a0;"
+                routerLink="/become-seller" routerLinkActive="active-nav">
+                {{ langService.translate('becomeSeller') }}
+              </a>
+            </li>
+          }
           <li class="nav-item">
             <a class="nav-link px-3 py-2 rounded-3" style="color: #e8c9a0;"
-              routerLink="/profile" routerLinkActive="active-nav">Profile</a>
+              routerLink="/profile" routerLinkActive="active-nav">{{ langService.translate('profile') }}</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link px-3 py-2 rounded-3 position-relative" style="color: #e8c9a0;"
+              routerLink="/chat" routerLinkActive="active-nav">
+              {{ langService.translate('chat') }}
+              @if (chatService.totalUnread() > 0) {
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.7rem;">
+                  {{ chatService.totalUnread() }}
+                </span>
+              }
+            </a>
           </li>
           <li class="nav-item">
             <button class="btn btn-sm px-3 py-2 rounded-3"
               style="background-color: #c8813a; color: white; border: none;"
               (click)="logout()">
-              Logout
+              {{ langService.translate('logout') }}
             </button>
           </li>
         }
+
+        <!-- Language Selector Button -->
+        <li class="nav-item">
+          <button class="btn btn-sm px-3 py-2 rounded-3 ms-lg-2 d-flex align-items-center gap-1 lang-toggle-btn"
+            style="background: transparent; color: #e8c9a0; border: 1px solid rgba(232, 201, 160, 0.35); outline: none;"
+            (click)="langService.toggleLanguage()">
+            <span class="material-symbols-outlined" style="font-size: 16px;">language</span>
+            <span>{{ langService.currentLang() === 'en' ? 'العربية' : 'English' }}</span>
+          </button>
+        </li>
 
       </ul>
     </div>

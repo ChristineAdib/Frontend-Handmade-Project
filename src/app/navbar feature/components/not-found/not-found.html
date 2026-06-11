@@ -2,9 +2,9 @@
   <div class="py-5">
     <div class="display-1 mb-3">😕</div>
     <h1 class="fw-bold text-danger">404</h1>
-    <p class="text-muted fs-5 mb-4">Oops! Page not found.</p>
+    <p class="text-muted fs-5 mb-4">{{ langService.translate('pageNotFound') }}</p>
     <a routerLink="/home" class="btn btn-dark btn-lg px-5">
-      🏠 Go Home
+      {{ langService.translate('goHome') }}
     </a>
   </div>
 </div>

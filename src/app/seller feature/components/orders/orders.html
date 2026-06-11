@@ -1,9 +1,9 @@
-<div class="orders-wrap">
+<div class="orders-wrap" [dir]="langService.currentLang() === 'ar' ? 'rtl' : 'ltr'">
 
   <div class="page-header">
     <div>
-      <h1 class="page-title">Orders</h1>
-      <p class="page-sub">Manage incoming orders for your shop</p>
+      <h1 class="page-title">{{ langService.translate('myOrders') }}</h1>
+      <p class="page-sub">{{ langService.currentLang() === 'ar' ? 'إدارة الطلبات الواردة لمتجرك' : 'Manage incoming orders for your shop' }}</p>
     </div>
     <div class="orders-count">
       <span class="count-num">{{ totalCount() }}</span>
@@ -14,7 +14,7 @@
   <!-- Filter Tabs -->
   <div class="filter-tabs">
     <button class="filter-tab" [class.active]="selectedStatus() === null"
-      (click)="filterByStatus(null)">All</button>
+      (click)="filterByStatus(null)">{{ langService.currentLang() === 'ar' ? 'الكل' : 'All' }}</button>
     @for (status of statuses; track status) {
       <button class="filter-tab" [class.active]="selectedStatus() === status"
         (click)="filterByStatus(status)">{{ status }}</button>
@@ -86,7 +86,7 @@
 <!-- Order Detail Modal -->
 @if (selectedOrder() || isDetailLoading()) {
   <div class="modal-overlay" (click)="closeDetail()">
-    <div class="modal" (click)="$event.stopPropagation()">
+    <div class="order-detail-modal" (click)="$event.stopPropagation()">
 
       @if (isDetailLoading()) {
         <div class="loading-state">
@@ -96,12 +96,12 @@
       }
 
       @if (selectedOrder()) {
-        <div class="modal-header">
-          <h2 class="modal-title">Order #{{ selectedOrder()!.id.slice(0,8) }}</h2>
+        <div class="order-detail-modal-header">
+          <h2 class="order-detail-modal-title">Order #{{ selectedOrder()!.id.slice(0,8) }}</h2>
           <button class="close-btn" (click)="closeDetail()">✕</button>
         </div>
 
-        <div class="modal-body">
+        <div class="order-detail-modal-body">
 
           <!-- Status & Date -->
           <div class="detail-row">
@@ -111,9 +111,16 @@
             </div>
             <div class="detail-item">
               <span class="detail-label">Status</span>
-              <span class="status-badge" [class]="getStatusClass(selectedOrder()!.status)">
-                {{ selectedOrder()!.status }}
-              </span>
+              <select class="form-select status-select" 
+                      [value]="selectedOrder()!.status" 
+                      [disabled]="isUpdatingStatus()"
+                      (change)="onStatusChange(selectedOrder()!.id, $event)">
+                @for (s of statuses; track s) {
+                  <option [value]="s">
+                    {{ s }}
+                  </option>
+                }
+              </select>
             </div>
             <div class="detail-item">
               <span class="detail-label">Payment</span>

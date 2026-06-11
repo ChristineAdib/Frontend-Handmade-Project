@@ -5,6 +5,7 @@ import { IProductAPI } from '../../models/iproductAPI';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
+import { LanguageService } from '../../../core/services/language.service';
 
 @Component({
   selector: 'app-search-products',
@@ -15,6 +16,7 @@ import { ToastrService } from 'ngx-toastr';
 export class SearchProducts {
   private ProductsService = inject(ProductApiService)
   private toastr = inject(ToastrService);
+  public langService = inject(LanguageService);
 
   products: IProductAPI[] = [];
   isLoading = false;
@@ -38,14 +40,18 @@ export class SearchProducts {
         this.isLoading = false;
 
         if (data.length > 0) {
-          this.toastr.success(`Found ${data.length} products!`, 'Search Complete');
+          const successMsg = this.langService.currentLang() === 'ar' ? `تم العثور على ${data.length} منتج!` : `Found ${data.length} products!`;
+          const successTitle = this.langService.currentLang() === 'ar' ? 'اكتمل البحث' : 'Search Complete';
+          this.toastr.success(successMsg, successTitle);
         } else {
-          this.toastr.warning('No products found!', 'Search Complete');
+          const warnTitle = this.langService.currentLang() === 'ar' ? 'اكتمل البحث' : 'Search Complete';
+          this.toastr.warning(this.langService.translate('noProductsFound'), warnTitle);
         }
       },
 
       error: (err) => {
-        this.toastr.error('Something went wrong!', 'Error');
+        const errorTitle = this.langService.currentLang() === 'ar' ? 'خطأ' : 'Error';
+        this.toastr.error(this.langService.translate('somethingWentWrongTryAgain'), errorTitle);
         this.isLoading = false;
       }
     });

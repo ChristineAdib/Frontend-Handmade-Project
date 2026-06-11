@@ -1,11 +1,14 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
+
 import { WishlistService } from '../../services/wishlist-service';
 import { CartApiService } from '../../../orders/services/cart-api.service';
 import { environment } from '../../../../environments/environment';
 import { IWishList } from '../../models/iwish-list';
 import { IWishListItem } from '../../models/iwish-list-item';
+import { LanguageService } from '../../../core/services/language.service';
 
 @Component({
   selector: 'app-wishlist-page',
@@ -56,6 +59,10 @@ export class WishlistPageComponent implements OnInit {
   }
 
   getImageUrl(item: IWishListItem): string {
-    return item.imageUrl ? `${environment.apiUrl}/${item.imageUrl}` : '';
+    if (!item.imageUrl) return '';
+    if (item.imageUrl.startsWith('http://') || item.imageUrl.startsWith('https://') || item.imageUrl.startsWith('//')) {
+      return item.imageUrl;
+    }
+    return `${environment.apiUrl}/${item.imageUrl}`;
   }
 }

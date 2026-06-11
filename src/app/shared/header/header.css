@@ -1,0 +1,7 @@
+.lang-toggle-btn {
+  transition: all 0.2s ease;
+}
+.lang-toggle-btn:hover {
+  background-color: rgba(232, 201, 160, 0.1) !important;
+  border-color: #e8c9a0 !important;
+}

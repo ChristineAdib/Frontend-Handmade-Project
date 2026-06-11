@@ -1,0 +1,72 @@
+<div class="sidebar-container">
+  <!-- Sidebar Header -->
+  <div class="sidebar-header">
+    <h2>{{ langService.translate('conversationsTitle') }}</h2>
+  </div>
+
+  <!-- Search Bar -->
+  <div class="search-box">
+    <div class="search-input-wrapper">
+      <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+      </svg>
+      <input 
+        type="text" 
+        [ngModel]="searchQuery()" 
+        (ngModelChange)="searchQuery.set($event)"
+        [placeholder]="langService.translate('searchChatPlaceholder')" 
+      />
+    </div>
+  </div>
+
+  <!-- Conversation List -->
+  <div class="list-wrapper">
+    @if (filteredConversations().length === 0) {
+      <div class="empty-list">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="empty-icon" viewBox="0 0 16 16">
+          <path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4.414a1 1 0 0 0-.707.293L.854 15.146A.5.5 0 0 1 0 14.793zm5 4a1 1 0 1 0-2 0 1 1 0 0 0 2 0m4 0a1 1 0 1 0-2 0 1 1 0 0 0 2 0m3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2"/>
+        </svg>
+        <p>{{ langService.translate('noConversationsFound') }}</p>
+      </div>
+    } @else {
+      @for (c of filteredConversations(); track c.id) {
+        <div 
+          class="conversation-item" 
+          [class.active]="chatService.activeConversation()?.id === c.id"
+          (click)="selectConversation(c)"
+        >
+          <!-- Avatar -->
+          <div class="avatar-col">
+            <div class="avatar-circle">
+              @if (getOtherParticipantImage(c)) {
+                <img [src]="getOtherParticipantImage(c)" alt="Avatar" class="avatar-img" />
+              } @else {
+                {{ getOtherParticipantName(c)[0] | uppercase }}
+              }
+            </div>
+            <!-- Role indicator -->
+            <span class="role-badge" [class.seller]="getOtherParticipantRole(c) === 'Seller'">
+              {{ langService.translate(getOtherParticipantRole(c).toLowerCase() === 'seller' ? 'seller' : 'buyer')[0] }}
+            </span>
+          </div>
+
+          <!-- Conversation Info -->
+          <div class="info-col">
+            <div class="name-row">
+              <span class="name-text">{{ getOtherParticipantName(c) }}</span>
+              <span class="time-text">{{ getLastMessageTime(c) }}</span>
+            </div>
+            <div class="preview-row">
+              <span class="preview-text" [class.unread]="c.unreadCount > 0">
+                {{ getLastMessageText(c) }}
+              </span>
+              @if (c.unreadCount > 0) {
+                <span class="unread-badge">{{ c.unreadCount }}</span>
+              }
+            </div>
+          </div>
+        </div>
+      }
+    }
+  </div>
+</div>

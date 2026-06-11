@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ShopService } from '../../../shop feature/services/shop-service';
 import { IShop } from '../../../shop feature/models/ishop';
 import { IShopStats } from '../../../shop feature/models/ishop-stats';
+import { LanguageService } from '../../../core/services/language.service';
 
 @Component({
   selector: 'app-overview',
@@ -13,6 +14,7 @@ import { IShopStats } from '../../../shop feature/models/ishop-stats';
 })
 export class Overview implements OnInit {
   private shopService = inject(ShopService);
+  protected readonly langService = inject(LanguageService);
 
   shop = signal<IShop | null>(null);
   stats = signal<IShopStats | null>(null);
@@ -32,7 +34,7 @@ export class Overview implements OnInit {
         });
       },
       error: err => {
-        this.error.set('Failed to load shop data');
+        this.error.set(this.langService.currentLang() === 'ar' ? 'فشل تحميل بيانات المتجر' : 'Failed to load shop data');
         this.isLoading.set(false);
       }
     });

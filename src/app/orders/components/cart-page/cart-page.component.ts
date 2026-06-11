@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { environment } from '../../../../environments/environment';
 import { CartApiService, CartItemDto } from '../../services/cart-api.service';
+import { LanguageService } from '../../../core/services/language.service';
 
 @Component({
   selector: 'app-cart-page',
@@ -13,14 +14,13 @@ import { CartApiService, CartItemDto } from '../../services/cart-api.service';
 })
 export class CartPageComponent implements OnInit {
   readonly cartApi = inject(CartApiService);
+  protected readonly langService = inject(LanguageService);
 
   ngOnInit(): void {
     this.cartApi.getCart();
   }
 
-  async seedCart(): Promise<void> {
-    await this.cartApi.seedTestCart();
-  }
+
 
   async increment(item: CartItemDto): Promise<void> {
     await this.cartApi.updateQuantity(item.productId, item.quantity + 1);
@@ -39,6 +39,10 @@ export class CartPageComponent implements OnInit {
   }
 
   getImageUrl(item: CartItemDto): string {
-    return item.imageUrl ? `${environment.apiUrl}/${item.imageUrl}` : '';
+    if (!item.imageUrl) return '';
+    if (item.imageUrl.startsWith('http://') || item.imageUrl.startsWith('https://') || item.imageUrl.startsWith('//')) {
+      return item.imageUrl;
+    }
+    return `${environment.apiUrl}/${item.imageUrl}`;
   }
 }

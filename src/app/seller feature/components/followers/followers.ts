@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FollowService } from '../../../follow feature/services/follow-service';
 import { ShopService } from '../../../shop feature/services/shop-service';
 import { IShopFollower } from '../../../follow feature/models/ishop-follower';
+import { LanguageService } from '../../../core/services/language.service';
 
 @Component({
   selector: 'app-followers',
@@ -14,6 +15,7 @@ import { IShopFollower } from '../../../follow feature/models/ishop-follower';
 export class Followers implements OnInit {
   private followService = inject(FollowService);
   private shopService = inject(ShopService);
+  protected readonly langService = inject(LanguageService);
 
   followers = signal<IShopFollower[]>([]);
   isLoading = signal(true);
@@ -28,13 +30,13 @@ export class Followers implements OnInit {
             this.isLoading.set(false);
           },
           error: () => {
-            this.error.set('Failed to load followers');
+            this.error.set(this.langService.currentLang() === 'ar' ? 'فشل تحميل المتابعين' : 'Failed to load followers');
             this.isLoading.set(false);
           }
         });
       },
       error: () => {
-        this.error.set('Failed to load shop');
+        this.error.set(this.langService.currentLang() === 'ar' ? 'فشل تحميل المتجر' : 'Failed to load shop');
         this.isLoading.set(false);
       }
     });

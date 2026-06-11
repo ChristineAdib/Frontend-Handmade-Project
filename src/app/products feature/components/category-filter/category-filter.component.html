@@ -1,0 +1,42 @@
+<!-- Desktop Chips (hidden on mobile) -->
+<div class="chips-wrapper d-none d-md-flex align-items-center">
+  <div class="chips-scroll">
+    <!-- "All" Chip -->
+    <button
+      type="button"
+      class="chip-button"
+      [class.active]="selectedCategoryId === '0'"
+      (click)="selectCategory('0')"
+    >
+      {{ langService.translate('allCategories') }}
+    </button>
+
+    <!-- Dynamic Category Chips -->
+    @for (cat of categories; track cat.id) {
+      <button
+        type="button"
+        class="chip-button"
+        [class.active]="selectedCategoryId === cat.id"
+        (click)="selectCategory(cat.id)"
+      >
+        {{ langService.currentLang() === 'ar' ? (cat.nameAr || cat.nameEn) : (cat.nameEn || cat.nameAr) }}
+      </button>
+    }
+  </div>
+</div>
+
+<!-- Mobile Dropdown (hidden on desktop) -->
+<div class="dropdown-wrapper d-block d-md-none">
+  <select 
+    class="luxury-select" 
+    [value]="selectedCategoryId" 
+    (change)="onDropdownChange($event)"
+  >
+    <option value="0">{{ langService.translate('allCategories') }}</option>
+    @for (cat of categories; track cat.id) {
+      <option [value]="cat.id">
+        {{ langService.currentLang() === 'ar' ? (cat.nameAr || cat.nameEn) : (cat.nameEn || cat.nameAr) }}
+      </option>
+    }
+  </select>
+</div>

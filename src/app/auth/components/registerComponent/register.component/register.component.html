@@ -1,0 +1,140 @@
+<div class="compact-layout-wide">
+  <div class="form-header-main">
+    <h2>{{ langService.translate('joinHandoraTitle') }}</h2>
+  </div>
+
+  <form [formGroup]="registerForm" (ngSubmit)="onRegister()" class="form-fields-stack">
+    <div class="exact-split-layout">
+
+      <div class="exact-left-column">
+        <div class="avatar-uploader-block">
+          @if (!imagePreview()) {
+          <div class="exact-circle-zone">
+            <input type="file" (change)="onImageSelected($event)" accept="image/*" id="fileUpload">
+            <label for="fileUpload" class="exact-circle-label">
+              <svg class="camera-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                   d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                <circle cx="12" cy="13" r="3" stroke-linecap="round" />
+              </svg>
+              <span>{{ langService.translate('addPhoto') }}</span>
+            </label>
+          </div>
+          } @else {
+          <div class="exact-circle-preview">
+            <img [src]="imagePreview()" alt="Artisan Preview">
+            <button type="button" class="exact-remove-overlay" (click)="onRemoveImage()">
+              {{ langService.currentLang() === 'ar' ? 'تغيير' : 'Change' }}
+            </button>
+          </div>
+          }
+          <span class="exact-caption">
+            {{ langService.translate('artisanPortrait') }} <span class="label-optional">{{ langService.translate('optionalLabel') }}</span>
+          </span>
+        </div>
+
+        <div class="exact-bio-block">
+          <label>{{ langService.translate('artisanBiography') }} <span class="label-optional">{{ langService.translate('optionalLabel') }}</span></label>
+          <textarea formControlName="bio" class="exact-textarea" rows="4" [placeholder]="langService.translate('tellYourStoryPlaceholder')"></textarea>
+        </div>
+      </div>
+
+      <div class="exact-right-column">
+
+        <!-- Name -->
+        <div class="exact-input-group">
+          <label>{{ langService.translate('nameLabel') }}</label>
+          <input type="text" formControlName="name"
+            [ngClass]="{'input-error': registerForm.get('name')?.touched && registerForm.get('name')?.invalid}">
+          @if (registerForm.get('name')?.touched && registerForm.get('name')?.hasError('required')) {
+          <span class="field-error">{{ langService.translate('nameRequired') }}</span>
+          }
+        </div>
+
+        <!-- Email -->
+        <div class="exact-input-group">
+          <label>{{ langService.translate('emailAddress') }}</label>
+          <input type="email" formControlName="email"
+            [ngClass]="{'input-error': registerForm.get('email')?.touched && registerForm.get('email')?.invalid}">
+          @if (registerForm.get('email')?.touched && registerForm.get('email')?.hasError('required')) {
+          <span class="field-error">{{ langService.translate('emailRequired') }}</span>
+          }
+          @if (registerForm.get('email')?.touched && registerForm.get('email')?.hasError('email')) {
+          <span class="field-error">{{ langService.translate('validEmail') }}</span>
+          }
+          @if (emailError()) {
+          <span class="field-error">{{ emailError() }}</span>
+          }
+        </div>
+
+        <!-- Phone -->
+        <div class="exact-input-group">
+          <label>{{ langService.translate('phoneNumber') }} <span class="label-optional">{{ langService.translate('optionalLabel') }}</span></label>
+          <input type="text" formControlName="phoneNumber">
+        </div>
+
+        <!-- Password -->
+        <div class="exact-input-group">
+          <label>{{ langService.translate('passwordLabel') }}</label>
+          <div class="password-wrapper-custom">
+            <input [type]="showPass() ? 'text' : 'password'" formControlName="password"
+              [ngClass]="{'input-error': registerForm.get('password')?.touched && registerForm.get('password')?.invalid}">
+            <button type="button" class="exact-eye-btn" (click)="togglePass()">
+              {{ showPass() ? '👁️' : '🔒' }}
+            </button>
+          </div>
+          @if (passwordError()) {
+          <span class="field-error">{{ passwordError() }}</span>
+          }
+          @if (registerForm.get('password')?.touched && registerForm.get('password')?.hasError('required')) {
+          <span class="field-error">{{ langService.translate('passwordRequired') }}</span>
+          }
+          @if (registerForm.get('password')?.touched && registerForm.get('password')?.hasError('minlength')) {
+          <span class="field-error">{{ langService.translate('passwordMinLength') }}</span>
+          }
+          @if (registerForm.get('password')?.touched && registerForm.get('password')?.hasError('pattern')) {
+          <span class="field-error">{{ langService.translate('passwordPattern') }}</span>
+          }
+        </div>
+
+        <!-- Confirm Password -->
+        <div class="exact-input-group">
+          <label>{{ langService.translate('confirmPasswordLabel') }}</label>
+          <div class="password-wrapper-custom">
+            <input [type]="showConfirm() ? 'text' : 'password'" formControlName="confirmPassword"
+              [ngClass]="{'input-error': registerForm.get('confirmPassword')?.touched && registerForm.errors?.['mismatch']}">
+            <button type="button" class="exact-eye-btn" (click)="toggleConfirm()">
+              {{ showConfirm() ? '👁️' : '🔒' }}
+            </button>
+          </div>
+          @if (registerForm.get('confirmPassword')?.touched && registerForm.errors?.['mismatch']) {
+          <span class="field-error">{{ langService.translate('passwordsDoNotMatch') }}</span>
+          }
+        </div>
+
+        <div class="exact-remember-zone">
+          <label class="remember-me-custom">
+            <input type="checkbox">
+            <span>{{ langService.translate('rememberMe') }}</span>
+          </label>
+        </div>
+
+      </div>
+    </div>
+
+    <button type="submit" [disabled]="registerForm.invalid || isLoading()" class="btn-submit-main">
+      @if (isLoading()) { <span class="spinner-custom"></span> } @else { {{ langService.translate('joinHandoraBtn') }} }
+    </button>
+  </form>
+
+  <div class="google-divider">
+    <span>{{ langService.currentLang() === 'ar' ? 'أو' : 'Or' }}</span>
+  </div>
+
+  <div id="google-btn" class="google-btn-container"></div>
+
+  <p class="switch-tab-text">
+    {{ langService.translate('alreadyMember') }}
+    <button type="button" (click)="auth.activeTab.set('login')">{{ langService.translate('signIn') }}</button>
+  </p>
+</div>
