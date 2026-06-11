@@ -309,3 +309,33 @@ input:-webkit-autofill:focus {
   color: #e74c3c;
   margin-top: 0.3rem;
 }
+
+.google-divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: var(--color-text-sub);
+  font-size: 0.85rem;
+  margin: 1rem 0;
+}
+
+.google-divider::before,
+.google-divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid var(--color-border-soft);
+}
+
+.google-divider:not(:empty)::before {
+  margin-right: .5em;
+}
+
+.google-divider:not(:empty)::after {
+  margin-left: .5em;
+}
+
+.google-btn-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}

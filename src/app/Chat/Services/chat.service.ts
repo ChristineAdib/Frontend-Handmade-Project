@@ -180,6 +180,28 @@ export class ChatService implements OnDestroy {
   }
 
   /**
+   * Starts or gets a conversation by shopId.
+   */
+  async startConversationByShop(shopId: string): Promise<Conversation> {
+    try {
+      const res = await firstValueFrom(
+        this.http.post<ApiResponse<Conversation>>(`${this.apiUrl}/start-by-shop/${shopId}`, {})
+      );
+      if (res.success && res.data) {
+        const exists = this.conversations().some((c) => c.id === res.data.id);
+        if (!exists) {
+          this.conversations.update((prev) => [res.data, ...prev]);
+        }
+        return res.data;
+      }
+      throw new Error(res.message || 'Failed to start conversation by shop');
+    } catch (err) {
+      console.error('Failed to start conversation by shop:', err);
+      throw err;
+    }
+  }
+
+  /**
    * Sends a message within a conversation.
    */
   async sendMessage(

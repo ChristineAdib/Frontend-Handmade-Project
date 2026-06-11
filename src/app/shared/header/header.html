@@ -124,7 +124,7 @@
                   display:flex; align-items:center; justify-content:center;
                   color:white; font-weight:500; font-size:16px;">H</div>
       <span style="color:white; font-size:18px; font-weight:500; letter-spacing:0.5px;">
-        Handoura
+        HandAura
       </span>
     </a>
 
@@ -143,10 +143,10 @@
             routerLink="/home" routerLinkActive="active-nav">{{ langService.translate('home') }}</a>
         </li>
 
-        <li class="nav-item">
+        <!-- <li class="nav-item">
           <a class="nav-link px-3 py-2 rounded-3" style="color: #e8c9a0;"
             routerLink="/products-api" routerLinkActive="active-nav">{{ langService.translate('productsApi') }}</a>
-        </li>
+        </li> -->
 
         <li class="nav-item">
           <a class="nav-link px-3 py-2 rounded-3" style="color: #e8c9a0;"
@@ -163,12 +163,12 @@
             routerLink="/contact" routerLinkActive="active-nav">{{ langService.translate('contact') }}</a>
         </li>
 
-        <li class="nav-item">
+        <!-- <li class="nav-item">
           <a class="nav-link px-3 py-2 rounded-3" style="color: #e8c9a0;"
             routerLink="/search-products" routerLinkActive="active-nav">
             {{ langService.translate('search') }}
           </a>
-        </li>
+        </li> -->
 
         <!-- ===== لو مش logged in ===== -->
         @if (!isLoggedIn()) {
@@ -184,6 +184,14 @@
 
         <!-- ===== لو logged in ===== -->
         @if (isLoggedIn()) {
+          @if (!isSeller()) {
+            <li class="nav-item">
+              <a class="nav-link px-3 py-2 rounded-3" style="color: #e8c9a0;"
+                routerLink="/become-seller" routerLinkActive="active-nav">
+                {{ langService.translate('becomeSeller') }}
+              </a>
+            </li>
+          }
           <li class="nav-item">
             <a class="nav-link px-3 py-2 rounded-3" style="color: #e8c9a0;"
               routerLink="/profile" routerLinkActive="active-nav">{{ langService.translate('profile') }}</a>

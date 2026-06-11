@@ -1,0 +1,92 @@
+<div class="become-seller-container py-5">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8 col-md-10">
+        
+        <!-- Back Navigation link -->
+        <div class="mb-4">
+          <a routerLink="/dashboard" class="back-link d-inline-flex align-items-center gap-2">
+            <span class="material-symbols-outlined">arrow_back</span>
+            {{ langService.translate('backToDashboard') }}
+          </a>
+        </div>
+
+        <!-- Main Form Card -->
+        <div class="card become-seller-card shadow-sm border-0 rounded-4 overflow-hidden card-glow">
+          <div class="card-header-accent p-4">
+            <h3 class="m-0 text-white fw-bold">{{ langService.translate('createShopTitle') }}</h3>
+            <p class="m-0 text-white-50 font-xs">{{ langService.translate('createShopDesc') }}</p>
+          </div>
+
+          <!-- Form Content -->
+          <form (submit)="onSubmit($event)" class="p-4 p-md-5">
+            
+            <!-- Logo Upload Section -->
+            <div class="logo-upload-group text-center mb-5">
+              <div class="logo-preview-container mx-auto">
+                <img [src]="logoPreview() || 'assets/default-shop-logo.png'" alt="Shop Logo Preview" class="logo-preview" onerror="this.src='https://api.dicebear.com/7.x/identicon/svg?seed=handora-shop'"/>
+                <label for="logoImageInput" class="btn-change-logo" title="Upload shop logo">
+                  <span class="material-symbols-outlined">photo_camera</span>
+                </label>
+              </div>
+              <input type="file" id="logoImageInput" accept="image/*" class="d-none" (change)="onFileSelected($event)" />
+              <div class="upload-hint mt-2 text-muted">
+                {{ langService.translate('shopLogoHint') }}
+              </div>
+            </div>
+
+            <!-- Form Fields -->
+            <div class="row g-4">
+              <!-- Name Input -->
+              <div class="col-12">
+                <div class="form-group-custom">
+                  <label for="shopNameInput" class="form-label-custom">
+                    <span class="material-symbols-outlined font-sm">storefront</span>
+                    {{ langService.translate('shopName') }}
+                  </label>
+                  <input type="text" id="shopNameInput" class="form-control-custom" [value]="name()" (input)="name.set($any($event.target).value)" [placeholder]="langService.translate('shopNamePlaceholder')" required />
+                </div>
+              </div>
+
+              <!-- Description (English) -->
+              <div class="col-12">
+                <div class="form-group-custom">
+                  <label for="descEnInput" class="form-label-custom">
+                    <span class="material-symbols-outlined font-sm">description</span>
+                    {{ langService.translate('shopDescriptionEn') }}
+                  </label>
+                  <textarea id="descEnInput" rows="4" class="form-control-custom" [value]="descriptionEn()" (input)="descriptionEn.set($any($event.target).value)" [placeholder]="langService.translate('shopDescEnPlaceholder')"></textarea>
+                </div>
+              </div>
+
+              <!-- Description (Arabic) -->
+              <div class="col-12">
+                <div class="form-group-custom">
+                  <label for="descArInput" class="form-label-custom">
+                    <span class="material-symbols-outlined font-sm">description</span>
+                    {{ langService.translate('shopDescriptionAr') }}
+                  </label>
+                  <textarea id="descArInput" rows="4" class="form-control-custom" [value]="descriptionAr()" (input)="descriptionAr.set($any($event.target).value)" [placeholder]="langService.translate('shopDescArPlaceholder')"></textarea>
+                </div>
+              </div>
+            </div>
+
+            <!-- Actions Bar -->
+            <div class="actions-row mt-5 pt-4 d-flex justify-content-end gap-3 border-top">
+              <a routerLink="/dashboard" class="btn btn-outline-custom">
+                {{ langService.translate('cancel') }}
+              </a>
+              <button type="submit" class="btn btn-submit-custom" [disabled]="isLoading()">
+                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true" *ngIf="isLoading()"></span>
+                {{ isLoading() ? langService.translate('registeringShop') : langService.translate('registerShopBtn') }}
+              </button>
+            </div>
+
+          </form>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

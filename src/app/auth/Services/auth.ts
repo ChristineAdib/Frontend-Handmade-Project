@@ -37,6 +37,28 @@ export class AuthService {
     );
   }
 
+  loginWithGoogle(credential: string): Observable<ApiResponse<AuthResponse>> {
+    return this.http.post<ApiResponse<AuthResponse>>(
+      `${this.apiUrl}/google`,
+      { credential }
+    ).pipe(
+      tap(res => {
+        if (res.success && res.data) {
+          this.setSession(res.data);
+          this.startTokenTimer(res.data.tokenExpiry);
+        }
+      })
+    );
+  }
+
+  forgotPassword(email: string): Observable<ApiResponse<any>> {
+    return this.http.post<ApiResponse<any>>(`${this.apiUrl}/forgot-password`, { email });
+  }
+
+  resetPassword(model: any): Observable<ApiResponse<any>> {
+    return this.http.post<ApiResponse<any>>(`${this.apiUrl}/reset-password`, model);
+  }
+
   register(model: RegisterRequest) {
 
     const formData = new FormData();
@@ -80,6 +102,10 @@ export class AuthService {
     localStorage.setItem('token', auth.token);
     localStorage.setItem('user', JSON.stringify(auth));
     localStorage.setItem('expiry', auth.tokenExpiry);
+  }
+
+  updateSession(auth: AuthResponse) {
+    this.setSession(auth);
   }
 
   getToken(): string | null {

@@ -115,7 +115,11 @@
                   <div class="avatar-circle">
                     <img [src]="profile()?.profileImage || 'assets/default-avatar.png'" alt="Avatar" onerror="this.src='https://api.dicebear.com/7.x/adventurer/svg?seed=handora'"/>
                   </div>
-                  <div class="profile-actions ms-auto">
+                  <div class="profile-actions ms-auto d-flex gap-2">
+                    <a routerLink="/become-seller" class="btn btn-secondary-accent d-flex align-items-center gap-2" style="background-color: #c8813a; color: white; border: none; border-radius: 8px; padding: 8px 16px;">
+                      <span class="material-symbols-outlined font-sm">storefront</span>
+                      {{ langService.translate('becomeSeller') }}
+                    </a>
                     <a routerLink="/profile/edit" class="btn btn-primary-accent d-flex align-items-center gap-2">
                       <span class="material-symbols-outlined font-sm">edit</span>
                       {{ langService.translate('editProfile') }}

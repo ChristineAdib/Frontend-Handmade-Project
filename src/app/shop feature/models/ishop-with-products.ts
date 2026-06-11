@@ -19,6 +19,7 @@ export interface IShopWithProducts {
   descriptionAr?: string;
   logo?: string;
   rating: number;
+  reviewCount: number;
   isVerified: boolean;
   ownerName: string;
   products: IProductSummary[];

@@ -40,6 +40,8 @@ export const routes: Routes = [
   { path: 'login', component: AuthComponent },
   { path: 'login-api', component: AuthComponent }, // Navbar login link fallback
   { path: 'register', component: AuthComponent },
+  { path: 'forgot-password', loadComponent: () => import('./auth/components/forgot-password/forgot-password.component').then(c => c.ForgotPasswordComponent) },
+  { path: 'reset-password', loadComponent: () => import('./auth/components/reset-password/reset-password.component').then(c => c.ResetPasswordComponent) },
   
   // Role-based profile redirect
   {
@@ -82,6 +84,8 @@ export const routes: Routes = [
 
   // Chat
   { path: 'chat', loadComponent: () => import('./Chat/components/chat.component').then(c => c.ChatComponent), canActivate: [authGuard] },
+  { path: 'chat/:shopId', loadComponent: () => import('./Chat/components/chat.component').then(c => c.ChatComponent), canActivate: [authGuard] },
+  { path: 'become-seller', loadComponent: () => import('./shop feature/components/become-seller/become-seller.component').then(c => c.BecomeSellerComponent), canActivate: [authGuard] },
   
   // Seller Dashboard with nested routes
   {

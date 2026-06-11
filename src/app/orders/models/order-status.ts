@@ -1,14 +1,16 @@
 export enum OrderStatus {
   Pending = 1,
-  Processing = 2,
-  Shipped = 3,
-  Delivered = 4,
-  Cancelled = 5,
-  Refunded = 6
+  Confirmed = 2,
+  Processing = 3,
+  Shipped = 4,
+  Delivered = 5,
+  Cancelled = 6,
+  Refunded = 7
 }
 
 export const OrderStatusLabel: Record<OrderStatus, string> = {
   [OrderStatus.Pending]: 'Pending',
+  [OrderStatus.Confirmed]: 'Confirmed',
   [OrderStatus.Processing]: 'Processing',
   [OrderStatus.Shipped]: 'Shipped',
   [OrderStatus.Delivered]: 'Delivered',

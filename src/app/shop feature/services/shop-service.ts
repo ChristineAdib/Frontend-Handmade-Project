@@ -63,8 +63,8 @@ getMyShopStats(): Observable<IShopStats> {
 }
 
 
-  createShop(dto: ICreateShop): Observable<IShop> {
-    return this.http.post<IShop>(API_URLS.createShop, dto, {
+  createShop(formData: FormData): Observable<any> {
+    return this.http.post<any>(API_URLS.createShop, formData, {
       headers: this.getAuthHeaders()
     });
   }
@@ -77,6 +77,34 @@ getMyShopStats(): Observable<IShopStats> {
 
   deleteShop(id: string): Observable<void> {
     return this.http.delete<void>(API_URLS.deleteShop(id), {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  getShopReviews(shopId: string, page: number, pageSize: number): Observable<any> {
+    return this.http.get<any>(API_URLS.getShopReviews(shopId, page, pageSize));
+  }
+
+  getUserReviewForShop(shopId: string): Observable<any> {
+    return this.http.get<any>(API_URLS.getUserReviewForShop(shopId), {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  createShopReview(dto: any): Observable<any> {
+    return this.http.post<any>(API_URLS.createShopReview, dto, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  updateShopReview(id: string, dto: any): Observable<any> {
+    return this.http.put<any>(API_URLS.updateShopReview(id), dto, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  deleteShopReview(id: string): Observable<any> {
+    return this.http.delete<any>(API_URLS.deleteShopReview(id), {
       headers: this.getAuthHeaders()
     });
   }

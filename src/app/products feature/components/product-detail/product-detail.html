@@ -60,8 +60,10 @@
         <div class="product-info-panel">
           <!-- Shop details -->
           <div class="shop-badge mb-2">
-            <span class="material-symbols-outlined">storefront</span>
-            <span class="shop-name">{{ product.shopName }}</span>
+            <a [routerLink]="['/shop', product.shopId]" class="shop-link">
+              <span class="material-symbols-outlined">storefront</span>
+              <span class="shop-name">{{ product.shopName }}</span>
+            </a>
           </div>
 
           <!-- Title -->

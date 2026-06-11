@@ -86,5 +86,14 @@ getWishList: `${base_domain}/api/wishlist`,
   getProfileFollowedShops: `${base_domain}/api/Profile/followed-shops`,
   getProfileOrders: `${base_domain}/api/Profile/orders`,
   getMyReviews: `${base_domain}/api/Reviews/my-reviews`,
-  updateUserProfile: (id: string) => `${base_domain}/api/auth/users/${id}`
+  updateUserProfile: (id: string) => `${base_domain}/api/auth/users/${id}`,
+  
+  // Shop Reviews
+  getShopReviews: (shopId: string, page: number, pageSize: number) => 
+    `${base_domain}/api/ShopReviews/shop/${shopId}?pageNumber=${page}&pageSize=${pageSize}`,
+  getUserReviewForShop: (shopId: string) => 
+    `${base_domain}/api/ShopReviews/shop/${shopId}/myReview`,
+  createShopReview: `${base_domain}/api/ShopReviews`,
+  updateShopReview: (id: string) => `${base_domain}/api/ShopReviews/${id}`,
+  deleteShopReview: (id: string) => `${base_domain}/api/ShopReviews/${id}`
 };

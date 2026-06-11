@@ -127,6 +127,12 @@
     </button>
   </form>
 
+  <div class="google-divider">
+    <span>{{ langService.currentLang() === 'ar' ? 'أو' : 'Or' }}</span>
+  </div>
+
+  <div id="google-btn" class="google-btn-container"></div>
+
   <p class="switch-tab-text">
     {{ langService.translate('alreadyMember') }}
     <button type="button" (click)="auth.activeTab.set('login')">{{ langService.translate('signIn') }}</button>

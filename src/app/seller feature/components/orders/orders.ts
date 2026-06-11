@@ -1,5 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ToastrService } from 'ngx-toastr';
 import { OrderStatus, OrderStatusLabel } from '../../../orders/models/order-status';
 import { LanguageService } from '../../../core/services/language.service';
 import { OrderService } from '../../../orders/services/order.service';
@@ -55,6 +56,7 @@ export class Orders {
   OrderStatusLabel = OrderStatusLabel;
   private orderService = inject(OrderService);
   private shopService = inject(ShopService);
+  private toastr = inject(ToastrService);
 
   orders = signal<SellerOrder[]>([]);
   isLoading = signal(true);
@@ -67,8 +69,10 @@ export class Orders {
 
   selectedOrder = signal<OrderDetail | null>(null);
   isDetailLoading = signal(false);
+  isUpdatingStatus = signal(false);
+  updateStatusError = signal<string | null>(null);
 
-  statuses = ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled', 'Refunded'];
+  statuses = ['Pending', 'Confirmed', 'Processing', 'Shipped', 'Delivered', 'Cancelled', 'Refunded'];
 
   ngOnInit() {
     this.shopService.getMyShop().subscribe({
@@ -118,6 +122,7 @@ export class Orders {
   translateOrderStatus(status: OrderStatus): string {
     switch (status) {
       case OrderStatus.Pending: return this.langService.translate('pending');
+      case OrderStatus.Confirmed: return this.langService.translate('confirmed');
       case OrderStatus.Processing: return this.langService.translate('processing');
       case OrderStatus.Shipped: return this.langService.translate('shipped');
       case OrderStatus.Delivered: return this.langService.translate('delivered');
@@ -126,20 +131,21 @@ export class Orders {
       default: return '';
     }
   }
-
+ 
   filteredOrders() {
     const status = this.selectedStatus();
     if (!status) return this.orders();
     return this.orders().filter(o => o.status === status);
   }
-
+ 
   filterByStatus(status: string | null) {
     this.selectedStatus.set(status);
   }
-
+ 
   getStatusClass(status: string): string {
     const map: Record<string, string> = {
       'Pending':    'status-pending',
+      'Confirmed':  'status-confirmed',
       'Processing': 'status-processing',
       'Shipped':    'status-shipped',
       'Delivered':  'status-delivered',
@@ -147,6 +153,63 @@ export class Orders {
       'Refunded':   'status-refunded',
     };
     return map[status] ?? '';
+  }
+ 
+  canTransition(current: string, next: string): boolean {
+    return true;
+  }
+ 
+  onStatusChange(orderId: string, event: Event) {
+    const select = event.target as HTMLSelectElement;
+    const nextStatusStr = select.value;
+    const currentOrder = this.selectedOrder();
+    if (!currentOrder) return;
+ 
+    if (nextStatusStr === currentOrder.status) return;
+ 
+    const statusMap: Record<string, OrderStatus> = {
+      'Pending': OrderStatus.Pending,
+      'Confirmed': OrderStatus.Confirmed,
+      'Processing': OrderStatus.Processing,
+      'Shipped': OrderStatus.Shipped,
+      'Delivered': OrderStatus.Delivered,
+      'Cancelled': OrderStatus.Cancelled,
+      'Refunded': OrderStatus.Refunded,
+    };
+ 
+    const nextStatusEnum = statusMap[nextStatusStr];
+    if (!nextStatusEnum) return;
+ 
+    if (confirm(`Are you sure you want to change the order status to ${nextStatusStr}?`)) {
+      this.isUpdatingStatus.set(true);
+      this.updateStatusError.set(null);
+ 
+      this.orderService.updateStatus(orderId, { status: nextStatusEnum }).then(success => {
+        this.isUpdatingStatus.set(false);
+        if (success) {
+          this.selectedOrder.update(order => order ? { ...order, status: nextStatusStr } : null);
+          this.orders.update(prevList => 
+            prevList.map(o => o.id === orderId ? { ...o, status: nextStatusStr } : o)
+          );
+          this.toastr.success(
+            this.langService.currentLang() === 'ar'
+              ? 'تم تحديث حالة الطلب بنجاح!'
+              : 'Order status updated successfully!'
+          );
+        } else {
+          select.value = currentOrder.status;
+          this.updateStatusError.set(this.orderService.error() || 'Failed to update order status.');
+          this.toastr.error(this.updateStatusError()!);
+        }
+      }).catch(err => {
+        this.isUpdatingStatus.set(false);
+        select.value = currentOrder.status;
+        this.updateStatusError.set('Failed to update status');
+        this.toastr.error('Failed to update status');
+      });
+    } else {
+      select.value = currentOrder.status;
+    }
   }
 
   nextPage() {

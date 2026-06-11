@@ -35,15 +35,17 @@ export class AddProduct implements OnInit {
   shopId = signal('');
   isEditMode = signal(false);
   productId = signal<string | null>(null);
+  existingImages = signal<{ id: string; imageUrl: string }[]>([]);
+  removeImageIds = signal<string[]>([]);
 
   form = this.fb.group({
-    titleEn:       ['', Validators.required],
-    titleAr:       ['', Validators.required],
+    titleEn: ['', Validators.required],
+    titleAr: ['', Validators.required],
     descriptionEn: [''],
     descriptionAr: [''],
-    price:         [0, [Validators.required, Validators.min(0.01)]],
-    quantity:      [1, [Validators.required, Validators.min(1)]],
-    categoryId:    ['', Validators.required],
+    price: [0, [Validators.required, Validators.min(0.01)]],
+    quantity: [1, [Validators.required, Validators.min(1)]],
+    categoryId: ['', Validators.required],
   });
 
   ngOnInit() {
@@ -52,6 +54,7 @@ export class AddProduct implements OnInit {
     if (id) {
       this.isEditMode.set(true);
       this.productId.set(id);
+      this.loadProductData(id);
     }
 
     // Load categories
@@ -83,7 +86,17 @@ export class AddProduct implements OnInit {
   }
 
   removeImage(index: number) {
-    this.selectedImages.update(imgs => imgs.filter((_, i) => i !== index));
+    const existingCount = this.existingImages().length;
+    if (index < existingCount) {
+      const removedImg = this.existingImages()[index];
+      if (removedImg.id) {
+        this.removeImageIds.update(ids => [...ids, removedImg.id]);
+      }
+      this.existingImages.update(imgs => imgs.filter((_, i) => i !== index));
+    } else {
+      const fileIndex = index - existingCount;
+      this.selectedImages.update(imgs => imgs.filter((_, i) => i !== fileIndex));
+    }
     this.imagePreviews.update(prev => prev.filter((_, i) => i !== index));
   }
 
@@ -124,7 +137,12 @@ export class AddProduct implements OnInit {
     formData.append('categoryId', v.categoryId!);
     formData.append('shopId', this.shopId());
 
-    this.selectedImages().forEach(img => formData.append('images', img));
+    if (this.isEditMode()) {
+      this.selectedImages().forEach(img => formData.append('newImages', img));
+      this.removeImageIds().forEach(id => formData.append('removeImageIds', id));
+    } else {
+      this.selectedImages().forEach(img => formData.append('images', img));
+    }
     this.tags().forEach(tag => formData.append('tags', tag));
 
     const request$ = this.isEditMode()
@@ -149,32 +167,38 @@ export class AddProduct implements OnInit {
   }
 
   private loadProductData(id: string) {
-  this.productService.getProductById(id).subscribe({
-    next: (product: any) => {
-      this.form.patchValue({
-        titleEn: product.titleEn,
-        titleAr: product.titleAr,
-        descriptionEn: product.descriptionEn ?? '',
-        descriptionAr: product.descriptionAr ?? '',
-        price: product.price,
-        quantity: product.quantity,
-        categoryId: product.categoryId,
-      });
-      if (product.images?.length) this.imagePreviews.set(product.images);
-      if (product.tags?.length) this.tags.set(product.tags);
-    }
-  });
-}
-
-@Input() set editProductId(id: string | null) {
-  if (id) {
-    this.isEditMode.set(true);
-    this.productId.set(id);
-    this.loadProductData(id);
+    this.productService.getProductById(id).subscribe({
+      next: (product: any) => {
+        this.form.patchValue({
+          titleEn: product.titleEn,
+          titleAr: product.titleAr,
+          descriptionEn: product.descriptionEn ?? '',
+          descriptionAr: product.descriptionAr ?? '',
+          price: product.price,
+          quantity: product.quantity,
+          categoryId: product.categoryId,
+        });
+        if (product.images?.length) {
+          const imgs = product.images.map((img: any) => ({ id: img.id, imageUrl: img.imageUrl }));
+          this.existingImages.set(imgs);
+          this.imagePreviews.set(imgs.map((img: any) => img.imageUrl));
+        }
+        if (product.tags?.length) this.tags.set(product.tags);
+      }
+    });
   }
-}
-  
+
+  @Input() set editProductId(id: string | null) {
+    if (id) {
+      this.isEditMode.set(true);
+      this.productId.set(id);
+      this.loadProductData(id);
+    }
+  }
+
   onCancel() {
-    this.router.navigate(['/seller/products']);
+    this.router.navigateByUrl('/').then(() => {
+      this.router.navigate(['/seller/products']);
+    });
   }
 }

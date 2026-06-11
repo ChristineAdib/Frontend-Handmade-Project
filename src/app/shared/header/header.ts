@@ -43,6 +43,10 @@ export class Header implements OnInit {
   isLoggedIn(): boolean{
     return this.authService.isLoggedIn();
   }
+  isSeller(): boolean {
+    const user = this.authService.getUser();
+    return user?.roles?.includes('Seller') ?? false;
+  }
   logout(){
     this.chatService.disconnectRealTime();
     this.authService.logout();

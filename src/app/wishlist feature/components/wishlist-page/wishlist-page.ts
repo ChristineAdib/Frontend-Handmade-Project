@@ -59,6 +59,10 @@ export class WishlistPageComponent implements OnInit {
   }
 
   getImageUrl(item: IWishListItem): string {
-    return item.imageUrl ? `${environment.apiUrl}/${item.imageUrl}` : '';
+    if (!item.imageUrl) return '';
+    if (item.imageUrl.startsWith('http://') || item.imageUrl.startsWith('https://') || item.imageUrl.startsWith('//')) {
+      return item.imageUrl;
+    }
+    return `${environment.apiUrl}/${item.imageUrl}`;
   }
 }

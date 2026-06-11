@@ -26,13 +26,19 @@
         <input type="checkbox">
         <span>{{ langService.translate('rememberMe') }}</span>
       </label>
-      <a class="forgot-link-custom">{{ langService.translate('forgotPassword') }}</a>
+      <a routerLink="/forgot-password" class="forgot-link-custom">{{ langService.translate('forgotPassword') }}</a>
     </div>
 
     <button type="submit" [disabled]="loginForm.invalid || isLoading()" class="btn-submit-main">
       @if (isLoading()) { <span class="spinner-custom"></span> } @else { {{ langService.translate('signIn') }} }
     </button>
   </form>
+
+  <div class="google-divider">
+    <span>{{ langService.currentLang() === 'ar' ? 'أو' : 'Or' }}</span>
+  </div>
+
+  <div id="google-btn" class="google-btn-container"></div>
 
   <p class="switch-tab-text">
     {{ langService.translate('newToHandora') }}
