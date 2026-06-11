@@ -1,0 +1,46 @@
+<section class="values-section">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">Why Choose Handaura</h2>
+      <p class="section-subtitle">The story behind every handmade piece</p>
+    </div>
+
+    <div class="values-grid">
+      @for (value of values; track value.title) {
+        <div class="value-card">
+          <div class="value-icon">
+            @if (value.icon === 'heart') {
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#c8813a" stroke-width="1.5">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+              </svg>
+            }
+            @if (value.icon === 'bamboo') {
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#c8813a" stroke-width="1.5">
+                <path d="M12 2v20"/>
+                <path d="M12 6c-2-1-4-1-4 0s2 2 4 0"/>
+                <path d="M12 10c2-1 4-1 4 0s-2 2-4 0"/>
+                <path d="M12 14c-2-1-4-1-4 0s2 2 4 0"/>
+                <path d="M12 18c2-1 4-1 4 0s-2 2-4 0"/>
+                <path d="M8 4v16"/>
+                <path d="M16 4v16"/>
+              </svg>
+            }
+            @if (value.icon === 'basket') {
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#c8813a" stroke-width="1.5">
+                <path d="M12 2l-8 8h16l-8-8z"/>
+                <path d="M4 10v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10"/>
+                <path d="M2 10h20" stroke-linecap="round"/>
+                <path d="M9 14l-2 4m8-4l2 4" stroke-linecap="round"/>
+                <path d="M12 14v4" stroke-linecap="round"/>
+              </svg>
+            }
+          </div>
+          <div class="value-content">
+            <h3 class="value-title">{{ value.title }}</h3>
+            <p class="value-description">{{ value.description }}</p>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>

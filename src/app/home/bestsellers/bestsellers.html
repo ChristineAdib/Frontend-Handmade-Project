@@ -1,0 +1,152 @@
+<section class="bestsellers-section">
+  <div class="container">
+    <!-- Header -->
+    <div class="section-header">
+      <h2 class="section-title">Shop Our Bestsellers</h2>
+      <a routerLink="/shop" class="shop-all-link">
+        SHOP ALL
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </a>
+    </div>
+
+    <!-- Products Grid -->
+    <div class="products-grid">
+      <div class="product-card" *ngFor="let product of products">
+        <!-- Image Container -->
+        <div class="product-image-wrapper">
+          <!-- Discount Badge -->
+          <div class="discount-badge" *ngIf="product.discount">
+            {{ product.discount }}% OFF
+          </div>
+
+          <!-- Main Image -->
+          <div class="product-image-container">
+            <img [src]="product.image" [alt]="product.name" class="product-img main-img">
+          </div>
+          
+          <!-- Hover Image - دائرة -->
+          <div class="hover-image-container">
+            <img [src]="product.hoverImage" [alt]="product.name" class="product-img hover-img">
+          </div>
+          
+          <!-- Hover Actions -->
+          <div class="product-actions">
+            <button class="action-btn wishlist-btn" title="Add to Wishlist">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+              </svg>
+            </button>
+            
+            <button class="action-btn quick-view-btn" (click)="openQuickView(product)" title="Quick View">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+            
+            <button class="action-btn compare-btn" title="Compare">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M16 3h3v3h-3zM8 3h3v3H8zM3 8h3v3H3zM16 8h3v3h-3zM8 8h3v3H8zM3 13h3v3H3zM16 13h3v3h-3zM8 13h3v3H8zM3 18h3v3H3zM16 18h3v3h-3zM8 18h3v3H8z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Product Info -->
+        <div class="product-info">
+          <div class="product-rating">
+            <span class="star" *ngFor="let star of getStars(product.rating)">
+              <svg width="14" height="14" viewBox="0 0 24 24" [attr.fill]="star ? '#1a1a1a' : 'none'" stroke="#1a1a1a" stroke-width="2">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+              </svg>
+            </span>
+          </div>
+
+          <h3 class="product-name">{{ product.name }}</h3>
+
+          <div class="product-price">
+            <span class="current-price" [class.has-discount]="product.discount">
+              {{ product.price }}$
+            </span>
+            <span class="old-price" *ngIf="product.oldPrice">
+              {{ product.oldPrice }}$
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick View Modal -->
+  <div class="modal-overlay" *ngIf="selectedProduct" [class.closing]="isClosing" (click)="closeQuickView()">
+    <div class="modal-content" [class.closing]="isClosing" (click)="$event.stopPropagation()">
+      <button class="modal-close" (click)="closeQuickView()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6L6 18M6 6l12 12"/>
+        </svg>
+      </button>
+
+      <div class="modal-body">
+        <div class="modal-image-section">
+          <div class="modal-bg-image" 
+               [style.background-image]="'url(' + getCurrentModalImage() + ')'">
+          </div>
+          
+          <button class="slider-arrow slider-prev" (click)="prevImage()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M15 18l-6-6 6-6"/>
+            </svg>
+          </button>
+          <button class="slider-arrow slider-next" (click)="nextImage()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+          </button>
+          
+          <div class="slider-dots">
+            <span class="dot" 
+                  *ngFor="let img of getModalImages(selectedProduct); let i = index"
+                  [class.active]="currentImageIndex === i"
+                  (click)="goToImage(i)">
+            </span>
+          </div>
+        </div>
+
+        <div class="modal-details">
+          <div class="modal-rating">
+            <span class="star" *ngFor="let star of getStars(selectedProduct.rating)">
+              <svg width="16" height="16" viewBox="0 0 24 24" [attr.fill]="star ? '#1a1a1a' : 'none'" stroke="#1a1a1a" stroke-width="2">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+              </svg>
+            </span>
+            <span class="reviews-count">({{ selectedProduct.reviews }} Reviews)</span>
+          </div>
+
+          <div class="modal-price">{{ selectedProduct.price }}$</div>
+
+          <p class="modal-description">
+            Accusamus perspiciatis deserunt et molestias consequatur. Ipsum vel nam maiores eum itaque provident voluptas. Tempore rerum optio occaecati necessitatibus.
+          </p>
+
+          <div class="modal-actions">
+            <div class="quantity-selector">
+              <button class="qty-btn" (click)="decreaseQuantity()">-</button>
+              <span class="qty-value">{{ quantity }}</span>
+              <button class="qty-btn" (click)="increaseQuantity()">+</button>
+            </div>
+            <button class="add-to-cart-btn" (click)="addToCart()">
+              ADD TO CART
+            </button>
+          </div>
+
+          <div class="modal-meta">
+            <p><span class="meta-label">Category:</span> {{ selectedProduct.category }}</p>
+            <p><span class="meta-label">Tags:</span> {{ selectedProduct.tags.join(', ') }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,27 +1,80 @@
-<p>categories works!</p>
 <section class="categories-section">
-  <div class="categories-header">
-    <span class="eyebrow">تسوق حسب الفئة</span>
-    <h2 class="section-title">اكتشفي الحرف اليدوية</h2>
-    <p class="section-subtitle">
-      كل قطعة تحكي قصة — من الفخار المشوي إلى خرز الألوان والكروشيه المنسوج بالحب
-    </p>
-  </div>
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">Shop by Category</h2>
+      <p class="section-subtitle">
+        Discover the finest handmade crafts made with love and skill by Egypt's finest artisans
+      </p>
+    </div>
 
-  <div class="categories-grid">
-    <div class="category-card" *ngFor="let cat of categories" (click)="navigateTo(cat.slug)">
-      <div class="diamond-wrapper">
-        <div class="diamond-border"></div>
-        <div class="diamond-image">
-          <img [src]="cat.image" [alt]="cat.name" loading="lazy" />
-          <div class="diamond-overlay"></div>
-        </div>
+    <!-- الصف الأول: 4 معينات -->
+    <div class="categories-row top-row">
+      <div 
+        class="category-item" 
+        *ngFor="let cat of categories.slice(0, 4); let i = index"
+        [class.coming-soon]="cat.comingSoon"
+      >
+        <a 
+          [routerLink]="cat.comingSoon ? null : '/shop'" 
+          [queryParams]="getQueryParams(cat)"
+          class="category-link"
+          [class.disabled]="cat.comingSoon"
+        >
+          <div class="diamond-wrapper">
+            <div class="diamond-frame">
+              <div class="diamond-image">
+                <img [src]="cat.image" [alt]="cat.name" />
+                <div class="coming-soon-overlay" *ngIf="cat.comingSoon">
+                  <span class="coming-soon-badge">COMING SOON</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="category-info">
+            <h3 class="category-name">{{ cat.name }}</h3>
+            <p class="category-count" *ngIf="!cat.comingSoon">
+              {{ cat.productCount }} Products
+            </p>
+            <p class="category-count coming-soon-text" *ngIf="cat.comingSoon">
+              COMING SOON
+            </p>
+          </div>
+        </a>
       </div>
-      <div class="category-info">
-        <h3>{{ cat.name }}</h3>
-        <span class="product-count">{{ cat.count }} منتج</span>
-        <a class="explore-link" [routerLink]="['/shop']" [queryParams]="{ category: cat.slug }">
-          تصفح الفئة <span class="arrow">←</span>
+    </div>
+
+    <!-- الصف التاني: 3 معينات متوسطين -->
+    <div class="categories-row bottom-row">
+      <div 
+        class="category-item" 
+        *ngFor="let cat of categories.slice(4, 7); let i = index"
+        [class.coming-soon]="cat.comingSoon"
+      >
+        <a 
+          [routerLink]="cat.comingSoon ? null : '/shop'" 
+          [queryParams]="getQueryParams(cat)"
+          class="category-link"
+          [class.disabled]="cat.comingSoon"
+        >
+          <div class="diamond-wrapper">
+            <div class="diamond-frame">
+              <div class="diamond-image">
+                <img [src]="cat.image" [alt]="cat.name" />
+                <div class="coming-soon-overlay" *ngIf="cat.comingSoon">
+                  <span class="coming-soon-badge">COMING SOON</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="category-info">
+            <h3 class="category-name">{{ cat.name }}</h3>
+            <p class="category-count" *ngIf="!cat.comingSoon">
+              {{ cat.productCount }} Products
+            </p>
+            <p class="category-count coming-soon-text" *ngIf="cat.comingSoon">
+              COMING SOON
+            </p>
+          </div>
         </a>
       </div>
     </div>
