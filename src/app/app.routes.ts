@@ -1,5 +1,8 @@
 import { Routes } from '@angular/router';
 import { AuthComponent } from './auth/components/auth.component/auth.component';
+import { authGuard } from './auth/guards/authGard';
+import { HomeComponent } from './home/home/home';
+import { WishlistPageComponent } from './wishlist feature/components/wishlist-page/wishlist-page';
 import { SellerDashboard } from './seller feature/components/seller-dashboard/seller-dashboard';
 import { Overview } from './seller feature/components/overview/overview';
 import { MyProducts } from './seller feature/components/my-products/my-products';
@@ -10,13 +13,10 @@ import { Earnings } from './seller feature/components/earnings/earnings';
 import { CustomRequests } from './seller feature/components/custom-requests/custom-requests';
 import { Settings } from './seller feature/components/settings/settings';
 import { MyProfile } from './seller feature/components/my-profile/my-profile';
-import { authGuard } from './auth/guards/authGard';
 import { roleGuard } from './auth/guards/roleGard';
-import { WishlistPageComponent } from './wishlist feature/components/wishlist-page/wishlist-page';
 import { Header } from './shared/header/header';
 
 // Navbar Feature Components
-import { Home } from './navbar feature/components/home/home';
 import { About } from './navbar feature/components/about/about';
 import { Contact } from './navbar feature/components/contact/contact';
 import { NotFound } from './navbar feature/components/not-found/not-found';
@@ -32,11 +32,10 @@ export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
   
   // Navbar / General pages
-  { path: 'home', component: Home },
+  { path: 'home', component: HomeComponent },
   { path: 'about', component: About },
   { path: 'contact', component: Contact },
 
-  // Auth
   { path: 'login', component: AuthComponent },
   { path: 'login-api', component: AuthComponent }, // Navbar login link fallback
   { path: 'register', component: AuthComponent },
@@ -46,31 +45,20 @@ export const routes: Routes = [
   // Role-based profile redirect
   {
     path: 'profile',
-    redirectTo: () => {
-      const userString = localStorage.getItem('user');
-      if (userString) {
-        try {
-          const user = JSON.parse(userString);
-          if (user.roles?.includes('Seller')) {
-            return '/seller/overview';
-          }
-        } catch (e) {
-          console.error('Error parsing user role for profile redirect', e);
-        }
-      }
-      return '/dashboard';
-    }
+    redirectTo: '/dashboard',
+    pathMatch: 'full'
   },
 
-  { path: 'wishlist', component: WishlistPageComponent , canActivate: [authGuard] },
-  { path: 'dashboard', loadComponent: () => import('./user feature/components/dashboard/dashboard.component').then(c => c.DashboardComponent), canActivate: [authGuard, roleGuard], data: { roles: ['Buyer'] } },
-  { path: 'profile/edit', loadComponent: () => import('./user feature/components/edit-profile/edit-profile.component').then(c => c.EditProfileComponent), canActivate: [authGuard, roleGuard], data: { roles: ['Buyer'] } },
+  // { path: 'wishlist', component: WishlistPageComponent , canActivate: [authGuard] },
+  { path: 'dashboard', loadComponent: () => import('./user feature/components/dashboard/dashboard.component').then(c => c.DashboardComponent), canActivate: [authGuard, roleGuard], data: { roles: ['Buyer', 'Seller'] } },
+  { path: 'profile/edit', loadComponent: () => import('./user feature/components/edit-profile/edit-profile.component').then(c => c.EditProfileComponent), canActivate: [authGuard, roleGuard], data: { roles: ['Buyer', 'Seller'] } },
 
   // Products
   { path: 'products', component: Products },
   { path: 'products/:id', component: ProductDetail },
   { path: 'products-api', component: ProductApi },
   { path: 'search-products', component: SearchProducts },
+  { path: 'wishlist', component: WishlistPageComponent, canActivate: [authGuard] },
 
   // Orders & Cart
   { path: 'orders', loadComponent: () => import('./orders/components/order-list/order-list.component').then(c => c.OrderListComponent), canActivate: [authGuard] },
@@ -78,7 +66,7 @@ export const routes: Routes = [
   { path: 'checkout', loadComponent: () => import('./orders/components/checkout/checkout.component').then(c => c.CheckoutComponent), canActivate: [authGuard] },
   { path: 'cart', loadComponent: () => import('./orders/components/cart-page/cart-page.component').then(c => c.CartPageComponent), canActivate: [authGuard] },
 
-  // Payments (specific routes BEFORE parameterized ones)
+  // Payments
   { path: 'payment/callback', loadComponent: () => import('./payments/components/payment-callback/payment-callback.component').then(c => c.PaymentCallbackComponent) },
   { path: 'payment/:orderId', loadComponent: () => import('./payments/components/payment-page/payment-page.component').then(c => c.PaymentPageComponent), canActivate: [authGuard] },
 
@@ -88,6 +76,7 @@ export const routes: Routes = [
   { path: 'become-seller', loadComponent: () => import('./shop feature/components/become-seller/become-seller.component').then(c => c.BecomeSellerComponent), canActivate: [authGuard] },
   
   // Seller Dashboard with nested routes
+  // Seller Dashboard
   {
     path: 'seller',
     component: SellerDashboard,
@@ -124,11 +113,12 @@ export const routes: Routes = [
     }
   },
 
+  // Public shop list
+  { path: 'shops', loadComponent: () => import('./shop feature/components/shop-list/shop-list').then(c => c.ShopListComponent) },
+
   // Public shop page
   { path: 'shop/:id', loadComponent: () => import('./shop feature/components/shop-public/shop-public').then(c => c.ShopPublic) },
 
   // Wildcard fallback
   { path: '**', component: NotFound }
 ];
-
-

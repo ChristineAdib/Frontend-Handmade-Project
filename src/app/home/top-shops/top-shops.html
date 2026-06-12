@@ -1,0 +1,60 @@
+<section class="top-shops-section">
+  <h2 class="section-title">{{ langService.translate('topShops') }}</h2>
+
+  <!-- Loading -->
+  <div *ngIf="isLoading" class="loading">{{ langService.currentLang() === 'ar' ? 'جاري التحميل...' : 'Loading...' }}</div>
+
+  <!-- Error -->
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <!-- Shops Grid -->
+  <div class="shops-grid" *ngIf="!isLoading && !error">
+
+    <!-- Card الأول - يسار -->
+    <div class="shop-card side-card" *ngIf="shops[0]">
+      <div class="diamond-image">
+        <img [src]="getShopLogo(shops[0])" [alt]="shops[0].name">
+      </div>
+      <div class="shop-info">
+        <div class="shop-rating">
+          <span class="star" *ngFor="let star of getStars(shops[0].rating)">
+            <svg width="14" height="14" viewBox="0 0 24 24" [attr.fill]="star ? '#c8813a' : 'none'" stroke="#c8813a" stroke-width="2">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+            </svg>
+          </span>
+        </div>
+        <h3 class="shop-name">{{ shops[0].name }}</h3>
+        <a [routerLink]="['/shop', shops[0].id]" class="discover-link">{{ langService.translate('discoverMore') }}</a>
+      </div>
+    </div>
+
+    <!-- Card - وسط (أكبر) -->
+    <div class="shop-card center-card" *ngIf="shops[1]"
+         [style.background-image]="'url(' + getShopLogo(shops[1]) + ')'">
+      <div class="center-overlay">
+        <p class="highly-recommended">{{ langService.translate('highlyRecommended') }}</p>
+        <h3 class="shop-name">{{ shops[1].name }}</h3>
+        <a [routerLink]="['/shop', shops[1].id]" class="discover-link">{{ langService.translate('discoverMore') }}</a>
+      </div>
+    </div>
+
+    <!-- Card الثالث - يمين -->
+    <div class="shop-card side-card" *ngIf="shops[2]">
+      <div class="diamond-image">
+        <img [src]="getShopLogo(shops[2])" [alt]="shops[2].name">
+      </div>
+      <div class="shop-info">
+        <div class="shop-rating">
+          <span class="star" *ngFor="let star of getStars(shops[2].rating)">
+            <svg width="14" height="14" viewBox="0 0 24 24" [attr.fill]="star ? '#c8813a' : 'none'" stroke="#c8813a" stroke-width="2">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+            </svg>
+          </span>
+        </div>
+        <h3 class="shop-name">{{ shops[2].name }}</h3>
+        <a [routerLink]="['/shop', shops[2].id]" class="discover-link">{{ langService.translate('discoverMore') }}</a>
+      </div>
+    </div>
+
+  </div>
+</section>
