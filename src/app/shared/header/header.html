@@ -59,7 +59,7 @@
         <div class="nav__drop" [class.nav__drop--open]="activeDropdown() === 'shop'">
           <p class="nav__drop-label">تسوق حسب الحرفة</p>
           <div class="nav__drop-categories">
-            
+
             <!-- BEADS - عقد -->
             <a [routerLink]="'/products'" class="nav__drop-cat" style="--cat-color: #c8813a">
               <div class="nav__drop-cat-icon">
@@ -153,7 +153,7 @@
         Gift Finder
       </a>
 
-      <!-- Search - أيقونة جديدة -->
+      <!-- Search -->
       <button class="nav__search-icon" (click)="toggleSearch()" title="Search">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -161,6 +161,25 @@
           <path d="M21 21L16.65 16.65"/>
         </svg>
       </button>
+
+      <!-- Become a Seller — أيقونة أوضح (متجر/بازار) -->
+      @if (!isSeller()) {
+        <button type="button" class="nav__seller-icon" data-tooltip="Start Selling on Handaura" (click)="onSellerIconClick()">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <!-- Storefront / Shop icon -->
+            <path d="M3 21h18"/>
+            <path d="M5 21V10"/>
+            <path d="M19 21V10"/>
+            <path d="M3 10l1.5-6h15L21 10"/>
+            <path d="M3 10h18"/>
+            <!-- Plus sign for "become/add" -->
+            <circle cx="18" cy="6" r="3" fill="#fff" stroke="currentColor"/>
+            <path d="M18 4.8v2.4"/>
+            <path d="M16.8 6h2.4"/>
+          </svg>
+        </button>
+      }
 
       @if (isLoggedIn()) {
         <div class="nav__icons-group">
@@ -187,7 +206,7 @@
 
       <div class="nav__divider"></div>
 
-      <!-- Account - أيقونة جديدة -->
+      <!-- Account -->
       <div class="nav__item--drop"
            (mouseenter)="toggleDropdown('acc')"
            (mouseleave)="toggleDropdown('acc')">
@@ -290,7 +309,7 @@
     <div class="mob__sep"></div>
     <a routerLink="/home" class="mob__link" (click)="toggleMobileMenu()">Home</a>
     <p class="mob__section">Shop by Craft</p>
-    
+
     <!-- Mobile: Beads -->
     <a [routerLink]="'/products'" class="mob__link mob__link--cat" (click)="toggleMobileMenu()">
       <span class="mob__cat-icon">

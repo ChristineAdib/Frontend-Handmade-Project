@@ -18,6 +18,10 @@ export class Header {
   private toastr = inject(ToastrService);
   private cartService = inject(CartApiService);
 
+  onSellerIconClick() {
+    this.toastr.info('Start Selling on Handaura', '');
+  }
+
   isScrolled = signal(false);
   mobileMenuOpen = signal(false);
   searchOpen = signal(false);

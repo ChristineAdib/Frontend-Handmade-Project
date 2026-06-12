@@ -8,10 +8,15 @@ import { FooterComponent } from '../footer/footer';
 import { SubscribeComponent } from '../subscribe/subscribe';
 
 import { BestsellersComponent } from '../bestsellers/bestsellers'; 
+import { TopShopsComponent } from '../top-shops/top-shops';
+import { ReviewsComponent } from '../reviews/reviews';
+
+
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [HeroComponent, CategoriesComponent, BestsellersComponent, ValuesComponent, VideoComponent, FooterComponent, SubscribeComponent],
+  imports: [HeroComponent, CategoriesComponent, BestsellersComponent, ValuesComponent, VideoComponent,
+     FooterComponent, SubscribeComponent, TopShopsComponent, ReviewsComponent],
   templateUrl: './home.html',
   styleUrl: './home.css'
 })

@@ -1,0 +1,42 @@
+<section class="reviews-section">
+  <div class="reviews-container">
+    <!-- Left Circle -->
+    <button class="nav-circle nav-left" (click)="prev()" aria-label="Previous review">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <path d="M12 4l-6 6 6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+
+    <div class="review-wrapper">
+      <div class="stars">
+        <span *ngFor="let star of getStars(currentReview.rating)"
+              class="star"
+              [class.filled]="star === 1">★</span>
+      </div>
+
+      <div class="review-content" [@fadeSlide]="currentIndex">
+        <blockquote class="review-text">
+          "{{ currentReview.comment }}"
+        </blockquote>
+
+        <div class="reviewer">
+          <span class="reviewer-name">{{ currentReview.userName }}</span>
+          <span class="verified" *ngIf="currentReview.isVerified">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <circle cx="7" cy="7" r="7" fill="#1a1a1a"/>
+              <path d="M4 7l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Verified Buyer
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Circle -->
+    <button class="nav-circle nav-right" (click)="next()" aria-label="Next review">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <path d="M8 4l6 6-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </div>
+</section>

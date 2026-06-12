@@ -11,24 +11,30 @@
       </a>
     </div>
 
+    <!-- Loading -->
+    <div *ngIf="isLoading" class="loading">Loading...</div>
+
+    <!-- Error -->
+    <div *ngIf="error" class="error">{{ error }}</div>
+
     <!-- Products Grid -->
-    <div class="products-grid">
+    <div class="products-grid" *ngIf="!isLoading && !error">
       <div class="product-card" *ngFor="let product of products">
         <!-- Image Container -->
         <div class="product-image-wrapper">
           <!-- Discount Badge -->
-          <div class="discount-badge" *ngIf="product.discount">
-            {{ product.discount }}% OFF
+          <div class="discount-badge" *ngIf="getDiscount(product)">
+            {{ getDiscount(product) }}% OFF
           </div>
 
           <!-- Main Image -->
           <div class="product-image-container">
-            <img [src]="product.image" [alt]="product.name" class="product-img main-img">
+            <img [src]="getMainImage(product)" [alt]="product.titleEn" class="product-img main-img">
           </div>
           
-          <!-- Hover Image - دائرة -->
+          <!-- Hover Image -->
           <div class="hover-image-container">
-            <img [src]="product.hoverImage" [alt]="product.name" class="product-img hover-img">
+            <img [src]="getMainImage(product)" [alt]="product.titleEn" class="product-img hover-img">
           </div>
           
           <!-- Hover Actions -->
@@ -57,21 +63,21 @@
         <!-- Product Info -->
         <div class="product-info">
           <div class="product-rating">
-            <span class="star" *ngFor="let star of getStars(product.rating)">
+            <span class="star" *ngFor="let star of getStars(product.averageRating)">
               <svg width="14" height="14" viewBox="0 0 24 24" [attr.fill]="star ? '#1a1a1a' : 'none'" stroke="#1a1a1a" stroke-width="2">
                 <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
               </svg>
             </span>
           </div>
 
-          <h3 class="product-name">{{ product.name }}</h3>
+          <h3 class="product-name">{{ product.titleEn }}</h3>
 
           <div class="product-price">
-            <span class="current-price" [class.has-discount]="product.discount">
-              {{ product.price }}$
+            <span class="current-price" [class.has-discount]="product.discountPrice">
+              {{ product.finalPrice }}$
             </span>
-            <span class="old-price" *ngIf="product.oldPrice">
-              {{ product.oldPrice }}$
+            <span class="old-price" *ngIf="product.discountPrice">
+              {{ product.price }}$
             </span>
           </div>
         </div>
@@ -116,15 +122,15 @@
 
         <div class="modal-details">
           <div class="modal-rating">
-            <span class="star" *ngFor="let star of getStars(selectedProduct.rating)">
+            <span class="star" *ngFor="let star of getStars(selectedProduct.averageRating)">
               <svg width="16" height="16" viewBox="0 0 24 24" [attr.fill]="star ? '#1a1a1a' : 'none'" stroke="#1a1a1a" stroke-width="2">
                 <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
               </svg>
             </span>
-            <span class="reviews-count">({{ selectedProduct.reviews }} Reviews)</span>
+            <span class="reviews-count">({{ selectedProduct.reviewCount }} Reviews)</span>
           </div>
 
-          <div class="modal-price">{{ selectedProduct.price }}$</div>
+          <div class="modal-price">{{ selectedProduct.finalPrice }}$</div>
 
           <p class="modal-description">
             Accusamus perspiciatis deserunt et molestias consequatur. Ipsum vel nam maiores eum itaque provident voluptas. Tempore rerum optio occaecati necessitatibus.
@@ -142,8 +148,8 @@
           </div>
 
           <div class="modal-meta">
-            <p><span class="meta-label">Category:</span> {{ selectedProduct.category }}</p>
-            <p><span class="meta-label">Tags:</span> {{ selectedProduct.tags.join(', ') }}</p>
+            <p><span class="meta-label">Category:</span> {{ selectedProduct.categoryNameEn }}</p>
+            <p><span class="meta-label">Shop:</span> {{ selectedProduct.shopName }}</p>
           </div>
         </div>
       </div>
