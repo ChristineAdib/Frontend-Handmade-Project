@@ -1,25 +1,126 @@
-<div class="container mt-5" style="max-width: 600px;">
+<div class="contact-container" [dir]="langService.currentLang() === 'ar' ? 'rtl' : 'ltr'">
+  <!-- Hero Header -->
+  <header class="contact-hero">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <span class="hero-tag">✦ {{ langService.currentLang() === 'ar' ? 'تواصل معنا' : 'Get In Touch' }}</span>
+      <h1 class="hero-title">{{ langService.translate('contactUs') }}</h1>
+      <p class="hero-subtitle">{{ langService.translate('contactSubtitle') }}</p>
+    </div>
+  </header>
 
-  <div class="text-center mb-5">
-    <h1 class="fw-bold">{{ langService.translate('contactUs') }}</h1>
-    <p class="text-muted">{{ langService.translate('contactSubtitle') }}</p>
+  <!-- Split Grid -->
+  <div class="contact-grid">
+    <!-- Contact Info Cards -->
+    <div class="contact-info">
+      <div class="info-card">
+        <div class="info-icon">📧</div>
+        <div class="info-details">
+          <h3>{{ langService.currentLang() === 'ar' ? 'البريد الإلكتروني' : 'Email Address' }}</h3>
+          <a href="mailto:contact@handmadehub.com" class="info-link">contact@handmadehub.com</a>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <div class="info-icon">📱</div>
+        <div class="info-details">
+          <h3>{{ langService.currentLang() === 'ar' ? 'رقم الهاتف' : 'Phone Number' }}</h3>
+          <a href="tel:+201000000000" class="info-link">+20 100 000 0000</a>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <div class="info-icon">📍</div>
+        <div class="info-details">
+          <h3>{{ langService.currentLang() === 'ar' ? 'الموقع' : 'Location' }}</h3>
+          <p class="info-text">{{ langService.translate('cairoEgypt') }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contact Form Card -->
+    <div class="form-card">
+      <h2 class="form-title">{{ langService.translate('contactFormTitle') }}</h2>
+      
+      <form #cForm="ngForm" (ngSubmit)="onSubmit(cForm)" novalidate>
+        <!-- Full Name -->
+        <div class="form-group">
+          <label for="name">{{ langService.translate('fullName') }} *</label>
+          <input 
+            type="text" 
+            id="name" 
+            name="name"
+            class="form-control"
+            [(ngModel)]="contactForm.name"
+            #nameModel="ngModel"
+            required
+            [placeholder]="langService.translate('fullNamePlaceholder')"
+            [disabled]="isSubmitting()"
+            [ngClass]="{ 'is-invalid': cForm.submitted && nameModel.invalid }"
+          />
+        </div>
+
+        <!-- Email Address -->
+        <div class="form-group">
+          <label for="email">{{ langService.currentLang() === 'ar' ? 'البريد الإلكتروني' : 'Email Address' }} *</label>
+          <input 
+            type="email" 
+            id="email" 
+            name="email"
+            class="form-control"
+            [(ngModel)]="contactForm.email"
+            #emailModel="ngModel"
+            required
+            email
+            placeholder="name@example.com"
+            [disabled]="isSubmitting()"
+            [ngClass]="{ 'is-invalid': cForm.submitted && emailModel.invalid }"
+          />
+        </div>
+
+        <!-- Subject -->
+        <div class="form-group">
+          <label for="subject">{{ langService.translate('subjectLabel') }} *</label>
+          <input 
+            type="text" 
+            id="subject" 
+            name="subject"
+            class="form-control"
+            [(ngModel)]="contactForm.subject"
+            #subjectModel="ngModel"
+            required
+            [placeholder]="langService.currentLang() === 'ar' ? 'عنوان الرسالة...' : 'Enter message subject...'"
+            [disabled]="isSubmitting()"
+            [ngClass]="{ 'is-invalid': cForm.submitted && subjectModel.invalid }"
+          />
+        </div>
+
+        <!-- Message -->
+        <div class="form-group">
+          <label for="message">{{ langService.translate('messageLabel') }} *</label>
+          <textarea 
+            id="message" 
+            name="message"
+            class="form-control textarea-control"
+            [(ngModel)]="contactForm.message"
+            #messageModel="ngModel"
+            required
+            [placeholder]="langService.translate('messagePlaceholder')"
+            rows="5"
+            [disabled]="isSubmitting()"
+            [ngClass]="{ 'is-invalid': cForm.submitted && messageModel.invalid }"
+          ></textarea>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="submit-btn" [disabled]="isSubmitting()">
+          <span *ngIf="!isSubmitting()">{{ langService.translate('sendMessageBtn') }}</span>
+          <span *ngIf="isSubmitting()" class="spinner-wrapper">
+            <span class="spinner"></span>
+            {{ langService.translate('sendingMessage') }}
+          </span>
+        </button>
+      </form>
+    </div>
   </div>
-
-  <div class="card border-0 shadow-sm p-4 mb-4">
-    <ul class="list-unstyled mb-0">
-      <li class="mb-3">
-        <span class="fw-bold">{{ langService.translate('emailLabel') }}</span>
-        <span class="text-muted ms-2">contact@handmadehub.com</span>
-      </li>
-      <li class="mb-3">
-        <span class="fw-bold">{{ langService.translate('phoneLabel') }}</span>
-        <span class="text-muted ms-2">+20 100 000 0000</span>
-      </li>
-      <li>
-        <span class="fw-bold">{{ langService.translate('addressLabel') }}</span>
-        <span class="text-muted ms-2">{{ langService.translate('cairoEgypt') }}</span>
-      </li>
-    </ul>
-  </div>
-
 </div>

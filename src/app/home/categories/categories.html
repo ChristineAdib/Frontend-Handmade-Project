@@ -1,0 +1,82 @@
+<section class="categories-section">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">{{ langService.translate('shopByCategory') }}</h2>
+      <p class="section-subtitle">
+        {{ langService.translate('categorySubtitle') }}
+      </p>
+    </div>
+
+    <!-- الصف الأول: 4 معينات -->
+    <div class="categories-row top-row">
+      <div 
+        class="category-item" 
+        *ngFor="let cat of categories.slice(0, 4); let i = index"
+        [class.coming-soon]="cat.comingSoon"
+      >
+        <a 
+          [routerLink]="cat.comingSoon ? null : '/products'" 
+          [queryParams]="getQueryParams(cat)"
+          class="category-link"
+          [class.disabled]="cat.comingSoon"
+        >
+          <div class="diamond-wrapper">
+            <div class="diamond-frame">
+              <div class="diamond-image">
+                <img [src]="cat.image" [alt]="langService.translate(cat.key)" />
+                <div class="coming-soon-overlay" *ngIf="cat.comingSoon">
+                  <span class="coming-soon-badge">{{ langService.translate('comingSoon') }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="category-info">
+            <h3 class="category-name">{{ langService.translate(cat.key) }}</h3>
+            <p class="category-count" *ngIf="!cat.comingSoon">
+              {{ cat.productCount }} {{ langService.translate('productsCountLabel') }}
+            </p>
+            <p class="category-count coming-soon-text" *ngIf="cat.comingSoon">
+              {{ langService.translate('comingSoon') }}
+            </p>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <!-- الصف التاني: 3 معينات متوسطين -->
+    <div class="categories-row bottom-row">
+      <div 
+        class="category-item" 
+        *ngFor="let cat of categories.slice(4, 7); let i = index"
+        [class.coming-soon]="cat.comingSoon"
+      >
+        <a 
+          [routerLink]="cat.comingSoon ? null : '/products'" 
+          [queryParams]="getQueryParams(cat)"
+          class="category-link"
+          [class.disabled]="cat.comingSoon"
+        >
+          <div class="diamond-wrapper">
+            <div class="diamond-frame">
+              <div class="diamond-image">
+                <img [src]="cat.image" [alt]="langService.translate(cat.key)" />
+                <div class="coming-soon-overlay" *ngIf="cat.comingSoon">
+                  <span class="coming-soon-badge">{{ langService.translate('comingSoon') }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="category-info">
+            <h3 class="category-name">{{ langService.translate(cat.key) }}</h3>
+            <p class="category-count" *ngIf="!cat.comingSoon">
+              {{ cat.productCount }} {{ langService.translate('productsCountLabel') }}
+            </p>
+            <p class="category-count coming-soon-text" *ngIf="cat.comingSoon">
+              {{ langService.translate('comingSoon') }}
+            </p>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

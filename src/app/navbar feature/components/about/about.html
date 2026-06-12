@@ -1,31 +1,62 @@
-<div class="container mt-5" style="max-width: 700px;">
+<div class="about-container" [dir]="langService.currentLang() === 'ar' ? 'rtl' : 'ltr'">
+  <!-- Hero Section -->
+  <header class="about-hero">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <span class="hero-tag">✦ {{ langService.currentLang() === 'ar' ? 'من نحن' : 'Who We Are' }}</span>
+      <h1 class="hero-title">{{ langService.translate('aboutHandmadeHub') }}</h1>
+      <p class="hero-subtitle">{{ langService.translate('storyAndMission') }}</p>
+    </div>
+  </header>
 
-  <div class="text-center mb-5">
-    <h1 class="fw-bold">{{ langService.translate('aboutHandmadeHub') }}</h1>
-    <p class="text-muted fs-5">{{ langService.translate('storyAndMission') }}</p>
+  <!-- Core Content Grid -->
+  <div class="content-section">
+    <!-- Story Card -->
+    <div class="story-card">
+      <div class="card-icon">📖</div>
+      <h2 class="section-title">{{ langService.translate('ourStory') }}</h2>
+      <p class="story-text">{{ langService.translate('ourStoryText') }}</p>
+    </div>
+
+    <!-- Mission & Vision Cards -->
+    <div class="info-grid">
+      <div class="info-card mission-card">
+        <div class="card-icon-small">🎯</div>
+        <h3>{{ langService.translate('ourMission') }}</h3>
+        <p>{{ langService.translate('missionText') }}</p>
+      </div>
+
+      <div class="info-card who-card">
+        <div class="card-icon-small">🌍</div>
+        <h3>{{ langService.translate('whoWeAre') }}</h3>
+        <p>{{ langService.translate('whoWeAreText') }}</p>
+      </div>
+    </div>
+
+    <!-- Branches Section -->
+    <div class="branches-section">
+      <h2 class="branches-title">
+        <span>📍</span> {{ langService.translate('ourBranches') }}
+      </h2>
+      <div class="branches-grid">
+        <div class="branch-card">
+          <div class="branch-city">🏙️</div>
+          <h4>{{ langService.translate('cairoMainBranch') }}</h4>
+          <span class="status-badge active">{{ langService.currentLang() === 'ar' ? 'الفرع الرئيسي' : 'Main Branch' }}</span>
+        </div>
+
+        <div class="branch-card">
+          <div class="branch-city">🌊</div>
+          <h4>{{ langService.translate('alexandria') }}</h4>
+          <span class="status-badge">{{ langService.currentLang() === 'ar' ? 'متاح' : 'Available' }}</span>
+        </div>
+
+        <div class="branch-card">
+          <div class="branch-city">☀️</div>
+          <h4>{{ langService.translate('aswan') }}</h4>
+          <span class="status-badge">{{ langService.currentLang() === 'ar' ? 'متاح' : 'Available' }}</span>
+        </div>
+      </div>
+    </div>
   </div>
-
-  <div class="card border-0 shadow-sm p-4 mb-4">
-    <h5 class="fw-bold mb-3">{{ langService.translate('ourMission') }}</h5>
-    <p class="text-muted">
-      {{ langService.translate('missionText') }}
-    </p>
-  </div>
-
-  <div class="card border-0 shadow-sm p-4 mb-4">
-    <h5 class="fw-bold mb-3">{{ langService.translate('whoWeAre') }}</h5>
-    <p class="text-muted">
-      {{ langService.translate('whoWeAreText') }}
-    </p>
-  </div>
-
-  <div class="card border-0 shadow-sm p-4">
-    <h5 class="fw-bold mb-3">{{ langService.translate('ourBranches') }}</h5>
-    <ul class="list-group list-group-flush">
-      <li class="list-group-item">{{ langService.translate('cairoMainBranch') }}</li>
-      <li class="list-group-item">{{ langService.translate('alexandria') }}</li>
-      <li class="list-group-item">{{ langService.translate('aswan') }}</li>
-    </ul>
-  </div>
-
 </div>

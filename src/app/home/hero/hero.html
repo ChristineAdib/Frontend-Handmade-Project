@@ -1,0 +1,68 @@
+<section class="hero" [class.hero--beads]="currentSlide() === 0" [class.hero--pottery]="currentSlide() === 1" [class.hero--crochet]="currentSlide() === 2">
+
+  <!-- Watermark -->
+  <div class="hero__watermark">
+    <span>{{ slide.watermark }}</span>
+    <span>{{ slide.watermark }}</span>
+    <span>{{ slide.watermark }}</span>
+  </div>
+
+  <div class="hero__inner">
+
+    <!-- LEFT: Content -->
+    <div class="hero__content" [class.active]="!isAnimating()">
+      <span class="hero__tag" [style.color]="slide.accent">
+        ✦ {{ slide.tag }}
+      </span>
+      <h1 class="hero__title">
+        <span class="line1">{{ slide.title }}</span>
+        <span class="line2" [style.color]="slide.accent">{{ slide.titleLine2 }}</span>
+      </h1>
+      <p class="hero__subtitle">{{ slide.subtitle }}</p>
+      <a [routerLink]="slide.btnRoute" class="hero__btn" [style.border-color]="slide.accent" [style.color]="slide.accent">
+        {{ slide.btnText }} &nbsp;{{ langService.currentLang() === 'ar' ? '←' : '→' }}
+      </a>
+    </div>
+
+    <!-- RIGHT: Image -->
+    <div class="hero__img-wrap" [class.active]="!isAnimating()">
+      <div class="hero__img-bg" [style.background]="slide.accent + '18'"></div>
+      
+      <img 
+        [src]="slide.image" 
+        [alt]="slide.tag" 
+        class="hero__img" 
+        loading="eager"
+        (error)="onImageError($event)" />
+      
+      <!-- Placeholder if image fails -->
+      <div class="hero__img-placeholder" *ngIf="imageError()">
+        <span>{{ slide.tag }}</span>
+      </div>
+      
+      <!-- Decorative ring -->
+      <div class="hero__ring" [style.border-color]="slide.accent + '30'"></div>
+      <div class="hero__ring hero__ring--2" [style.border-color]="slide.accent + '18'"></div>
+      
+      <!-- Sparkles -->
+      <span class="sparkle s1" [style.background]="slide.accent"></span>
+      <span class="sparkle s2" [style.background]="slide.accent"></span>
+      <span class="sparkle s3" [style.background]="slide.accent"></span>
+    </div>
+
+  </div>
+
+  <!-- Dots -->
+  <div class="hero__dots">
+    @for (s of slides; track $index) {
+      <button
+        class="hero__dot"
+        [class.hero__dot--active]="currentSlide() === $index"
+        [style.background]="currentSlide() === $index ? slide.accent : 'rgba(0,0,0,0.15)'"
+        (click)="goToSlide($index)"
+        [attr.aria-label]="'Go to slide ' + ($index + 1)">
+      </button>
+    }
+  </div>
+
+</section>

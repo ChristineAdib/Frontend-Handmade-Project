@@ -1,0 +1,110 @@
+<div class="artisans-container" [dir]="langService.currentLang() === 'ar' ? 'rtl' : 'ltr'">
+  
+  <!-- Banner / Header -->
+  <header class="artisans-header">
+    <div class="header-overlay"></div>
+    <div class="header-content">
+      <span class="header-tag">{{ langService.currentLang() === 'ar' ? '✦ حِرفيّونا المبدعون' : '✦ Our Talented Artisans' }}</span>
+      <h1 class="header-title">
+        {{ langService.currentLang() === 'ar' ? 'صُنّاع الأثر والجمال' : 'The Hands Behind the Magic' }}
+      </h1>
+      <p class="header-subtitle">
+        {{ langService.currentLang() === 'ar' ? 'اكتشف متاجر الحرفيين المبدعين الذين يروون قصص الهوية والتراث من خلال إبداعاتهم اليدوية الفريدة.' : 'Discover and connect with independent local creators weaving heritage and soul into unique handcrafted pieces.' }}
+      </p>
+    </div>
+  </header>
+
+  <!-- Search & Filter Controls -->
+  <div class="controls-wrapper">
+    <div class="search-box">
+      <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+      </svg>
+      <input 
+        type="text" 
+        [placeholder]="langService.currentLang() === 'ar' ? 'ابحث عن حرفي أو متجر...' : 'Search for artisans, shops or crafts...'" 
+        class="search-input"
+        [ngModel]="searchQuery()"
+        (ngModelChange)="searchQuery.set($event); onSearchChange()" />
+      <button class="clear-btn" *ngIf="searchQuery()" (click)="searchQuery.set(''); onSearchChange()">✕</button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div class="status-box" *ngIf="isLoading()">
+    <div class="spinner"></div>
+    <p>{{ langService.currentLang() === 'ar' ? 'جاري تحميل المتاجر...' : 'Discovering beautiful shops...' }}</p>
+  </div>
+
+  <!-- Error State -->
+  <div class="status-box error-box" *ngIf="error()">
+    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+    </svg>
+    <p>{{ langService.currentLang() === 'ar' ? 'عذراً، فشل تحميل الحرفيين. يرجى المحاولة مرة أخرى لاحقاً.' : 'Unable to load artisans. Please try again later.' }}</p>
+    <button class="retry-btn" (click)="loadShops()">{{ langService.currentLang() === 'ar' ? 'إعادة المحاولة' : 'Try Again' }}</button>
+  </div>
+
+  <!-- Grid of Shops -->
+  <div class="artisans-grid-wrapper" *ngIf="!isLoading() && !error()">
+    
+    <!-- No Results -->
+    <div class="no-results" *ngIf="filteredShops().length === 0">
+      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/><line x1="8" y1="11" x2="14" y2="11"/>
+      </svg>
+      <h3>{{ langService.currentLang() === 'ar' ? 'لم نجد أي متجر يطابق بحثك' : 'No Artisans Found' }}</h3>
+      <p>{{ langService.currentLang() === 'ar' ? 'جرب البحث بكلمات أخرى أو تصفح المتاجر المتاحة.' : 'Try adjusting your keywords or browse all available shops.' }}</p>
+    </div>
+
+    <!-- Shops Grid -->
+    <div class="shops-grid" *ngIf="filteredShops().length > 0">
+      @for (shop of filteredShops(); track shop.id) {
+        <div class="shop-card">
+          <div class="card-bg"></div>
+          
+          <div class="card-header">
+            <div class="logo-wrapper">
+              <img [src]="getShopLogo(shop)" [alt]="shop.name" class="shop-logo" />
+            </div>
+            <div class="rating-badge" *ngIf="shop.rating > 0">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="#c8813a" stroke="#c8813a">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+              </svg>
+              <span>{{ shop.rating | number:'1.1-1' }}</span>
+            </div>
+          </div>
+
+          <div class="card-body">
+            <h3 class="shop-name">{{ shop.name }}</h3>
+            
+            <p class="shop-desc">
+              {{ langService.currentLang() === 'ar' 
+                  ? (shop.descriptionAr || shop.descriptionEn || 'لا يوجد وصف للمتجر حالياً.') 
+                  : (shop.descriptionEn || shop.descriptionAr || 'No description available for this shop.') 
+              }}
+            </p>
+
+            <div class="stars-list" *ngIf="shop.rating > 0">
+              <span class="star-icon" *ngFor="let star of getStars(shop.rating)">
+                <svg width="14" height="14" viewBox="0 0 24 24" [attr.fill]="star ? '#c8813a' : 'none'" stroke="#c8813a" stroke-width="2">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                </svg>
+              </span>
+            </div>
+          </div>
+
+          <div class="card-footer">
+            <a [routerLink]="['/shop', shop.id]" class="discover-btn">
+              <span>{{ langService.currentLang() === 'ar' ? 'زيارة المتجر' : 'Discover Shop' }}</span>
+              <svg class="arrow-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+
+</div>

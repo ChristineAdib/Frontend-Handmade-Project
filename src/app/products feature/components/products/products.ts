@@ -1,7 +1,7 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { RouterLink, ActivatedRoute } from '@angular/router';
 
 import { ProductsService } from '../../services/products-service';
 import { LanguageService } from '../../../core/services/language.service';
@@ -30,6 +30,7 @@ import { PaginationComponent } from '../pagination/pagination.component';
 export class Products implements OnInit, OnChanges {
   private productsService = inject(ProductsService);
   public langService = inject(LanguageService);
+  private route = inject(ActivatedRoute);
 
   @Input() parentSearch: string = '';
 
@@ -52,10 +53,35 @@ export class Products implements OnInit, OnChanges {
   skeletonArray = Array(8).fill(0);
 
   ngOnInit(): void {
-    // Initial fetch if not overridden by parent search changes
-    if (!this.parentSearch) {
-      this.loadProducts();
-    }
+    // Subscribe to query parameters to filter by category if provided
+    this.route.queryParams.subscribe(params => {
+      const categoryParam = params['category'];
+      if (categoryParam) {
+        // Fetch categories first to match by name
+        this.productsService.getCategories().subscribe({
+          next: (categories) => {
+            const matchedCat = categories.find(
+              c => c.nameEn.toLowerCase() === categoryParam.toLowerCase()
+            );
+            if (matchedCat) {
+              this.selectedCategory.set(matchedCat.id);
+            } else {
+              this.selectedCategory.set('0');
+            }
+            this.pageIndex.set(1);
+            this.loadProducts();
+          },
+          error: () => {
+            this.selectedCategory.set('0');
+            this.loadProducts();
+          }
+        });
+      } else {
+        if (!this.parentSearch) {
+          this.loadProducts();
+        }
+      }
+    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
