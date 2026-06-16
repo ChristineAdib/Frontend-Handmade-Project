@@ -396,12 +396,12 @@ export const translations = {
     categorySubtitle: 'Discover the finest handmade crafts made with love and skill by Egypt\'s finest artisans',
     comingSoon: 'Coming Soon',
     productsCountLabel: 'Products',
-    shopOurBestsellers: 'Shop Our Bestsellers',
+    shopOurBestSales: 'Shop Our Best Sales',
     shopAll: 'SHOP ALL',
     percentOff: 'OFF',
     compare: 'Compare',
     addToCartCaps: 'ADD TO CART',
-    topShops: 'Top Shops',
+    topArtisans: 'Top Artisans',
     highlyRecommended: 'HIGHLY RECOMMENDED',
     discoverMore: 'DISCOVER MORE',
     verifiedBuyer: 'Verified Buyer',
@@ -464,7 +464,8 @@ export const translations = {
     heroAnniversary: 'Anniversary',
     heroWedding: 'Wedding',
     heroMothersDay: 'Mother\'s Day',
-    heroJustBecause: 'Just Because'
+    heroJustBecause: 'Just Because',
+    heroCustomBadge: 'Custom',           // ✅ التعديل الجديد
   },
   ar: {
     // Navigation / Header
@@ -860,12 +861,12 @@ export const translations = {
     categorySubtitle: 'اكتشف أرقى الحرف اليدوية المصنوعة بكل حب ومهارة بأيدي أفضل الحرفيين في مصر',
     comingSoon: 'قريباً',
     productsCountLabel: 'منتجات',
-    shopOurBestsellers: 'تسوق الأكثر مبيعاً',
+    shopOurBestSales: 'تسوق الأكثر مبيعاً',
     shopAll: 'تسوق الكل',
     percentOff: 'خصم',
     compare: 'مقارنة',
     addToCartCaps: 'أضف إلى السلة',
-    topShops: 'أفضل المتاجر',
+    topArtisans: 'أفضل الفنانين ',
     highlyRecommended: 'موصى به بشدة',
     discoverMore: 'اكتشف المزيد',
     verifiedBuyer: 'مشتري موثق',
@@ -928,9 +929,10 @@ export const translations = {
     heroAnniversary: 'ذكرى سنوية',
     heroWedding: 'زفاف',
     heroMothersDay: 'عيد الأم',
-    heroJustBecause: 'بدون مناسبة'
+    heroJustBecause: 'بدون مناسبة',
+    heroCustomBadge: 'مخصص',           // ✅ التعديل الجديد
   }
-};;
+};
 
 @Injectable({
   providedIn: 'root'
