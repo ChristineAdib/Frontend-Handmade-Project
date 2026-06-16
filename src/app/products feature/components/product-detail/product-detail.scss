@@ -452,6 +452,70 @@
       transform: none;
     }
   }
+
+  .btn-luxury-outline {
+    background-color: transparent;
+    color: #8B4513;
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 12px 28px;
+    border-radius: 30px;
+    border: 2px solid #8B4513;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+    cursor: pointer;
+    box-shadow: none;
+
+    &:hover {
+      background-color: rgba(139, 69, 19, 0.05);
+      transform: translateY(-2px);
+      color: #8B4513;
+    }
+
+    &:disabled {
+      color: #c4b5ac;
+      border-color: #c4b5ac;
+      cursor: not-allowed;
+      transform: none;
+    }
+  }
+
+  .btn-luxury-wishlist {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: #faf7f5;
+    border: 1px solid #e2d7d0;
+    color: #8b6a4a;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+
+    &:hover {
+      background-color: #fff;
+      color: #e07a5f;
+      border-color: #e07a5f;
+      transform: scale(1.08);
+      box-shadow: 0 4px 12px rgba(224, 122, 95, 0.15);
+    }
+    
+    &.active {
+      background-color: #fff0ee;
+      color: #e07a5f;
+      border-color: #e07a5f;
+    }
+
+    span {
+      font-size: 1.4rem;
+      line-height: 1;
+    }
+  }
 }
 
 /* RTL Chevron swap and gallery scroll fixes */

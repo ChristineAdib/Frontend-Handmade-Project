@@ -69,12 +69,12 @@ export class ResetPasswordComponent implements OnInit {
             this.router.navigate(['/login']);
           }, 3000);
         } else {
-          this.errorMsg.set(res.errors?.[0] ?? 'An error occurred.');
+          this.errorMsg.set(this.auth.extractError(res, 'An error occurred.'));
         }
       },
       error: err => {
         this.isLoading.set(false);
-        this.errorMsg.set(err.error?.errors?.[0] ?? 'An error occurred.');
+        this.errorMsg.set(this.auth.extractError(err, 'An error occurred.'));
       }
     });
   }

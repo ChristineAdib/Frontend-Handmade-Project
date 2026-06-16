@@ -236,11 +236,15 @@
            (mouseenter)="toggleDropdown('acc')"
            (mouseleave)="toggleDropdown('acc')">
         <button class="nav__account-icon" [title]="langService.currentLang() === 'ar' ? 'الحساب' : 'Account'">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
-               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-            <circle cx="12" cy="7" r="4"/>
-          </svg>
+          @if (isLoggedIn() && getUserProfileImage()) {
+            <img [src]="getUserProfileImage()!" class="nav__profile-img" alt="Profile" />
+          } @else {
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+          }
         </button>
 
         <div class="nav__drop nav__drop--right" [class.nav__drop--open]="activeDropdown() === 'acc'">
@@ -252,7 +256,13 @@
               <a routerLink="/register" class="nav__drop-item nav__drop-item--sell">{{ langService.currentLang() === 'ar' ? 'ابدأ ✦' : 'Start ✦' }}</a>
             } @else {
               <div class="nav__drop-user">
-                <div class="nav__drop-avatar">{{ getUserName().charAt(0).toUpperCase() }}</div>
+                <div class="nav__drop-avatar">
+                  @if (getUserProfileImage()) {
+                    <img [src]="getUserProfileImage()!" class="nav__profile-img" alt="Profile" />
+                  } @else {
+                    {{ getUserName().charAt(0).toUpperCase() }}
+                  }
+                </div>
                 <span>{{ getUserName() }}</span>
               </div>
               <div class="nav__drop-sep"></div>

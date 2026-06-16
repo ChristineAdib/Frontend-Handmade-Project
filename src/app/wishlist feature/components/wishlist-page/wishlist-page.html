@@ -31,9 +31,9 @@
 
             <div class="wl-img">
               @if (getImageUrl(item)) {
-                <img [src]="getImageUrl(item)" [alt]="langService.currentLang() === 'ar' ? (item.titleAr || item.titleEn) : (item.titleEn || item.titleAr)" [class.wl-img-soldout]="item.isSoldOut" loading="lazy">
+                <img [src]="getImageUrl(item)" [alt]="langService.currentLang() === 'ar' ? (item.titleAr || item.titleEn) : (item.titleEn || item.titleAr)" [class.wl-img-soldout]="item.isSoldOut" loading="lazy" [routerLink]="['/products', item.productId]" style="cursor: pointer;">
               } @else {
-                <div class="wl-img-placeholder" [class.wl-img-soldout]="item.isSoldOut">
+                <div class="wl-img-placeholder" [class.wl-img-soldout]="item.isSoldOut" [routerLink]="['/products', item.productId]" style="cursor: pointer;">
                   <i class="ti ti-photo" aria-hidden="true"></i>
                 </div>
               }
@@ -62,7 +62,7 @@
             </div>
 
             <div class="wl-body">
-              <p class="wl-title">{{ langService.currentLang() === 'ar' ? (item.titleAr || item.titleEn) : (item.titleEn || item.titleAr) }}</p>
+              <p class="wl-title" [routerLink]="['/products', item.productId]" style="cursor: pointer;">{{ langService.currentLang() === 'ar' ? (item.titleAr || item.titleEn) : (item.titleEn || item.titleAr) }}</p>
               <p class="wl-subtitle">{{ langService.currentLang() === 'ar' ? item.titleEn : item.titleAr }}</p>
 
               <div class="wl-price">

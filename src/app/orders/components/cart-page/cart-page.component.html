@@ -85,7 +85,12 @@
                   <span class="total-value">{{ item.totalPrice | currency:'EGP':'symbol' }}</span>
                 </div>
 
-                <button class="item-remove" (click)="removeItem(item.productId)" [disabled]="cartApi.isLoading()" [title]="langService.translate('removeAttachment')">&times;</button>
+                <div class="item-actions-group" style="display: flex; flex-direction: column; gap: 6px; align-items: center; justify-content: center; flex-shrink: 0; min-width: 32px;">
+                  <button class="item-remove" (click)="removeItem(item.productId)" [disabled]="cartApi.isLoading()" [title]="langService.currentLang() === 'ar' ? 'إزالة من السلة' : 'Remove from Cart'" style="margin: 0; padding: 2px; line-height: 1;">&times;</button>
+                  <button class="item-wishlist" (click)="addToWishlist(item)" [title]="langService.currentLang() === 'ar' ? 'إضافة إلى قائمة الأمنيات' : 'Add to Wishlist'">
+                    <span class="material-symbols-outlined">favorite</span>
+                  </button>
+                </div>
               </div>
             }
           </div>

@@ -212,7 +212,11 @@ export class AddProduct implements OnInit {
             ? (this.langService.currentLang() === 'ar' ? 'تم تحديث المنتج!' : 'Product updated!')
             : (this.langService.currentLang() === 'ar' ? 'تم إنشاء المنتج!' : 'Product created!')
         );
-        setTimeout(() => this.router.navigate(['/seller/products']), 1500);
+        setTimeout(() => {
+          this.router.navigateByUrl('/').then(() => {
+            this.router.navigate(['/seller/products']);
+          });
+        }, 1500);
       },
       error: () => {
         this.isSaving.set(false);
@@ -259,7 +263,32 @@ export class AddProduct implements OnInit {
       this.isEditMode.set(true);
       this.productId.set(id);
       this.loadProductData(id);
+    } else {
+      this.isEditMode.set(false);
+      this.productId.set(null);
+      this.resetForm();
     }
+  }
+
+  private resetForm() {
+    this.form.reset({
+      titleEn: '',
+      titleAr: '',
+      descriptionEn: '',
+      descriptionAr: '',
+      price: 0,
+      quantity: 1,
+      categoryId: '',
+      subCategoryId: ''
+    });
+    this.subCategories.set([]);
+    this.imagePreviews.set([]);
+    this.selectedImages.set([]);
+    this.tags.set([]);
+    this.successMsg.set(null);
+    this.errorMsg.set(null);
+    this.existingImages.set([]);
+    this.removeImageIds.set([]);
   }
 
   onCancel() {

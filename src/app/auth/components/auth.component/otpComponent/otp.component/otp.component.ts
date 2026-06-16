@@ -40,13 +40,16 @@ export class OtpComponent implements OnDestroy {
       email:   this.auth.otpEmail(),
       OtpCode: this.otpForm.value.otp
     }).subscribe({
-      next: () => {
+      next: (res: any) => {
         this.isLoading.set(false);
+        if (res && res.success && res.data && res.data.authData) {
+          this.auth.updateSession(res.data.authData);
+        }
         this.router.navigate(['/']);
       },
       error: err => {
         this.isLoading.set(false);
-        this.auth.errorMsg.set(err.error?.errors?.[0] ?? 'Invalid OTP.');
+        this.auth.errorMsg.set(this.auth.extractError(err, 'Invalid OTP.'));
       }
     });
   }
