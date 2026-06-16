@@ -189,9 +189,22 @@
                 <span class="material-symbols-outlined">shopping_bag</span>
                 {{ langService.translate('buyNow') }}
               </button>
+
+              <button class="btn btn-luxury-outline btn-lg flex-fill" (click)="addToCart()">
+                <span class="material-symbols-outlined">shopping_cart</span>
+                {{ langService.currentLang() === 'ar' ? 'أضف إلى السلة' : 'Add to Cart' }}
+              </button>
+
+              <button class="btn-luxury-wishlist" [class.active]="isWishlisted()" (click)="toggleWishlist()" [title]="langService.translate('myWishlist')">
+                <span class="material-symbols-outlined">{{ isWishlisted() ? 'favorite' : 'favorite_border' }}</span>
+              </button>
             } @else {
               <button class="btn btn-secondary btn-lg flex-fill" disabled>
                 {{ langService.translate('unavailable') }}
+              </button>
+
+              <button class="btn-luxury-wishlist" [class.active]="isWishlisted()" (click)="toggleWishlist()" [title]="langService.translate('myWishlist')">
+                <span class="material-symbols-outlined">{{ isWishlisted() ? 'favorite' : 'favorite_border' }}</span>
               </button>
             }
           </div>

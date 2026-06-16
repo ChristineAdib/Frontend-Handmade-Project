@@ -170,7 +170,7 @@
 
     <div class="form-actions">
       <button type="button" class="cancel-btn" (click)="onCancel()">{{ langService.translate('cancel') }}</button>
-      <button type="submit" class="save-btn" [disabled]="isSaving() || form.invalid">
+      <button type="submit" class="save-btn" [disabled]="isSaving() || form.invalid || !shopId()">
         @if (isSaving()) { <span class="spinner-sm"></span> {{ langService.translate('savingChanges') || 'Saving...' }} }
         @else { {{ isEditMode() ? langService.translate('editProduct') : (langService.currentLang() === 'ar' ? 'نشر المنتج' : 'Publish Product') }} }
       </button>

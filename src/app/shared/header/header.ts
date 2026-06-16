@@ -9,6 +9,7 @@ import { CartApiService } from '../../orders/services/cart-api.service';
 import { WishlistService } from '../../wishlist feature/services/wishlist-service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-header',
@@ -105,6 +106,17 @@ export class Header implements OnInit {
 
   getUserName(): string {
     return this.authService.getUser()?.name ?? '';
+  }
+
+  getUserProfileImage(): string | null {
+    const user = this.authService.getUser();
+    if (!user || !user.profileImage) {
+      return null;
+    }
+    if (user.profileImage.startsWith('http://') || user.profileImage.startsWith('https://')) {
+      return user.profileImage;
+    }
+    return `${environment.apiUrl}/${user.profileImage}`;
   }
 
   toggleMobileMenu() {

@@ -27,7 +27,6 @@ export class RegisterComponent implements AfterViewInit {
   isLoading = signal(false);
   showPass = signal(false);
   showConfirm = signal(false);
-  imagePreview = signal<string | null>(null);
   emailError = signal<string | null>(null);
   passwordError = signal<string | null>(null);
 
@@ -39,7 +38,6 @@ export class RegisterComponent implements AfterViewInit {
 
   registerForm = this.fb.group({
     name: ['', [Validators.required, Validators.maxLength(100)]],
-    phoneNumber: [''],
     email: ['', [Validators.required, Validators.email]],
     password: ['', [
       Validators.required,
@@ -47,55 +45,65 @@ export class RegisterComponent implements AfterViewInit {
       Validators.pattern(/^(?=.*[a-zA-Z])(?=.*[0-9])/)
     ]], confirmPassword: ['', Validators.required],
     role: ['Buyer', Validators.required],
-    bio: [''],
-    profileImage: [null as File | null]
+    rememberMe: [false]
   }, { validators: this.passwordMatchValidator });
 
   togglePass() { this.showPass.update(v => !v); }
   toggleConfirm() { this.showConfirm.update(v => !v); }
 
-
-
-  onImageSelected(event: Event) {
-    const file = (event.target as HTMLInputElement).files?.[0];
-    if (!file) return;
-    this.registerForm.patchValue({ profileImage: file });
-    const reader = new FileReader();
-    reader.onload = () => this.imagePreview.set(reader.result as string);
-    reader.readAsDataURL(file);
-  }
-
-  onRemoveImage() {
-    this.registerForm.patchValue({ profileImage: null });
-    this.imagePreview.set(null);
-  }
-
   onRegister() {
     if (this.registerForm.invalid) return;
     this.isLoading.set(true);
     this.auth.errorMsg.set(null);
-    this.emailError.set(null);      // ضيفي دي
+    this.emailError.set(null);
     this.passwordError.set(null);
     const v = this.registerForm.value;
+    const remember = this.registerForm.value.rememberMe;
+    const email = this.registerForm.value.email;
+
     this.auth.register(v as any).subscribe({
       next: () => {
         this.isLoading.set(false);
+        if (remember && email) {
+          localStorage.setItem('remembered_email', email);
+        } else {
+          localStorage.removeItem('remembered_email');
+        }
         this.auth.otpEmail.set(v.email!);
         this.auth.activeTab.set('otp');
       },
       error: err => {
         this.isLoading.set(false);
-const msg: string = err.error?.message ?? err.error?.errors?.[0] ?? 'Registration failed.';console.log('full err.error:', JSON.stringify(err.error));
+        const msg: string = this.auth.extractError(err, 'Registration failed.');
 
-        if (msg.includes('already exists')) {
+        if (msg.toLowerCase().includes('already exists')) {
           this.emailError.set(this.langService.currentLang() === 'ar' ? 'هذا البريد الإلكتروني مسجل بالفعل.' : 'This email is already registered.');
-        } else if (msg.includes('password') || msg.includes('Password')) {
-          this.passwordError.set(msg);
+        } else if (msg.toLowerCase().includes('password')) {
+          this.passwordError.set(this.getLocalizedError(msg));
         } else {
-          this.auth.errorMsg.set(this.langService.currentLang() === 'ar' ? 'فشل التسجيل.' : 'Registration failed.');
+          this.auth.errorMsg.set(this.getLocalizedError(msg));
         }
       }
     });
+  }
+
+  private getLocalizedError(msg: string): string {
+    const isAr = this.langService.currentLang() === 'ar';
+    const lower = msg.toLowerCase();
+    
+    if (lower.includes('already exists')) {
+      return isAr ? 'هذا البريد الإلكتروني مسجل بالفعل.' : 'This email is already registered.';
+    }
+    if (lower.includes('failed to send otp email')) {
+      return isAr ? 'فشل إرسال بريد التحقق (OTP). يرجى المحاولة مرة أخرى.' : 'Failed to send OTP email. Please try again.';
+    }
+    if (lower.includes('do not match') || lower.includes('mismatch')) {
+      return isAr ? 'كلمتا المرور غير متطابقتين.' : 'Passwords do not match.';
+    }
+    if (lower.includes('at least 8 characters') || lower.includes('minlength')) {
+      return isAr ? 'يجب أن تتكون كلمة المرور من 8 أحرف على الأقل.' : 'Password must be at least 8 characters.';
+    }
+    return isAr ? 'فشل التسجيل. يرجى المحاولة مرة أخرى.' : msg;
   }
 
   ngAfterViewInit() {
@@ -129,12 +137,12 @@ const msg: string = err.error?.message ?? err.error?.errors?.[0] ?? 'Registratio
         if (res.success) {
           this.router.navigate(['/']);
         } else {
-          this.auth.errorMsg.set(res.errors?.[0] ?? 'Google authentication failed.');
+          this.auth.errorMsg.set(this.auth.extractError(res, 'Google authentication failed.'));
         }
       },
       error: err => {
         this.isLoading.set(false);
-        this.auth.errorMsg.set(err.error?.errors?.[0] ?? 'Google authentication failed.');
+        this.auth.errorMsg.set(this.auth.extractError(err, 'Google authentication failed.'));
       }
     });
   }

@@ -186,6 +186,10 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  transition: color 0.2s ease;
+}
+.wl-title:hover {
+  color: #c8813a;
 }
 .wl-subtitle {
   font-size: 11px;

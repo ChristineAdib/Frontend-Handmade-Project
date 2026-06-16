@@ -167,4 +167,43 @@ export class AuthService {
     this.authChange$.next();
     window.location.href = '/login';
   }
+
+  extractError(err: any, fallback: string = 'An error occurred.'): string {
+    if (!err) return fallback;
+    
+    if (typeof err === 'string') return err;
+    
+    const errorObj = err.error ?? err;
+    
+    if (typeof errorObj === 'string') {
+      return errorObj;
+    }
+    
+    if (errorObj && typeof errorObj === 'object') {
+      if (errorObj.message) {
+        return errorObj.message;
+      }
+      
+      if (errorObj.errors) {
+        if (Array.isArray(errorObj.errors)) {
+          return errorObj.errors[0] || fallback;
+        }
+        
+        if (typeof errorObj.errors === 'object') {
+          const keys = Object.keys(errorObj.errors);
+          if (keys.length > 0) {
+            const firstVal = errorObj.errors[keys[0]];
+            if (Array.isArray(firstVal)) {
+              return firstVal[0] || fallback;
+            }
+            if (typeof firstVal === 'string') {
+              return firstVal;
+            }
+          }
+        }
+      }
+    }
+    
+    return fallback;
+  }
 }
