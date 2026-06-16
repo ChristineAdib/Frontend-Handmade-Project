@@ -25,24 +25,30 @@
           } @else {
             <div class="shop-avatar-placeholder">{{ shop()!.name[0] }}</div>
           }
-          @if (shop()!.isVerified) {
-            <div class="verified-dot">
-              <span class="material-symbols-outlined">verified</span>
-            </div>
-          }
         </div>
 
         <!-- Info -->
         <div class="hero-info">
           <div class="hero-info-left">
-            <div class="badges-row">
-              <span class="role-badge">{{ langService.translate('artisan') }}</span>
-              <div class="rating-inline">
-                <span class="material-symbols-outlined star-icon">star</span>
-                <span>{{ shop()!.rating | number:'1.1-1' }} ({{ shop()!.products.length }} {{ langService.translate('products') }})</span>
-              </div>
-            </div>
             <h1 class="shop-name">{{ shop()!.name }}</h1>
+            
+            <!-- Rating Display -->
+            <div class="shop-rating-summary mb-3">
+              @if (shop()!.reviewCount > 0) {
+                <div class="stars d-inline-flex me-2" style="gap: 4px; vertical-align: middle;">
+                  <span class="material-symbols-outlined fill-star" *ngFor="let star of getStarsArray(shop()!.rating)" style="color: #D4AF37; font-variation-settings: 'FILL' 1, 'wght' 400; font-size: 1.15rem;">star</span>
+                  <span class="material-symbols-outlined empty-star" *ngFor="let star of getEmptyStarsArray(shop()!.rating)" style="color: #e2d7d0; font-size: 1.15rem;">star</span>
+                </div>
+                <span class="rating-value" style="font-weight: 600; color: #2c1810; margin-right: 6px; font-size: 1rem; vertical-align: middle;">{{ shop()!.rating | number:'1.1-1' }}</span>
+                <span class="reviews-count" style="color: #8a786d; font-size: 0.95rem; vertical-align: middle;">({{ shop()!.reviewCount }} {{ langService.translate('reviewsLabel') }})</span>
+              } @else {
+                <span class="no-rating text-muted" style="font-size: 0.95rem;">
+                  <span class="material-symbols-outlined text-muted me-1" style="font-size: 1.1rem; vertical-align: middle;">star_rate</span>
+                  {{ langService.translate('noReviewsYet') }}
+                </span>
+              }
+            </div>
+
             <p class="shop-desc">
               {{ (langService.currentLang() === 'ar' ? (shop()!.descriptionAr || shop()!.descriptionEn) : (shop()!.descriptionEn || shop()!.descriptionAr)) || langService.translate('defaultShopDesc') }}
             </p>
@@ -50,43 +56,55 @@
 
           <!-- Actions -->
           <div class="hero-actions">
-            <button class="follow-btn"
-              [class.following]="isFollowing()"
-              [disabled]="isFollowLoading()"
-              (click)="toggleFollow()">
-              @if (isFollowLoading()) { ... }
-              @else if (isFollowing()) { {{ langService.translate('following') }} }
-              @else { {{ langService.translate('followShop') }} }
-            </button>
-            <button class="review-action-btn" (click)="scrollToWriteReview()">
-              <span class="material-symbols-outlined">rate_review</span>
-              <span>{{ langService.translate('writeShopReview') }}</span>
-            </button>
-            <button class="share-btn" (click)="goToChat()">
-              <span class="material-symbols-outlined">chat</span>
-            </button>
+            @if (isShopOwner()) {
+              <div class="alert alert-info text-center w-100 mb-0 d-flex align-items-center gap-2" role="alert" style="border-radius: 30px; padding: 10px 24px; background-color: rgba(139, 69, 19, 0.08); border: 1px solid rgba(139, 69, 19, 0.15); color: #8B4513;">
+                <span class="material-symbols-outlined align-middle">info</span>
+                <span style="font-weight: 600;">{{ langService.translate('ownShopNotice') }}</span>
+              </div>
+            } @else {
+              <button class="follow-btn"
+                [class.following]="isFollowing()"
+                [disabled]="isFollowLoading()"
+                (click)="toggleFollow()">
+                @if (isFollowLoading()) {
+                  <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                }
+                @else if (isFollowing()) { {{ langService.translate('following') }} }
+                @else { {{ langService.translate('followShop') }} }
+              </button>
+              <button class="review-action-btn" (click)="scrollToWriteReview()">
+                <span class="material-symbols-outlined">rate_review</span>
+                <span>{{ langService.translate('writeShopReview') }}</span>
+              </button>
+              <button class="share-btn" (click)="goToChat()">
+                <span class="material-symbols-outlined">chat</span>
+              </button>
+            }
           </div>
         </div>
       </div>
 
-      <!-- Stats Bar -->
-      <div class="stats-bar">
-        <div class="stat-item">
-          <span class="stat-val">{{ shop()!.products.length }}</span>
-          <span class="stat-lbl">{{ langService.translate('products') }}</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-val">{{ shop()!.rating | number:'1.1-1' }}</span>
-          <span class="stat-lbl">{{ langService.translate('rating') }}</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-val">{{ shop()!.isVerified ? langService.translate('verified') : langService.translate('unverified') }}</span>
-          <span class="stat-lbl">{{ langService.translate('status') }}</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-val">{{ shop()!.ownerName }}</span>
-          <span class="stat-lbl">{{ langService.translate('owner') }}</span>
-        </div>
+      <!-- Stats Grid -->
+      <div class="stats-grid">
+        <app-statistic-card 
+          [label]="langService.translate('products')" 
+          [value]="shop()!.products.length">
+        </app-statistic-card>
+
+        <app-statistic-card 
+          [label]="langService.translate('rating')" 
+          [value]="shop()!.reviewCount > 0 ? (shop()!.rating | number:'1.1-1') + ' ⭐' : langService.translate('noReviewsYet')">
+        </app-statistic-card>
+
+        <app-statistic-card 
+          [label]="langService.translate('reviewsLabel')" 
+          [value]="shop()!.reviewCount">
+        </app-statistic-card>
+
+        <app-statistic-card 
+          [label]="langService.translate('owner')" 
+          [value]="shop()!.ownerName">
+        </app-statistic-card>
       </div>
     </div>
   </section>
@@ -111,7 +129,7 @@
         @if (shop()!.products.length === 0) {
           <div class="empty-state">
             <span style="font-size:48px">🧶</span>
-            <p>{{ langService.translate('noProductsYetShop') }}</p>
+            <p>{{ langService.translate('noProductsAvailable') }}</p>
           </div>
         } @else {
           <div class="products-bento">
@@ -150,9 +168,11 @@
                   @if (product.discountPrice) {
                     <span class="small-badge">{{ langService.translate('sale') }}</span>
                   }
-                  <button class="quick-add" (click)="quickAdd(product.id, $event)">
-                    <span class="material-symbols-outlined">shopping_bag</span>
-                  </button>
+                  @if (!isShopOwner()) {
+                    <button class="quick-add" (click)="quickAdd(product.id, $event)">
+                      <span class="material-symbols-outlined">shopping_bag</span>
+                    </button>
+                  }
                 </div>
                 <div class="product-body">
                   <h3 class="product-title">{{ langService.currentLang() === 'ar' ? product.titleAr : product.titleEn }}</h3>
@@ -204,7 +224,12 @@
 
             <!-- Review writing/editing section -->
             <div class="write-review-card mt-4 p-4 rounded shadow-sm border" style="background-color: #ffffff;">
-              @if (isUserLoggedIn()) {
+              @if (isShopOwner()) {
+                <div class="text-center py-3">
+                  <span class="material-symbols-outlined text-info mb-2" style="font-size: 2rem;">info</span>
+                  <h5 style="font-weight: 700; color: #2c1810;">{{ langService.translate('ownShopNotice') }}</h5>
+                </div>
+              } @else if (isUserLoggedIn()) {
                 
                 @if (myReview() && !isEditing()) {
                   <!-- Already reviewed show state -->
@@ -278,6 +303,19 @@
                         style="background-color: #fcfaf7; border: 1px solid #e2d7d0; border-radius: 12px; padding: 12px; font-size: 0.9rem; resize: none; outline: none; width: 100%;"
                         required
                       ></textarea>
+                      
+                      <!-- Permanent purchase validation info message under the textarea -->
+                      <div class="text-muted mt-2 small" style="font-size: 0.8rem; display: flex; align-items: center; gap: 4px;">
+                        <span class="material-symbols-outlined" style="font-size: 14px; color: #8B4513;">info</span>
+                        <span>{{ langService.currentLang() === 'ar' ? 'يمكن فقط للمستخدمين الذين أكملوا طلباً من هذا المتجر ترك تقييم.' : 'Only users who completed an order from this shop can leave a review.' }}</span>
+                      </div>
+
+                      @if (eligibilityError()) {
+                        <div class="text-danger mt-2 small d-flex align-items-center gap-1" style="font-weight: 600; font-size: 0.85rem;">
+                          <span class="material-symbols-outlined" style="font-size: 14px;">warning</span>
+                          <span>{{ eligibilityError() }}</span>
+                        </div>
+                      }
                     </div>
 
                     <div class="d-flex gap-2">

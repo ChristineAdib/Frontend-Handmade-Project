@@ -1,6 +1,6 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { Observable, tap, Subject } from 'rxjs';
 
 import { LoginRequest } from '../models/login-request.model';
 import { RegisterRequest } from '../models/register-request.model';
@@ -21,6 +21,7 @@ export class AuthService {
   activeTab  = signal<AuthTab>('login');
   otpEmail   = signal<string>('');
   errorMsg   = signal<string | null>(null);
+  readonly authChange$ = new Subject<void>();
   private logoutTimer: any;
 
   login(model: LoginRequest): Observable<ApiResponse<AuthResponse>> {
@@ -102,6 +103,7 @@ export class AuthService {
     localStorage.setItem('token', auth.token);
     localStorage.setItem('user', JSON.stringify(auth));
     localStorage.setItem('expiry', auth.tokenExpiry);
+    this.authChange$.next();
   }
 
   updateSession(auth: AuthResponse) {
@@ -127,6 +129,7 @@ export class AuthService {
     if (expiry) {
       this.startTokenTimer(expiry);
     }
+    this.authChange$.next();
   }
 
   private startTokenTimer(expiry: string) {
@@ -161,6 +164,7 @@ export class AuthService {
       clearTimeout(this.logoutTimer);
     }
 
+    this.authChange$.next();
     window.location.href = '/login';
   }
 }

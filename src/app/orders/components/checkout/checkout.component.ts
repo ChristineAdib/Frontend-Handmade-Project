@@ -38,6 +38,16 @@ export class CheckoutComponent implements OnInit {
   async onSubmit(): Promise<void> {
     if (this.checkoutForm.invalid) return;
 
+    const cart = this.cartApiService.cart();
+    if (cart && cart.items.some(item => item.isSoldOut)) {
+      this.orderService.error.set(
+        this.langService.currentLang() === 'ar'
+          ? 'بعض المنتجات في سلتك غير متوفرة حالياً.'
+          : 'One or more products in your cart are currently unavailable.'
+      );
+      return;
+    }
+
     const dto = {
       firstName: this.checkoutForm.value.firstName!,
       lastName: this.checkoutForm.value.lastName!,

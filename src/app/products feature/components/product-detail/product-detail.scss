@@ -384,6 +384,43 @@
     }
   }
 
+  /* Verified Purchase Badge */
+  .verified-badge {
+    background: rgba(46, 117, 89, 0.06);
+    color: #2e7559;
+    border: 1px solid rgba(46, 117, 89, 0.15);
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.2px;
+
+    .verified-icon {
+      font-size: 0.95rem;
+      font-variation-settings: 'FILL' 1, 'wght' 600;
+    }
+  }
+
+  /* Ineligible Review Prompt */
+  .ineligible-prompt {
+    .ineligible-prompt-icon {
+      font-size: 2.2rem;
+      color: #8a786d;
+      opacity: 0.8;
+    }
+
+    h5 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #2c1810;
+    }
+
+    p {
+      line-height: 1.5;
+    }
+  }
+
   /* Global luxury details primary button */
   .btn-luxury-primary {
     background-color: #8B4513;
@@ -430,5 +467,47 @@
         }
       }
     }
+  }
+}
+
+/* Unique Badge on details */
+.detail-badge-unique {
+  background: linear-gradient(135deg, #a0522d, #cd853f);
+  color: #ffffff;
+  padding: 5px 12px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  text-transform: uppercase;
+  border-radius: 6px;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 6px rgba(160, 82, 45, 0.2);
+}
+
+/* Detail stock status urgency indicator */
+.detail-stock-urgency {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background-color: #fff8f5;
+  border: 1px solid #ffebe3;
+  border-radius: 8px;
+  color: #e07a5f;
+  font-size: 0.85rem;
+  font-weight: 600;
+  
+  span {
+    vertical-align: middle;
+  }
+  
+  .material-symbols-outlined {
+    font-size: 1.1rem;
+  }
+
+  &.only-one {
+    background-color: #fffcf0;
+    border-color: #fef5d1;
+    color: #b8860b;
   }
 }

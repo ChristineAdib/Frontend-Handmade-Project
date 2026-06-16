@@ -193,28 +193,31 @@
         </a>
       }
 
-      @if (isLoggedIn()) {
-        <div class="nav__icons-group">
-          <a routerLink="/wishlist" class="nav__icon-btn" [title]="langService.translate('myWishlist')">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
-                 stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
-              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-            </svg>
-          </a>
+      <div class="nav__icons-group">
+        <a routerLink="/wishlist" class="nav__icon-btn nav__cart" [title]="langService.translate('myWishlist')">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+          </svg>
+          @if (wishlistCount() > 0) {
+            <span class="nav__badge">{{ wishlistCount() }}</span>
+          }
+        </a>
 
-          <a routerLink="/cart" class="nav__icon-btn nav__cart" [title]="langService.currentLang() === 'ar' ? 'عربة التسوق' : 'Cart'">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
-                 stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
-              <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
-              <line x1="3" y1="6" x2="21" y2="6"/>
-              <path d="M16 10a4 4 0 0 1-8 0"/>
-            </svg>
-            @if (cartCount() > 0) {
-              <span class="nav__badge">{{ cartCount() }}</span>
-            }
-          </a>
+        <a routerLink="/cart" class="nav__icon-btn nav__cart" [title]="langService.currentLang() === 'ar' ? 'عربة التسوق' : 'Cart'">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+            <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+            <line x1="3" y1="6" x2="21" y2="6"/>
+            <path d="M16 10a4 4 0 0 1-8 0"/>
+          </svg>
+          @if (cartCount() > 0) {
+            <span class="nav__badge">{{ cartCount() }}</span>
+          }
+        </a>
 
-          <!-- Chat -->
+        <!-- Chat -->
+        @if (isLoggedIn()) {
           <a routerLink="/chat" class="nav__icon-btn nav__cart" [title]="langService.translate('chat')">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
               <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
@@ -223,8 +226,8 @@
               <span class="nav__badge">{{ chatService.totalUnread() }}</span>
             }
           </a>
-        </div>
-      }
+        }
+      </div>
 
       <div class="nav__divider"></div>
 
@@ -402,10 +405,24 @@
     <div class="mob__sep"></div>
     @if (!isLoggedIn()) {
       <a routerLink="/login" class="mob__link" (click)="toggleMobileMenu()">{{ langService.translate('signIn') }}</a>
+      <a routerLink="/wishlist" class="mob__link" (click)="toggleMobileMenu()">
+        {{ langService.translate('myWishlist') }}
+        @if (wishlistCount() > 0) { ({{ wishlistCount() }}) }
+      </a>
+      <a routerLink="/cart" class="mob__link" (click)="toggleMobileMenu()">
+        {{ langService.currentLang() === 'ar' ? 'السلة' : 'Cart' }}
+        @if (cartCount() > 0) { ({{ cartCount() }}) }
+      </a>
       <a routerLink="/become-seller" class="mob__link mob__link--sell" (click)="toggleMobileMenu()">{{ langService.translate('startSelling') }} ✦</a>
     } @else {
-      <a routerLink="/wishlist" class="mob__link" (click)="toggleMobileMenu()">{{ langService.translate('myWishlist') }}</a>
-      <a routerLink="/cart" class="mob__link" (click)="toggleMobileMenu()">{{ langService.currentLang() === 'ar' ? 'السلة' : 'Cart' }}</a>
+      <a routerLink="/wishlist" class="mob__link" (click)="toggleMobileMenu()">
+        {{ langService.translate('myWishlist') }}
+        @if (wishlistCount() > 0) { ({{ wishlistCount() }}) }
+      </a>
+      <a routerLink="/cart" class="mob__link" (click)="toggleMobileMenu()">
+        {{ langService.currentLang() === 'ar' ? 'السلة' : 'Cart' }}
+        @if (cartCount() > 0) { ({{ cartCount() }}) }
+      </a>
       <a routerLink="/chat" class="mob__link" (click)="toggleMobileMenu()">{{ langService.translate('chat') }}</a>
       <a routerLink="/orders" class="mob__link" (click)="toggleMobileMenu()">{{ langService.translate('myOrders') }}</a>
       @if (isSeller()) {

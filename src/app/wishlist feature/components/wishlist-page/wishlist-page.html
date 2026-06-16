@@ -1,13 +1,13 @@
-<div class="wl-page">
+<div class="wl-page" [dir]="langService.currentLang() === 'ar' ? 'rtl' : 'ltr'">
   <div class="wl-hero">
     <div class="wl-hero-left">
-      <h1>My Wishlist</h1>
-      <p>YOUR SAVED PIECES</p>
+      <h1>{{ langService.translate('myWishlist') }}</h1>
+      <p>{{ langService.translate('yourSavedPieces') }}</p>
     </div>
     @if (wishlist) {
       <div class="wl-hero-badge">
         <i class="ti ti-heart" aria-hidden="true"></i>
-        {{ wishlist.totalItems }} {{ wishlist.totalItems === 1 ? 'item' : 'items' }}
+        {{ wishlist.totalItems }} {{ wishlist.totalItems === 1 ? langService.translate('item') : langService.translate('items') }}
       </div>
     }
   </div>
@@ -19,7 +19,7 @@
   @if (isLoading) {
     <div class="wl-empty">
       <div class="custom-spinner"></div>
-      <p>Loading wishlist...</p>
+      <p>{{ langService.translate('loadingWishlist') }}</p>
     </div>
   }
 
@@ -31,9 +31,9 @@
 
             <div class="wl-img">
               @if (getImageUrl(item)) {
-                <img [src]="getImageUrl(item)" [alt]="item.titleEn" loading="lazy">
+                <img [src]="getImageUrl(item)" [alt]="langService.currentLang() === 'ar' ? (item.titleAr || item.titleEn) : (item.titleEn || item.titleAr)" [class.wl-img-soldout]="item.isSoldOut" loading="lazy">
               } @else {
-                <div class="wl-img-placeholder">
+                <div class="wl-img-placeholder" [class.wl-img-soldout]="item.isSoldOut">
                   <i class="ti ti-photo" aria-hidden="true"></i>
                 </div>
               }
@@ -44,27 +44,51 @@
                 </span>
               }
 
+              @if (item.isSoldOut) {
+                <span class="wl-badge-soldout">
+                  {{ langService.currentLang() === 'ar' ? 'نفدت الكمية' : 'Sold Out' }}
+                </span>
+              }
+
+              @if (item.stockQuantity === 1) {
+                <span class="wl-badge-unique">
+                  {{ langService.currentLang() === 'ar' ? 'قطعة فريدة' : 'One of a Kind' }}
+                </span>
+              }
+
               <button class="btn-remove" (click)="removeItem(item.productId)" aria-label="Remove from wishlist">
                 <i class="ti ti-x" aria-hidden="true"></i>
               </button>
             </div>
 
             <div class="wl-body">
-              <p class="wl-title">{{ item.titleEn }}</p>
-              <p class="wl-subtitle">{{ item.titleAr }}</p>
+              <p class="wl-title">{{ langService.currentLang() === 'ar' ? (item.titleAr || item.titleEn) : (item.titleEn || item.titleAr) }}</p>
+              <p class="wl-subtitle">{{ langService.currentLang() === 'ar' ? item.titleEn : item.titleAr }}</p>
 
               <div class="wl-price">
                 @if (item.discountPrice) {
-                  <span class="old-price">EGP {{ item.price }}</span>
-                  <span class="sale-price">EGP {{ item.discountPrice }}</span>
+                  <span class="old-price">{{ langService.translate('egp') }} {{ item.price }}</span>
+                  <span class="sale-price">{{ langService.translate('egp') }} {{ item.discountPrice }}</span>
                 } @else {
-                  <span class="sale-price">EGP {{ item.price }}</span>
+                  <span class="sale-price">{{ langService.translate('egp') }} {{ item.price }}</span>
                 }
               </div>
 
-              <button class="btn-cart">
+              @if (!item.isSoldOut && item.stockQuantity > 0 && item.stockQuantity <= 5) {
+                <div class="wl-stock-urgency" [class.only-one]="item.stockQuantity === 1">
+                  @if (item.stockQuantity === 1) {
+                    {{ langService.currentLang() === 'ar' ? 'متوفر قطعة واحدة فقط' : 'Only 1 available' }}
+                  } @else {
+                    {{ langService.currentLang() === 'ar' ? 'متبقي ' + item.stockQuantity + ' فقط في المخزن' : 'Only ' + item.stockQuantity + ' left' }}
+                  }
+                </div>
+              }
+
+              <button class="btn-cart" (click)="addToCart(item.productId)" 
+                [disabled]="item.isSoldOut || addingToCart === item.productId"
+                [title]="item.isSoldOut ? langService.translate('soldOutTooltip') : ''">
                 <i class="ti ti-shopping-cart" aria-hidden="true"></i>
-                Add to cart
+                {{ item.isSoldOut ? (langService.currentLang() === 'ar' ? 'غير متوفر حالياً' : 'Currently unavailable') : (addingToCart === item.productId ? langService.translate('adding') : langService.translate('addToCart')) }}
               </button>
             </div>
 
@@ -75,8 +99,8 @@
           <div class="browse-icon">
             <i class="ti ti-plus" aria-hidden="true"></i>
           </div>
-          <p>Discover more<br>handmade pieces</p>
-          <a routerLink="/products" class="btn-browse">Browse</a>
+          <p>{{ langService.translate('discoverMoreHandmade') }}</p>
+          <a routerLink="/products" class="btn-browse">{{ langService.translate('browse') }}</a>
         </div>
 
       </div>
@@ -85,11 +109,11 @@
         <div class="empty-icon-wrap">
           <i class="ti ti-heart" aria-hidden="true"></i>
         </div>
-        <h3>Your wishlist is empty</h3>
-        <p>Save your favorite handmade items here and come back to them anytime.</p>
+        <h3>{{ langService.translate('wishlistIsEmptyTitle') }}</h3>
+        <p>{{ langService.translate('wishlistEmptyText') }}</p>
         <a routerLink="/products" class="btn-browse">
-          <i class="ti ti-arrow-right" aria-hidden="true"></i>
-          Browse products
+          <i [class]="langService.currentLang() === 'ar' ? 'ti ti-arrow-left' : 'ti ti-arrow-right'" aria-hidden="true"></i>
+          {{ langService.translate('browseProducts') }}
         </a>
       </div>
     }

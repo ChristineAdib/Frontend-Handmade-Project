@@ -4,7 +4,7 @@ import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ProductService } from '../../../seller feature/services/product-service';
 import { ShopService } from '../../../shop feature/services/shop-service';
-  import { CategorySummary } from '../../../Categories/Models/CategorySummary';
+import { CategorySummary } from '../../../Categories/Models/CategorySummary';
 import { Input } from '@angular/core';
 import { LanguageService } from '../../../core/services/language.service';
 
@@ -24,7 +24,9 @@ export class AddProduct implements OnInit {
   protected readonly langService = inject(LanguageService);
 
   categories = signal<CategorySummary[]>([]);
+  subCategories = signal<CategorySummary[]>([]);
   isLoading = signal(false);
+  isLoadingSubCategories = signal(false);
   isSaving = signal(false);
   successMsg = signal<string | null>(null);
   errorMsg = signal<string | null>(null);
@@ -46,6 +48,7 @@ export class AddProduct implements OnInit {
     price: [0, [Validators.required, Validators.min(0.01)]],
     quantity: [1, [Validators.required, Validators.min(1)]],
     categoryId: ['', Validators.required],
+    subCategoryId: ['', Validators.required],
   });
 
   ngOnInit() {
@@ -58,15 +61,66 @@ export class AddProduct implements OnInit {
     }
 
     // Load categories
+    console.log('[AddProduct] Loading categories...');
     this.productService.getCategories().subscribe({
-      next: cats => this.categories.set(cats as unknown as CategorySummary[]),
-      error: () => this.errorMsg.set(this.langService.currentLang() === 'ar' ? 'فشل تحميل الفئات' : 'Failed to load categories')
+      next: cats => {
+        console.log('[AddProduct] Categories loaded successfully:', cats);
+        this.categories.set(cats as unknown as CategorySummary[]);
+      },
+      error: (err) => {
+        console.error('[AddProduct] Failed to load categories:', err);
+        this.errorMsg.set(this.langService.currentLang() === 'ar' ? 'فشل تحميل الفئات' : 'Failed to load categories');
+      }
     });
 
     // Get shopId
     this.shopService.getMyShop().subscribe({
       next: shop => this.shopId.set(shop.id),
     });
+  }
+
+  loadSubCategories(parentId: string) {
+    this.isLoadingSubCategories.set(true);
+    console.log('[AddProduct] Loading subcategories for parent:', parentId);
+    this.productService.getSubCategories(parentId).subscribe({
+      next: (subs) => {
+        console.log('[AddProduct] Subcategories loaded successfully:', subs);
+        this.subCategories.set(subs as unknown as CategorySummary[]);
+        
+        const subCategoryCtrl = this.form.get('subCategoryId');
+        if (subs && subs.length === 0) {
+          subCategoryCtrl?.clearValidators();
+          subCategoryCtrl?.setValue(parentId);
+        } else {
+          subCategoryCtrl?.setValidators(Validators.required);
+          const currentVal = subCategoryCtrl?.value;
+          if (!subs.some(s => s.id === currentVal)) {
+            subCategoryCtrl?.setValue('');
+          }
+        }
+        subCategoryCtrl?.updateValueAndValidity();
+        this.isLoadingSubCategories.set(false);
+      },
+      error: (err) => {
+        console.error('[AddProduct] Failed to load subcategories:', err);
+        this.errorMsg.set(this.langService.currentLang() === 'ar' ? 'فشل تحميل الفئات الفرعية' : 'Failed to load subcategories');
+        this.isLoadingSubCategories.set(false);
+      }
+    });
+  }
+
+  onCategoryChange(event: Event) {
+    const parentId = (event.target as HTMLSelectElement).value;
+    this.form.patchValue({ subCategoryId: '' });
+    this.form.get('subCategoryId')?.markAsTouched();
+    this.subCategories.set([]);
+    if (parentId) {
+      this.loadSubCategories(parentId);
+    } else {
+      const subCategoryCtrl = this.form.get('subCategoryId');
+      subCategoryCtrl?.setValidators(Validators.required);
+      subCategoryCtrl?.updateValueAndValidity();
+    }
   }
 
   onImagesSelected(event: Event) {
@@ -135,6 +189,7 @@ export class AddProduct implements OnInit {
     formData.append('price', v.price!.toString());
     formData.append('quantity', v.quantity!.toString());
     formData.append('categoryId', v.categoryId!);
+    formData.append('subCategoryId', v.subCategoryId!);
     formData.append('shopId', this.shopId());
 
     if (this.isEditMode()) {
@@ -169,6 +224,9 @@ export class AddProduct implements OnInit {
   private loadProductData(id: string) {
     this.productService.getProductById(id).subscribe({
       next: (product: any) => {
+        const parentId = product.parentCategoryId;
+        const subId = product.categoryId;
+
         this.form.patchValue({
           titleEn: product.titleEn,
           titleAr: product.titleAr,
@@ -176,8 +234,16 @@ export class AddProduct implements OnInit {
           descriptionAr: product.descriptionAr ?? '',
           price: product.price,
           quantity: product.quantity,
-          categoryId: product.categoryId,
+          categoryId: parentId || subId || '',
+          subCategoryId: parentId ? subId : subId || '',
         });
+
+        if (parentId) {
+          this.loadSubCategories(parentId);
+        } else if (subId) {
+          this.loadSubCategories(subId);
+        }
+
         if (product.images?.length) {
           const imgs = product.images.map((img: any) => ({ id: img.id, imageUrl: img.imageUrl }));
           this.existingImages.set(imgs);

@@ -6,6 +6,7 @@ import { LanguageService } from '../../core/services/language.service';
 import { filter } from 'rxjs';
 import { Component, inject, signal, HostListener, computed,OnInit } from '@angular/core';
 import { CartApiService } from '../../orders/services/cart-api.service';
+import { WishlistService } from '../../wishlist feature/services/wishlist-service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -23,8 +24,13 @@ export class Header implements OnInit {
   protected chatService = inject(ChatService);
   protected langService = inject(LanguageService);
   private cartService = inject(CartApiService);
+  protected wishlistService = inject(WishlistService);
 
   ngOnInit(): void {
+    // Load initial cart and wishlist state
+    this.cartService.getCart();
+    this.wishlistService.getWishList().subscribe();
+
     // 1. Initial connection if already logged in on load
     if (this.isLoggedIn()) {
       this.chatService.initializeRealTime();
@@ -55,6 +61,7 @@ export class Header implements OnInit {
   activeDropdown = signal<string | null>(null);
 
   cartCount = computed(() => this.cartService.cart()?.totalItems ?? 0);
+  wishlistCount = computed(() => this.wishlistService.wishlist()?.totalItems ?? 0);
 
   categories = [
     { 

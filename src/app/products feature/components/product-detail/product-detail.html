@@ -71,6 +71,13 @@
             {{ langService.currentLang() === 'ar' ? (product.titleAr || product.titleEn) : (product.titleEn || product.titleAr) }}
           </h1>
 
+          <!-- One of a Kind Badge -->
+          @if (product.quantity === 1) {
+            <span class="detail-badge-unique mb-3 d-inline-block">
+              {{ langService.currentLang() === 'ar' ? 'قطعة فريدة' : 'One of a Kind' }}
+            </span>
+          }
+
           <!-- Rating summary -->
           <div class="rating-row mb-3" *ngIf="product.reviewCount > 0; else noRating">
             <div class="stars">
@@ -104,6 +111,20 @@
             }
           </div>
 
+          <!-- Urgency stock status banner -->
+          @if (product.quantity > 0 && product.quantity <= 5) {
+            <div class="detail-stock-urgency mb-4" [class.only-one]="product.quantity === 1">
+              <span class="material-symbols-outlined">bolt</span>
+              <span>
+                @if (product.quantity === 1) {
+                  {{ langService.currentLang() === 'ar' ? 'متوفر قطعة واحدة فقط' : 'Only 1 available' }}
+                } @else {
+                  {{ langService.currentLang() === 'ar' ? 'متبقي ' + product.quantity + ' فقط في المخزن' : 'Only ' + product.quantity + ' left in stock' }}
+                }
+              </span>
+            </div>
+          }
+
           <!-- Description -->
           <div class="description-section mb-4">
             <h5 class="section-heading">{{ langService.currentLang() === 'ar' ? 'الوصف' : 'Description' }}</h5>
@@ -128,7 +149,9 @@
                       @if (product.quantity === 0) {
                         <span class="badge bg-danger">{{ langService.translate('outOfStock') }}</span>
                       } @else if (product.quantity === 1) {
-                        <span class="badge bg-warning text-dark">{{ langService.translate('lastOneItem') }}</span>
+                        <span class="badge bg-warning text-dark">{{ langService.currentLang() === 'ar' ? 'متوفر قطعة واحدة فقط' : 'Only 1 available' }}</span>
+                      } @else if (product.quantity <= 5) {
+                        <span class="badge bg-warning text-dark">{{ langService.currentLang() === 'ar' ? 'متبقي ' + product.quantity + ' فقط في المخزن' : 'Only ' + product.quantity + ' left in stock' }}</span>
                       } @else {
                         <span class="badge bg-success">{{ langService.translate('inStock') }}</span>
                       }
@@ -156,7 +179,12 @@
 
           <!-- CTA Buttons -->
           <div class="action-buttons-row">
-            @if (product.quantity > 0) {
+            @if (isProductOwner) {
+              <div class="alert alert-info text-center w-100 mb-0" role="alert">
+                <span class="material-symbols-outlined me-2 align-middle">info</span>
+                {{ langService.translate('ownProductNotice') }}
+              </div>
+            } @else if (product.quantity > 0) {
               <button class="btn btn-luxury-primary btn-lg flex-fill" (click)="buyNow()">
                 <span class="material-symbols-outlined">shopping_bag</span>
                 {{ langService.translate('buyNow') }}
@@ -195,59 +223,85 @@
 
           <!-- Review writing section -->
           <div class="write-review-card mt-4 p-4 rounded shadow-sm">
-            @if (isUserLoggedIn) {
-              <h4 class="card-title mb-3">
-                {{ langService.currentLang() === 'ar' ? 'اكتب تقييمك للمنتج' : 'Write a Product Review' }}
-              </h4>
-              
-              <form (ngSubmit)="submitReview()" #reviewForm="ngForm">
-                <!-- Interactive Star Selector -->
-                <div class="star-selector mb-3">
-                  <label class="form-label text-muted d-block">{{ langService.currentLang() === 'ar' ? 'تقييمك بالنجوم:' : 'Your Rating:' }}</label>
-                  <div class="stars-input">
-                    <button 
-                      type="button" 
-                      *ngFor="let star of [1,2,3,4,5]" 
-                      class="star-btn"
-                      (click)="setNewRating(star)"
-                      (mouseenter)="onStarMouseEnter(star)"
-                      (mouseleave)="onStarMouseLeave()"
-                      aria-label="Rate star"
-                    >
-                      <span 
-                        class="material-symbols-outlined"
-                        [class.filled]="hoveredRating ? star <= hoveredRating : star <= newRating"
+            @if (isProductOwner) {
+              <div class="text-center py-3">
+                <span class="material-symbols-outlined text-info mb-2">info</span>
+                <h5>{{ langService.translate('ownProductNotice') }}</h5>
+              </div>
+            } @else if (isUserLoggedIn) {
+              @if (checkingEligibility) {
+                <div class="text-center py-4">
+                  <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                </div>
+              } @else if (isEligibleToReview) {
+                <h4 class="card-title mb-3">
+                  {{ alreadyReviewed
+                      ? (langService.currentLang() === 'ar' ? 'تحديث تقييمك للمنتج' : 'Update Your Review')
+                      : (langService.currentLang() === 'ar' ? 'اكتب تقييمك للمنتج' : 'Write a Product Review') }}
+                </h4>
+                
+                <form (ngSubmit)="submitReview()" #reviewForm="ngForm">
+                  <!-- Interactive Star Selector -->
+                  <div class="star-selector mb-3">
+                    <label class="form-label text-muted d-block">{{ langService.currentLang() === 'ar' ? 'تقييمك بالنجوم:' : 'Your Rating:' }}</label>
+                    <div class="stars-input">
+                      <button 
+                        type="button" 
+                        *ngFor="let star of [1,2,3,4,5]" 
+                        class="star-btn"
+                        (click)="setNewRating(star)"
+                        (mouseenter)="onStarMouseEnter(star)"
+                        (mouseleave)="onStarMouseLeave()"
+                        aria-label="Rate star"
                       >
-                        star
-                      </span>
-                    </button>
+                        <span 
+                          class="material-symbols-outlined"
+                          [class.filled]="hoveredRating ? star <= hoveredRating : star <= newRating"
+                        >
+                          star
+                        </span>
+                      </button>
+                    </div>
                   </div>
-                </div>
 
-                <!-- Textarea Comment -->
-                <div class="mb-3">
-                  <label for="reviewComment" class="form-label text-muted">{{ langService.currentLang() === 'ar' ? 'ملاحظاتك تعليقاً:' : 'Your Review Comment:' }}</label>
-                  <textarea 
-                    id="reviewComment"
-                    name="comment"
-                    [(ngModel)]="newComment"
-                    rows="4" 
-                    class="form-control luxury-textarea" 
-                    [placeholder]="langService.currentLang() === 'ar' ? 'اكتب تجربتك للمنتج بالتفصيل...' : 'Tell us about your experience with this handmade item...'"
-                    required
-                  ></textarea>
-                </div>
+                  <!-- Textarea Comment -->
+                  <div class="mb-3">
+                    <label for="reviewComment" class="form-label text-muted">{{ langService.currentLang() === 'ar' ? 'ملاحظاتك تعليقاً:' : 'Your Review Comment:' }}</label>
+                    <textarea 
+                      id="reviewComment"
+                      name="comment"
+                      [(ngModel)]="newComment"
+                      rows="4" 
+                      class="form-control luxury-textarea" 
+                      [placeholder]="langService.currentLang() === 'ar' ? 'اكتب تجربتك للمنتج بالتفصيل...' : 'Tell us about your experience with this handmade item...'"
+                      required
+                    ></textarea>
+                  </div>
 
-                <button 
-                  type="submit" 
-                  class="btn btn-luxury-primary w-100"
-                  [disabled]="isSubmittingReview || !newComment.trim()"
-                >
-                  <span class="spinner-border spinner-border-sm me-2" role="status" *ngIf="isSubmittingReview"></span>
-                  <span class="material-symbols-outlined btn-icon" *ngIf="!isSubmittingReview">rate_review</span>
-                  {{ langService.currentLang() === 'ar' ? 'تقديم التقييم' : 'Submit Review' }}
-                </button>
-              </form>
+                  <button 
+                    type="submit" 
+                    class="btn btn-luxury-primary w-100"
+                    [disabled]="isSubmittingReview || !newComment.trim()"
+                  >
+                    <span class="spinner-border spinner-border-sm me-2" role="status" *ngIf="isSubmittingReview"></span>
+                    <span class="material-symbols-outlined btn-icon" *ngIf="!isSubmittingReview">rate_review</span>
+                    {{ alreadyReviewed 
+                        ? (langService.currentLang() === 'ar' ? 'تحديث التقييم' : 'Update Review')
+                        : (langService.currentLang() === 'ar' ? 'تقديم التقييم' : 'Submit Review') }}
+                  </button>
+                </form>
+              } @else {
+                <!-- Ineligible check message -->
+                <div class="ineligible-prompt text-center py-4">
+                  <span class="material-symbols-outlined ineligible-prompt-icon mb-2">info</span>
+                  <h5 class="mb-2">{{ langService.currentLang() === 'ar' ? 'التقييمات للمشترين فقط' : 'Verified Purchases Only' }}</h5>
+                  <p class="text-muted small mb-0">
+                    {{ langService.currentLang() === 'ar' 
+                        ? 'يمكنك تقييم هذا المنتج بعد استلامه وتوصيله إليك.' 
+                        : 'You can review this product after it has been delivered.' }}
+                  </p>
+                </div>
+              }
             } @else {
               <!-- Login prompt -->
               <div class="login-prompt text-center py-3">
@@ -287,7 +341,15 @@
                   <div class="review-item-card p-4 mb-3 rounded shadow-sm border-0">
                     <div class="review-header d-flex justify-content-between align-items-center mb-2">
                       <div class="reviewer-meta">
-                        <h5 class="reviewer-name mb-0">{{ rev.userName }}</h5>
+                        <div class="d-flex align-items-center gap-2 flex-wrap">
+                          <h5 class="reviewer-name mb-0">{{ rev.userName }}</h5>
+                          @if (rev.isVerifiedPurchase) {
+                            <span class="verified-badge d-inline-flex align-items-center gap-1">
+                              <span class="material-symbols-outlined verified-icon">verified</span>
+                              {{ langService.currentLang() === 'ar' ? 'شراء مؤكد' : 'Verified Purchase' }}
+                            </span>
+                          }
+                        </div>
                         <small class="review-date text-muted">{{ rev.createdAt | date:'mediumDate' }}</small>
                       </div>
                       <div class="review-score">

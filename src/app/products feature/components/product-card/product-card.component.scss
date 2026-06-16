@@ -65,6 +65,24 @@
       z-index: 2;
     }
 
+    .badge-unique {
+      position: absolute;
+      bottom: 12px;
+      left: 12px;
+      background: linear-gradient(135deg, #a0522d, #cd853f); /* Sienna to Peru brown gradient */
+      color: #ffffff;
+      padding: 5px 10px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      text-transform: uppercase;
+      border-radius: 6px;
+      letter-spacing: 0.5px;
+      box-shadow: 0 2px 6px rgba(160, 82, 45, 0.3);
+      z-index: 2;
+      transition: all 0.3s ease;
+    }
+
     /* Floating Action Bar (Wishlist & Cart) */
     .hover-actions-bar {
       position: absolute;
@@ -265,6 +283,38 @@
         color: #c4b5ac;
       }
     }
+
+    .stock-status-urgency {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 8px;
+      padding: 4px 8px;
+      background-color: #fff8f5;
+      border: 1px solid #ffebe3;
+      border-radius: 6px;
+      width: fit-content;
+
+      .urgency-icon {
+        font-size: 0.95rem;
+        color: #e07a5f;
+      }
+
+      .urgency-text {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: #e07a5f;
+      }
+
+      &.only-one {
+        background-color: #fffcf0;
+        border-color: #fef5d1;
+        
+        .urgency-icon, .urgency-text {
+          color: #b8860b;
+        }
+      }
+    }
   }
 }
 
@@ -273,6 +323,11 @@
   .luxury-card {
     .image-wrapper {
       .badge-discount {
+        left: auto;
+        right: 12px;
+      }
+
+      .badge-unique {
         left: auto;
         right: 12px;
       }
