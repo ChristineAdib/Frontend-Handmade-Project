@@ -25,9 +25,19 @@
               <div class="cart-item">
                 <div class="item-image" [routerLink]="['/products', item.productId]" style="cursor: pointer;">
                   @if (getImageUrl(item)) {
-                    <img [src]="getImageUrl(item)" [alt]="langService.currentLang() === 'ar' ? (item.titleAr || item.titleEn) : item.titleEn" loading="lazy">
+                    <img [src]="getImageUrl(item)" [alt]="langService.currentLang() === 'ar' ? (item.titleAr || item.titleEn) : item.titleEn" [class.cart-img-soldout]="item.isSoldOut" loading="lazy">
                   } @else {
-                    <div class="img-placeholder"></div>
+                    <div class="img-placeholder" [class.cart-img-soldout]="item.isSoldOut"></div>
+                  }
+                  @if (item.isSoldOut) {
+                    <span class="cart-badge-soldout">
+                      {{ langService.currentLang() === 'ar' ? 'نفدت الكمية' : 'Sold Out' }}
+                    </span>
+                  }
+                  @if (item.stockQuantity === 1) {
+                    <span class="cart-badge-unique">
+                      {{ langService.currentLang() === 'ar' ? 'قطعة فريدة' : 'One of a Kind' }}
+                    </span>
                   }
                 </div>
 
@@ -36,6 +46,20 @@
                     {{ langService.currentLang() === 'ar' ? (item.titleAr || item.titleEn) : item.titleEn }}
                   </h4>
                   <p class="item-subtitle">{{ item.titleAr }}</p>
+                  @if (item.isSoldOut) {
+                    <p class="text-danger fw-bold" style="font-size: 0.85rem; margin-top: 5px; margin-bottom: 5px;">
+                      {{ langService.currentLang() === 'ar' ? 'هذا المنتج غير متوفر حالياً.' : 'This product is currently unavailable.' }}
+                    </p>
+                  }
+                  @if (!item.isSoldOut && item.stockQuantity > 0 && item.stockQuantity <= 5) {
+                    <div class="cart-stock-urgency" [class.only-one]="item.stockQuantity === 1">
+                      @if (item.stockQuantity === 1) {
+                        {{ langService.currentLang() === 'ar' ? 'متوفر قطعة واحدة فقط' : 'Only 1 available' }}
+                      } @else {
+                        {{ langService.currentLang() === 'ar' ? 'متبقي ' + item.stockQuantity + ' فقط في المخزن' : 'Only ' + item.stockQuantity + ' left' }}
+                      }
+                    </div>
+                  }
                   <div class="item-price-info">
                     @if (item.discountPrice) {
                       <span class="old-price">{{ item.price | currency:'EGP':'symbol' }}</span>
@@ -47,9 +71,13 @@
                 </div>
 
                 <div class="item-quantity">
-                  <button class="qty-btn" (click)="decrement(item)" [disabled]="cartApi.isLoading()">−</button>
+                  <button class="qty-btn" (click)="decrement(item)" 
+                    [disabled]="cartApi.isLoading() || item.isSoldOut || item.quantity <= 1"
+                    [title]="item.isSoldOut ? langService.translate('soldOutTooltip') : (item.quantity <= 1 ? langService.translate('minQtyReached') : '')">−</button>
                   <span class="qty-value">{{ item.quantity }}</span>
-                  <button class="qty-btn" (click)="increment(item)" [disabled]="cartApi.isLoading()">+</button>
+                  <button class="qty-btn" (click)="increment(item)" 
+                    [disabled]="cartApi.isLoading() || item.isSoldOut || item.quantity >= item.stockQuantity"
+                    [title]="item.isSoldOut ? langService.translate('soldOutTooltip') : (item.quantity >= item.stockQuantity ? langService.translate('maxQtyReached') : '')">+</button>
                 </div>
 
                 <div class="item-total">
@@ -90,7 +118,16 @@
               <span>{{ cart.totalPrice | currency:'EGP':'symbol' }}</span>
             </div>
 
-            <a routerLink="/checkout" class="btn-checkout">{{ langService.translate('proceedToCheckout') }}</a>
+            @if (hasSoldOutItems()) {
+              <button class="btn-checkout" disabled [style.opacity]="0.5" [style.cursor]="'not-allowed'" style="width: 100%;">
+                {{ langService.translate('proceedToCheckout') }}
+              </button>
+              <div class="alert alert-warning mt-2 text-center" style="font-size: 0.85rem; padding: 0.5rem 0.75rem; color: #856404; background-color: #fff3cd; border-color: #ffeeba; border-radius: 6px;">
+                {{ langService.currentLang() === 'ar' ? 'بعض المنتجات في سلتك غير متوفرة حالياً.' : 'One or more products in your cart are currently unavailable.' }}
+              </div>
+            } @else {
+              <a routerLink="/checkout" class="btn-checkout">{{ langService.translate('proceedToCheckout') }}</a>
+            }
 
             <a routerLink="/products" class="btn-continue">{{ langService.translate('continueShopping') }}</a>
 

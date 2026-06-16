@@ -1,4 +1,4 @@
-<div class="dashboard-container">
+<div class="dashboard-container" [dir]="langService.currentLang() === 'ar' ? 'rtl' : 'ltr'">
   <!-- Sidebar Navigation -->
   <aside class="dashboard-sidebar" [class.open]="sidebarOpen()">
     <div class="sidebar-header">
@@ -33,25 +33,25 @@
       <button class="menu-item" [class.active]="activeTab() === 'Orders'" (click)="selectTab('Orders')">
         <span class="material-symbols-outlined">shopping_bag</span>
         <span class="menu-text">{{ langService.translate('myOrders') }}</span>
-        <span class="badge-count" *ngIf="totalOrdersCount() > 0">{{ totalOrdersCount() }}</span>
+        <span class="badge-count" *ngIf="totalOrdersCount() > 0 && !hideOrdersCount()">{{ totalOrdersCount() }}</span>
       </button>
 
       <button class="menu-item" [class.active]="activeTab() === 'Wishlist'" (click)="selectTab('Wishlist')">
         <span class="material-symbols-outlined">favorite</span>
         <span class="menu-text">{{ langService.translate('myWishlist') }}</span>
-        <span class="badge-count" *ngIf="wishlistCount() > 0">{{ wishlistCount() }}</span>
+        <span class="badge-count" *ngIf="wishlistCount() > 0 && !hideWishlistCount()">{{ wishlistCount() }}</span>
       </button>
 
       <button class="menu-item" [class.active]="activeTab() === 'Shops'" (click)="selectTab('Shops')">
         <span class="material-symbols-outlined">storefront</span>
         <span class="menu-text">{{ langService.translate('followedShops') }}</span>
-        <span class="badge-count" *ngIf="followedShopsCount() > 0">{{ followedShopsCount() }}</span>
+        <span class="badge-count" *ngIf="followedShopsCount() > 0 && !hideShopsCount()">{{ followedShopsCount() }}</span>
       </button>
 
       <button class="menu-item" [class.active]="activeTab() === 'Reviews'" (click)="selectTab('Reviews')">
         <span class="material-symbols-outlined">rate_review</span>
         <span class="menu-text">{{ langService.translate('myReviews') }}</span>
-        <span class="badge-count" *ngIf="reviewsCount() > 0">{{ reviewsCount() }}</span>
+        <span class="badge-count" *ngIf="reviewsCount() > 0 && !hideReviewsCount()">{{ reviewsCount() }}</span>
       </button>
 
       <hr class="menu-divider" />
@@ -116,10 +116,6 @@
                     <img [src]="profile()?.profileImage || 'assets/default-avatar.png'" alt="Avatar" onerror="this.src='https://api.dicebear.com/7.x/adventurer/svg?seed=handora'"/>
                   </div>
                   <div class="profile-actions ms-auto d-flex gap-2">
-                    <a routerLink="/become-seller" class="btn btn-secondary-accent d-flex align-items-center gap-2" style="background-color: #c8813a; color: white; border: none; border-radius: 8px; padding: 8px 16px;">
-                      <span class="material-symbols-outlined font-sm">storefront</span>
-                      {{ langService.translate('becomeSeller') }}
-                    </a>
                     <a routerLink="/profile/edit" class="btn btn-primary-accent d-flex align-items-center gap-2">
                       <span class="material-symbols-outlined font-sm">edit</span>
                       {{ langService.translate('editProfile') }}
@@ -400,7 +396,10 @@
               <div class="col-sm-6 col-lg-4 col-xl-3" *ngFor="let item of wishlistItems()">
                 <div class="wishlist-product-card card-glow">
                   <div class="product-image-wrapper">
-                    <img [src]="item.imageUrl || 'assets/default-product.png'" alt="Product Image" onerror="this.src='https://images.unsplash.com/photo-1513519245088-0e12902e5a38?q=80&w=400&auto=format&fit=crop'"/>
+                    <img [src]="item.imageUrl || 'assets/default-product.png'" alt="Product Image" [class.wl-img-soldout]="item.isSoldOut" onerror="this.src='https://images.unsplash.com/photo-1513519245088-0e12902e5a38?q=80&w=400&auto=format&fit=crop'"/>
+                    <span class="wl-badge-soldout" *ngIf="item.isSoldOut">
+                      {{ langService.currentLang() === 'ar' ? 'نفدت الكمية' : 'Sold Out' }}
+                    </span>
                     <button class="btn btn-remove-wishlist" (click)="removeFromWishlist(item.productId, $event)" title="Remove from wishlist">
                       <span class="material-symbols-outlined">close</span>
                     </button>

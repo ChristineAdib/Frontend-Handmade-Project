@@ -23,19 +23,27 @@ export class CartPageComponent implements OnInit {
 
 
   async increment(item: CartItemDto): Promise<void> {
+    if (item.isSoldOut || item.quantity >= item.stockQuantity || this.cartApi.isLoading()) {
+      return;
+    }
     await this.cartApi.updateQuantity(item.productId, item.quantity + 1);
   }
 
   async decrement(item: CartItemDto): Promise<void> {
-    if (item.quantity <= 1) {
-      await this.cartApi.removeItem(item.productId);
-    } else {
-      await this.cartApi.updateQuantity(item.productId, item.quantity - 1);
+    if (item.isSoldOut || item.quantity <= 1 || this.cartApi.isLoading()) {
+      return;
     }
+    await this.cartApi.updateQuantity(item.productId, item.quantity - 1);
   }
 
   async removeItem(productId: string): Promise<void> {
     await this.cartApi.removeItem(productId);
+  }
+
+  hasSoldOutItems(): boolean {
+    const cart = this.cartApi.cart();
+    if (!cart || !cart.items) return false;
+    return cart.items.some(item => item.isSoldOut);
   }
 
   getImageUrl(item: CartItemDto): string {

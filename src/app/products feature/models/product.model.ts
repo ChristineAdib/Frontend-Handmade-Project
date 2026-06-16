@@ -17,6 +17,7 @@ export interface Product {
   reviewCount: number;
   categoryNameEn: string;
   shopName: string;
+  quantity?: number;
 }
 
 export interface ProductDetailResponse {
@@ -30,6 +31,9 @@ export interface ProductDetailResponse {
   finalPrice: number;
   quantity: number;
   status: string; // "Active", "Inactive", "OutOfStock"
+  isAvailable: boolean;
+  stockQuantity: number;
+  isSoldOut: boolean;
   averageRating: number;
   reviewCount: number;
   categoryId: string;
@@ -81,6 +85,7 @@ export interface ReviewResponse {
   comment?: string;
   userName: string;
   createdAt: string;
+  isVerifiedPurchase: boolean;
 }
 
 export interface CreateReviewRequest {

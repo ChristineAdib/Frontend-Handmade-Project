@@ -20,6 +20,7 @@ import { LanguageService } from '../../../core/services/language.service';
 export class WishlistPageComponent implements OnInit {
   private wishlistService = inject(WishlistService);
   private cartApi = inject(CartApiService);
+  protected readonly langService = inject(LanguageService);
 
   wishlist: IWishList | null = null;
   isLoading = true;
@@ -39,7 +40,7 @@ export class WishlistPageComponent implements OnInit {
         this.isLoading = false;
       },
       error: () => {
-        this.errorMessage = 'Failed to load wishlist.';
+        this.errorMessage = this.langService.translate('failedLoadWishlist');
         this.isLoading = false;
       },
     });
@@ -48,7 +49,7 @@ export class WishlistPageComponent implements OnInit {
   removeItem(productId: string): void {
     this.wishlistService.removeItem(productId).subscribe({
       next: (data) => { this.wishlist = data; },
-      error: () => { this.errorMessage = 'Failed to remove item.'; },
+      error: () => { this.errorMessage = this.langService.translate('failedRemoveItem'); },
     });
   }
 

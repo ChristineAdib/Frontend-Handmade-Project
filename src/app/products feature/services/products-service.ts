@@ -105,6 +105,19 @@ export class ProductsService {
     );
   }
 
+  checkReviewEligibility(productId: string): Observable<any> {
+    return this.http.get<any>(
+      `${environment.domain}/api/Reviews/eligible/${productId}`
+    );
+  }
+
+  updateReview(reviewId: string, review: CreateReviewRequest): Observable<ReviewResponse> {
+    return this.http.put<ReviewResponse>(
+      `${environment.domain}/api/Reviews/${reviewId}`,
+      review
+    );
+  }
+
   getFilteredProducts(searchName: string, categoryID: number): IProduct[] {
     return this.ProductList.filter(p => {
       const matchName = p.Name.toLowerCase()

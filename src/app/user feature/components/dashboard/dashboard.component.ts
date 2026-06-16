@@ -62,6 +62,12 @@ export class DashboardComponent implements OnInit {
   wishlistCount = computed(() => this.wishlistItems().length);
   reviewsCount = computed(() => this.userReviews().length);
 
+  // Badge Visibility Signals
+  hideOrdersCount = signal<boolean>(localStorage.getItem('hideOrdersCount') === 'true');
+  hideWishlistCount = signal<boolean>(localStorage.getItem('hideWishlistCount') === 'true');
+  hideShopsCount = signal<boolean>(localStorage.getItem('hideShopsCount') === 'true');
+  hideReviewsCount = signal<boolean>(localStorage.getItem('hideReviewsCount') === 'true');
+
   ngOnInit(): void {
     this.loadAllData();
   }
@@ -180,6 +186,20 @@ export class DashboardComponent implements OnInit {
   selectTab(tab: string): void {
     this.activeTab.set(tab);
     this.sidebarOpen.set(false);
+
+    if (tab === 'Orders') {
+      this.hideOrdersCount.set(true);
+      localStorage.setItem('hideOrdersCount', 'true');
+    } else if (tab === 'Wishlist') {
+      this.hideWishlistCount.set(true);
+      localStorage.setItem('hideWishlistCount', 'true');
+    } else if (tab === 'Shops') {
+      this.hideShopsCount.set(true);
+      localStorage.setItem('hideShopsCount', 'true');
+    } else if (tab === 'Reviews') {
+      this.hideReviewsCount.set(true);
+      localStorage.setItem('hideReviewsCount', 'true');
+    }
   }
 
   toggleSidebar(): void {

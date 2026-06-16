@@ -51,16 +51,14 @@ export class BestsellersComponent implements OnInit {
       }
     });
 
-    if (this.authService.isLoggedIn()) {
-      this.wishlistService.getWishList().subscribe({
-        next: (res) => {
-          this.wishlistedIds = new Set(res.items.map(item => item.productId));
-        },
-        error: (err) => {
-          console.error('Failed to load wishlist:', err);
-        }
-      });
-    }
+    this.wishlistService.getWishList().subscribe({
+      next: (res) => {
+        this.wishlistedIds = new Set(res.items.map(item => item.productId));
+      },
+      error: (err) => {
+        console.error('Failed to load wishlist:', err);
+      }
+    });
   }
 
   getMainImage(product: IProductSummary): string {
@@ -133,16 +131,6 @@ export class BestsellersComponent implements OnInit {
   addToCart() {
     if (!this.selectedProduct) return;
 
-    if (!this.authService.isLoggedIn()) {
-      this.toastr.warning(
-        this.langService.currentLang() === 'ar'
-          ? 'الرجاء تسجيل الدخول أولاً لإضافة منتجات إلى السلة.'
-          : 'Please log in first to add items to your cart.'
-      );
-      this.router.navigate(['/login-api']);
-      return;
-    }
-
     const productId = this.selectedProduct.id;
     const qty = this.quantity;
 
@@ -175,16 +163,6 @@ export class BestsellersComponent implements OnInit {
     event.stopPropagation();
     event.preventDefault();
 
-    if (!this.authService.isLoggedIn()) {
-      this.toastr.warning(
-        this.langService.currentLang() === 'ar'
-          ? 'الرجاء تسجيل الدخول أولاً لإضافة منتجات لقائمة الأمنيات.'
-          : 'Please log in first to add items to your wishlist.'
-      );
-      this.router.navigate(['/login-api']);
-      return;
-    }
-
     if (this.isWishlisted(product.id)) {
       this.wishlistService.removeItem(product.id).subscribe({
         next: (res) => {
@@ -216,11 +194,19 @@ export class BestsellersComponent implements OnInit {
         },
         error: (err) => {
           console.error('Wishlist error:', err);
-          this.toastr.error(
-            this.langService.currentLang() === 'ar'
-              ? 'فشل إضافة المنتج لقائمة الأمنيات.'
-              : 'Failed to add item to wishlist.'
-          );
+          let errMsg = this.langService.currentLang() === 'ar'
+            ? 'فشل إضافة المنتج لقائمة الأمنيات.'
+            : 'Failed to add item to wishlist.';
+          if (err?.error) {
+            if (typeof err.error === 'object' && err.error.message) {
+              errMsg = err.error.message;
+            } else if (Array.isArray(err.error) && err.error.length > 0) {
+              errMsg = err.error[0];
+            } else if (typeof err.error === 'string') {
+              errMsg = err.error;
+            }
+          }
+          this.toastr.error(errMsg, '', { timeOut: 10000 });
         }
       });
     }

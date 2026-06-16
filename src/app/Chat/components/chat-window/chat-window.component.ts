@@ -5,6 +5,7 @@ import { ChatService } from '../../Services/chat.service';
 import { AuthService } from '../../../auth/Services/auth';
 import { MessageType } from '../../Models/MessageType';
 import { LanguageService } from '../../../core/services/language.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-chat-window',
@@ -17,6 +18,7 @@ export class ChatWindowComponent implements AfterViewChecked {
   protected chatService = inject(ChatService);
   private authService = inject(AuthService);
   protected langService = inject(LanguageService);
+  private toastr = inject(ToastrService);
 
   @ViewChild('scrollContainer') private scrollContainer!: ElementRef;
 
@@ -32,6 +34,37 @@ export class ChatWindowComponent implements AfterViewChecked {
 
   activeConversation = this.chatService.activeConversation;
   messages = this.chatService.activeMessages;
+
+  // Regex pattern for Egyptian mobile numbers
+  private readonly phoneRegex = /(?:\+?20|0020)?\s*0?1[0125](?:\s*[.\- ]?\s*\d){8}\b/i;
+
+  // Regex pattern for URLs, links and social media links
+  private readonly linkRegex = /\b(?:https?:\/\/|www\.)\S+|\b[a-zA-Z0-9.-]+\.(?:com|net|org|io|co|app|dev|me|shop|store|eg)\b(?:\/\S*)?|\b(?:facebook|instagram|tiktok|twitter|youtube|telegram|whatsapp|wa\.me|t\.me)\b(?:\/\S*)?/i;
+
+  validationError = computed(() => {
+    const c = this.activeConversation();
+    if (!c) return '';
+
+    // 1. Prevent Self-Messaging
+    if (c.buyerId === this.currentUserId() && c.sellerId === this.currentUserId()) {
+      return this.langService.translate('cannotSendToSelf');
+    }
+
+    const text = this.newMessage();
+    if (!text) return '';
+
+    // 2. Block Phone Numbers
+    if (this.phoneRegex.test(text)) {
+      return this.langService.translate('phoneNotAllowed');
+    }
+
+    // 3. Block URLs & Links
+    if (this.linkRegex.test(text)) {
+      return this.langService.translate('linksNotAllowed');
+    }
+
+    return '';
+  });
 
   constructor() {
     // Scroll to bottom whenever messages change
@@ -86,6 +119,13 @@ export class ChatWindowComponent implements AfterViewChecked {
   async send() {
     const c = this.activeConversation();
     if (!c) return;
+
+    // Check validation error before sending
+    const err = this.validationError();
+    if (err) {
+      this.toastr.error(err);
+      return;
+    }
 
     const text = this.newMessage().trim();
     const img = this.imageUrl().trim();

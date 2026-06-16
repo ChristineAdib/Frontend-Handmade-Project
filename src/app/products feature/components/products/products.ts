@@ -1,7 +1,7 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink, ActivatedRoute } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 
 import { ProductsService } from '../../services/products-service';
 import { LanguageService } from '../../../core/services/language.service';
@@ -18,7 +18,6 @@ import { PaginationComponent } from '../pagination/pagination.component';
   imports: [
     CommonModule,
     FormsModule,
-    RouterLink,
     SearchComponent,
     CategoryFilterComponent,
     ProductCardComponent,
