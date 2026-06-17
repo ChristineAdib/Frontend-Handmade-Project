@@ -6,8 +6,10 @@ import { LanguageService } from '../../core/services/language.service';
 import { filter } from 'rxjs';
 import { Component, inject, signal, HostListener, computed,OnInit } from '@angular/core';
 import { CartApiService } from '../../orders/services/cart-api.service';
+import { WishlistService } from '../../wishlist feature/services/wishlist-service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-header',
@@ -23,8 +25,13 @@ export class Header implements OnInit {
   protected chatService = inject(ChatService);
   protected langService = inject(LanguageService);
   private cartService = inject(CartApiService);
+  protected wishlistService = inject(WishlistService);
 
   ngOnInit(): void {
+    // Load initial cart and wishlist state
+    this.cartService.getCart();
+    this.wishlistService.getWishList().subscribe();
+
     // 1. Initial connection if already logged in on load
     if (this.isLoggedIn()) {
       this.chatService.initializeRealTime();
@@ -55,6 +62,7 @@ export class Header implements OnInit {
   activeDropdown = signal<string | null>(null);
 
   cartCount = computed(() => this.cartService.cart()?.totalItems ?? 0);
+  wishlistCount = computed(() => this.wishlistService.wishlist()?.totalItems ?? 0);
 
   categories = [
     { 
@@ -98,6 +106,17 @@ export class Header implements OnInit {
 
   getUserName(): string {
     return this.authService.getUser()?.name ?? '';
+  }
+
+  getUserProfileImage(): string | null {
+    const user = this.authService.getUser();
+    if (!user || !user.profileImage) {
+      return null;
+    }
+    if (user.profileImage.startsWith('http://') || user.profileImage.startsWith('https://')) {
+      return user.profileImage;
+    }
+    return `${environment.apiUrl}/${user.profileImage}`;
   }
 
   toggleMobileMenu() {

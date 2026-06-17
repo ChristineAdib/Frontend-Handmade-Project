@@ -7,4 +7,7 @@ export interface IWishListItem {
   discountPrice?: number;
   imageUrl?: string;
   quantity: number;
+  isAvailable: boolean;
+  stockQuantity: number;
+  isSoldOut: boolean;
 }

@@ -3,4 +3,5 @@ export interface ReviewSummary {
   comment: string | null;
   userName: string;
   createdAt: string;
+  isVerifiedPurchase: boolean;
 }

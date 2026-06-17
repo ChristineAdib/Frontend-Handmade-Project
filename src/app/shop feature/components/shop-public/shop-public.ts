@@ -10,13 +10,14 @@ import { AuthService } from '../../../auth/Services/auth';
 import { CartApiService } from '../../../orders/services/cart-api.service';
 import { IShopWithProducts, IProductSummary } from '../../models/ishop-with-products';
 import { LanguageService } from '../../../core/services/language.service';
+import { StatisticCard } from '../../../shared/statistic-card/statistic-card';
 
 type ActiveTab = 'products' | 'about' | 'reviews';
 
 @Component({
   selector: 'app-shop-public',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, StatisticCard],
   templateUrl: './shop-public.html',
   styleUrl: './shop-public.css',
 })
@@ -37,6 +38,7 @@ export class ShopPublic implements OnInit {
   isFollowing = signal(false);
   isFollowLoading = signal(false);
   shopId = signal('');
+  isShopOwner = signal(false);
 
   // Reviews state
   reviews = signal<any[]>([]);
@@ -54,6 +56,7 @@ export class ShopPublic implements OnInit {
   hoveredRating = signal(0);
   isSubmittingReview = signal(false);
   isUserLoggedIn = signal(false);
+  eligibilityError = signal<string | null>(null);
 
   // User's own review for the shop (if exists)
   myReview = signal<any | null>(null);
@@ -63,6 +66,7 @@ export class ShopPublic implements OnInit {
     const id = this.route.snapshot.paramMap.get('id')!;
     this.shopId.set(id);
     this.isUserLoggedIn.set(this.auth.isLoggedIn());
+    this.checkShopOwnership();
 
     this.shopService.getShopWithProducts(id).subscribe({
       next: res => {
@@ -179,6 +183,32 @@ export class ShopPublic implements OnInit {
     });
   }
 
+  checkShopOwnership(): void {
+    if (!this.isUserLoggedIn()) {
+      this.isShopOwner.set(false);
+      return;
+    }
+
+    const user = this.auth.getUser();
+    const isSeller = user?.roles?.includes('Seller');
+    if (!isSeller) {
+      this.isShopOwner.set(false);
+      return;
+    }
+
+    this.shopService.getMyShop().subscribe({
+      next: (myShop) => {
+        if (myShop) {
+          this.isShopOwner.set(myShop.id === this.shopId());
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching my shop:', err);
+        this.isShopOwner.set(false);
+      }
+    });
+  }
+
   submitReview() {
     if (this.newRating() < 1 || this.newRating() > 5) {
       this.toastr.warning('Please select a rating between 1 and 5 stars.');
@@ -186,6 +216,7 @@ export class ShopPublic implements OnInit {
     }
 
     this.isSubmittingReview.set(true);
+    this.eligibilityError.set(null);
     const commentVal = this.newComment().trim() || null;
 
     if (this.myReview()) {
@@ -205,7 +236,9 @@ export class ShopPublic implements OnInit {
         },
         error: (err) => {
           console.error(err);
-          this.toastr.error(err.error?.message || 'Failed to update review.');
+          const msg = err.error?.message || 'Failed to update review.';
+          this.eligibilityError.set(msg);
+          this.toastr.error(msg);
           this.isSubmittingReview.set(false);
         }
       });
@@ -226,7 +259,9 @@ export class ShopPublic implements OnInit {
         },
         error: (err) => {
           console.error(err);
-          this.toastr.error(err.error?.[0] || err.error?.message || 'Failed to submit review. Only customers who completed a purchase from this shop can review.');
+          const msg = err.error?.[0] || err.error?.message || 'Failed to submit review. Only customers who completed a purchase from this shop can review.';
+          this.eligibilityError.set(msg);
+          this.toastr.error(msg);
           this.isSubmittingReview.set(false);
         }
       });

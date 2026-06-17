@@ -23,7 +23,7 @@
     @if (canResend()) {
       <button type="button" (click)="onResendOtp()">{{ langService.translate('resendCode') }}</button>
     } @else {
-      {{ langService.translate('resendCodeIn') }} <strong>{{ otpTimer() }}s</strong>
+      {{ langService.translate('resendCodeIn') }} <strong>{{ formattedTimer() }}</strong>
     }
   </p>
 </div>

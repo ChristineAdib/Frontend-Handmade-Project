@@ -178,6 +178,10 @@ export const translations = {
 
     // Product Detail Page Keys
     productNotFound: 'Product not found!',
+    ownProductNotice: 'This is your product.',
+    ownShopNotice: 'This is your shop.',
+    noProductsAvailable: 'No products available',
+    reviewsLabel: 'Reviews',
     backToProducts: 'Back to Products',
     productIdLabel: 'Product ID',
     pieces: 'pieces',
@@ -191,6 +195,13 @@ export const translations = {
     wishlistIsEmptyTitle: 'Your wishlist is empty',
     wishlistEmptyText: 'Save your favorite handmade items here and come back to them anytime.',
     browseProducts: 'Browse Products',
+    yourSavedPieces: 'YOUR SAVED PIECES',
+    discoverMoreHandmade: 'Discover more handmade pieces',
+    browse: 'Browse',
+    adding: 'Adding...',
+    egp: 'EGP',
+    failedLoadWishlist: 'Failed to load wishlist.',
+    failedRemoveItem: 'Failed to remove item.',
 
     // Cart Page Keys
     shoppingCart: 'Shopping Cart',
@@ -204,7 +215,6 @@ export const translations = {
     cartIsEmpty: 'Your cart is empty',
     cartIsEmptyDesc: 'Looks like you haven\'t added anything yet. Browse our handmade collection and find something special.',
     loadTestProducts: '🛒 Load Test Products',
-    adding: 'Adding...',
     loadingCart: 'Loading cart...',
     totalLabel: 'Total',
 
@@ -298,6 +308,9 @@ export const translations = {
     imageUploadFailed: 'Image upload failed. Please try again.',
     loadingShop: 'Loading shop...',
     failedToLoadShop: 'Failed to load shop',
+    cannotSendToSelf: 'You cannot send messages to yourself.',
+    phoneNotAllowed: 'Phone numbers are not allowed in chat.',
+    linksNotAllowed: 'Links are not allowed in chat.',
     artisan: 'Artisan',
     following: 'Following',
     followShop: 'Follow Shop',
@@ -332,6 +345,8 @@ export const translations = {
     newToHandora: 'New to Handora?',
     createAccount: 'Create an account',
     joinHandoraTitle: 'Join Handora. Shape Your Story.',
+    showPassword: 'Show Password',
+    hidePassword: 'Hide Password',
     addPhoto: 'add photo',
     artisanPortrait: 'Your Artisan Portrait',
     optionalLabel: '(Optional)',
@@ -463,9 +478,17 @@ export const translations = {
     heroBirthday: 'Birthday',
     heroAnniversary: 'Anniversary',
     heroWedding: 'Wedding',
+<<<<<<< HEAD
     heroMothersDay: 'Mother\'s Day',
     heroJustBecause: 'Just Because',
     heroCustomBadge: 'Custom',           // ✅ التعديل الجديد
+=======
+    heroMothersDay: "Mother's Day",
+    heroJustBecause: 'Just Because',
+    minQtyReached: 'Minimum quantity reached',
+    maxQtyReached: 'Maximum available quantity reached',
+    soldOutTooltip: 'Product is currently unavailable'
+>>>>>>> main
   },
   ar: {
     // Navigation / Header
@@ -643,6 +666,10 @@ export const translations = {
 
     // Product Detail Page Keys
     productNotFound: 'المنتج غير موجود!',
+    ownProductNotice: 'هذا المنتج الخاص بك.',
+    ownShopNotice: 'هذا المتجر الخاص بك.',
+    noProductsAvailable: 'لا توجد منتجات متوفرة',
+    reviewsLabel: 'التقييمات',
     backToProducts: 'العودة للمنتجات',
     productIdLabel: 'رقم المنتج',
     pieces: 'قطع',
@@ -656,6 +683,13 @@ export const translations = {
     wishlistIsEmptyTitle: 'قائمة أمنياتك فارغة',
     wishlistEmptyText: 'احفظ منتجاتك اليدوية المفضلة هنا للعودة إليها في أي وقت.',
     browseProducts: 'تصفح المنتجات',
+    yourSavedPieces: 'قطعك المحفوظة',
+    discoverMoreHandmade: 'اكتشف المزيد من القطع اليدوية',
+    browse: 'تصفح',
+    adding: 'جاري الإضافة...',
+    egp: 'ج.م',
+    failedLoadWishlist: 'فشل تحميل قائمة الأمنيات.',
+    failedRemoveItem: 'فشل إزالة العنصر.',
 
     // Cart Page Keys
     shoppingCart: 'سلة التسوق',
@@ -669,7 +703,6 @@ export const translations = {
     cartIsEmpty: 'سلة تسوقك فارغة',
     cartIsEmptyDesc: 'يبدو أنك لم تقم بإضافة أي شيء بعد. تصفح مجموعتنا المميزة واعثر على شيء فريد.',
     loadTestProducts: 'تحميل منتجات تجريبية 🛒',
-    adding: 'جاري الإضافة...',
     loadingCart: 'جاري تحميل السلة...',
     totalLabel: 'الإجمالي',
 
@@ -763,6 +796,9 @@ export const translations = {
     imageUploadFailed: 'فشل تحميل الصورة. يرجى المحاولة مرة أخرى.',
     loadingShop: 'جاري تحميل المتجر...',
     failedToLoadShop: 'فشل تحميل المتجر',
+    cannotSendToSelf: 'لا يمكنك إرسال رسائل إلى نفسك.',
+    phoneNotAllowed: 'غير مسموح بمشاركة أرقام الهواتف في المحادثة.',
+    linksNotAllowed: 'غير مسموح بمشاركة الروابط في المحادثة.',
     artisan: 'حرفي',
     following: 'متابع',
     followShop: 'متابعة المتجر',
@@ -797,6 +833,8 @@ export const translations = {
     newToHandora: 'جديد على هاندورا؟',
     createAccount: 'إنشاء حساب',
     joinHandoraTitle: 'انضم إلى هاندورا. ارسم قصتك.',
+    showPassword: 'عرض كلمة المرور',
+    hidePassword: 'إخفاء كلمة المرور',
     addPhoto: 'إضافة صورة',
     artisanPortrait: 'صورتك الحرفية',
     optionalLabel: '(اختياري)',

@@ -8,20 +8,34 @@
   </div>
 
   <div class="container mt-4">
-    <!-- Filter & Search Controls -->
     <div class="controls-section row g-3 align-items-center mb-4">
-      <div class="col-12 col-md-6 search-col">
+      <div class="col-12 col-md-5 search-col">
         <app-search
           [value]="searchTerm()"
           (search)="onSearch($event)"
           [placeholder]="langService.translate('searchPlaceholder')"
         ></app-search>
       </div>
-      <div class="col-12 col-md-6 filter-col">
+      <div class="col-12 col-md-4 filter-col">
         <app-category-filter
           [selectedCategoryId]="selectedCategory()"
           (categoryChange)="onCategoryChange($event)"
         ></app-category-filter>
+      </div>
+      <div class="col-12 col-md-3 toggle-col d-flex justify-content-md-end justify-content-start">
+        <div class="form-check form-switch luxury-switch">
+          <input 
+            class="form-check-input" 
+            type="checkbox" 
+            role="switch" 
+            id="onePieceFilter"
+            [checked]="onlyOnePiece()"
+            (change)="toggleOnePieceFilter()"
+          >
+          <label class="form-check-label ms-2" for="onePieceFilter">
+            {{ langService.currentLang() === 'ar' ? 'قطعة واحدة فقط' : 'One Piece Only' }}
+          </label>
+        </div>
       </div>
     </div>
 

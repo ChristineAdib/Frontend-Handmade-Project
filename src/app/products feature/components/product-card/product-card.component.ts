@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 
 import { Product } from '../../models/product.model';
@@ -25,6 +25,7 @@ export class ProductCardComponent {
   private cartApiService = inject(CartApiService);
   private authService = inject(AuthService);
   private toastr = inject(ToastrService);
+  private router = inject(Router);
 
   @Input() product!: Product;
   @Output() quickView = new EventEmitter<Product>();
@@ -32,21 +33,13 @@ export class ProductCardComponent {
   onQuickView(event: Event): void {
     event.stopPropagation();
     event.preventDefault();
+    this.router.navigate(['/products', this.product.id]);
     this.quickView.emit(this.product);
   }
 
   onAddToWishlist(event: Event): void {
     event.stopPropagation();
     event.preventDefault();
-
-    if (!this.authService.isLoggedIn()) {
-      this.toastr.warning(
-        this.langService.currentLang() === 'ar'
-          ? 'الرجاء تسجيل الدخول أولاً لإضافة منتجات لقائمة الأمنيات.'
-          : 'Please log in first to add items to your wishlist.'
-      );
-      return;
-    }
 
     this.wishlistService.addItem(this.product.id).subscribe({
       next: () => {
@@ -58,11 +51,19 @@ export class ProductCardComponent {
       },
       error: (err) => {
         console.error('Wishlist error:', err);
-        this.toastr.error(
-          this.langService.currentLang() === 'ar'
-            ? 'فشل إضافة المنتج لقائمة الأمنيات.'
-            : 'Failed to add item to wishlist.'
-        );
+        let errMsg = this.langService.currentLang() === 'ar'
+          ? 'فشل إضافة المنتج لقائمة الأمنيات.'
+          : 'Failed to add item to wishlist.';
+        if (err?.error) {
+          if (typeof err.error === 'object' && err.error.message) {
+            errMsg = err.error.message;
+          } else if (Array.isArray(err.error) && err.error.length > 0) {
+            errMsg = err.error[0];
+          } else if (typeof err.error === 'string') {
+            errMsg = err.error;
+          }
+        }
+        this.toastr.error(errMsg, '', { timeOut: 10000 });
       }
     });
   }
@@ -70,15 +71,6 @@ export class ProductCardComponent {
   onAddToCart(event: Event): void {
     event.stopPropagation();
     event.preventDefault();
-
-    if (!this.authService.isLoggedIn()) {
-      this.toastr.warning(
-        this.langService.currentLang() === 'ar'
-          ? 'الرجاء تسجيل الدخول أولاً لإضافة منتجات إلى السلة.'
-          : 'Please log in first to add items to your cart.'
-      );
-      return;
-    }
 
     this.cartApiService.addItem(this.product.id, 1).then((res) => {
       if (res) {
@@ -88,15 +80,12 @@ export class ProductCardComponent {
             : 'Product added to cart!'
         );
       } else {
-        this.toastr.error(
-          this.langService.currentLang() === 'ar'
-            ? 'فشل إضافة المنتج إلى السلة.'
-            : 'Failed to add item to cart.'
-        );
+        const errMsg = this.cartApiService.error() || (this.langService.currentLang() === 'ar' ? 'فشل إضافة المنتج إلى السلة.' : 'Failed to add item to cart.');
+        this.toastr.error(errMsg, '', { timeOut: 10000 });
       }
     }).catch(err => {
       console.error('Cart error:', err);
-      this.toastr.error('Failed to add item to cart.');
+      this.toastr.error(this.langService.currentLang() === 'ar' ? 'فشل إضافة المنتج إلى السلة.' : 'Failed to add item to cart.', '', { timeOut: 10000 });
     });
   }
 

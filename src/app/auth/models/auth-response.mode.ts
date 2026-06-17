@@ -5,4 +5,5 @@ export interface AuthResponse {
   token: string;
   tokenExpiry: string;
   roles: string[];
+  profileImage?: string;
 }

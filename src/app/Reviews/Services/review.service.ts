@@ -70,7 +70,8 @@ export class ReviewService {
         rating: data.rating,
         comment: data.comment,
         userName: data.userName,
-        createdAt: data.createdAt
+        createdAt: data.createdAt,
+        isVerifiedPurchase: data.isVerifiedPurchase
       }, ...prev]);
       return data;
     } catch {
