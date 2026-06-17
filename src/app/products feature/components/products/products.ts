@@ -39,6 +39,7 @@ export class Products implements OnInit, OnChanges {
   error = signal<string | null>(null);
   searchTerm = signal<string>('');
   selectedCategory = signal<string>('0');
+  onlyOnePiece = signal<boolean>(false);
   
   // Pagination Signals
   pageIndex = signal<number>(1);
@@ -100,7 +101,8 @@ export class Products implements OnInit, OnChanges {
       pageIndex: this.pageIndex(),
       pageSize: this.pageSize(),
       categoryId: this.selectedCategory() !== '0' ? this.selectedCategory() : undefined,
-      search: this.searchTerm() || undefined
+      search: this.searchTerm() || undefined,
+      onlyOnePiece: this.onlyOnePiece() ? true : undefined
     };
 
     this.productsService.getProducts(query).subscribe({
@@ -132,6 +134,12 @@ export class Products implements OnInit, OnChanges {
     this.loadProducts();
   }
 
+  toggleOnePieceFilter(): void {
+    this.onlyOnePiece.update(val => !val);
+    this.pageIndex.set(1);
+    this.loadProducts();
+  }
+
   onPageChange(page: number): void {
     this.pageIndex.set(page);
     this.loadProducts();
@@ -140,6 +148,7 @@ export class Products implements OnInit, OnChanges {
   clearFilters(): void {
     this.searchTerm.set('');
     this.selectedCategory.set('0');
+    this.onlyOnePiece.set(false);
     this.pageIndex.set(1);
     this.loadProducts();
   }
