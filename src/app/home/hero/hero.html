@@ -1,7 +1,8 @@
 <section class="hero" [class.hero--slide1]="currentSlide() === 0" [class.hero--slide2]="currentSlide() === 1" [class.hero--slide3]="currentSlide() === 2">
 
-  <!-- Watermark — النص مكرر مرتين لإحساس لا نهائي -->
+  <!-- Watermark -->
   <div class="hero__watermark">
+    <span>{{ slide.watermark }}</span>
     <span>{{ slide.watermark }}</span>
     <span>{{ slide.watermark }}</span>
   </div>
@@ -15,6 +16,7 @@
         ✦ {{ slide.tag }}
       </span>
 
+      <!-- Custom Badge — Slide 2 only, positioned below tag and above heading -->
       <div class="hero__badge" *ngIf="currentSlide() === 1">
         <span class="hero__badge-icon">✂</span>
         <span class="hero__badge-text">Custom orders available</span>
@@ -32,7 +34,9 @@
 
     <!-- RIGHT: Image -->
     <div class="hero__img-wrap" [class.active]="!isAnimating()">
+      <div class="hero__img-bg" [style.background]="slide.accent + '18'"></div>
 
+      <!-- Blueprint overlay for Slide 2 (Custom Orders) -->
       <div class="hero__blueprint" *ngIf="currentSlide() === 1">
         <svg viewBox="0 0 400 400" class="blueprint-svg">
           <defs>
@@ -55,8 +59,10 @@
         </div>
       </div>
 
+      <!-- Constellation overlay for Slide 3 (Gift Discovery) -->
       <div class="hero__constellation" *ngIf="currentSlide() === 2">
         <div class="constellation-glow"></div>
+
         <div class="occasion-tag occasion-tag--birthday">
           <span class="occasion-tag__text">{{ langService.translate('heroBirthday') }}</span>
         </div>
@@ -72,6 +78,7 @@
         <div class="occasion-tag occasion-tag--love">
           <span class="occasion-tag__text">{{ langService.translate('heroJustBecause') }}</span>
         </div>
+
         <svg class="constellation-lines" viewBox="0 0 500 520" preserveAspectRatio="none">
           <line class="constellation-line" x1="250" y1="260" x2="380" y2="120" />
           <line class="constellation-line" x1="250" y1="260" x2="420" y2="280" />
@@ -85,13 +92,15 @@
         [src]="slide.image"
         [alt]="slide.tag"
         class="hero__img"
-        [class.hero__img--slide1]="currentSlide() === 0"
         loading="eager"
         (error)="onImageError($event)" />
 
       <div class="hero__img-placeholder" *ngIf="imageError()">
         <span>{{ slide.tag }}</span>
       </div>
+
+      <div class="hero__ring" [style.border-color]="slide.accent + '30'"></div>
+      <div class="hero__ring hero__ring--2" [style.border-color]="slide.accent + '18'"></div>
 
       <span class="sparkle s1" [style.background]="slide.accent"></span>
       <span class="sparkle s2" [style.background]="slide.accent"></span>
@@ -100,6 +109,7 @@
 
   </div>
 
+  <!-- Dots -->
   <div class="hero__dots">
     @for (s of slides; track $index) {
       <button
