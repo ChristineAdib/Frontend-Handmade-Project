@@ -3,7 +3,8 @@
   <div class="page-header">
     <div>
       <h1 class="page-title">{{ langService.translate('myOrders') }}</h1>
-      <p class="page-sub">{{ langService.currentLang() === 'ar' ? 'إدارة الطلبات الواردة لمتجرك' : 'Manage incoming orders for your shop' }}</p>
+      <p class="page-sub">{{ langService.currentLang() === 'ar' ? 'إدارة الطلبات الواردة لمتجرك' : 'Manage incoming
+        orders for your shop' }}</p>
     </div>
     <div class="orders-count">
       <span class="count-num">{{ totalCount() }}</span>
@@ -13,181 +14,184 @@
 
   <!-- Filter Tabs -->
   <div class="filter-tabs">
-    <button class="filter-tab" [class.active]="selectedStatus() === null"
-      (click)="filterByStatus(null)">{{ langService.currentLang() === 'ar' ? 'الكل' : 'All' }} MM</button>
+    <button class="filter-tab" [class.active]="selectedStatus() === null" (click)="filterByStatus(null)">{{
+      langService.currentLang() === 'ar' ? 'الكل' : 'All' }}</button>
     @for (status of statuses; track status) {
-      <button class="filter-tab" [class.active]="selectedStatus() === status"
-        (click)="filterByStatus(status)">{{ status }}</button>
+    <button class="filter-tab" [class.active]="selectedStatus() === status" (click)="filterByStatus(status)">{{ status
+      }}</button>
     }
   </div>
 
   @if (isLoading()) {
-    <div class="loading-state">
-      <div class="spinner"></div>
-      <p>Loading orders...</p>
-    </div>
+  <div class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading orders...</p>
+  </div>
   }
 
   @if (error()) {
-    <div class="error-state">⚠️ {{ error() }}</div>
+  <div class="error-state">⚠️ {{ error() }}</div>
   }
 
   @if (!isLoading() && !error()) {
-    @if (filteredOrders().length === 0) {
-      <div class="empty-state">
-        <span class="empty-icon">📦</span>
-        <h3>No orders found</h3>
-        <p>No orders match the selected filter.</p>
-      </div>
-    } @else {
-      <div class="orders-table-wrap">
-        <table class="orders-table">
-          <thead>
-            <tr>
-              <th>Order ID</th>
-              <th>Date</th>
-              <th>Items</th>
-              <th>Total</th>
-              <th>Payment</th>
-              <th>Status</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (order of filteredOrders(); track order.id) {
-              <tr class="order-row">
-                <td class="order-id">#{{ order.id.slice(0,8) }}</td>
-                <td class="order-date">{{ order.orderDate | date:'MMM d, yyyy' }}</td>
-                <td class="item-count">{{ order.itemCount }} item{{ order.itemCount > 1 ? 's' : '' }}</td>
-                <td class="order-total">{{ order.total | currency:'EGP ':'code' }}</td>
-                <td><span class="payment-badge">{{ order.paymentStatus }}</span></td>
-                <td><span class="status-badge" [class]="getStatusClass(order.status)">{{ order.status }}</span></td>
-                <td>
-                  <button class="detail-btn" (click)="openOrderDetail(order.id)">View</button>
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </div>
+  @if (filteredOrders().length === 0) {
+  <div class="empty-state">
+    <span class="empty-icon">📦</span>
+    <h3>No orders found</h3>
+    <p>No orders match the selected filter.</p>
+  </div>
+  } @else {
+  <div class="orders-table-wrap">
+    <table class="orders-table">
+      <thead>
+        <tr>
+          <th>Order ID</th>
+          <th>Date</th>
+          <th>Items</th>
+          <th>Total</th>
+          <th>Payment</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (order of filteredOrders(); track order.id) {
+        <tr class="order-row">
+          <td class="order-id">#{{ order.id.slice(0,8) }}</td>
+          <td class="order-date">{{ order.orderDate | date:'MMM d, yyyy' }}</td>
+          <td class="item-count">{{ order.itemCount }} item{{ order.itemCount > 1 ? 's' : '' }}</td>
+          <td class="order-total">{{ order.total | currency:'EGP ':'code' }}</td>
+          <td><span class="payment-badge">{{ order.paymentStatus }}</span></td>
+          <td><span class="status-badge" [class]="getStatusClass(order.status)">{{ order.status }}</span></td>
+          <td>
+            <button class="detail-btn" (click)="openOrderDetail(order.id)">View</button>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
 
-      @if (totalPages() > 1) {
-        <div class="pagination">
-          <button class="page-btn" [disabled]="currentPage() === 1" (click)="prevPage()">← Prev</button>
-          <span class="page-info">{{ currentPage() }} / {{ totalPages() }}</span>
-          <button class="page-btn" [disabled]="currentPage() === totalPages()" (click)="nextPage()">Next →</button>
-        </div>
-      }
-    }
+  @if (totalPages() > 1) {
+  <div class="pagination">
+    <button class="page-btn" [disabled]="currentPage() === 1" (click)="prevPage()">← Prev</button>
+    <span class="page-info">{{ currentPage() }} / {{ totalPages() }}</span>
+    <button class="page-btn" [disabled]="currentPage() === totalPages()" (click)="nextPage()">Next →</button>
+  </div>
+  }
+  }
   }
 
 </div>
 
 <!-- Order Detail Modal -->
 @if (selectedOrder() || isDetailLoading()) {
-  <div class="modal-overlay" (click)="closeDetail()">
-    <div class="order-detail-modal" (click)="$event.stopPropagation()">
+<div class="modal-overlay" (click)="closeDetail()">
+  <div class="order-detail-modal" (click)="$event.stopPropagation()">
 
-      @if (isDetailLoading()) {
-        <div class="loading-state">
-          <div class="spinner"></div>
-          <p>Loading...</p>
-        </div>
-      }
-
-      @if (selectedOrder()) {
-        <div class="order-detail-modal-header">
-          <h2 class="order-detail-modal-title">Order #{{ selectedOrder()!.id.slice(0,8) }}</h2>
-          <button class="close-btn" (click)="closeDetail()">✕</button>
-        </div>
-
-        <div class="order-detail-modal-body">
-
-          <!-- Status & Date -->
-          <div class="detail-row">
-            <div class="detail-item">
-              <span class="detail-label">Date</span>
-              <span class="detail-val">{{ selectedOrder()!.orderDate | date:'MMM d, yyyy' }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="detail-label">Status</span>
-              <select class="form-select status-select" 
-                      [value]="selectedOrder()!.status" 
-                      [disabled]="isUpdatingStatus()"
-                      (change)="onStatusChange(selectedOrder()!.id, $event)">
-                @for (s of statuses; track s) {
-                  <option [value]="s">
-                    {{ s }}
-                  </option>
-                }
-              </select>
-            </div>
-            <div class="detail-item">
-              <span class="detail-label">Payment</span>
-              <span class="payment-badge">{{ selectedOrder()!.paymentStatus }}</span>
-            </div>
-          </div>
-
-          <!-- Buyer & Shipping -->
-          <div class="detail-section">
-            <h4 class="detail-section-title">Shipping Address</h4>
-            <p class="detail-text">{{ selectedOrder()!.firstName }} {{ selectedOrder()!.lastName }}</p>
-            <p class="detail-text">{{ selectedOrder()!.street }}, {{ selectedOrder()!.city }}, {{ selectedOrder()!.country }}</p>
-            <p class="detail-text">{{ selectedOrder()!.buyerEmail }}</p>
-          </div>
-
-          <!-- Items -->
-          <div class="detail-section">
-            <h4 class="detail-section-title">Items</h4>
-            <div class="items-list">
-              @for (item of selectedOrder()!.items; track item.id) {
-                <div class="order-item">
-                  @if (item.pictureUrl) {
-                    <img [src]="item.pictureUrl" [alt]="item.productName" class="item-img" />
-                  } @else {
-                    <div class="item-img-ph">🧵</div>
-                  }
-                  <div class="item-info">
-                    <span class="item-name">{{ item.productName }}</span>
-                    <span class="item-qty">x{{ item.quantity }}</span>
-                  </div>
-                  <span class="item-total">{{ item.total | currency:'EGP ':'code' }}</span>
-                </div>
-              }
-            </div>
-          </div>
-
-          <!-- Totals -->
-          <div class="detail-section totals">
-            <div class="total-row">
-              <span>Subtotal</span>
-              <span>{{ selectedOrder()!.subTotal | currency:'EGP ':'code' }}</span>
-            </div>
-            <div class="total-row">
-              <span>Delivery ({{ selectedOrder()!.deliveryMethodName }})</span>
-              <span>{{ selectedOrder()!.deliveryMethodCost | currency:'EGP ':'code' }}</span>
-            </div>
-            @if (selectedOrder()!.discountAmount) {
-              <div class="total-row discount">
-                <span>Discount @if(selectedOrder()!.couponCode) { ({{ selectedOrder()!.couponCode }}) }</span>
-                <span>- {{ selectedOrder()!.discountAmount | currency:'EGP ':'code' }}</span>
-              </div>
-            }
-            <div class="total-row grand-total">
-              <span>Total</span>
-              <span>{{ selectedOrder()!.total | currency:'EGP ':'code' }}</span>
-            </div>
-          </div>
-
-          @if (selectedOrder()!.notes) {
-            <div class="detail-section">
-              <h4 class="detail-section-title">Notes</h4>
-              <p class="detail-text">{{ selectedOrder()!.notes }}</p>
-            </div>
-          }
-
-        </div>
-      }
+    @if (isDetailLoading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading...</p>
     </div>
+    }
+
+    @if (selectedOrder()) {
+    <div class="order-detail-modal-header">
+      <h2 class="order-detail-modal-title">Order #{{ selectedOrder()!.id.slice(0,8) }}</h2>
+      <button class="close-btn" (click)="closeDetail()">✕</button>
+    </div>
+
+    <div class="order-detail-modal-body">
+
+      <!-- Status & Date -->
+      <div class="detail-row">
+        <div class="detail-item">
+          <span class="detail-label">Date</span>
+          <span class="detail-val">{{ selectedOrder()!.orderDate | date:'MMM d, yyyy' }}</span>
+        </div>
+        <div class="detail-item">
+
+          <span class="detail-label">Status</span>
+          @if (isStatusEditable(selectedOrder()!.status)) {
+          <select class="form-select status-select" [value]="selectedOrder()!.status" [disabled]="isUpdatingStatus()"
+            (change)="onStatusChange(selectedOrder()!.id, $event)">
+            @for (s of getAvailableStatusOptions(selectedOrder()!.status); track s) {
+            <option [value]="s">{{ s }}</option>
+            }
+          </select>
+          } @else {
+          <span class="status-badge" [class]="getStatusClass(selectedOrder()!.status)">{{ selectedOrder()!.status
+            }}</span>
+          }
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Payment</span>
+          <span class="payment-badge">{{ selectedOrder()!.paymentStatus }}</span>
+        </div>
+      </div>
+
+      <!-- Buyer & Shipping -->
+      <div class="detail-section">
+        <h4 class="detail-section-title">Shipping Address</h4>
+        <p class="detail-text">{{ selectedOrder()!.firstName }} {{ selectedOrder()!.lastName }}</p>
+        <p class="detail-text">{{ selectedOrder()!.street }}, {{ selectedOrder()!.city }}, {{ selectedOrder()!.country
+          }}</p>
+        <p class="detail-text">{{ selectedOrder()!.buyerEmail }}</p>
+      </div>
+
+      <!-- Items -->
+      <div class="detail-section">
+        <h4 class="detail-section-title">Items</h4>
+        <div class="items-list">
+          @for (item of selectedOrder()!.items; track item.id) {
+          <div class="order-item">
+            @if (item.pictureUrl) {
+            <img [src]="item.pictureUrl" [alt]="item.productName" class="item-img" />
+            } @else {
+            <div class="item-img-ph">🧵</div>
+            }
+            <div class="item-info">
+              <span class="item-name">{{ item.productName }}</span>
+              <span class="item-qty">x{{ item.quantity }}</span>
+            </div>
+            <span class="item-total">{{ item.total | currency:'EGP ':'code' }}</span>
+          </div>
+          }
+        </div>
+      </div>
+
+      <!-- Totals -->
+      <div class="detail-section totals">
+        <div class="total-row">
+          <span>Subtotal</span>
+          <span>{{ selectedOrder()!.subTotal | currency:'EGP ':'code' }}</span>
+        </div>
+        <div class="total-row">
+          <span>Delivery ({{ selectedOrder()!.deliveryMethodName }})</span>
+          <span>{{ selectedOrder()!.deliveryMethodCost | currency:'EGP ':'code' }}</span>
+        </div>
+        @if (selectedOrder()!.discountAmount) {
+        <div class="total-row discount">
+          <span>Discount @if(selectedOrder()!.couponCode) { ({{ selectedOrder()!.couponCode }}) }</span>
+          <span>- {{ selectedOrder()!.discountAmount | currency:'EGP ':'code' }}</span>
+        </div>
+        }
+        <div class="total-row grand-total">
+          <span>Total</span>
+          <span>{{ selectedOrder()!.total | currency:'EGP ':'code' }}</span>
+        </div>
+      </div>
+
+      @if (selectedOrder()!.notes) {
+      <div class="detail-section">
+        <h4 class="detail-section-title">Notes</h4>
+        <p class="detail-text">{{ selectedOrder()!.notes }}</p>
+      </div>
+      }
+
+    </div>
+    }
   </div>
+</div>
 }
