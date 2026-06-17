@@ -59,7 +59,7 @@
         <div class="nav__drop" [class.nav__drop--open]="activeDropdown() === 'shop'">
           <p class="nav__drop-label">{{ langService.translate('shopByCraft') }}</p>
           <div class="nav__drop-categories">
-            <!-- BEADS - عقد -->
+            <!-- BEADS -->
             <a [routerLink]="'/products'" [queryParams]="{ category: 'beads' }" class="nav__drop-cat" style="--cat-color: #c8813a">
               <div class="nav__drop-cat-icon">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -81,7 +81,7 @@
               </svg>
             </a>
 
-            <!-- POTTERY - وعاء فخار -->
+            <!-- POTTERY -->
             <a [routerLink]="'/products'" [queryParams]="{ category: 'pottery' }" class="nav__drop-cat" style="--cat-color: #8B6914">
               <div class="nav__drop-cat-icon">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -102,7 +102,7 @@
               </svg>
             </a>
 
-            <!-- CROCHET - إبرة وخيط -->
+            <!-- CROCHET -->
             <a [routerLink]="'/products'" [queryParams]="{ category: 'crochet' }" class="nav__drop-cat" style="--cat-color: #A0522D">
               <div class="nav__drop-cat-icon">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -174,18 +174,16 @@
         </svg>
       </button>
 
-      <!-- Become a Seller — أيقونة أوضح (متجر/بازار) -->
+      <!-- Become a Seller -->
       @if (!isSeller()) {
         <a routerLink="/become-seller" class="nav__seller-icon" [attr.data-tooltip]="langService.translate('becomeSeller')">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
                stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <!-- Storefront / Shop icon -->
             <path d="M3 21h18"/>
             <path d="M5 21V10"/>
             <path d="M19 21V10"/>
             <path d="M3 10l1.5-6h15L21 10"/>
             <path d="M3 10h18"/>
-            <!-- Plus sign for "become/add" -->
             <circle cx="18" cy="6" r="3" fill="#fff" stroke="currentColor"/>
             <path d="M18 4.8v2.4"/>
             <path d="M16.8 6h2.4"/>
@@ -194,6 +192,19 @@
       }
 
       <div class="nav__icons-group">
+
+        <!-- ✦ SELLER DASHBOARD ICON — هنا الجديد -->
+        @if (isSeller()) {
+          <a routerLink="/seller" class="nav__icon-btn nav__cart" [title]="langService.translate('sellerDashboard')">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="3" width="20" height="14" rx="2"/>
+              <path d="M8 21h8M12 17v4"/>
+            </svg>
+          </a>
+        }
+
+        <!-- Wishlist -->
         <a routerLink="/wishlist" class="nav__icon-btn nav__cart" [title]="langService.translate('myWishlist')">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
                stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
@@ -204,6 +215,7 @@
           }
         </a>
 
+        <!-- Cart -->
         <a routerLink="/cart" class="nav__icon-btn nav__cart" [title]="langService.currentLang() === 'ar' ? 'عربة التسوق' : 'Cart'">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
                stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
@@ -278,12 +290,8 @@
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                 {{ langService.translate('chat') }}
               </a>
-              @if (isSeller()) {
-                <a routerLink="/seller" class="nav__drop-item">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-                  {{ langService.translate('sellerDashboard') }}
-                </a>
-              } @else {
+              <!-- ✦ Seller Dashboard شالناه من هنا -->
+              @if (!isSeller()) {
                 <a routerLink="/become-seller" class="nav__drop-item nav__drop-item--sell">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21h18M5 21V10M19 21V10M3 10l1.5-6h15L21 10M3 10h18"/><circle cx="18" cy="6" r="3" fill="#fff" stroke="currentColor"/><path d="M18 4.8v2.4M16.8 6h2.4"/></svg>
                   {{ langService.translate('becomeSeller') }} ✦
@@ -436,6 +444,7 @@
       <a routerLink="/chat" class="mob__link" (click)="toggleMobileMenu()">{{ langService.translate('chat') }}</a>
       <a routerLink="/orders" class="mob__link" (click)="toggleMobileMenu()">{{ langService.translate('myOrders') }}</a>
       @if (isSeller()) {
+        <!-- ✦ Seller Dashboard في الموبايل كمان موجود -->
         <a routerLink="/seller" class="mob__link" (click)="toggleMobileMenu()">{{ langService.translate('sellerDashboard') }}</a>
       } @else {
         <a routerLink="/become-seller" class="mob__link mob__link--sell" (click)="toggleMobileMenu()">{{ langService.translate('becomeSeller') }} ✦</a>

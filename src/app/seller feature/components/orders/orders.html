@@ -14,7 +14,7 @@
   <!-- Filter Tabs -->
   <div class="filter-tabs">
     <button class="filter-tab" [class.active]="selectedStatus() === null"
-      (click)="filterByStatus(null)">{{ langService.currentLang() === 'ar' ? 'الكل' : 'All' }}</button>
+      (click)="filterByStatus(null)">{{ langService.currentLang() === 'ar' ? 'الكل' : 'All' }} MM</button>
     @for (status of statuses; track status) {
       <button class="filter-tab" [class.active]="selectedStatus() === status"
         (click)="filterByStatus(status)">{{ status }}</button>
