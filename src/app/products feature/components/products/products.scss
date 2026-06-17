@@ -164,4 +164,47 @@
       transform: translateY(0);
     }
   }
+
+  /* Luxury Switch Toggle Styling */
+  .luxury-switch {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #5c4d43;
+    cursor: pointer;
+    margin: 0;
+
+    .form-check-input {
+      cursor: pointer;
+      background-color: #f0e6e0;
+      border-color: #dcd0c9;
+      height: 1.6em;
+      width: 2.95em;
+      border-radius: 2em;
+      margin-top: 0;
+      transition: background-position 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+
+      &:focus {
+        border-color: #8B4513;
+        box-shadow: 0 0 0 0.25rem rgba(139, 69, 19, 0.15);
+      }
+
+      &:checked {
+        background-color: #8B4513;
+        border-color: #8B4513;
+      }
+    }
+
+    .form-check-label {
+      cursor: pointer;
+      user-select: none;
+      transition: color 0.2s ease;
+      margin-left: 0.5rem;
+      
+      &:hover {
+        color: #8B4513;
+      }
+    }
+  }
 }

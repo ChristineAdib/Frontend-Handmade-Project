@@ -64,6 +64,10 @@ export class ProductsService {
         params = params.set('search', query.search.trim());
       }
 
+      if (query.onlyOnePiece !== undefined) {
+        params = params.set('onlyOnePiece', query.onlyOnePiece.toString());
+      }
+
       return this.http.get<PaginatedResponse<Product>>(API_URLS.getProducts, { params });
     } else {
       const page = queryOrPage as number;

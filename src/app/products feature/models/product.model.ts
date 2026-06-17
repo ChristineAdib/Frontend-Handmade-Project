@@ -18,6 +18,7 @@ export interface Product {
   categoryNameEn: string;
   shopName: string;
   quantity?: number;
+  isOnePiece?: boolean;
 }
 
 export interface ProductDetailResponse {
@@ -30,6 +31,7 @@ export interface ProductDetailResponse {
   discountPrice?: number;
   finalPrice: number;
   quantity: number;
+  isOnePiece?: boolean;
   status: string; // "Active", "Inactive", "OutOfStock"
   isAvailable: boolean;
   stockQuantity: number;
@@ -67,6 +69,7 @@ export interface ProductQuery {
   pageSize: number;
   categoryId?: string;
   search?: string;
+  onlyOnePiece?: boolean;
 }
 
 export interface PaginatedResponse<T> {
