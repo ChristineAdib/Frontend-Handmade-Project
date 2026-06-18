@@ -531,6 +531,212 @@
   cursor: not-allowed;
 }
 
+/* Card Warning (under withdraw button) */
+.card-warning {
+  font-size: 12px;
+  color: #ef6c00;
+  margin-top: 8px;
+  text-align: center;
+  animation: fadeIn 0.3s ease;
+}
+
+/* Action Buttons inside cards */
+.action-btn {
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  border: none;
+  transition: background 0.2s, transform 0.1s;
+  width: 100%;
+}
+
+.action-btn:active { transform: scale(0.98); }
+
+.add-bank-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  margin-top: 1rem;
+}
+.add-bank-btn:hover { opacity: 0.9; }
+
+.edit-bank-btn {
+  background: #E8DDD4;
+  color: #3D2B1F;
+  margin-top: 1rem;
+}
+.edit-bank-btn:hover { background: #dcd0c5; }
+
+/* ─── Payout Method Section ─── */
+.payout-method-section {
+  margin-bottom: 2rem;
+}
+
+.payout-method-card {
+  border-radius: 18px;
+  padding: 1.8rem;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.payout-method-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  border-radius: 18px 18px 0 0;
+}
+
+.payout-method-card.configured {
+  background: #fff;
+  border-color: rgba(76, 175, 80, 0.3);
+  box-shadow: 0 4px 20px rgba(76, 175, 80, 0.08);
+}
+.payout-method-card.configured::before {
+  background: linear-gradient(90deg, #4CAF50, #81C784);
+}
+
+.payout-method-card.not-configured {
+  background: #FFFAF5;
+  border-color: rgba(255, 152, 0, 0.4);
+  box-shadow: 0 4px 20px rgba(255, 152, 0, 0.08);
+}
+.payout-method-card.not-configured::before {
+  background: linear-gradient(90deg, #FF9800, #FFB74D);
+}
+
+.payout-method-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.2rem;
+}
+
+.payout-icon-wrapper {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: rgba(102, 126, 234, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  flex-shrink: 0;
+}
+
+.payout-title-area {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.payout-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #3D2B1F;
+  margin: 0;
+}
+
+.payout-status-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  width: fit-content;
+}
+
+.configured-pill {
+  background: rgba(76, 175, 80, 0.12);
+  color: #2e7d32;
+  border: 1px solid rgba(76, 175, 80, 0.3);
+}
+
+.not-configured-pill {
+  background: rgba(255, 152, 0, 0.12);
+  color: #e65100;
+  border: 1px solid rgba(255, 152, 0, 0.3);
+}
+
+/* Bank Details Display */
+.bank-details-display {
+  background: #FAF6F2;
+  border-radius: 12px;
+  padding: 1rem 1.2rem;
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.bank-detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+}
+
+.detail-label {
+  color: #8B6F5C;
+  font-weight: 600;
+}
+
+.detail-value {
+  color: #3D2B1F;
+  font-weight: 500;
+}
+
+.masked-number {
+  font-family: monospace;
+  font-size: 15px;
+  letter-spacing: 1px;
+}
+
+.payout-warning-text {
+  font-size: 13.5px;
+  color: #8B6F5C;
+  line-height: 1.6;
+  margin: 0 0 0.5rem;
+  background: rgba(255, 152, 0, 0.06);
+  border-radius: 10px;
+  padding: 12px 14px;
+  border-left: 3px solid #FF9800;
+}
+
+/* Bank Form */
+.bank-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* Bank info strip in withdrawal modal */
+.bank-info-in-modal {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(135deg, #f0f4ff, #f8f0ff);
+  border: 1px solid rgba(102, 126, 234, 0.2);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 13.5px;
+  margin-bottom: 1rem;
+}
+.bank-label {
+  color: #8B6F5C;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.bank-value {
+  color: #3D2B1F;
+  font-weight: 700;
+  font-family: monospace;
+}
+
 /* RTL Specific Overrides */
 [dir="rtl"] .close-modal-btn {
   right: auto;
@@ -540,4 +746,13 @@
 [dir="rtl"] .transactions-table th,
 [dir="rtl"] .transactions-table td {
   text-align: right;
+}
+
+[dir="rtl"] .payout-warning-text {
+  border-left: none;
+  border-right: 3px solid #FF9800;
+}
+
+[dir="rtl"] .bank-detail-row {
+  flex-direction: row-reverse;
 }

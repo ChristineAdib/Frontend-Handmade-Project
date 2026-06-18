@@ -2,7 +2,7 @@ import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { PaymentResponse, PaymentIntentResponse, CreateWithdrawalRequest, SellerWallet } from '../models/payment-models';
+import { PaymentResponse, PaymentIntentResponse, CreateWithdrawalRequest, SellerWallet, BankAccount } from '../models/payment-models';
 
 @Injectable({ providedIn: 'root' })
 export class PaymentService {
@@ -41,7 +41,8 @@ export class PaymentService {
       );
       return true;
     } catch (err: any) {
-      this.error.set(err?.error?.message || 'Withdrawal failed.');
+      const errMsg = typeof err?.error === 'string' ? err.error : (err?.error?.message || 'Withdrawal failed.');
+      this.error.set(errMsg);
       return false;
     } finally {
       this.isLoading.set(false);
@@ -76,6 +77,30 @@ export class PaymentService {
       return null;
     } finally {
       this.isLoading.set(false);
+    }
+  }
+
+  async getBankAccount(): Promise<BankAccount | null> {
+    try {
+      return await firstValueFrom(
+        this.http.get<BankAccount>(`${this.payoutUrl}/bank-account`)
+      );
+    } catch {
+      return null;
+    }
+  }
+
+  async updateBankAccount(dto: BankAccount): Promise<boolean> {
+    this.error.set(null);
+    try {
+      await firstValueFrom(
+        this.http.post(`${this.payoutUrl}/bank-account`, dto)
+      );
+      return true;
+    } catch (err: any) {
+      const errMsg = typeof err?.error === 'string' ? err.error : (err?.error?.message || 'Failed to update bank account.');
+      this.error.set(errMsg);
+      return false;
     }
   }
 }

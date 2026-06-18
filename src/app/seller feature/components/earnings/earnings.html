@@ -27,6 +27,61 @@
       </button>
     </div>
   } @else {
+
+    <!-- Payout Method Card -->
+    <section class="payout-method-section">
+      <div class="payout-method-card" [class.configured]="isBankAccountConfigured()" [class.not-configured]="!isBankAccountConfigured()">
+        <div class="payout-method-header">
+          <div class="payout-icon-wrapper">
+            <span class="payout-icon">🏦</span>
+          </div>
+          <div class="payout-title-area">
+            <h3 class="payout-title">
+              {{ langService.currentLang() === 'ar' ? 'طريقة الدفع / الحساب البنكي' : 'Payout Method / Bank Account' }}
+            </h3>
+            @if (isBankAccountConfigured()) {
+              <span class="payout-status-pill configured-pill">
+                {{ langService.currentLang() === 'ar' ? '✓ تم التهيئة' : '✓ Configured' }}
+              </span>
+            } @else {
+              <span class="payout-status-pill not-configured-pill">
+                {{ langService.currentLang() === 'ar' ? '⚠ غير مهيأ' : '⚠ Not Configured' }}
+              </span>
+            }
+          </div>
+        </div>
+
+        @if (isBankAccountConfigured()) {
+          <div class="bank-details-display">
+            <div class="bank-detail-row">
+              <span class="detail-label">{{ langService.currentLang() === 'ar' ? 'اسم البنك:' : 'Bank Name:' }}</span>
+              <span class="detail-value">{{ bankAccount()?.bankName }}</span>
+            </div>
+            <div class="bank-detail-row">
+              <span class="detail-label">{{ langService.currentLang() === 'ar' ? 'اسم صاحب الحساب:' : 'Account Holder:' }}</span>
+              <span class="detail-value">{{ bankAccount()?.accountHolderName }}</span>
+            </div>
+            <div class="bank-detail-row">
+              <span class="detail-label">{{ langService.currentLang() === 'ar' ? 'رقم الحساب / الفيزا:' : 'Account / Card Number:' }}</span>
+              <span class="detail-value masked-number">****{{ bankAccount()?.accountNumber?.slice(-4) }}</span>
+            </div>
+          </div>
+          <button class="action-btn edit-bank-btn" (click)="openBankForm()">
+            {{ langService.currentLang() === 'ar' ? 'تعديل البيانات' : 'Edit Details' }}
+          </button>
+        } @else {
+          <p class="payout-warning-text">
+            {{ langService.currentLang() === 'ar' 
+              ? 'لم تقم بإضافة حساب بنكي أو فيزا بعد. يجب تهيئة طريقة الدفع أولاً قبل أن تتمكن من سحب أرباحك.'
+              : 'You have not added a bank account or visa card yet. Please configure your payout method before you can withdraw your earnings.' }}
+          </p>
+          <button class="action-btn add-bank-btn" (click)="openBankForm()">
+            {{ langService.currentLang() === 'ar' ? 'إضافة حساب بنكي / فيزا' : 'Add Bank Account / Visa' }}
+          </button>
+        }
+      </div>
+    </section>
+
     <!-- Stats Cards Grid -->
     <div class="stats-grid">
       
@@ -43,9 +98,16 @@
           <p class="card-hint">
             {{ langService.currentLang() === 'ar' ? 'هذا المبلغ جاهز للسحب الفوري إلى حسابك.' : 'This amount is unlocked and ready for withdrawal.' }}
           </p>
-          <button class="action-btn withdraw-btn" [disabled]="(wallet()?.availableBalance ?? 0) <= 0" (click)="openWithdrawModal()">
+          <button class="action-btn withdraw-btn" 
+                  [disabled]="(wallet()?.availableBalance ?? 0) <= 0 || !isBankAccountConfigured()" 
+                  (click)="openWithdrawModal()">
             {{ langService.currentLang() === 'ar' ? 'سحب الأرباح الآن' : 'Withdraw Funds Now' }}
           </button>
+          @if (!isBankAccountConfigured() && (wallet()?.availableBalance ?? 0) > 0) {
+            <p class="card-warning">
+              {{ langService.currentLang() === 'ar' ? '⚠ أضف حسابك البنكي أولاً لتتمكن من السحب' : '⚠ Add your bank account first to enable withdrawals' }}
+            </p>
+          }
         </div>
       </div>
 
@@ -76,7 +138,7 @@
           </span>
           <h2 class="card-value">{{ wallet()?.totalEarnings | number:'1.2-2' }} <span class="currency">EGP</span></h2>
           <p class="card-hint">
-            {{ langService.currentLang() === 'ar' ? 'مجموع كافة المبيعات التي حققها متجرك (المحرة والمعلقة).' : 'Lifetime gross earnings of your shop (both cleared and pending).' }}
+            {{ langService.currentLang() === 'ar' ? 'مجموع كافة المبيعات التي حققها متجرك (المحررة والمعلقة).' : 'Lifetime gross earnings of your shop (both cleared and pending).' }}
           </p>
         </div>
       </div>
@@ -151,6 +213,91 @@
     </section>
   }
 
+  <!-- Bank Account Form Modal -->
+  @if (showBankForm()) {
+    <div class="modal-overlay" (click)="closeBankForm()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        
+        <button class="close-modal-btn" (click)="closeBankForm()">✕</button>
+        
+        <h3 class="modal-title">
+          {{ langService.currentLang() === 'ar' 
+            ? (isBankAccountConfigured() ? 'تعديل بيانات الحساب البنكي' : 'إضافة حساب بنكي / فيزا') 
+            : (isBankAccountConfigured() ? 'Edit Bank Account Details' : 'Add Bank Account / Visa Card') }}
+        </h3>
+        
+        <p class="modal-desc">
+          {{ langService.currentLang() === 'ar' 
+            ? 'أدخل بيانات حسابك البنكي أو بطاقة الفيزا التي ستُستخدم لاستقبال أرباحك عند السحب.'
+            : 'Enter your bank account or visa card details that will be used to receive your earnings upon withdrawal.' }}
+        </p>
+
+        <form (submit)="saveBankAccount(); $event.preventDefault();" class="bank-form">
+          <div class="form-group">
+            <label for="bankName">{{ langService.currentLang() === 'ar' ? 'اسم البنك' : 'Bank Name' }}</label>
+            <input 
+              type="text" 
+              id="bankName"
+              [value]="bankFormData().bankName"
+              (input)="updateBankField('bankName', $any($event.target).value)"
+              [placeholder]="langService.currentLang() === 'ar' ? 'مثال: البنك الأهلي المصري' : 'e.g., National Bank of Egypt'"
+              class="form-control"
+              [disabled]="isSavingBank()"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="holderName">{{ langService.currentLang() === 'ar' ? 'اسم صاحب الحساب' : 'Account Holder Name' }}</label>
+            <input 
+              type="text" 
+              id="holderName"
+              [value]="bankFormData().accountHolderName"
+              (input)="updateBankField('accountHolderName', $any($event.target).value)"
+              [placeholder]="langService.currentLang() === 'ar' ? 'مثال: أحمد كمال' : 'e.g., Ahmed Kamal'"
+              class="form-control"
+              [disabled]="isSavingBank()"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="accountNumber">{{ langService.currentLang() === 'ar' ? 'رقم الحساب / بطاقة الفيزا' : 'Account / Visa Card Number' }}</label>
+            <input 
+              type="text" 
+              id="accountNumber"
+              [value]="bankFormData().accountNumber"
+              (input)="updateBankField('accountNumber', $any($event.target).value)"
+              [placeholder]="langService.currentLang() === 'ar' ? 'أدخل رقم الحساب أو الكارت' : 'Enter account or card number'"
+              class="form-control"
+              [disabled]="isSavingBank()"
+            />
+          </div>
+
+          <!-- Messages -->
+          @if (bankSaveError()) {
+            <div class="alert alert-danger">{{ bankSaveError() }}</div>
+          }
+          @if (bankSaveSuccess()) {
+            <div class="alert alert-success">{{ bankSaveSuccess() }}</div>
+          }
+
+          <div class="modal-actions">
+            <button type="button" class="btn btn-secondary" (click)="closeBankForm()" [disabled]="isSavingBank()">
+              {{ langService.currentLang() === 'ar' ? 'إلغاء' : 'Cancel' }}
+            </button>
+            <button type="submit" class="btn btn-primary" [disabled]="isSavingBank()">
+              @if (isSavingBank()) {
+                <span class="spinner-small"></span> {{ langService.currentLang() === 'ar' ? 'جاري الحفظ...' : 'Saving...' }}
+              } @else {
+                {{ langService.currentLang() === 'ar' ? 'حفظ البيانات' : 'Save Details' }}
+              }
+            </button>
+          </div>
+        </form>
+
+      </div>
+    </div>
+  }
+
   <!-- Withdrawal Modal -->
   @if (showWithdrawModal()) {
     <div class="modal-overlay" (click)="closeWithdrawModal()">
@@ -165,6 +312,12 @@
         <p class="modal-desc">
           {{ langService.currentLang() === 'ar' ? 'سيتم خصم المبلغ فوراً من رصيدك المتاح وتحويله (محاكاة نظام Paymob في الوضع التجريبي).' : 'The requested amount will be deducted from your available balance and disbursed instantly (Paymob Sandbox Simulation).' }}
         </p>
+
+        <!-- Show bank info in withdrawal modal -->
+        <div class="bank-info-in-modal">
+          <span class="bank-label">{{ langService.currentLang() === 'ar' ? 'التحويل إلى:' : 'Transfer to:' }}</span>
+          <span class="bank-value">{{ bankAccount()?.bankName }} - ****{{ bankAccount()?.accountNumber?.slice(-4) }}</span>
+        </div>
 
         <div class="available-badge">
           <span>{{ langService.currentLang() === 'ar' ? 'الرصيد المتاح للسحب:' : 'Available Balance:' }}</span>

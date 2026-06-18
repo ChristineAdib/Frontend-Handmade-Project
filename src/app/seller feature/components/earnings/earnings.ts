@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { LanguageService } from '../../../core/services/language.service';
 import { PaymentService } from '../../../payments/services/payment.service';
 import { ShopService } from '../../../shop feature/services/shop-service';
-import { SellerWallet } from '../../../payments/models/payment-models';
+import { SellerWallet, BankAccount } from '../../../payments/models/payment-models';
 
 @Component({
   selector: 'app-earnings',
@@ -23,6 +23,15 @@ export class Earnings implements OnInit {
   isLoading = signal<boolean>(true);
   error = signal<string | null>(null);
 
+  // Bank Account / Payout Method
+  bankAccount = signal<BankAccount | null>(null);
+  isBankAccountConfigured = signal<boolean>(false);
+  showBankForm = signal<boolean>(false);
+  bankFormData = signal<BankAccount>({ bankName: '', accountHolderName: '', accountNumber: '' });
+  isSavingBank = signal<boolean>(false);
+  bankSaveError = signal<string | null>(null);
+  bankSaveSuccess = signal<string | null>(null);
+
   // Withdrawal modal / form fields
   showWithdrawModal = signal<boolean>(false);
   withdrawAmount = signal<number | null>(null);
@@ -36,6 +45,7 @@ export class Earnings implements OnInit {
       next: (shop) => {
         this.shopId.set(shop.id);
         this.loadWallet();
+        this.loadBankAccount();
       },
       error: () => {
         const isAr = this.langService.currentLang() === 'ar';
@@ -56,6 +66,61 @@ export class Earnings implements OnInit {
       this.error.set(isAr ? 'فشل تحميل بيانات المحفظة' : 'Failed to load wallet details.');
     }
     this.isLoading.set(false);
+  }
+
+  async loadBankAccount() {
+    const data = await this.paymentService.getBankAccount();
+    if (data) {
+      this.bankAccount.set(data);
+      this.isBankAccountConfigured.set(
+        !!(data.bankName && data.accountHolderName && data.accountNumber)
+      );
+    }
+  }
+
+  openBankForm() {
+    const current = this.bankAccount();
+    this.bankFormData.set({
+      bankName: current?.bankName || '',
+      accountHolderName: current?.accountHolderName || '',
+      accountNumber: current?.accountNumber || ''
+    });
+    this.bankSaveError.set(null);
+    this.bankSaveSuccess.set(null);
+    this.showBankForm.set(true);
+  }
+
+  closeBankForm() {
+    this.showBankForm.set(false);
+  }
+
+  updateBankField(field: keyof BankAccount, value: string) {
+    this.bankFormData.update(prev => ({ ...prev, [field]: value }));
+  }
+
+  async saveBankAccount() {
+    const form = this.bankFormData();
+    const isAr = this.langService.currentLang() === 'ar';
+
+    if (!form.bankName || !form.accountHolderName || !form.accountNumber) {
+      this.bankSaveError.set(isAr ? 'جميع الحقول مطلوبة' : 'All fields are required.');
+      return;
+    }
+
+    this.isSavingBank.set(true);
+    this.bankSaveError.set(null);
+    this.bankSaveSuccess.set(null);
+
+    const success = await this.paymentService.updateBankAccount(form);
+    if (success) {
+      this.bankSaveSuccess.set(isAr ? 'تم حفظ بيانات الحساب بنجاح!' : 'Bank account saved successfully!');
+      this.bankAccount.set({ ...form });
+      this.isBankAccountConfigured.set(true);
+      setTimeout(() => this.closeBankForm(), 1500);
+    } else {
+      this.bankSaveError.set(this.paymentService.error() || (isAr ? 'فشل حفظ البيانات' : 'Failed to save bank account.'));
+    }
+    this.isSavingBank.set(false);
   }
 
   openWithdrawModal() {
@@ -97,9 +162,7 @@ export class Earnings implements OnInit {
 
     if (success) {
       this.withdrawalSuccess.set(isAr ? 'تمت عملية السحب بنجاح كعملية محاكاة!' : 'Withdrawal processed successfully as a simulation!');
-      // Reload wallet to show updated balance and transaction history
       await this.loadWallet();
-      // Delay closing modal slightly so they see the success message
       setTimeout(() => {
         this.closeWithdrawModal();
       }, 2000);

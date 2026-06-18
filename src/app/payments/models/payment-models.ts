@@ -39,3 +39,9 @@ export interface WalletTransaction {
   description: string;
   reference?: string;
 }
+
+export interface BankAccount {
+  bankName: string;
+  accountHolderName: string;
+  accountNumber: string;
+}
