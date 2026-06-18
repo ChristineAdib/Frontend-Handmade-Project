@@ -22,3 +22,26 @@ export interface CreateWithdrawalRequest {
 export interface PaymentIntentResponse {
   checkoutUrl: string;
 }
+
+export interface SellerWallet {
+  availableBalance: number;
+  pendingBalance: number;
+  totalEarnings: number;
+  transactions: WalletTransaction[];
+}
+
+export interface WalletTransaction {
+  id: string;
+  type: string;
+  amount: number;
+  date: string;
+  status: string;
+  description: string;
+  reference?: string;
+}
+
+export interface BankAccount {
+  bankName: string;
+  accountHolderName: string;
+  accountNumber: string;
+}
