@@ -8,6 +8,7 @@ import { ApiResponse } from '../../auth/models/api-response.model';
 import { environment } from '../../../environments/environment';
 import { SignalrService } from './signalr.service';
 import { AuthService } from '../../auth/Services/auth';
+import { ToastrService } from 'ngx-toastr';
 
 @Injectable({
   providedIn: 'root',
@@ -16,6 +17,7 @@ export class ChatService implements OnDestroy {
   private readonly http = inject(HttpClient);
   private readonly signalrService = inject(SignalrService);
   private readonly authService = inject(AuthService);
+  private readonly toastr = inject(ToastrService);
 
   private readonly apiUrl = `${environment.apiUrl}/api/chat`;
 
@@ -161,6 +163,11 @@ export class ChatService implements OnDestroy {
    * Starts a new conversation with a seller.
    */
   async startConversation(sellerId: string): Promise<Conversation> {
+    const currentUserId = this.authService.getUser()?.userId;
+    if (currentUserId === sellerId) {
+      this.toastr.error('You cannot send messages to yourself.');
+      throw new Error('You cannot send messages to yourself.');
+    }
     try {
       const res = await firstValueFrom(
         this.http.post<ApiResponse<Conversation>>(`${this.apiUrl}/start`, { sellerId })
@@ -173,8 +180,10 @@ export class ChatService implements OnDestroy {
         return res.data;
       }
       throw new Error(res.message || 'Failed to start conversation');
-    } catch (err) {
+    } catch (err: any) {
       console.error('Failed to start conversation:', err);
+      const errMsg = err.error?.message || err.message || 'Failed to start conversation';
+      this.toastr.error(errMsg);
       throw err;
     }
   }
@@ -195,8 +204,10 @@ export class ChatService implements OnDestroy {
         return res.data;
       }
       throw new Error(res.message || 'Failed to start conversation by shop');
-    } catch (err) {
+    } catch (err: any) {
       console.error('Failed to start conversation by shop:', err);
+      const errMsg = err.error?.message || err.message || 'Failed to start conversation by shop';
+      this.toastr.error(errMsg);
       throw err;
     }
   }

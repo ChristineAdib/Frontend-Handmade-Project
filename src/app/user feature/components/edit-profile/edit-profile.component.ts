@@ -6,6 +6,7 @@ import { ToastrService } from 'ngx-toastr';
 import { ProfileService } from '../../services/profile.service';
 import { UserProfile } from '../../models/user-profile';
 import { LanguageService } from '../../../core/services/language.service';
+import { AuthService } from '../../../auth/Services/auth';
 
 @Component({
   selector: 'app-edit-profile',
@@ -19,6 +20,7 @@ export class EditProfileComponent implements OnInit {
   private readonly toastr = inject(ToastrService);
   private readonly router = inject(Router);
   protected readonly langService = inject(LanguageService);
+  private readonly authService = inject(AuthService);
 
   // Profile data signal
   profile = signal<UserProfile | null>(null);
@@ -119,6 +121,15 @@ export class EditProfileComponent implements OnInit {
       next: (res) => {
         this.isSaving.set(false);
         this.toastr.success('Profile updated successfully.');
+        
+        // Sync the updated profile info to the auth session in localStorage
+        const authUser = this.authService.getUser();
+        if (authUser && res.data) {
+          authUser.name = res.data.name;
+          authUser.profileImage = res.data.profileImage;
+          this.authService.updateSession(authUser);
+        }
+
         this.router.navigate(['/dashboard']);
       },
       error: (err) => {

@@ -12,6 +12,7 @@ export  const API_URLS = {
 
     // Categories
     getAllCategories: `${base_domain}/api/Categories`,
+    getSubCategories: (parentId: string) => `${base_domain}/api/Categories/${parentId}/subcategories`,
 
 // Products
     createProduct: `${base_domain}/api/Products`,
@@ -95,5 +96,6 @@ getWishList: `${base_domain}/api/wishlist`,
     `${base_domain}/api/ShopReviews/shop/${shopId}/myReview`,
   createShopReview: `${base_domain}/api/ShopReviews`,
   updateShopReview: (id: string) => `${base_domain}/api/ShopReviews/${id}`,
-  deleteShopReview: (id: string) => `${base_domain}/api/ShopReviews/${id}`
+  deleteShopReview: (id: string) => `${base_domain}/api/ShopReviews/${id}`,
+  sellerAnalytics: `${base_domain}/api/SellerAnalytics`
 };

@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnDestroy } from '@angular/core';
+import { Component, inject, signal, OnDestroy, computed } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -19,8 +19,17 @@ export class OtpComponent implements OnDestroy {
   protected readonly langService = inject(LanguageService);
 
   isLoading = signal(false);
-  otpTimer  = signal(60);
+  otpTimer  = signal(600);
   canResend = signal(false);
+
+  formattedTimer = computed(() => {
+    const totalSecs = this.otpTimer();
+    const mins = Math.floor(totalSecs / 60);
+    const secs = totalSecs % 60;
+    const padMins = mins.toString().padStart(2, '0');
+    const padSecs = secs.toString().padStart(2, '0');
+    return `${padMins}:${padSecs}`;
+  });
   private timerInterval: any;
 
   otpForm = this.fb.group({
@@ -40,13 +49,16 @@ export class OtpComponent implements OnDestroy {
       email:   this.auth.otpEmail(),
       OtpCode: this.otpForm.value.otp
     }).subscribe({
-      next: () => {
+      next: (res: any) => {
         this.isLoading.set(false);
+        if (res && res.success && res.data && res.data.authData) {
+          this.auth.updateSession(res.data.authData);
+        }
         this.router.navigate(['/']);
       },
       error: err => {
         this.isLoading.set(false);
-        this.auth.errorMsg.set(err.error?.errors?.[0] ?? 'Invalid OTP.');
+        this.auth.errorMsg.set(this.auth.extractError(err, 'Invalid OTP.'));
       }
     });
   }
@@ -55,7 +67,7 @@ export class OtpComponent implements OnDestroy {
     if (!this.canResend()) return;
     this.auth.resendOtp({ email: this.auth.otpEmail() }).subscribe({
       next: () => {
-        this.otpTimer.set(60);
+        this.otpTimer.set(600);
         this.canResend.set(false);
         this.startOtpTimer();
       }

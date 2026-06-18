@@ -5,7 +5,7 @@
     <button class="sub-tab" [class.active]="activeTab() === 'list'" (click)="setTab('list')">
       {{ langService.translate('myProducts') }}
     </button>
-    <button class="sub-tab" [class.active]="activeTab() === 'add'" (click)="setTab('add')">
+    <button class="sub-tab" [class.active]="activeTab() === 'add'" (click)="addNewProduct()">
       + {{ langService.translate('addProduct') }}
     </button>
   </div>
@@ -39,7 +39,7 @@
           <span class="empty-icon">📦</span>
           <h3>{{ langService.currentLang() === 'ar' ? 'لا توجد منتجات بعد' : 'No products yet' }}</h3>
           <p>{{ langService.currentLang() === 'ar' ? 'أضف منتجك الأول لبدء البيع!' : 'Add your first product to start selling!' }}</p>
-          <button class="add-first-btn" (click)="setTab('add')">+ {{ langService.translate('addProduct') }}</button>
+          <button class="add-first-btn" (click)="addNewProduct()">+ {{ langService.translate('addProduct') }}</button>
         </div>
       } @else {
         <div class="products-grid">

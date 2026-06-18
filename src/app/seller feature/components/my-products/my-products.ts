@@ -66,9 +66,14 @@ export class MyProducts implements OnInit {
     }
   }
 
+  addNewProduct() {
+    this.editingProductId.set(null);
+    this.activeTab.set('add');
+  }
+
   editProduct(id: string) {
     this.editingProductId.set(id);
-    this.setTab('add');
+    this.activeTab.set('add');
   }
 
   nextPage() {

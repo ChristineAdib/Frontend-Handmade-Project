@@ -17,6 +17,8 @@ export interface Product {
   reviewCount: number;
   categoryNameEn: string;
   shopName: string;
+  quantity?: number;
+  isOnePiece?: boolean;
 }
 
 export interface ProductDetailResponse {
@@ -29,7 +31,11 @@ export interface ProductDetailResponse {
   discountPrice?: number;
   finalPrice: number;
   quantity: number;
+  isOnePiece?: boolean;
   status: string; // "Active", "Inactive", "OutOfStock"
+  isAvailable: boolean;
+  stockQuantity: number;
+  isSoldOut: boolean;
   averageRating: number;
   reviewCount: number;
   categoryId: string;
@@ -63,6 +69,7 @@ export interface ProductQuery {
   pageSize: number;
   categoryId?: string;
   search?: string;
+  onlyOnePiece?: boolean;
 }
 
 export interface PaginatedResponse<T> {
@@ -81,6 +88,7 @@ export interface ReviewResponse {
   comment?: string;
   userName: string;
   createdAt: string;
+  isVerifiedPurchase: boolean;
 }
 
 export interface CreateReviewRequest {

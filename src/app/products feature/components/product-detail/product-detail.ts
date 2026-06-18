@@ -8,7 +8,9 @@ import { ProductsService } from '../../services/products-service';
 import { AuthService } from '../../../auth/Services/auth';
 import { LanguageService } from '../../../core/services/language.service';
 import { ProductDetailResponse, ReviewResponse, CreateReviewRequest } from '../../models/product.model';
-import { CartApiService } from '../../../orders/services/cart-api.service';
+import { CartApiService, CartItemDto } from '../../../orders/services/cart-api.service';
+import { ShopService } from '../../../shop feature/services/shop-service';
+import { WishlistService } from '../../../wishlist feature/services/wishlist-service';
 
 @Component({
   selector: 'app-product-detail',
@@ -25,11 +27,14 @@ export class ProductDetail implements OnInit {
   public langService = inject(LanguageService);
   private router = inject(Router);
   private cartApiService = inject(CartApiService);
+  private shopService = inject(ShopService);
+  private wishlistService = inject(WishlistService);
 
   productId: string | null = null;
   product: ProductDetailResponse | null = null;
   loadingProduct = true;
   activeImageUrl: string = '';
+  isProductOwner = false;
 
   // Reviews list states
   reviews: ReviewResponse[] = [];
@@ -47,6 +52,12 @@ export class ProductDetail implements OnInit {
   newComment = '';
   isSubmittingReview = false;
   hoveredRating = 0;
+
+  // Verified purchase eligibility states
+  isEligibleToReview = false;
+  alreadyReviewed = false;
+  existingReviewId: string | null = null;
+  checkingEligibility = false;
 
   ngOnInit(): void {
     this.productId = this.route.snapshot.paramMap.get('id');
@@ -71,12 +82,62 @@ export class ProductDetail implements OnInit {
           this.activeImageUrl = 'assets/images/placeholder.jpg';
         }
         this.loadingProduct = false;
+        this.checkProductOwnership();
         this.loadReviews();
+        this.checkEligibility();
       },
       error: (err) => {
         console.error('Error loading product details:', err);
         this.toastr.error(this.langService.translate('productNotFound'));
         this.loadingProduct = false;
+      }
+    });
+  }
+
+  checkEligibility(): void {
+    if (!this.productId || !this.isUserLoggedIn) return;
+    this.checkingEligibility = true;
+    this.productsService.checkReviewEligibility(this.productId).subscribe({
+      next: (res) => {
+        this.isEligibleToReview = res.isEligible;
+        this.alreadyReviewed = res.alreadyReviewed;
+        this.existingReviewId = res.existingReviewId;
+        if (res.alreadyReviewed) {
+          this.newRating = res.existingRating;
+          this.newComment = res.existingComment || '';
+        }
+        this.checkingEligibility = false;
+      },
+      error: (err) => {
+        console.error('Error checking review eligibility:', err);
+        this.isEligibleToReview = false;
+        this.checkingEligibility = false;
+      }
+    });
+  }
+
+  checkProductOwnership(): void {
+    if (!this.isUserLoggedIn || !this.product) {
+      this.isProductOwner = false;
+      return;
+    }
+
+    const user = this.authService.getUser();
+    const isSeller = user?.roles?.includes('Seller');
+    if (!isSeller) {
+      this.isProductOwner = false;
+      return;
+    }
+
+    this.shopService.getMyShop().subscribe({
+      next: (myShop) => {
+        if (myShop && this.product) {
+          this.isProductOwner = (myShop.id === this.product.shopId);
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching my shop:', err);
+        this.isProductOwner = false;
       }
     });
   }
@@ -138,15 +199,17 @@ export class ProductDetail implements OnInit {
       comment: this.newComment.trim() || undefined
     };
 
-    this.productsService.createReview(request).subscribe({
+    const operation$ = this.alreadyReviewed && this.existingReviewId
+      ? this.productsService.updateReview(this.existingReviewId, request)
+      : this.productsService.createReview(request);
+
+    operation$.subscribe({
       next: (res) => {
         this.toastr.success(
           this.langService.currentLang() === 'ar' 
-            ? 'تمت إضافة مراجعتك بنجاح. شكراً لك!' 
-            : 'Your review was submitted successfully. Thank you!'
+            ? 'تم حفظ تقييمك بنجاح. شكراً لك!' 
+            : 'Your review was saved successfully. Thank you!'
         );
-        this.newRating = 5;
-        this.newComment = '';
         this.isSubmittingReview = false;
         
         // Refresh product details (to update averageRating and reviewCount) and reviews list
@@ -154,13 +217,12 @@ export class ProductDetail implements OnInit {
           this.loadProduct(this.productId);
         }
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Error submitting review:', err);
-        this.toastr.error(
-          this.langService.currentLang() === 'ar'
-            ? 'فشل تقديم التقييم. قد تكون قمت بتقييم هذا المنتج بالفعل.'
-            : 'Failed to submit review. You may have already reviewed this product.'
-        );
+        const errorMsg = err?.error?.message || (this.langService.currentLang() === 'ar'
+          ? 'فشل تقديم التقييم.'
+          : 'Failed to submit review.');
+        this.toastr.error(errorMsg);
         this.isSubmittingReview = false;
       }
     });
@@ -199,15 +261,78 @@ export class ProductDetail implements OnInit {
         );
         this.router.navigate(['/checkout']);
       } else {
-        this.toastr.error(
-          this.langService.currentLang() === 'ar'
-            ? 'فشل إضافة المنتج إلى السلة.'
-            : 'Failed to add item to cart.'
-        );
+        const errMsg = this.cartApiService.error() || (this.langService.currentLang() === 'ar' ? 'فشل إضافة المنتج إلى السلة.' : 'Failed to add item to cart.');
+        this.toastr.error(errMsg, '', { timeOut: 10000 });
       }
     }).catch(err => {
       console.error('Cart error:', err);
-      this.toastr.error('Failed to add item to cart.');
+      this.toastr.error(this.langService.currentLang() === 'ar' ? 'فشل إضافة المنتج إلى السلة.' : 'Failed to add item to cart.', '', { timeOut: 10000 });
     });
+  }
+
+  addToCart(): void {
+    if (!this.productId) return;
+
+    this.cartApiService.addItem(this.productId, 1).then((res) => {
+      if (res) {
+        this.toastr.success(
+          this.langService.currentLang() === 'ar'
+            ? 'تمت إضافة المنتج إلى السلة!'
+            : 'Added to cart successfully!'
+        );
+      } else {
+        const errMsg = this.cartApiService.error() || (this.langService.currentLang() === 'ar' ? 'فشل إضافة المنتج إلى السلة.' : 'Failed to add item to cart.');
+        this.toastr.error(errMsg);
+      }
+    }).catch(err => {
+      console.error('Cart error:', err);
+      this.toastr.error(this.langService.currentLang() === 'ar' ? 'فشل إضافة المنتج إلى السلة.' : 'Failed to add item to cart.');
+    });
+  }
+
+  isWishlisted(): boolean {
+    const list = this.wishlistService.wishlist();
+    if (!list || !list.items || !this.productId) return false;
+    return list.items.some(item => item.productId === this.productId);
+  }
+
+  toggleWishlist(): void {
+    if (!this.productId) return;
+
+    if (this.isWishlisted()) {
+      this.wishlistService.removeItem(this.productId).subscribe({
+        next: () => {
+          this.toastr.success(
+            this.langService.currentLang() === 'ar'
+              ? 'تمت إزالة المنتج من قائمة الأمنيات'
+              : 'Removed from wishlist successfully'
+          );
+        },
+        error: (err) => {
+          this.toastr.error(
+            this.langService.currentLang() === 'ar'
+              ? 'فشل إزالة المنتج.'
+              : 'Failed to remove product from wishlist.'
+          );
+        }
+      });
+    } else {
+      this.wishlistService.addItem(this.productId).subscribe({
+        next: () => {
+          this.toastr.success(
+            this.langService.currentLang() === 'ar'
+              ? 'تمت إضافة المنتج إلى قائمة الأمنيات!'
+              : 'Added to wishlist successfully!'
+          );
+        },
+        error: (err) => {
+          this.toastr.error(
+            this.langService.currentLang() === 'ar'
+              ? 'فشل إضافة المنتج لقائمة الأمنيات.'
+              : 'Failed to add product to wishlist.'
+          );
+        }
+      });
+    }
   }
 }

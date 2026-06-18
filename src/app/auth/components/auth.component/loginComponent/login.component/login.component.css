@@ -75,7 +75,7 @@
 
 .password-wrapper-custom input {
   width: 100%;
-  padding: 0.7rem 1rem;
+  padding: 0.7rem 2.5rem 0.7rem 1rem;
   background-color: #fff;
   border: 1px solid var(--color-border-soft);
   border-radius: 10px;
@@ -84,6 +84,15 @@
   box-sizing: border-box;
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+:host-context([dir="rtl"]) .password-wrapper-custom input {
+  padding: 0.7rem 1rem 0.7rem 2.5rem;
+}
+
+:host-context([dir="rtl"]) .exact-eye-btn {
+  right: auto;
+  left: 1rem;
 }
 
 .exact-eye-btn {
@@ -96,6 +105,24 @@
   cursor: pointer;
   font-size: 0.9rem;
   padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toggle-password-svg {
+  width: 18px;
+  height: 18px;
+  color: var(--color-text-sub);
+  transition: color 0.2s, transform 0.1s;
+}
+
+.exact-eye-btn:hover .toggle-password-svg {
+  color: var(--color-text-dark);
+}
+
+.exact-eye-btn:active .toggle-password-svg {
+  transform: scale(0.9);
 }
 
 .exact-utilities-zone {

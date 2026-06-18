@@ -23,6 +23,10 @@ export class ProductService {
     return this.http.get<ICategory[]>(API_URLS.getAllCategories);
   }
 
+  getSubCategories(parentId: string): Observable<ICategory[]> {
+    return this.http.get<ICategory[]>(API_URLS.getSubCategories(parentId));
+  }
+
   createProduct(formData: FormData): Observable<IProduct> {
     return this.http.post<IProduct>(API_URLS.createProduct, formData, {
       headers: this.getAuthHeaders()
