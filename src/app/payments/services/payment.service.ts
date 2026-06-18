@@ -2,7 +2,7 @@ import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { PaymentResponse, PaymentIntentResponse, CreateWithdrawalRequest } from '../models/payment-models';
+import { PaymentResponse, PaymentIntentResponse, CreateWithdrawalRequest, SellerWallet } from '../models/payment-models';
 
 @Injectable({ providedIn: 'root' })
 export class PaymentService {
@@ -59,6 +59,21 @@ export class PaymentService {
     } catch {
       this.error.set('Failed to process payouts.');
       return false;
+    } finally {
+      this.isLoading.set(false);
+    }
+  }
+
+  async getSellerWallet(): Promise<SellerWallet | null> {
+    this.isLoading.set(true);
+    this.error.set(null);
+    try {
+      return await firstValueFrom(
+        this.http.get<SellerWallet>(`${this.payoutUrl}/wallet`)
+      );
+    } catch (err: any) {
+      this.error.set(err?.error?.message || 'Failed to fetch wallet details.');
+      return null;
     } finally {
       this.isLoading.set(false);
     }

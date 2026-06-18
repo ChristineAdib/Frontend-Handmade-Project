@@ -1,3 +1,234 @@
-<p [dir]="langService.currentLang() === 'ar' ? 'rtl' : 'ltr'">
-  {{ langService.translate('earnings') }} {{ langService.currentLang() === 'ar' ? 'تعمل!' : 'works!' }}
-</p>
+<div class="financials-container" [dir]="langService.currentLang() === 'ar' ? 'rtl' : 'ltr'">
+  
+  <!-- Header -->
+  <header class="page-header">
+    <div class="header-title-wrapper">
+      <h1 class="page-title">
+        {{ langService.currentLang() === 'ar' ? 'المحفظة المالية والأرباح' : 'Financial Wallet & Earnings' }}
+      </h1>
+      <p class="page-subtitle">
+        {{ langService.currentLang() === 'ar' ? 'تتبع أرباح متجرك، والتحكم في عوائد المبيعات المعلقة والمتاحة للسحب.' : 'Track your store revenue, monitor pending escrow balances, and request instant simulated withdrawals.' }}
+      </p>
+    </div>
+  </header>
+
+  <!-- Error / Loading States -->
+  @if (isLoading()) {
+    <div class="state-container loading-state">
+      <div class="spinner"></div>
+      <p>{{ langService.currentLang() === 'ar' ? 'جاري تحميل تفاصيل المحفظة...' : 'Loading wallet details...' }}</p>
+    </div>
+  } @else if (error()) {
+    <div class="state-container error-state">
+      <div class="error-icon">⚠️</div>
+      <p>{{ error() }}</p>
+      <button class="retry-btn" (click)="loadWallet()">
+        {{ langService.currentLang() === 'ar' ? 'إعادة المحاولة' : 'Retry' }}
+      </button>
+    </div>
+  } @else {
+    <!-- Stats Cards Grid -->
+    <div class="stats-grid">
+      
+      <!-- Available Balance Card -->
+      <div class="stat-card available-card">
+        <div class="card-icon-wrapper">
+          <span class="card-icon">💸</span>
+        </div>
+        <div class="card-content">
+          <span class="card-label">
+            {{ langService.currentLang() === 'ar' ? 'الرصيد المتاح للسحب' : 'Available Balance' }}
+          </span>
+          <h2 class="card-value">{{ wallet()?.availableBalance | number:'1.2-2' }} <span class="currency">EGP</span></h2>
+          <p class="card-hint">
+            {{ langService.currentLang() === 'ar' ? 'هذا المبلغ جاهز للسحب الفوري إلى حسابك.' : 'This amount is unlocked and ready for withdrawal.' }}
+          </p>
+          <button class="action-btn withdraw-btn" [disabled]="(wallet()?.availableBalance ?? 0) <= 0" (click)="openWithdrawModal()">
+            {{ langService.currentLang() === 'ar' ? 'سحب الأرباح الآن' : 'Withdraw Funds Now' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Pending Balance Card -->
+      <div class="stat-card pending-card">
+        <div class="card-icon-wrapper">
+          <span class="card-icon">🔒</span>
+        </div>
+        <div class="card-content">
+          <span class="card-label">
+            {{ langService.currentLang() === 'ar' ? 'الرصيد المعلق' : 'Pending Balance' }}
+          </span>
+          <h2 class="card-value">{{ wallet()?.pendingBalance | number:'1.2-2' }} <span class="currency">EGP</span></h2>
+          <p class="card-hint">
+            {{ langService.currentLang() === 'ar' ? 'أرباح طلبات قيد التجهيز أو الشحن. سيتم الإفراج عنها فور التوصيل.' : 'Escrow funds for active orders. Automatically unlocked upon delivery.' }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Total Earnings Card -->
+      <div class="stat-card total-card">
+        <div class="card-icon-wrapper">
+          <span class="card-icon">📈</span>
+        </div>
+        <div class="card-content">
+          <span class="card-label">
+            {{ langService.currentLang() === 'ar' ? 'إجمالي الأرباح المتراكمة' : 'Cumulative Revenue' }}
+          </span>
+          <h2 class="card-value">{{ wallet()?.totalEarnings | number:'1.2-2' }} <span class="currency">EGP</span></h2>
+          <p class="card-hint">
+            {{ langService.currentLang() === 'ar' ? 'مجموع كافة المبيعات التي حققها متجرك (المحرة والمعلقة).' : 'Lifetime gross earnings of your shop (both cleared and pending).' }}
+          </p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Transaction History -->
+    <section class="history-section">
+      <div class="section-header">
+        <h3 class="section-title">
+          {{ langService.currentLang() === 'ar' ? 'سجل المعاملات والعمليات' : 'Transaction History' }}
+        </h3>
+      </div>
+
+      <div class="table-wrapper">
+        @if (wallet()?.transactions && wallet()!.transactions.length > 0) {
+          <table class="transactions-table">
+            <thead>
+              <tr>
+                <th>{{ langService.currentLang() === 'ar' ? 'التاريخ' : 'Date' }}</th>
+                <th>{{ langService.currentLang() === 'ar' ? 'النوع' : 'Type' }}</th>
+                <th>{{ langService.currentLang() === 'ar' ? 'الوصف' : 'Description' }}</th>
+                <th>{{ langService.currentLang() === 'ar' ? 'المبلغ' : 'Amount' }}</th>
+                <th>{{ langService.currentLang() === 'ar' ? 'المرجع' : 'Reference' }}</th>
+                <th>{{ langService.currentLang() === 'ar' ? 'الحالة' : 'Status' }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (tx of wallet()?.transactions; track tx.id) {
+                <tr>
+                  <td class="date-cell">{{ tx.date | date:'mediumDate' }}</td>
+                  <td class="type-cell">
+                    @if (tx.type === 'Sale') {
+                      <span class="badge type-sale">
+                        {{ langService.currentLang() === 'ar' ? 'مبيعات' : 'Sale' }}
+                      </span>
+                    } @else {
+                      <span class="badge type-withdraw">
+                        {{ langService.currentLang() === 'ar' ? 'سحب' : 'Withdrawal' }}
+                      </span>
+                    }
+                  </td>
+                  <td class="desc-cell">{{ tx.description }}</td>
+                  <td class="amount-cell" [class.positive]="tx.amount > 0" [class.negative]="tx.amount < 0">
+                    {{ tx.amount > 0 ? '+' : '' }}{{ tx.amount | number:'1.2-2' }} EGP
+                  </td>
+                  <td class="ref-cell">{{ tx.reference || '-' }}</td>
+                  <td class="status-cell">
+                    <span class="badge status-badge" [class.status-released]="tx.status === 'Released' || tx.status === 'Paid'" [class.status-pending]="tx.status === 'Pending'" [class.status-cancelled]="tx.status === 'Cancelled'">
+                      @if (tx.status === 'Released') {
+                        {{ langService.currentLang() === 'ar' ? 'محرر' : 'Released' }}
+                      } @else if (tx.status === 'Paid') {
+                        {{ langService.currentLang() === 'ar' ? 'مدفوع' : 'Paid' }}
+                      } @else if (tx.status === 'Pending') {
+                        {{ langService.currentLang() === 'ar' ? 'معلق' : 'Pending' }}
+                      } @else {
+                        {{ langService.currentLang() === 'ar' ? 'ملغي' : 'Cancelled' }}
+                      }
+                    </span>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        } @else {
+          <div class="empty-state">
+            <span class="empty-icon">📁</span>
+            <p>{{ langService.currentLang() === 'ar' ? 'لا توجد أي معاملات مالية مسجلة بعد.' : 'No financial transactions recorded yet.' }}</p>
+          </div>
+        }
+      </div>
+    </section>
+  }
+
+  <!-- Withdrawal Modal -->
+  @if (showWithdrawModal()) {
+    <div class="modal-overlay" (click)="closeWithdrawModal()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        
+        <button class="close-modal-btn" (click)="closeWithdrawModal()">✕</button>
+        
+        <h3 class="modal-title">
+          {{ langService.currentLang() === 'ar' ? 'سحب الأرباح (محاكاة)' : 'Withdraw Funds (Simulation)' }}
+        </h3>
+        
+        <p class="modal-desc">
+          {{ langService.currentLang() === 'ar' ? 'سيتم خصم المبلغ فوراً من رصيدك المتاح وتحويله (محاكاة نظام Paymob في الوضع التجريبي).' : 'The requested amount will be deducted from your available balance and disbursed instantly (Paymob Sandbox Simulation).' }}
+        </p>
+
+        <div class="available-badge">
+          <span>{{ langService.currentLang() === 'ar' ? 'الرصيد المتاح للسحب:' : 'Available Balance:' }}</span>
+          <strong>{{ wallet()?.availableBalance | number:'1.2-2' }} EGP</strong>
+        </div>
+
+        <form (submit)="submitWithdrawal(); $event.preventDefault();" class="withdraw-form">
+          <div class="form-group">
+            <label for="amount">{{ langService.currentLang() === 'ar' ? 'مبلغ السحب (EGP)' : 'Withdrawal Amount (EGP)' }}</label>
+            <input 
+              type="number" 
+              id="amount" 
+              name="amount"
+              [(ngModel)]="withdrawAmount" 
+              placeholder="0.00" 
+              required 
+              min="1" 
+              [max]="wallet()?.availableBalance || 0"
+              class="form-control"
+              [disabled]="isSubmittingWithdrawal()"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="notes">{{ langService.currentLang() === 'ar' ? 'ملاحظات إضافية (اختياري)' : 'Additional Notes (Optional)' }}</label>
+            <textarea 
+              id="notes" 
+              name="notes"
+              [(ngModel)]="withdrawNotes" 
+              [placeholder]="langService.currentLang() === 'ar' ? 'أضف أي تفاصيل خاصة بالتحويل...' : 'Add any transfer notes...'" 
+              class="form-control"
+              rows="3"
+              [disabled]="isSubmittingWithdrawal()"
+            ></textarea>
+          </div>
+
+          <!-- Messages -->
+          @if (withdrawalError()) {
+            <div class="alert alert-danger">
+              {{ withdrawalError() }}
+            </div>
+          }
+          @if (withdrawalSuccess()) {
+            <div class="alert alert-success">
+              {{ withdrawalSuccess() }}
+            </div>
+          }
+
+          <div class="modal-actions">
+            <button type="button" class="btn btn-secondary" (click)="closeWithdrawModal()" [disabled]="isSubmittingWithdrawal()">
+              {{ langService.currentLang() === 'ar' ? 'إلغاء' : 'Cancel' }}
+            </button>
+            <button type="submit" class="btn btn-primary" [disabled]="isSubmittingWithdrawal() || !withdrawAmount() || withdrawAmount()! <= 0">
+              @if (isSubmittingWithdrawal()) {
+                <span class="spinner-small"></span> {{ langService.currentLang() === 'ar' ? 'جاري التحويل...' : 'Processing...' }}
+              } @else {
+                {{ langService.currentLang() === 'ar' ? 'تأكيد السحب' : 'Confirm Payout' }}
+              }
+            </button>
+          </div>
+        </form>
+
+      </div>
+    </div>
+  }
+
+</div>
