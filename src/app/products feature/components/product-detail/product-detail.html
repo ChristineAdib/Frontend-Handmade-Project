@@ -214,9 +214,25 @@
 
     <!-- Reviews & Ratings Section -->
     <div class="reviews-section mt-5 pt-5 border-top">
-      <h2 class="reviews-title mb-4">
-        {{ langService.currentLang() === 'ar' ? 'آراء المشترين والتقييمات' : 'Customer Reviews & Ratings' }}
-      </h2>
+      <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+        <h2 class="reviews-title mb-0">
+          {{ langService.currentLang() === 'ar' ? 'آراء المشترين والتقييمات' : 'Customer Reviews & Ratings' }}
+        </h2>
+        
+        <!-- Generate AI Summary Button -->
+        <button 
+          *ngIf="isUserLoggedIn" 
+          class="btn btn-ai-summary d-flex align-items-center gap-2"
+          [disabled]="isGeneratingAiSummary"
+          (click)="generateAiSummary()"
+        >
+          <span class="spinner-border spinner-border-sm" role="status" *ngIf="isGeneratingAiSummary"></span>
+          <span class="material-symbols-outlined" *ngIf="!isGeneratingAiSummary">smart_toy</span>
+          <span>
+            {{ langService.currentLang() === 'ar' ? 'توليد ملخص الذكاء الاصطناعي' : 'Generate AI Summary' }}
+          </span>
+        </button>
+      </div>
 
       <div class="row g-5">
         <!-- Rating Distribution Summary -->
@@ -333,6 +349,51 @@
 
         <!-- Reviews Logs List Column -->
         <div class="col-12 col-lg-8">
+          <!-- AI Review Summary Card -->
+          @if (product && product.aiSummary) {
+            <div class="ai-summary-card p-4 mb-4 rounded-3 shadow-sm">
+              <div class="ai-summary-header d-flex align-items-center gap-2 mb-4">
+                <span class="material-symbols-outlined ai-icon">insights</span>
+                <h4 class="mb-0">{{ langService.currentLang() === 'ar' ? 'ملخص مراجعات الذكاء الاصطناعي' : 'AI-Generated Review Summary' }}</h4>
+                <span class="badge ai-badge">{{ langService.currentLang() === 'ar' ? 'ذكاء اصطناعي' : 'AI-Powered' }}</span>
+              </div>
+              
+              <div class="row g-3">
+                <!-- Pros Section -->
+                @if (product.aiSummary.pros && product.aiSummary.pros.length > 0) {
+                  <div class="col-12 col-md-6">
+                    <h5 class="pros-title d-flex align-items-center gap-2 mb-2">
+                      <span class="material-symbols-outlined text-success">add_circle</span>
+                      {{ langService.currentLang() === 'ar' ? 'الإيجابيات' : 'Pros' }}
+                    </h5>
+                    <ul class="pros-list list-unstyled ps-0 mb-0">
+                      <li *ngFor="let pro of product.aiSummary.pros" class="d-flex align-items-start gap-2 mb-2">
+                        <span class="material-symbols-outlined list-check text-success">check</span>
+                        <span class="small">{{ pro }}</span>
+                      </li>
+                    </ul>
+                  </div>
+                }
+                
+                <!-- Cons Section -->
+                @if (product.aiSummary.cons && product.aiSummary.cons.length > 0) {
+                  <div class="col-12 col-md-6">
+                    <h5 class="cons-title d-flex align-items-center gap-2 mb-2">
+                      <span class="material-symbols-outlined text-danger">remove_circle</span>
+                      {{ langService.currentLang() === 'ar' ? 'السلبيات' : 'Cons' }}
+                    </h5>
+                    <ul class="cons-list list-unstyled ps-0 mb-0">
+                      <li *ngFor="let con of product.aiSummary.cons" class="d-flex align-items-start gap-2 mb-2">
+                        <span class="material-symbols-outlined list-cross text-danger">close</span>
+                        <span class="small">{{ con }}</span>
+                      </li>
+                    </ul>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+
           @if (loadingReviews) {
             <div class="loading-reviews text-center py-4">
               <div class="spinner-border text-secondary spinner-border-sm" role="status"></div>

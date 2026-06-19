@@ -146,7 +146,7 @@
     <div class="nav__actions">
 
       <!-- Gift Finder -->
-      <a routerLink="/gift" class="nav__gift-btn">
+      <a routerLink="/gift-assistant" class="nav__gift-btn">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
              stroke="currentColor" stroke-width="2" stroke-linecap="round">
           <path d="M20 12v10H4V12"/><rect x="2" y="7" width="20" height="5" rx="1"/>
@@ -412,7 +412,7 @@
     <div class="mob__sep"></div>
     <a routerLink="/shops" class="mob__link" (click)="toggleMobileMenu()">{{ langService.translate('artisans') }}</a>
     <a routerLink="/about" class="mob__link" (click)="toggleMobileMenu()">{{ langService.currentLang() === 'ar' ? 'من نحن' : 'About Us' }}</a>
-    <a routerLink="/gift" class="mob__link mob__link--gift" (click)="toggleMobileMenu()">
+    <a routerLink="/gift-assistant" class="mob__link mob__link--gift" (click)="toggleMobileMenu()">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
         <path d="M20 12v10H4V12"/><rect x="2" y="7" width="20" height="5" rx="1"/>
         <path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/>

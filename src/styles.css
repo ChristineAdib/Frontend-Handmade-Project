@@ -17,15 +17,4 @@
 
 ::-webkit-scrollbar-thumb:hover {
     background: #311702;
-}
-.custom-cursor {
-  position: fixed;
-  width: 30px;
-  height: 30px;
-  border: 2pxsolid #d4a373;
-  border-radius: 50%;
-  pointer-events: none;
-  transform: translate(-50%, -50%);
-  z-index: 9999;
-  transition: transform0.15sease;
-}
+}
