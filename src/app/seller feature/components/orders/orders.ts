@@ -72,8 +72,7 @@ export class Orders {
   isUpdatingStatus = signal(false);
   updateStatusError = signal<string | null>(null);
 
-  statuses = ['Pending', 'Confirmed', 'Processing', 'Shipped', 'Delivered', 'Cancelled', 'Refunded'];
-
+statuses = ['Processing', 'Shipped', 'Delivered'];
   ngOnInit() {
     this.shopService.getMyShop().subscribe({
       next: shop => {
@@ -155,63 +154,79 @@ export class Orders {
     return map[status] ?? '';
   }
  
-  canTransition(current: string, next: string): boolean {
-    return true;
-  }
- 
-  onStatusChange(orderId: string, event: Event) {
-    const select = event.target as HTMLSelectElement;
-    const nextStatusStr = select.value;
-    const currentOrder = this.selectedOrder();
-    if (!currentOrder) return;
- 
-    if (nextStatusStr === currentOrder.status) return;
- 
-    const statusMap: Record<string, OrderStatus> = {
-      'Pending': OrderStatus.Pending,
-      'Confirmed': OrderStatus.Confirmed,
-      'Processing': OrderStatus.Processing,
-      'Shipped': OrderStatus.Shipped,
-      'Delivered': OrderStatus.Delivered,
-      'Cancelled': OrderStatus.Cancelled,
-      'Refunded': OrderStatus.Refunded,
-    };
- 
-    const nextStatusEnum = statusMap[nextStatusStr];
-    if (!nextStatusEnum) return;
- 
-    if (confirm(`Are you sure you want to change the order status to ${nextStatusStr}?`)) {
-      this.isUpdatingStatus.set(true);
-      this.updateStatusError.set(null);
- 
-      this.orderService.updateStatus(orderId, { status: nextStatusEnum }).then(success => {
-        this.isUpdatingStatus.set(false);
-        if (success) {
-          this.selectedOrder.update(order => order ? { ...order, status: nextStatusStr } : null);
-          this.orders.update(prevList => 
-            prevList.map(o => o.id === orderId ? { ...o, status: nextStatusStr } : o)
-          );
-          this.toastr.success(
-            this.langService.currentLang() === 'ar'
-              ? 'تم تحديث حالة الطلب بنجاح!'
-              : 'Order status updated successfully!'
-          );
-        } else {
-          select.value = currentOrder.status;
-          this.updateStatusError.set(this.orderService.error() || 'Failed to update order status.');
-          this.toastr.error(this.updateStatusError()!);
-        }
-      }).catch(err => {
-        this.isUpdatingStatus.set(false);
-        select.value = currentOrder.status;
-        this.updateStatusError.set('Failed to update status');
-        this.toastr.error('Failed to update status');
-      });
-    } else {
-      select.value = currentOrder.status;
-    }
+ canTransition(current: string, next: string): boolean {
+  if (current === 'Delivered') return false;
+  if (current === 'Shipped' && next === 'Processing') return false;
+  return this.getAvailableStatusOptions(current).includes(next);
+}
+
+getAvailableStatusOptions(currentStatus: string): string[] {
+  if (currentStatus === 'Processing') return ['Processing', 'Shipped'];
+  if (currentStatus === 'Shipped') return ['Shipped'];
+  return [currentStatus]; // Delivered (أو أي حالة تانية) - مقفولة
+}
+
+isStatusEditable(currentStatus: string): boolean {
+  return currentStatus === 'Processing' || currentStatus === 'Shipped';
+}
+
+onStatusChange(orderId: string, event: Event) {
+  const select = event.target as HTMLSelectElement;
+  const nextStatusStr = select.value;
+  const currentOrder = this.selectedOrder();
+  if (!currentOrder) return;
+
+  if (nextStatusStr === currentOrder.status) return;
+
+  if (!this.canTransition(currentOrder.status, nextStatusStr)) {
+    select.value = currentOrder.status;
+    return;
   }
 
+  const statusMap: Record<string, OrderStatus> = {
+    'Pending': OrderStatus.Pending,
+    'Confirmed': OrderStatus.Confirmed,
+    'Processing': OrderStatus.Processing,
+    'Shipped': OrderStatus.Shipped,
+    'Delivered': OrderStatus.Delivered,
+    'Cancelled': OrderStatus.Cancelled,
+    'Refunded': OrderStatus.Refunded,
+  };
+
+  const nextStatusEnum = statusMap[nextStatusStr];
+  if (!nextStatusEnum) return;
+
+  if (confirm(`Are you sure you want to change the order status to ${nextStatusStr}?`)) {
+    this.isUpdatingStatus.set(true);
+    this.updateStatusError.set(null);
+
+    this.orderService.updateStatus(orderId, { status: nextStatusEnum }).then(success => {
+      this.isUpdatingStatus.set(false);
+      if (success) {
+        this.selectedOrder.update(order => order ? { ...order, status: nextStatusStr } : null);
+        this.orders.update(prevList =>
+          prevList.map(o => o.id === orderId ? { ...o, status: nextStatusStr } : o)
+        );
+        this.toastr.success(
+          this.langService.currentLang() === 'ar'
+            ? 'تم تحديث حالة الطلب بنجاح!'
+            : 'Order status updated successfully!'
+        );
+      } else {
+        select.value = currentOrder.status;
+        this.updateStatusError.set(this.orderService.error() || 'Failed to update order status.');
+        this.toastr.error(this.updateStatusError()!);
+      }
+    }).catch(() => {
+      this.isUpdatingStatus.set(false);
+      select.value = currentOrder.status;
+      this.updateStatusError.set('Failed to update status');
+      this.toastr.error('Failed to update status');
+    });
+  } else {
+    select.value = currentOrder.status;
+  }
+}
   nextPage() {
     if (this.currentPage() < this.totalPages()) {
       this.currentPage.update(p => p + 1);
