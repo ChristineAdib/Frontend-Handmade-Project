@@ -21,6 +21,12 @@ export interface Product {
   isOnePiece?: boolean;
 }
 
+export interface AiReviewSummary {
+  overallSummary: string;
+  pros: string[];
+  cons: string[];
+}
+
 export interface ProductDetailResponse {
   id: string;
   titleEn: string;
@@ -47,6 +53,7 @@ export interface ProductDetailResponse {
   tags: string[];
   createdAt: string;
   updatedAt?: string;
+  aiSummary?: AiReviewSummary;
 }
 
 export interface CategorySummary {

@@ -73,6 +73,7 @@ export const routes: Routes = [
   // Chat
   { path: 'chat', loadComponent: () => import('./Chat/components/chat.component').then(c => c.ChatComponent), canActivate: [authGuard] },
   { path: 'chat/:shopId', loadComponent: () => import('./Chat/components/chat.component').then(c => c.ChatComponent), canActivate: [authGuard] },
+  { path: 'gift-assistant', loadComponent: () => import('./Chat/components/gift-chat/gift-chat.component').then(c => c.GiftChatComponent) },
   { path: 'become-seller', loadComponent: () => import('./shop feature/components/become-seller/become-seller.component').then(c => c.BecomeSellerComponent), canActivate: [authGuard] },
   
   // Seller Dashboard with nested routes

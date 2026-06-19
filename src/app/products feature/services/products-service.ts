@@ -115,6 +115,20 @@ export class ProductsService {
     );
   }
 
+  generateDemoReviews(productId: string): Observable<any> {
+    return this.http.post<any>(
+      `${environment.domain}/api/Reviews/demo/${productId}`,
+      {}
+    );
+  }
+
+  generateAiSummary(productId: string): Observable<any> {
+    return this.http.post<any>(
+      `${environment.domain}/api/Reviews/summarize/${productId}`,
+      {}
+    );
+  }
+
   updateReview(reviewId: string, review: CreateReviewRequest): Observable<ReviewResponse> {
     return this.http.put<ReviewResponse>(
       `${environment.domain}/api/Reviews/${reviewId}`,

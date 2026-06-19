@@ -58,6 +58,7 @@ export class ProductDetail implements OnInit {
   alreadyReviewed = false;
   existingReviewId: string | null = null;
   checkingEligibility = false;
+  isGeneratingAiSummary = false;
 
   ngOnInit(): void {
     this.productId = this.route.snapshot.paramMap.get('id');
@@ -224,6 +225,42 @@ export class ProductDetail implements OnInit {
           : 'Failed to submit review.');
         this.toastr.error(errorMsg);
         this.isSubmittingReview = false;
+      }
+    });
+  }
+
+  generateAiSummary(): void {
+    if (!this.productId) return;
+
+    this.isGeneratingAiSummary = true;
+
+    this.productsService.generateAiSummary(this.productId).subscribe({
+      next: (res) => {
+        this.toastr.success(
+          this.langService.currentLang() === 'ar'
+            ? 'تم توليد ملخص الذكاء الاصطناعي بنجاح!'
+            : 'AI Review Summary generated successfully!'
+        );
+        
+        // Reload only product details to show the new summary
+        this.productsService.getProductById(this.productId!).subscribe({
+          next: (data) => {
+            this.product = data;
+            this.isGeneratingAiSummary = false;
+          },
+          error: (err) => {
+            console.error('Error reloading product summary:', err);
+            this.isGeneratingAiSummary = false;
+          }
+        });
+      },
+      error: (err) => {
+        console.error('Error generating AI summary:', err);
+        const errorMsg = err?.error?.message || (this.langService.currentLang() === 'ar'
+          ? 'فشل توليد ملخص الذكاء الاصطناعي. تأكد من وجود 5 مراجعات على الأقل.'
+          : 'Failed to generate AI summary. Make sure there are at least 5 reviews.');
+        this.toastr.error(errorMsg);
+        this.isGeneratingAiSummary = false;
       }
     });
   }

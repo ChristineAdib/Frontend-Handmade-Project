@@ -1,4 +1,4 @@
-import { Component, signal,HostListener } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 // import { Products } from './products feature/components/products/products';
 // import { ProductDetail } from "./products feature/components/product-detail/product-detail";
@@ -16,13 +16,6 @@ import { Header } from "./shared/header/header";
 })
 export class App {
   protected readonly title = signal('handmade');
-  cursorX =0;
-  cursorY =0;
-@HostListener('document:mousemove', ['$event'])
-  onMouseMove(event: MouseEvent) {
-this.cursorX =event.clientX;
-this.cursorY =event.clientY;
-  }
 }
 
 
