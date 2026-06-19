@@ -75,10 +75,10 @@ export class HeroComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       this.currentSlide.set(index);
       this.imageError.set(false);
-    }, 300);
+    }, 250);
     setTimeout(() => {
       this.isAnimating.set(false);
-    }, 900);
+    }, 750);
     this.stopAutoPlay();
     this.startAutoPlay();
   }

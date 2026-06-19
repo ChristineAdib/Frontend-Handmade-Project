@@ -478,17 +478,13 @@ export const translations = {
     heroBirthday: 'Birthday',
     heroAnniversary: 'Anniversary',
     heroWedding: 'Wedding',
-<<<<<<< HEAD
     heroMothersDay: 'Mother\'s Day',
     heroJustBecause: 'Just Because',
-    heroCustomBadge: 'Custom',           // ✅ التعديل الجديد
-=======
-    heroMothersDay: "Mother's Day",
-    heroJustBecause: 'Just Because',
+    heroCustomBadge: 'Custom',
+
+    soldOutTooltip: 'Sold Out',
     minQtyReached: 'Minimum quantity reached',
-    maxQtyReached: 'Maximum available quantity reached',
-    soldOutTooltip: 'Product is currently unavailable'
->>>>>>> main
+    maxQtyReached: 'Maximum quantity reached',
   },
   ar: {
     // Navigation / Header
@@ -968,7 +964,10 @@ export const translations = {
     heroWedding: 'زفاف',
     heroMothersDay: 'عيد الأم',
     heroJustBecause: 'بدون مناسبة',
-    heroCustomBadge: 'مخصص',           // ✅ التعديل الجديد
+    heroCustomBadge: 'مخصص',
+    soldOutTooltip: 'نفذت الكمية',
+    minQtyReached: 'وصلت للحد الأدنى',
+    maxQtyReached: 'وصلت للحد الأقصى',     // ✅ التعديل الجديد
   }
 };
 
@@ -977,7 +976,7 @@ export const translations = {
 })
 export class LanguageService {
   private platformId = inject(PLATFORM_ID);
-  
+
   // Active language signal
   currentLang = signal<'en' | 'ar'>('en');
 

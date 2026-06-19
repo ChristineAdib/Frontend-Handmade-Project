@@ -1,30 +1,44 @@
 <section class="hero" [class.hero--slide1]="currentSlide() === 0" [class.hero--slide2]="currentSlide() === 1" [class.hero--slide3]="currentSlide() === 2">
 
   <!-- Watermark -->
-  <div class="hero__watermark">
-    <span>{{ slide.watermark }}</span>
-    <span>{{ slide.watermark }}</span>
-    <span>{{ slide.watermark }}</span>
-  </div>
+   <div class="hero__watermark" aria-hidden="true">
+  <span>{{ slide.watermark }}</span>
+  <span>{{ slide.watermark }}</span>
+  <span>{{ slide.watermark }}</span>
+  <span>{{ slide.watermark }}</span>
+  <span>{{ slide.watermark }}</span>
+</div>
+  
 
   <div class="hero__inner">
 
     <!-- LEFT: Content -->
     <div class="hero__content" [class.active]="!isAnimating()">
 
-      <span class="hero__tag" [style.color]="slide.accent">
-        ✦ {{ slide.tag }}
-      </span>
+      <div class="hero__label-group">
+        <span class="hero__tag" [style.color]="slide.accent">
+          {{ slide.tag }}
+        </span>
 
-      <!-- Custom Badge — Slide 2 only, positioned below tag and above heading -->
-      <div class="hero__badge" *ngIf="currentSlide() === 1">
-        <span class="hero__badge-icon">✂</span>
-        <span class="hero__badge-text">Custom orders available</span>
+        <div class="hero__badge-slot">
+          @if (currentSlide() === 1) {
+            <div class="hero__badge">
+              <span class="hero__badge-icon">✂</span>
+              <span class="hero__badge-text">Custom orders available</span>
+            </div>
+          }
+        </div>
       </div>
 
       <h1 class="hero__title">
-        <span class="line1">{{ slide.title }}</span>
-        <span class="line2" [style.color]="slide.accent">{{ slide.titleLine2 }}</span>
+        @if (currentSlide() === 1) {
+          <span class="line1">{{ langService.currentLang() === 'ar' ? 'هل تفكر' : 'Have' }}</span>
+          <span class="line1-mid">{{ langService.currentLang() === 'ar' ? 'في شيء' : 'Something' }}</span>
+          <span class="line2" [style.color]="slide.accent">{{ langService.currentLang() === 'ar' ? 'خاص ومميز؟' : 'Special in Mind?' }}</span>
+        } @else {
+          <span class="line1">{{ slide.title }}</span>
+          <span class="line2" [style.color]="slide.accent">{{ slide.titleLine2 }}</span>
+        }
       </h1>
       <p class="hero__subtitle">{{ slide.subtitle }}</p>
       <a [routerLink]="slide.btnRoute" class="hero__btn" [style.border-color]="slide.accent" [style.color]="slide.accent">
@@ -34,9 +48,8 @@
 
     <!-- RIGHT: Image -->
     <div class="hero__img-wrap" [class.active]="!isAnimating()">
-      <div class="hero__img-bg" [style.background]="slide.accent + '18'"></div>
+      <div class="hero__img-bg" *ngIf="currentSlide() !== 0" [style.background]="slide.accent + '18'"></div>
 
-      <!-- Blueprint overlay for Slide 2 (Custom Orders) -->
       <div class="hero__blueprint" *ngIf="currentSlide() === 1">
         <svg viewBox="0 0 400 400" class="blueprint-svg">
           <defs>
@@ -54,12 +67,8 @@
           <path d="M 60 300 L 60 340 L 100 340" fill="none" stroke="rgba(200, 129, 58, 0.18)" stroke-width="1" class="blueprint-corner"/>
           <path d="M 300 340 L 340 340 L 340 300" fill="none" stroke="rgba(200, 129, 58, 0.18)" stroke-width="1" class="blueprint-corner"/>
         </svg>
-        <div class="blueprint-label">
-          <span class="blueprint-label__text">{{ langService.translate('heroCustomDesign') }}</span>
-        </div>
       </div>
 
-      <!-- Constellation overlay for Slide 3 (Gift Discovery) -->
       <div class="hero__constellation" *ngIf="currentSlide() === 2">
         <div class="constellation-glow"></div>
 
@@ -99,8 +108,8 @@
         <span>{{ slide.tag }}</span>
       </div>
 
-      <div class="hero__ring" [style.border-color]="slide.accent + '30'"></div>
-      <div class="hero__ring hero__ring--2" [style.border-color]="slide.accent + '18'"></div>
+      <div class="hero__ring" *ngIf="currentSlide() !== 0" [style.border-color]="slide.accent + '30'"></div>
+      <div class="hero__ring hero__ring--2" *ngIf="currentSlide() !== 0" [style.border-color]="slide.accent + '18'"></div>
 
       <span class="sparkle s1" [style.background]="slide.accent"></span>
       <span class="sparkle s2" [style.background]="slide.accent"></span>
@@ -109,7 +118,6 @@
 
   </div>
 
-  <!-- Dots -->
   <div class="hero__dots">
     @for (s of slides; track $index) {
       <button
