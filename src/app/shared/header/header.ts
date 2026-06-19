@@ -3,42 +3,92 @@ import { AuthService } from '../../auth/Services/auth';
 import { ToastrService } from 'ngx-toastr';
 import { ChatService } from '../../Chat/Services/chat.service';
 import { LanguageService } from '../../core/services/language.service';
+import { CategoryService } from '../../Categories/Services/category.service';
+import { CategoryResponse } from '../../Categories/Models/CategoryResponse';
 import { filter } from 'rxjs';
-import { Component, inject, signal, HostListener, computed,OnInit } from '@angular/core';
+import { Component, inject, signal, HostListener, computed, OnInit } from '@angular/core';
 import { CartApiService } from '../../orders/services/cart-api.service';
 import { WishlistService } from '../../wishlist feature/services/wishlist-service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { environment } from '../../../environments/environment';
-
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+ 
+// Static fallback — shown when backend is down or returns empty list
+const FALLBACK_CATEGORIES: CategoryResponse[] = [
+  { id: 'f1', nameEn: 'Pottery',  nameAr: 'فخار',   imageUrl: null, parentId: null, subCategories: [] },
+  { id: 'f2', nameEn: 'Beads',    nameAr: 'خرز',     imageUrl: null, parentId: null, subCategories: [] },
+  { id: 'f3', nameEn: 'Crochet',  nameAr: 'كروشيه', imageUrl: null, parentId: null, subCategories: [] },
+];
+ 
 @Component({
   selector: 'app-header',
   imports: [RouterLink, RouterLinkActive, CommonModule, FormsModule],
   templateUrl: './header.html',
   styleUrl: './header.css',
 })
-
 export class Header implements OnInit {
-  private authService = inject(AuthService);
-  private router = inject(Router);
-  private toastr = inject(ToastrService);
-  protected chatService = inject(ChatService);
-  protected langService = inject(LanguageService);
-  private cartService = inject(CartApiService);
+  private authService    = inject(AuthService);
+  private router         = inject(Router);
+  private toastr         = inject(ToastrService);
+  protected chatService  = inject(ChatService);
+  protected langService  = inject(LanguageService);
+  private cartService    = inject(CartApiService);
   protected wishlistService = inject(WishlistService);
-
+  private categoryService   = inject(CategoryService);
+  private sanitizer         = inject(DomSanitizer);
+ 
+  // ── Local signal for displayed categories ──────────────────
+  displayedCategories = signal<CategoryResponse[]>([]);
+  categoriesLoading   = signal<boolean>(false);
+ 
+  // ── Icons per category (lowercase English name key) ────────
+  private categoryIcons: Record<string, string> = {
+    pottery: `<path d="M7 8C7 5 9 3 12 3C15 3 17 5 17 8"/><path d="M7 8C7 12 8 15 9 17C10 19 14 19 15 17C16 15 17 12 17 8"/><path d="M9 17H15"/><path d="M8 20H16"/><path d="M9 20V17"/><path d="M15 20V17"/>`,
+    beads:   `<path d="M4 10C4 10 6 4 12 4C18 4 20 10 20 10"/><circle cx="12" cy="14" r="2"/><circle cx="8" cy="16" r="1.5"/><circle cx="16" cy="16" r="1.5"/><circle cx="6" cy="12" r="1.5"/><circle cx="18" cy="12" r="1.5"/><path d="M12 16V20"/>`,
+    crochet: `<path d="M12 2V14"/><path d="M8 6C8 6 10 4 12 4C14 4 16 6 16 6"/><path d="M8 10C8 10 10 8 12 8C14 8 16 10 16 10"/><path d="M8 14C8 14 10 12 12 12C14 12 16 14 16 14"/><path d="M10 18H14"/><path d="M11 18V22"/><path d="M13 18V22"/>`,
+  };
+  private defaultIcon = `<circle cx="12" cy="12" r="9"/><path d="M12 8v4l2 2"/>`;
+ 
+  private categoryColors: Record<string, string> = {
+    pottery: '#8B6914',
+    beads:   '#c8813a',
+    crochet: '#A0522D',
+  };
+ 
+  getCategoryIcon(nameEn: string): string {
+    return this.categoryIcons[nameEn.toLowerCase()] ?? this.defaultIcon;
+  }
+ 
+  getFullCategoryIconSvg(nameEn: string): SafeHtml {
+    const paths = this.getCategoryIcon(nameEn);
+    const color = this.getCategoryColor(nameEn);
+    const svg = `<svg width="28" height="28" viewBox="0 0 24 24" fill="none"
+      stroke="${color}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+      xmlns="http://www.w3.org/2000/svg">${paths}</svg>`;
+    return this.sanitizer.bypassSecurityTrustHtml(svg);
+  }
+  getCategoryColor(nameEn: string): string {
+    return this.categoryColors[nameEn.toLowerCase()] ?? '#c8813a';
+  }
+ 
+  // Navigate to /products?category=pottery  then close dropdown
+  goToCategory(nameEn: string): void {
+    this.router.navigate(['/products'], { queryParams: { category: nameEn.toLowerCase() } });
+    this.activeDropdown.set(null);
+  }
+ 
+  // ── Lifecycle ──────────────────────────────────────────────
   ngOnInit(): void {
-    // Load initial cart and wishlist state
     this.cartService.getCart();
     this.wishlistService.getWishList().subscribe();
-
-    // 1. Initial connection if already logged in on load
+    this.loadCategories();
+ 
     if (this.isLoggedIn()) {
       this.chatService.initializeRealTime();
       this.chatService.loadConversations();
     }
-
-    // 2. Listen to navigation events to initialize/disconnect on state change
+ 
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe(() => {
@@ -50,95 +100,46 @@ export class Header implements OnInit {
       }
     });
   }
-
-  onSellerIconClick() {
-    this.toastr.info('Start Selling on Handaura', '');
+ 
+  private async loadCategories(): Promise<void> {
+    this.categoriesLoading.set(true);
+    try {
+      await this.categoryService.loadAll();
+      const fromApi = this.categoryService.categories();
+      // Use API data if returned, otherwise show fallback
+      this.displayedCategories.set(fromApi.length > 0 ? fromApi : FALLBACK_CATEGORIES);
+    } catch {
+      this.displayedCategories.set(FALLBACK_CATEGORIES);
+    } finally {
+      this.categoriesLoading.set(false);
+    }
   }
-
-  isScrolled = signal(false);
-  mobileMenuOpen = signal(false);
-  searchOpen = signal(false);
-  searchQuery = signal('');
-  activeDropdown = signal<string | null>(null);
-
-  cartCount = computed(() => this.cartService.cart()?.totalItems ?? 0);
+ 
+  // ── Computed shortcuts ─────────────────────────────────────
+  cartCount     = computed(() => this.cartService.cart()?.totalItems ?? 0);
   wishlistCount = computed(() => this.wishlistService.wishlist()?.totalItems ?? 0);
-
-  categories = [
-    { 
-      name: 'Beads', 
-      nameAr: 'خرز', 
-      route: '/products', 
-      color: '#c8813a'
-    },
-    { 
-      name: 'Pottery', 
-      nameAr: 'فخار', 
-      route: '/products', 
-      color: '#8B6914'
-    },
-    { 
-      name: 'Crochet', 
-      nameAr: 'كروشيه', 
-      route: '/products', 
-      color: '#A0522D'
-    },
-  ];
-
+ 
+  // ── UI state ───────────────────────────────────────────────
+  isScrolled     = signal(false);
+  mobileMenuOpen = signal(false);
+  searchOpen     = signal(false);
+  searchQuery    = signal('');
+  activeDropdown = signal<string | null>(null);
+ 
   @HostListener('window:scroll')
-  onScroll() {
-    this.isScrolled.set(window.scrollY > 30);
-  }
-
-  isLoggedIn(): boolean {
-    return this.authService.isLoggedIn();
-  }
-  isSeller(): boolean {
-    const user = this.authService.getUser();
-    return user?.roles?.includes('Seller') ?? false;
-  }
-  logout(){
-    this.chatService.disconnectRealTime();
-    this.authService.logout();
-    this.toastr.info('See you soon!', "Logged Out")
-    this.router.navigate(['/login-api']);
-  }
-
-  getUserName(): string {
-    return this.authService.getUser()?.name ?? '';
-  }
-
-  getUserProfileImage(): string | null {
-    const user = this.authService.getUser();
-    if (!user || !user.profileImage) {
-      return null;
-    }
-    if (user.profileImage.startsWith('http://') || user.profileImage.startsWith('https://')) {
-      return user.profileImage;
-    }
-    return `${environment.apiUrl}/${user.profileImage}`;
-  }
-
+  onScroll() { this.isScrolled.set(window.scrollY > 30); }
+ 
   toggleMobileMenu() {
     this.mobileMenuOpen.update(v => !v);
-    if (this.mobileMenuOpen()) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
+    document.body.style.overflow = this.mobileMenuOpen() ? 'hidden' : '';
   }
-
   toggleSearch() {
     this.searchOpen.update(v => !v);
-    if (this.searchOpen()) {
-      setTimeout(() => document.getElementById('navSearch')?.focus(), 100);
-    }
+    if (this.searchOpen()) setTimeout(() => document.getElementById('navSearch')?.focus(), 100);
   }
-
   toggleDropdown(name: string) {
     this.activeDropdown.update(v => v === name ? null : name);
   }
-
   onSearch() {
     if (this.searchQuery().trim()) {
       this.router.navigate(['/products'], { queryParams: { search: this.searchQuery() } });
@@ -146,10 +147,27 @@ export class Header implements OnInit {
       this.searchQuery.set('');
     }
   }
-
-  // logout() {
-  //   this.authService.logout();
-  //   this.toastr.info('See you soon!', 'Logged Out');
-  //   this.router.navigate(['/login']);
-  // }
+ 
+  // ── Auth helpers ───────────────────────────────────────────
+  isLoggedIn(): boolean { return this.authService.isLoggedIn(); }
+  isSeller(): boolean {
+    return this.authService.getUser()?.roles?.includes('Seller') ?? false;
+  }
+  logout() {
+    this.chatService.disconnectRealTime();
+    this.authService.logout();
+    this.toastr.info('See you soon!', 'Logged Out');
+    this.router.navigate(['/login-api']);
+  }
+  getUserName(): string { return this.authService.getUser()?.name ?? ''; }
+  getUserProfileImage(): string | null {
+    const user = this.authService.getUser();
+    if (!user?.profileImage) return null;
+    if (user.profileImage.startsWith('http://') || user.profileImage.startsWith('https://'))
+      return user.profileImage;
+    return `${environment.apiUrl}/${user.profileImage}`;
+  }
+ 
+  onSellerIconClick() { this.toastr.info('Start Selling on Handaura', ''); }
 }
+ 

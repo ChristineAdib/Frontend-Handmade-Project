@@ -411,12 +411,12 @@ export const translations = {
     categorySubtitle: 'Discover the finest handmade crafts made with love and skill by Egypt\'s finest artisans',
     comingSoon: 'Coming Soon',
     productsCountLabel: 'Products',
-    shopOurBestsellers: 'Shop Our Bestsellers',
+    shopOurBestSales: 'Shop Our Best Sales',
     shopAll: 'SHOP ALL',
     percentOff: 'OFF',
     compare: 'Compare',
     addToCartCaps: 'ADD TO CART',
-    topShops: 'Top Shops',
+    topArtisans: 'Top Artisans',
     highlyRecommended: 'HIGHLY RECOMMENDED',
     discoverMore: 'DISCOVER MORE',
     verifiedBuyer: 'Verified Buyer',
@@ -478,11 +478,13 @@ export const translations = {
     heroBirthday: 'Birthday',
     heroAnniversary: 'Anniversary',
     heroWedding: 'Wedding',
-    heroMothersDay: "Mother's Day",
+    heroMothersDay: 'Mother\'s Day',
     heroJustBecause: 'Just Because',
+    heroCustomBadge: 'Custom',
+
+    soldOutTooltip: 'Sold Out',
     minQtyReached: 'Minimum quantity reached',
-    maxQtyReached: 'Maximum available quantity reached',
-    soldOutTooltip: 'Product is currently unavailable'
+    maxQtyReached: 'Maximum quantity reached',
   },
   ar: {
     // Navigation / Header
@@ -893,12 +895,12 @@ export const translations = {
     categorySubtitle: 'اكتشف أرقى الحرف اليدوية المصنوعة بكل حب ومهارة بأيدي أفضل الحرفيين في مصر',
     comingSoon: 'قريباً',
     productsCountLabel: 'منتجات',
-    shopOurBestsellers: 'تسوق الأكثر مبيعاً',
+    shopOurBestSales: 'تسوق الأكثر مبيعاً',
     shopAll: 'تسوق الكل',
     percentOff: 'خصم',
     compare: 'مقارنة',
     addToCartCaps: 'أضف إلى السلة',
-    topShops: 'أفضل المتاجر',
+    topArtisans: 'أفضل الفنانين ',
     highlyRecommended: 'موصى به بشدة',
     discoverMore: 'اكتشف المزيد',
     verifiedBuyer: 'مشتري موثق',
@@ -962,18 +964,19 @@ export const translations = {
     heroWedding: 'زفاف',
     heroMothersDay: 'عيد الأم',
     heroJustBecause: 'بدون مناسبة',
-    minQtyReached: 'تم الوصول إلى الحد الأدنى للكمية',
-    maxQtyReached: 'تم الوصول إلى الحد الأقصى للكمية المتاحة',
-    soldOutTooltip: 'المنتج غير متوفر حالياً'
+    heroCustomBadge: 'مخصص',
+    soldOutTooltip: 'نفذت الكمية',
+    minQtyReached: 'وصلت للحد الأدنى',
+    maxQtyReached: 'وصلت للحد الأقصى',     // ✅ التعديل الجديد
   }
-};;
+};
 
 @Injectable({
   providedIn: 'root'
 })
 export class LanguageService {
   private platformId = inject(PLATFORM_ID);
-  
+
   // Active language signal
   currentLang = signal<'en' | 'ar'>('en');
 
