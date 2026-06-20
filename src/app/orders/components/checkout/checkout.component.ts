@@ -1,4 +1,5 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, computed, inject, OnInit } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
@@ -18,7 +19,7 @@ export class CheckoutComponent implements OnInit {
   private readonly router = inject(Router);
   readonly orderService = inject(OrderService);
   protected readonly langService = inject(LanguageService);
-  private readonly cartApiService = inject(CartApiService);
+  protected readonly cartApiService = inject(CartApiService);
 
   checkoutForm = this.fb.group({
     firstName: ['', Validators.required],
@@ -34,6 +35,18 @@ export class CheckoutComponent implements OnInit {
   ngOnInit(): void {
     this.orderService.loadDeliveryMethods();
   }
+
+  private readonly selectedMethodId = toSignal(
+    this.checkoutForm.get('deliveryMethodId')!.valueChanges,
+    { initialValue: '' }
+  );
+
+  readonly selectedDeliveryCost = computed<number | null>(() => {
+    const methodId = this.selectedMethodId();
+    if (!methodId) return null;
+    const method = this.orderService.deliveryMethods().find(m => m.id === methodId);
+    return method ? method.cost : null;
+  });
 
   async onSubmit(): Promise<void> {
     if (this.checkoutForm.invalid) return;
