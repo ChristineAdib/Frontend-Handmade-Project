@@ -6,6 +6,7 @@ import { AuthService } from '../../../auth/Services/auth';
 import { MessageType } from '../../Models/MessageType';
 import { LanguageService } from '../../../core/services/language.service';
 import { ToastrService } from 'ngx-toastr';
+import { parseUtcDate } from '../../../core/utils/date-utils';
 
 @Component({
   selector: 'app-chat-window',
@@ -176,8 +177,12 @@ export class ChatWindowComponent implements AfterViewChecked {
   }
 
   formatMessageTime(timeStr: string): string {
-    const date = new Date(timeStr);
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const date = parseUtcDate(timeStr);
+    return date.toLocaleTimeString([], { 
+      hour: '2-digit', 
+      minute: '2-digit',
+      timeZone: 'Africa/Cairo'
+    });
   }
 
   openLightbox(url: string): void {

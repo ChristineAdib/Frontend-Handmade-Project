@@ -87,8 +87,18 @@ export class OrderService {
       );
       this.selectedOrder.set(data);
       return true;
-    } catch {
-      this.error.set('Failed to update order status.');
+    } catch (err: any) {
+      let errorMessage = 'Failed to update order status.';
+      if (err?.error) {
+        if (typeof err.error === 'string') {
+          errorMessage = err.error;
+        } else if (Array.isArray(err.error) && err.error.length > 0) {
+          errorMessage = err.error[0];
+        } else if (err.error.message) {
+          errorMessage = err.error.message;
+        }
+      }
+      this.error.set(errorMessage);
       return false;
     } finally {
       this.isLoading.set(false);

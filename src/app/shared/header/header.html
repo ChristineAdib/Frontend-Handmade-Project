@@ -1,29 +1,21 @@
 <!-- ANNOUNCEMENT BAR -->
 <div class="ann-bar">
   <div class="ann-track">
-    <span>✦ شحن مجاني للطلبات فوق 500 جنيه</span>
-    <span>✦ كل قطعة تحكي قصة</span>
-    <span>✦ 10% خصم على أول طلب — سجّل الآن</span>
-    <span>✦ صنايعية مصريين بأيدي محترفة</span>
-    <span>✦ Free shipping on orders over 500 EGP</span>
+    <span>✦ Free shipping on orders over 200 EGP</span>
     <span>✦ Every piece tells a story</span>
     <span>✦ 10% off your first order — sign up now</span>
     <span>✦ Handcrafted with love in Egypt</span>
-    <span>✦ شحن مجاني للطلبات فوق 500 جنيه</span>
-    <span>✦ كل قطعة تحكي قصة</span>
-    <span>✦ 10% خصم على أول طلب — سجّل الآن</span>
-    <span>✦ صنايعية مصريين بأيدي محترفة</span>
-    <span>✦ Free shipping on orders over 500 EGP</span>
+    <span>✦ Free shipping on orders over 200 EGP</span>
     <span>✦ Every piece tells a story</span>
     <span>✦ 10% off your first order — sign up now</span>
     <span>✦ Handcrafted with love in Egypt</span>
   </div>
 </div>
-
+ 
 <!-- MAIN NAV -->
 <nav class="nav" [class.nav--scrolled]="isScrolled()">
   <div class="nav__inner">
-
+ 
     <!-- LEFT: LOGO -->
     <a routerLink="/home" class="logo">
       <div class="logo__mark">
@@ -37,114 +29,85 @@
         <span class="logo__tag">{{ langService.currentLang() === 'ar' ? 'مشغولات يدوية مصرية ✦' : 'Handmade in Egypt ✦' }}</span>
       </div>
     </a>
-
+ 
     <!-- CENTER: NAV LINKS -->
     <ul class="nav__links">
       <li>
         <a routerLink="/home" routerLinkActive="is-active" class="nav__link">{{ langService.translate('home') }}</a>
       </li>
-
-      <!-- Shop dropdown -->
-      <li class="nav__item--drop"
-          (mouseenter)="toggleDropdown('shop')"
-          (mouseleave)="toggleDropdown('shop')">
-        <span class="nav__link" [class.is-active]="activeDropdown() === 'shop'">
+ 
+      <!-- Shop dropdown — Dynamic Categories -->
+      <li class="nav__item--drop nav__item--shop-drop">
+        <a routerLink="/products" class="nav__link">
           {{ langService.translate('shop') }}
-          <svg class="nav__chevron" [class.nav__chevron--open]="activeDropdown() === 'shop'"
-               width="10" height="10" viewBox="0 0 10 10">
+          <svg class="nav__chevron" width="10" height="10" viewBox="0 0 10 10">
             <path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" stroke-width="1.5"
                   stroke-linecap="round" stroke-linejoin="round" fill="none"/>
           </svg>
-        </span>
-        <div class="nav__drop" [class.nav__drop--open]="activeDropdown() === 'shop'">
+        </a>
+        <div class="nav__drop nav__drop--shop">
           <p class="nav__drop-label">{{ langService.translate('shopByCraft') }}</p>
           <div class="nav__drop-categories">
-            <!-- BEADS -->
-            <a [routerLink]="'/products'" [queryParams]="{ category: 'beads' }" class="nav__drop-cat" style="--cat-color: #c8813a">
-              <div class="nav__drop-cat-icon">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M4 10C4 10 6 4 12 4C18 4 20 10 20 10"/>
-                  <circle cx="12" cy="14" r="2"/>
-                  <circle cx="8" cy="16" r="1.5"/>
-                  <circle cx="16" cy="16" r="1.5"/>
-                  <circle cx="6" cy="12" r="1.5"/>
-                  <circle cx="18" cy="12" r="1.5"/>
-                  <path d="M12 16V20"/>
-                </svg>
+            <!-- Loading state -->
+            @if (categoriesLoading()) {
+              <div class="nav__drop-loading">
+                <span class="nav__drop-loading-spinner"></span>
+                <span class="nav__drop-loading-text">{{ langService.currentLang() === 'ar' ? 'جاري التحميل...' : 'Loading...' }}</span>
               </div>
-              <div class="nav__drop-cat-info">
-                <span class="nav__drop-cat-name">Beads</span>
-                <span class="nav__drop-cat-ar">خرز</span>
-              </div>
-              <svg class="nav__drop-cat-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-                <path d="M5 12h14M12 5l7 7-7 7"/>
-              </svg>
-            </a>
+            }
 
-            <!-- POTTERY -->
-            <a [routerLink]="'/products'" [queryParams]="{ category: 'pottery' }" class="nav__drop-cat" style="--cat-color: #8B6914">
-              <div class="nav__drop-cat-icon">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M7 8C7 5 9 3 12 3C15 3 17 5 17 8"/>
-                  <path d="M7 8C7 12 8 15 9 17C10 19 14 19 15 17C16 15 17 12 17 8"/>
-                  <path d="M9 17H15"/>
-                  <path d="M8 20H16"/>
-                  <path d="M9 20V17"/>
-                  <path d="M15 20V17"/>
-                </svg>
+            <!-- Empty state -->
+            @if (!categoriesLoading() && displayedCategories().length === 0) {
+              <div class="nav__drop-empty">
+                <span>{{ langService.currentLang() === 'ar' ? 'لا توجد تصنيفات حالياً' : 'No categories available' }}</span>
               </div>
-              <div class="nav__drop-cat-info">
-                <span class="nav__drop-cat-name">Pottery</span>
-                <span class="nav__drop-cat-ar">فخار</span>
-              </div>
-              <svg class="nav__drop-cat-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-                <path d="M5 12h14M12 5l7 7-7 7"/>
-              </svg>
-            </a>
+            }
 
-            <!-- CROCHET -->
-            <a [routerLink]="'/products'" [queryParams]="{ category: 'crochet' }" class="nav__drop-cat" style="--cat-color: #A0522D">
-              <div class="nav__drop-cat-icon">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M12 2V14"/>
-                  <path d="M8 6C8 6 10 4 12 4C14 4 16 6 16 6"/>
-                  <path d="M8 10C8 10 10 8 12 8C14 8 16 10 16 10"/>
-                  <path d="M8 14C8 14 10 12 12 12C14 12 16 14 16 14"/>
-                  <path d="M10 18H14"/>
-                  <path d="M11 18V22"/>
-                  <path d="M13 18V22"/>
-                </svg>
-              </div>
-              <div class="nav__drop-cat-info">
-                <span class="nav__drop-cat-name">Crochet</span>
-                <span class="nav__drop-cat-ar">كروشيه</span>
-              </div>
-              <svg class="nav__drop-cat-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-                <path d="M5 12h14M12 5l7 7-7 7"/>
-              </svg>
-            </a>
+            <!-- Dynamic Categories from API -->
+            @for (cat of displayedCategories(); track cat.id) {
+              <a [routerLink]="'/products'"
+                 [queryParams]="{ category: cat.nameEn.toLowerCase() }"
+                 class="nav__drop-cat"
+                 [style]="'--cat-color:' + getCategoryColor(cat.nameEn)">
 
+                <!-- Icon: use div[innerHTML] to render SVG paths correctly -->
+                <div class="nav__drop-cat-icon">
+                  <div class="nav__drop-cat-svg-wrap"
+                       [innerHTML]="getFullCategoryIconSvg(cat.nameEn)">
+                  </div>
+                </div>
+
+                <div class="nav__drop-cat-info">
+                  <span class="nav__drop-cat-name">{{ cat.nameEn }}</span>
+                  <span class="nav__drop-cat-ar">{{ cat.nameAr }}</span>
+                </div>
+                <svg class="nav__drop-cat-arrow" width="16" height="16" viewBox="0 0 24 24"
+                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+              </a>
+            }
           </div>
           <a routerLink="/products" class="nav__drop-all">{{ langService.translate('viewAllCrafts') }} →</a>
         </div>
       </li>
-
+ 
       <li>
         <a routerLink="/shops" routerLinkActive="is-active" class="nav__link">{{ langService.translate('artisans') }}</a>
       </li>
-
+ 
       <li>
         <a routerLink="/about" routerLinkActive="is-active" class="nav__link">{{ langService.translate('about') }}</a>
       </li>
-
+ 
       <li>
         <a routerLink="/contact" routerLinkActive="is-active" class="nav__link">{{ langService.translate('contact') }}</a>
       </li>
     </ul>
-
+ 
     <!-- RIGHT: ACTIONS -->
     <div class="nav__actions">
-
+ 
       <!-- Gift Finder -->
       <a routerLink="/gift-assistant" class="nav__gift-btn">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
@@ -155,7 +118,7 @@
         </svg>
         {{ langService.translate('giftFinder') }}
       </a>
-
+ 
       <!-- Search -->
       <button class="nav__search-icon" (click)="toggleSearch()" [title]="langService.translate('search')">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
@@ -164,7 +127,7 @@
           <path d="M21 21L16.65 16.65"/>
         </svg>
       </button>
-
+ 
       <!-- Language Toggle -->
       <button class="nav__icon-btn" (click)="langService.toggleLanguage()" [title]="langService.currentLang() === 'en' ? 'العربية' : 'English'">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -173,8 +136,7 @@
           <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
         </svg>
       </button>
-
-      <!-- Become a Seller -->
+      <!-- Become a Seller — أيقونة أوضح (متجر/بازار) -->
       @if (!isSeller()) {
         <a routerLink="/become-seller" class="nav__seller-icon" [attr.data-tooltip]="langService.translate('becomeSeller')">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
@@ -190,7 +152,7 @@
           </svg>
         </a>
       }
-
+ 
       <div class="nav__icons-group">
 
         <!-- ✦ SELLER DASHBOARD ICON — هنا الجديد -->
@@ -214,7 +176,6 @@
             <span class="nav__badge">{{ wishlistCount() }}</span>
           }
         </a>
-
         <!-- Cart -->
         <a routerLink="/cart" class="nav__icon-btn nav__cart" [title]="langService.currentLang() === 'ar' ? 'عربة التسوق' : 'Cart'">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
@@ -227,26 +188,105 @@
             <span class="nav__badge">{{ cartCount() }}</span>
           }
         </a>
-
+ 
         <!-- Chat -->
         @if (isLoggedIn()) {
           <a routerLink="/chat" class="nav__icon-btn nav__cart" [title]="langService.translate('chat')">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+               <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
             </svg>
             @if (chatService.totalUnread() > 0) {
               <span class="nav__badge">{{ chatService.totalUnread() }}</span>
             }
           </a>
         }
+
+        <!-- Notifications -->
+        @if (isLoggedIn()) {
+          <div class="nav__item--drop nav__notifications-wrapper"
+               (mouseenter)="openDropdown('notif')"
+               (mouseleave)="closeDropdown()">
+            <button class="nav__icon-btn nav__cart" [title]="langService.currentLang() === 'ar' ? 'الإشعارات' : 'Notifications'">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+              </svg>
+              @if (notificationService.unreadCount() > 0) {
+                <span class="nav__badge">{{ notificationService.unreadCount() }}</span>
+              }
+            </button>
+
+            <!-- Notifications Dropdown -->
+            <div class="nav__drop nav__drop--right nav__notifications-dropdown" [class.nav__drop--open]="activeDropdown() === 'notif'">
+              <div class="nav__drop-inner">
+                <div class="notif__header">
+                  <h3>{{ langService.currentLang() === 'ar' ? 'الإشعارات' : 'Notifications' }}</h3>
+                  @if (notificationService.unreadCount() > 0) {
+                    <button class="notif__read-all" (click)="notificationService.markAllAsRead()">
+                      {{ langService.currentLang() === 'ar' ? 'تحديد الكل كمقروء' : 'Mark all as read' }}
+                    </button>
+                  }
+                </div>
+                <div class="nav__drop-sep"></div>
+                <div class="notif__list">
+                  @if (notificationService.notifications().length === 0) {
+                    <div class="notif__empty">
+                      {{ langService.currentLang() === 'ar' ? 'لا توجد إشعارات' : 'No notifications yet' }}
+                    </div>
+                  } @else {
+                    @for (notif of notificationService.notifications(); track notif.id) {
+                      <div class="notif__item" [class.notif__item--unread]="!notif.isRead" (click)="handleNotificationClick(notif)">
+                        <div class="notif__icon">
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            @switch (notif.type) {
+                              @case (7) { <!-- Message -->
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                              }
+                              @case (8) { <!-- Follow/NewFollower -->
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/>
+                              }
+                              @case (16) { <!-- Order -->
+                                <circle cx="6" cy="19" r="2"/><circle cx="17" cy="19" r="2"/><path d="M17 17H6.5C5.7 17 5 16.3 5 15.5V5H2M5 9h16.5l-2.5 8H6.5"/>
+                              }
+                              @case (19) { <!-- OrderStatusChanged -->
+                                <circle cx="6" cy="19" r="2"/><circle cx="17" cy="19" r="2"/><path d="M17 17H6.5C5.7 17 5 16.3 5 15.5V5H2M5 9h16.5l-2.5 8H6.5"/>
+                              }
+                              @case (17) { <!-- PaymentReceived -->
+                                <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                              }
+                              @case (18) { <!-- UserBanned -->
+                                <circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>
+                              }
+                              @default {
+                                <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="9" x2="12.01" y2="9"/>
+                              }
+                            }
+                          </svg>
+                        </div>
+                        <div class="notif__content">
+                          <h4 class="notif__title">{{ langService.currentLang() === 'ar' ? notif.titleAr : notif.titleEn }}</h4>
+                          <p class="notif__desc">{{ langService.currentLang() === 'ar' ? notif.messageAr : notif.messageEn }}</p>
+                          <span class="notif__time">{{ getRelativeTime(notif.createdAt) }}</span>
+                        </div>
+                        @if (!notif.isRead) {
+                          <span class="notif__dot"></span>
+                        }
+                      </div>
+                    }
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+        }
       </div>
-
+ 
       <div class="nav__divider"></div>
-
+ 
       <!-- Account -->
       <div class="nav__item--drop"
-           (mouseenter)="toggleDropdown('acc')"
-           (mouseleave)="toggleDropdown('acc')">
+           (mouseenter)="openDropdown('acc')"
+           (mouseleave)="closeDropdown()">
         <button class="nav__account-icon" [title]="langService.currentLang() === 'ar' ? 'الحساب' : 'Account'">
           @if (isLoggedIn() && getUserProfileImage()) {
             <img [src]="getUserProfileImage()!" class="nav__profile-img" alt="Profile" />
@@ -258,7 +298,7 @@
             </svg>
           }
         </button>
-
+ 
         <div class="nav__drop nav__drop--right" [class.nav__drop--open]="activeDropdown() === 'acc'">
           <div class="nav__drop-inner">
             @if (!isLoggedIn()) {
@@ -306,7 +346,7 @@
           </div>
         </div>
       </div>
-
+ 
       <!-- Start Selling -->
       @if (!isLoggedIn()) {
         <a routerLink="/register" class="nav__sell-btn">
@@ -317,13 +357,13 @@
           </svg>
         </a>
       }
-
+ 
       <button class="nav__burger" [class.nav__burger--open]="mobileMenuOpen()" (click)="toggleMobileMenu()">
         <span></span><span></span><span></span>
       </button>
     </div>
   </div>
-
+ 
   <!-- SEARCH OVERLAY -->
   <div class="nav__search-bar" [class.nav__search-bar--open]="searchOpen()">
     <div class="nav__search-inner">
@@ -341,15 +381,15 @@
         (keyup.enter)="onSearch()"
       />
       <div class="nav__search-tags">
-        <a routerLink="/products" [queryParams]="{ category: 'beads' }" (click)="toggleSearch()">{{ langService.currentLang() === 'ar' ? 'خرز' : 'Beads' }}</a>
-        <a routerLink="/products" [queryParams]="{ category: 'pottery' }" (click)="toggleSearch()">{{ langService.currentLang() === 'ar' ? 'فخار' : 'Pottery' }}</a>
-        <a routerLink="/products" [queryParams]="{ category: 'crochet' }" (click)="toggleSearch()">{{ langService.currentLang() === 'ar' ? 'كروشيه' : 'Crochet' }}</a>
+        @for (cat of displayedCategories(); track cat.id) {
+          <a routerLink="/products" [queryParams]="{ category: cat.nameEn.toLowerCase() }" (click)="toggleSearch()">{{ langService.currentLang() === 'ar' ? cat.nameAr : cat.nameEn }}</a>
+        }
       </div>
       <button class="nav__search-close" (click)="toggleSearch()">✕</button>
     </div>
   </div>
 </nav>
-
+ 
 <!-- MOBILE MENU -->
 <div class="mob" [class.mob--open]="mobileMenuOpen()">
   <div class="mob__inner">
@@ -360,54 +400,26 @@
     <div class="mob__sep"></div>
     <a routerLink="/home" class="mob__link" (click)="toggleMobileMenu()">{{ langService.translate('home') }}</a>
     <p class="mob__section">{{ langService.translate('shopByCraft') }}</p>
-
-    <!-- Mobile: Beads -->
-    <a [routerLink]="'/products'" [queryParams]="{ category: 'beads' }" class="mob__link mob__link--cat" (click)="toggleMobileMenu()">
-      <span class="mob__cat-icon">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M4 10C4 10 6 4 12 4C18 4 20 10 20 10"/>
-          <circle cx="12" cy="14" r="2"/>
-          <circle cx="8" cy="16" r="1.5"/>
-          <circle cx="16" cy="16" r="1.5"/>
-          <circle cx="6" cy="12" r="1.5"/>
-          <circle cx="18" cy="12" r="1.5"/>
-          <path d="M12 16V20"/>
-        </svg>
+ 
+    <!-- Mobile: Dynamic Categories -->
+    @for (cat of displayedCategories(); track cat.id) {
+      <a [routerLink]="'/products'" [queryParams]="{ category: cat.nameEn.toLowerCase() }" class="mob__link mob__link--cat" (click)="toggleMobileMenu()">
+        <span class="mob__cat-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"
+               [innerHTML]="getCategoryIcon(cat.nameEn)">
+          </svg>
+        </span>
+        {{ langService.currentLang() === 'ar' ? cat.nameAr : cat.nameEn }}
+      </a>
+    }
+ 
+    <!-- Empty state for mobile -->
+    @if (!categoriesLoading() && displayedCategories().length === 0) {
+      <span class="mob__link" style="color: #a08060; font-size: 13px;">
+        {{ langService.currentLang() === 'ar' ? 'لا توجد تصنيفات' : 'No categories yet' }}
       </span>
-      {{ langService.currentLang() === 'ar' ? 'خرز' : 'Beads' }}
-    </a>
-
-    <!-- Mobile: Pottery -->
-    <a [routerLink]="'/products'" [queryParams]="{ category: 'pottery' }" class="mob__link mob__link--cat" (click)="toggleMobileMenu()">
-      <span class="mob__cat-icon">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M7 8C7 5 9 3 12 3C15 3 17 5 17 8"/>
-          <path d="M7 8C7 12 8 15 9 17C10 19 14 19 15 17C16 15 17 12 17 8"/>
-          <path d="M9 17H15"/>
-          <path d="M8 20H16"/>
-          <path d="M9 20V17"/>
-          <path d="M15 20V17"/>
-        </svg>
-      </span>
-      {{ langService.currentLang() === 'ar' ? 'فخار' : 'Pottery' }}
-    </a>
-
-    <!-- Mobile: Crochet -->
-    <a [routerLink]="'/products'" [queryParams]="{ category: 'crochet' }" class="mob__link mob__link--cat" (click)="toggleMobileMenu()">
-      <span class="mob__cat-icon">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 2V14"/>
-          <path d="M8 6C8 6 10 4 12 4C14 4 16 6 16 6"/>
-          <path d="M8 10C8 10 10 8 12 8C14 8 16 10 16 10"/>
-          <path d="M8 14C8 14 10 12 12 12C14 12 16 14 16 14"/>
-          <path d="M10 18H14"/>
-          <path d="M11 18V22"/>
-          <path d="M13 18V22"/>
-        </svg>
-      </span>
-      {{ langService.currentLang() === 'ar' ? 'كروشيه' : 'Crochet' }}
-    </a>
-
+    }
+ 
     <a routerLink="/products" class="mob__link" (click)="toggleMobileMenu()">{{ langService.translate('allProducts') }}</a>
     <div class="mob__sep"></div>
     <a routerLink="/shops" class="mob__link" (click)="toggleMobileMenu()">{{ langService.translate('artisans') }}</a>

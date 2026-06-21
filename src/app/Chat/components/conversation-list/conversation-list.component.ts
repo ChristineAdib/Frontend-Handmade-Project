@@ -6,6 +6,7 @@ import { ChatService } from '../../Services/chat.service';
 import { AuthService } from '../../../auth/Services/auth';
 import { MessageType } from '../../Models/MessageType';
 import { LanguageService } from '../../../core/services/language.service';
+import { parseUtcDate } from '../../../core/utils/date-utils';
 
 @Component({
   selector: 'app-conversation-list',
@@ -55,21 +56,37 @@ export class ConversationListComponent {
   }
 
   getLastMessageTime(c: Conversation): string {
-    const msgDate = c.lastMessage ? new Date(c.lastMessage.createdAt) : new Date(c.createdAt);
+    const msgDate = c.lastMessage ? parseUtcDate(c.lastMessage.createdAt) : parseUtcDate(c.createdAt);
+    
+    const getEgyptDateString = (d: Date) => {
+      return d.toLocaleDateString('en-US', { timeZone: 'Africa/Cairo' });
+    };
+    
     const now = new Date();
+    const msgDateStr = getEgyptDateString(msgDate);
+    const nowStr = getEgyptDateString(now);
     
     // If today, show time
-    if (msgDate.toDateString() === now.toDateString()) {
-      return msgDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    if (msgDateStr === nowStr) {
+      return msgDate.toLocaleTimeString([], { 
+        hour: '2-digit', 
+        minute: '2-digit',
+        timeZone: 'Africa/Cairo'
+      });
     }
     // If yesterday
     const yesterday = new Date(now);
     yesterday.setDate(now.getDate() - 1);
-    if (msgDate.toDateString() === yesterday.toDateString()) {
+    const yesterdayStr = getEgyptDateString(yesterday);
+    if (msgDateStr === yesterdayStr) {
       return this.langService.translate('yesterday');
     }
     // Otherwise show date
-    return msgDate.toLocaleDateString([], { month: 'short', day: 'numeric' });
+    return msgDate.toLocaleDateString([], { 
+      month: 'short', 
+      day: 'numeric',
+      timeZone: 'Africa/Cairo'
+    });
   }
 
   selectConversation(conversation: Conversation) {

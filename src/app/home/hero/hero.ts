@@ -28,7 +28,7 @@ export class HeroComponent implements OnInit, OnDestroy {
         btnText: this.langService.translate('heroPassionBtn'),
         btnRoute: '/products',
         watermark: this.langService.translate('heroPassionWatermark'),
-        image: 'https://plus.unsplash.com/premium_photo-1679868096292-54efdc6c021f?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+        image: 'images/pottery.png',
         accent: '#c8813a',
       },
       {
@@ -39,7 +39,7 @@ export class HeroComponent implements OnInit, OnDestroy {
         btnText: this.langService.translate('heroCustomBtn'),
         btnRoute: '/custom-order',
         watermark: this.langService.translate('heroCustomWatermark'),
-        image: 'https://images.unsplash.com/photo-1452860606245-08befc0ff44b?w=800&q=80',
+        image: '/images/custom.png',
         accent: '#8B5E3C',
       },
       {
@@ -50,7 +50,7 @@ export class HeroComponent implements OnInit, OnDestroy {
         btnText: this.langService.translate('heroGiftsBtn'),
         btnRoute: '/gifts',
         watermark: this.langService.translate('heroGiftsWatermark'),
-        image: 'https://images.unsplash.com/photo-1512909006721-3d6018887383?w=800&q=80',
+        image: '/images/gift.png',
         accent: '#E8913A',
       }
     ];
@@ -72,23 +72,19 @@ export class HeroComponent implements OnInit, OnDestroy {
   goToSlide(index: number) {
     if (this.isAnimating() || index === this.currentSlide()) return;
     this.isAnimating.set(true);
-    
     setTimeout(() => {
       this.currentSlide.set(index);
       this.imageError.set(false);
-    }, 300);
-    
+    }, 250);
     setTimeout(() => {
       this.isAnimating.set(false);
-    }, 900);
-    
+    }, 750);
     this.stopAutoPlay();
     this.startAutoPlay();
   }
 
   onImageError(event: Event) {
     this.imageError.set(true);
-    console.log('Image failed to load:', this.slide.image);
   }
 
   get slide() { return this.slides[this.currentSlide()]; }
