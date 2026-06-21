@@ -13,6 +13,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { environment } from '../../../environments/environment';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { NotificationService } from '../../Notifications/Services/notification.service';
+import { parseUtcDate } from '../../core/utils/date-utils';
  
 // Static fallback — shown when backend is down or returns empty list
 const FALLBACK_CATEGORIES: CategoryResponse[] = [
@@ -37,6 +39,7 @@ export class Header implements OnInit {
   protected wishlistService = inject(WishlistService);
   private categoryService   = inject(CategoryService);
   private sanitizer         = inject(DomSanitizer);
+  protected notificationService = inject(NotificationService);
  
   // ── Local signal for displayed categories ──────────────────
   displayedCategories = signal<CategoryResponse[]>([]);
@@ -87,6 +90,12 @@ export class Header implements OnInit {
     if (this.isLoggedIn()) {
       this.chatService.initializeRealTime();
       this.chatService.loadConversations();
+      const token = this.authService.getToken();
+      if (token) {
+        this.notificationService.startConnection(token);
+        this.notificationService.loadUnreadCount();
+        this.notificationService.loadNotifications(1, 10);
+      }
     }
  
     this.router.events.pipe(
@@ -95,8 +104,15 @@ export class Header implements OnInit {
       if (this.isLoggedIn()) {
         this.chatService.initializeRealTime();
         this.chatService.loadConversations();
+        const token = this.authService.getToken();
+        if (token) {
+          this.notificationService.startConnection(token);
+          this.notificationService.loadUnreadCount();
+          this.notificationService.loadNotifications(1, 10);
+        }
       } else {
         this.chatService.disconnectRealTime();
+        this.notificationService.stopConnection();
       }
     });
   }
@@ -140,6 +156,12 @@ export class Header implements OnInit {
   toggleDropdown(name: string) {
     this.activeDropdown.update(v => v === name ? null : name);
   }
+  openDropdown(name: string) {
+    this.activeDropdown.set(name);
+  }
+  closeDropdown() {
+    this.activeDropdown.set(null);
+  }
   onSearch() {
     if (this.searchQuery().trim()) {
       this.router.navigate(['/products'], { queryParams: { search: this.searchQuery() } });
@@ -155,6 +177,7 @@ export class Header implements OnInit {
   }
   logout() {
     this.chatService.disconnectRealTime();
+    this.notificationService.stopConnection();
     this.authService.logout();
     this.toastr.info('See you soon!', 'Logged Out');
     this.router.navigate(['/login-api']);
@@ -166,6 +189,93 @@ export class Header implements OnInit {
     if (user.profileImage.startsWith('http://') || user.profileImage.startsWith('https://'))
       return user.profileImage;
     return `${environment.apiUrl}/${user.profileImage}`;
+  }
+
+  handleNotificationClick(notif: any): void {
+    this.notificationService.markAsRead(notif.id);
+    this.activeDropdown.set(null);
+
+    const type = Number(notif.type);
+    
+    if (type === 7) { // Message
+      if (notif.referenceId) {
+        this.router.navigate([`/chat/${notif.referenceId}`]);
+      } else {
+        this.router.navigate(['/chat']);
+      }
+    } else if (type === 8 || type === 6) { // Follow / NewFollower
+      if (this.isSeller()) {
+        this.router.navigate(['/seller/followers']);
+      } else {
+        this.router.navigate(['/']);
+      }
+    } else if (type === 1 || type === 16 || type === 19) { // Order / NewOrder / OrderStatusChanged
+      if (notif.referenceId) {
+        if (this.isSeller() && (type === 16 || type === 19)) {
+          this.router.navigate([`/seller/orders`]);
+        } else {
+          this.router.navigate([`/orders/${notif.referenceId}`]);
+        }
+      } else {
+        if (this.isSeller()) {
+          this.router.navigate(['/seller/orders']);
+        } else {
+          this.router.navigate(['/orders']);
+        }
+      }
+    } else if (type === 2 || type === 17) { // Payment / PaymentReceived
+      if (this.isSeller()) {
+        this.router.navigate(['/seller/earnings']);
+      } else {
+        this.router.navigate(['/']);
+      }
+    } else if (type === 3) { // Review
+      if (notif.referenceId) {
+        this.router.navigate([`/products/${notif.referenceId}`]);
+      } else {
+        this.router.navigate(['/products']);
+      }
+    } else if (type === 9 || type === 10 || type === 11 || type === 12 || type === 13 || type === 14 || type === 15) { // Product
+      if (type === 15 || type === 10) {
+        if (notif.referenceId) {
+          this.router.navigate([`/products/${notif.referenceId}`]);
+        } else {
+          this.router.navigate(['/products']);
+        }
+      } else {
+        if (this.isSeller()) {
+          this.router.navigate(['/seller/products']);
+        } else {
+          this.router.navigate(['/products']);
+        }
+      }
+    } else if (type === 18) { // UserBanned
+      this.logout();
+    } else {
+      this.router.navigate(['/']);
+    }
+  }
+
+  getRelativeTime(createdAt: string): string {
+    const created = parseUtcDate(createdAt);
+    const now = new Date();
+    const diffMs = now.getTime() - created.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMins / 60);
+    const diffDays = Math.floor(diffHours / 24);
+
+    const isAr = this.langService.currentLang() === 'ar';
+
+    if (diffMins < 1) {
+      return isAr ? 'الآن' : 'Just now';
+    }
+    if (diffMins < 60) {
+      return isAr ? `منذ ${diffMins} دقيقة` : `${diffMins}m ago`;
+    }
+    if (diffHours < 24) {
+      return isAr ? `منذ ${diffHours} ساعة` : `${diffHours}h ago`;
+    }
+    return isAr ? `منذ ${diffDays} يوم` : `${diffDays}d ago`;
   }
  
   onSellerIconClick() { this.toastr.info('Start Selling on Handaura', ''); }

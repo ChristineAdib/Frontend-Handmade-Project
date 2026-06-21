@@ -3,7 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import * as signalr from '@microsoft/signalr';
 import { firstValueFrom } from 'rxjs';
 import { NotificationItem } from '../Models/Notification';
-import{ ApiResponse } from '../../auth/models/api-response.model';
+import { NotificationType } from '../Models/NotificationType';
+import { ApiResponse } from '../../auth/models/api-response.model';
+import { PagedResult } from '../../models/paged-result';
 import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
@@ -67,9 +69,49 @@ export class NotificationService implements OnDestroy {
     this.isConnected.set(false);
   }
 
+  private normalizeNotification(notif: any): NotificationItem {
+    let typeVal = notif.type;
+    if (typeof typeVal === 'string') {
+      const parsed = Number(typeVal);
+      if (!isNaN(parsed)) {
+        typeVal = parsed;
+      } else {
+        const nameMap: Record<string, number> = {
+          'Order': 1,
+          'Payment': 2,
+          'Review': 3,
+          'System': 4,
+          'Coupon': 5,
+          'Follow': 6,
+          'Message': 7,
+          'NewFollower': 8,
+          'ProductSubmitted': 9,
+          'ProductApproved': 10,
+          'ProductRejected': 11,
+          'ProductUpdated': 12,
+          'ProductUpdateApproved': 13,
+          'ProductUpdateRejected': 14,
+          'NewProductFromFollowedShop': 15,
+          'NewOrder': 16,
+          'PaymentReceived': 17,
+          'UserBanned': 18,
+          'OrderStatusChanged': 19
+        };
+        typeVal = nameMap[typeVal] ?? 0;
+      }
+    }
+    return {
+      ...notif,
+      type: typeVal
+    };
+  }
+
   private registerHandlers(): void {
-    this.hubConnection!.on('ReceiveNotification', (notification: NotificationItem) => {
-      this.notifications.update(prev => [notification, ...prev]);
+    this.hubConnection!.on('ReceiveNotification', (notification: any) => {
+      const normalized = this.normalizeNotification(notification);
+      if (normalized.type !== NotificationType.Message) {
+        this.notifications.update(prev => [normalized, ...prev]);
+      }
     });
 
     this.hubConnection!.on('UnreadCountUpdated', (count: number) => {
@@ -80,11 +122,21 @@ export class NotificationService implements OnDestroy {
     this.hubConnection!.onreconnecting(() => this.isConnected.set(false));
   }
 
-  async loadNotifications(): Promise<void> {
+  async loadNotifications(pageNumber: number = 1, pageSize: number = 10): Promise<void> {
     const res = await firstValueFrom(
-      this.http.get<ApiResponse<NotificationItem[]>>(this.apiUrl)
+      this.http.get<ApiResponse<PagedResult<any>>>(
+        `${this.apiUrl}?pageNumber=${pageNumber}&pageSize=${pageSize}`
+      )
     );
-    if (res.success) this.notifications.set(res.data);
+    if (res.success && res.data) {
+      const normalizedItems = res.data.items.map(n => this.normalizeNotification(n));
+      const items = normalizedItems.filter(n => n.type !== NotificationType.Message);
+      if (pageNumber === 1) {
+        this.notifications.set(items);
+      } else {
+        this.notifications.update(prev => [...prev, ...items]);
+      }
+    }
   }
 
   async loadUnreadCount(): Promise<void> {
