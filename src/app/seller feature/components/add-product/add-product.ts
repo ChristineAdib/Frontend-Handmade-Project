@@ -39,6 +39,8 @@ export class AddProduct implements OnInit {
   productId = signal<string | null>(null);
   existingImages = signal<{ id: string; imageUrl: string }[]>([]);
   removeImageIds = signal<string[]>([]);
+  selectedGlbFile = signal<File | null>(null);
+  existingGlbUrl = signal<string | null>(null);
 
   form = this.fb.group({
     titleEn: ['', Validators.required],
@@ -139,6 +141,18 @@ export class AddProduct implements OnInit {
     });
   }
 
+  onGlbFileSelected(event: Event) {
+    const files = (event.target as HTMLInputElement).files;
+    if (files && files.length > 0) {
+      this.selectedGlbFile.set(files[0]);
+    }
+  }
+
+  removeGlbFile() {
+    this.selectedGlbFile.set(null);
+    this.existingGlbUrl.set(null);
+  }
+
   removeImage(index: number) {
     const existingCount = this.existingImages().length;
     if (index < existingCount) {
@@ -200,6 +214,15 @@ export class AddProduct implements OnInit {
     }
     this.tags().forEach(tag => formData.append('tags', tag));
 
+if (this.selectedGlbFile()) {
+  formData.append('arModel', this.selectedGlbFile()!); 
+}
+
+// لو في edit mode وحذف الموديل الموجود
+if (this.isEditMode() && !this.existingGlbUrl() && !this.selectedGlbFile()) {
+  formData.append('removeArModel', 'true');
+}
+
     const request$ = this.isEditMode()
       ? this.productService.updateProduct(this.productId()!, formData)
       : this.productService.createProduct(formData);
@@ -254,6 +277,7 @@ export class AddProduct implements OnInit {
           this.imagePreviews.set(imgs.map((img: any) => img.imageUrl));
         }
         if (product.tags?.length) this.tags.set(product.tags);
+       if (product.arModelUrl) this.existingGlbUrl.set(product.arModelUrl);
       }
     });
   }

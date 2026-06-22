@@ -10,6 +10,7 @@ export interface IProductSummary {
   reviewCount: number;
   categoryNameEn: string;
   shopName: string;
+  arModelUrl?: string;
 }
 
 export interface IShopWithProducts {

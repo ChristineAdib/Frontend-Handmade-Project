@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
@@ -7,6 +7,7 @@ import { Product } from '../../models/product.model';
 import { LanguageService } from '../../../core/services/language.service';
 import { AppHoverCard } from '../../../core/directives/app-hover-card';
 import { ProductCard as ProductCardDirective } from '../../../core/directives/product-card';
+import { ArViewModalComponent } from '../../../shared/components/ar-view-modal/ar-view-modal.component';
 
 import { WishlistService } from '../../../wishlist feature/services/wishlist-service';
 import { CartApiService } from '../../../orders/services/cart-api.service';
@@ -15,7 +16,7 @@ import { AuthService } from '../../../auth/Services/auth';
 @Component({
   selector: 'app-product-card',
   standalone: true,
-  imports: [CommonModule, RouterLink, AppHoverCard, ProductCardDirective],
+  imports: [CommonModule, RouterLink, AppHoverCard, ProductCardDirective, ArViewModalComponent],
   templateUrl: './product-card.component.html',
   styleUrl: './product-card.component.scss'
 })
@@ -30,6 +31,14 @@ export class ProductCardComponent {
   @Input() product!: Product;
   @Output() quickView = new EventEmitter<Product>();
 
+  showArModal = signal(false);
+
+  onOpenAr(event: Event): void {
+    event.stopPropagation();
+    event.preventDefault();
+    this.showArModal.set(true);
+  }
+
   onQuickView(event: Event): void {
     event.stopPropagation();
     event.preventDefault();
@@ -40,7 +49,6 @@ export class ProductCardComponent {
   onAddToWishlist(event: Event): void {
     event.stopPropagation();
     event.preventDefault();
-
     this.wishlistService.addItem(this.product.id).subscribe({
       next: () => {
         this.toastr.success(
@@ -50,18 +58,13 @@ export class ProductCardComponent {
         );
       },
       error: (err) => {
-        console.error('Wishlist error:', err);
         let errMsg = this.langService.currentLang() === 'ar'
           ? 'فشل إضافة المنتج لقائمة الأمنيات.'
           : 'Failed to add item to wishlist.';
         if (err?.error) {
-          if (typeof err.error === 'object' && err.error.message) {
-            errMsg = err.error.message;
-          } else if (Array.isArray(err.error) && err.error.length > 0) {
-            errMsg = err.error[0];
-          } else if (typeof err.error === 'string') {
-            errMsg = err.error;
-          }
+          if (typeof err.error === 'object' && err.error.message) errMsg = err.error.message;
+          else if (Array.isArray(err.error) && err.error.length > 0) errMsg = err.error[0];
+          else if (typeof err.error === 'string') errMsg = err.error;
         }
         this.toastr.error(errMsg, '', { timeOut: 10000 });
       }
@@ -71,7 +74,6 @@ export class ProductCardComponent {
   onAddToCart(event: Event): void {
     event.stopPropagation();
     event.preventDefault();
-
     this.cartApiService.addItem(this.product.id, 1).then((res) => {
       if (res) {
         this.toastr.success(
@@ -80,12 +82,16 @@ export class ProductCardComponent {
             : 'Product added to cart!'
         );
       } else {
-        const errMsg = this.cartApiService.error() || (this.langService.currentLang() === 'ar' ? 'فشل إضافة المنتج إلى السلة.' : 'Failed to add item to cart.');
+        const errMsg = this.cartApiService.error() || (
+          this.langService.currentLang() === 'ar' ? 'فشل إضافة المنتج إلى السلة.' : 'Failed to add item to cart.'
+        );
         this.toastr.error(errMsg, '', { timeOut: 10000 });
       }
-    }).catch(err => {
-      console.error('Cart error:', err);
-      this.toastr.error(this.langService.currentLang() === 'ar' ? 'فشل إضافة المنتج إلى السلة.' : 'Failed to add item to cart.', '', { timeOut: 10000 });
+    }).catch(() => {
+      this.toastr.error(
+        this.langService.currentLang() === 'ar' ? 'فشل إضافة المنتج إلى السلة.' : 'Failed to add item to cart.',
+        '', { timeOut: 10000 }
+      );
     });
   }
 
@@ -94,12 +100,10 @@ export class ProductCardComponent {
   }
 
   getStarsArray(): number[] {
-    const stars = Math.round(this.product.averageRating);
-    return Array(stars).fill(0);
+    return Array(Math.round(this.product.averageRating)).fill(0);
   }
 
   getEmptyStarsArray(): number[] {
-    const stars = Math.round(this.product.averageRating);
-    return Array(Math.max(0, 5 - stars)).fill(0);
+    return Array(Math.max(0, 5 - Math.round(this.product.averageRating))).fill(0);
   }
 }
