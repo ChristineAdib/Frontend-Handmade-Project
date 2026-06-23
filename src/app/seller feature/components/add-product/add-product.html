@@ -71,21 +71,21 @@
           </div>
           <input #imgInput type="file" accept="image/*" multiple (change)="onImagesSelected($event)" hidden />
 
-
-            @if (agentImageBase64()) {
-    <button
-      type="button"
-      class="agent-btn"
-      (click)="analyzeWithAgent()"
-      [disabled]="isAnalyzing()">
-      @if (isAnalyzing()) {
-        <span class="spinner-sm"></span>
-        {{ langService.currentLang() === 'ar' ? 'جاري التحليل...' : 'Analyzing...' }}
-      } @else {
-        ✨ {{ langService.currentLang() === 'ar' ? 'تحليل بالذكاء الاصطناعي' : 'Analyze with AI' }}
-      }
-    </button>
-  }
+@if (agentImageBase64()) {
+  <button
+    type="button"
+    class="agent-btn"
+    [class.loading]="isAnalyzing()"
+    (click)="analyzeWithAgent()"
+    [disabled]="isAnalyzing()">
+    <span class="btn-icon">✨</span>
+    @if (isAnalyzing()) {
+      {{ langService.currentLang() === 'ar' ? 'جاري التحليل...' : 'Analyzing your product...' }}
+    } @else {
+      {{ langService.currentLang() === 'ar' ? 'تحليل بالذكاء الاصطناعي' : 'Analyze with AI' }}
+    }
+  </button>
+}
         </div>
 
       </div>
