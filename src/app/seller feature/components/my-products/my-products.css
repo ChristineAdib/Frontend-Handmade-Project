@@ -151,3 +151,22 @@
 .page-btn:hover:not(:disabled) { border-color: #C17B5C; color: #C17B5C; }
 .page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 .page-info { font-size: 14px; color: #8B6F5C; }
+
+
+.agent-btn {
+  margin-top: 12px;
+  width: 100%;
+  padding: 10px;
+  background: #a0522d;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.agent-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
