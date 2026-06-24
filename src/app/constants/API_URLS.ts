@@ -97,5 +97,8 @@ getWishList: `${base_domain}/api/wishlist`,
   createShopReview: `${base_domain}/api/ShopReviews`,
   updateShopReview: (id: string) => `${base_domain}/api/ShopReviews/${id}`,
   deleteShopReview: (id: string) => `${base_domain}/api/ShopReviews/${id}`,
-  sellerAnalytics: `${base_domain}/api/SellerAnalytics`
+  sellerAnalytics: `${base_domain}/api/SellerAnalytics`,
+
+
+  analyzeProductImage: `${base_domain}/api/ProductAgent/analyze-image`,
 };
