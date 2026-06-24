@@ -7,8 +7,17 @@ import { IProduct } from '../../models/iproduct';
 import { ICategory } from '../../seller feature/models/icategory'
 import { IProductSummary } from '../../shop feature/models/ishop-with-products';
 import { PagedResult } from '../../models/paged-result';
-
+export interface ProductAnalysisResult {
+  titleEn: string;
+  titleAr: string;
+  descriptionEn: string;
+  descriptionAr: string;
+  suggestedPrice: number;
+  category: string;
+  tags: string[];
+}
 @Injectable({ providedIn: 'root' })
+
 export class ProductService {
   private http = inject(HttpClient);
   private auth = inject(AuthService);
@@ -54,5 +63,13 @@ getProductById(id: string): Observable<any> {
   return this.http.get<any>(API_URLS.getProductById(id), {
     headers: this.getAuthHeaders()
   });
+}
+
+analyzeProductImage(imageBase64: string, mimeType: string): Observable<ProductAnalysisResult> {
+  return this.http.post<ProductAnalysisResult>(
+    API_URLS.analyzeProductImage,
+    { imageBase64, mimeType },
+    { headers: this.getAuthHeaders() }
+  );
 }
 }

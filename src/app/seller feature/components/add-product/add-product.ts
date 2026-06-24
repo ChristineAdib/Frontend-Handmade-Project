@@ -23,6 +23,10 @@ export class AddProduct implements OnInit {
   private route = inject(ActivatedRoute);
   protected readonly langService = inject(LanguageService);
 
+  isAnalyzing = signal(false);
+agentImageBase64 = signal('');
+agentMimeType = signal('');
+
   categories = signal<CategorySummary[]>([]);
   subCategories = signal<CategorySummary[]>([]);
   isLoading = signal(false);
@@ -128,6 +132,17 @@ export class AddProduct implements OnInit {
   onImagesSelected(event: Event) {
     const files = Array.from((event.target as HTMLInputElement).files || []);
     if (!files.length) return;
+
+
+
+    this.agentMimeType.set(files[0].type);
+  const reader0 = new FileReader();
+  reader0.onload = () => {
+    this.agentImageBase64.set((reader0.result as string).split(',')[1]);
+  };
+  reader0.readAsDataURL(files[0]);
+
+
 
     const newImages = [...this.selectedImages(), ...files];
     this.selectedImages.set(newImages);
@@ -332,4 +347,32 @@ if (this.isEditMode() && !this.existingGlbUrl() && !this.selectedGlbFile()) {
       this.router.navigate(['/seller/products']);
     });
   }
+  
+  analyzeWithAgent() {
+  if (!this.agentImageBase64()) return;
+  this.isAnalyzing.set(true);
+
+  this.productService.analyzeProductImage(
+    this.agentImageBase64(),
+    this.agentMimeType()
+  ).subscribe({
+    next: (result) => {
+      this.form.patchValue({
+        titleEn: result.titleEn,
+        titleAr: result.titleAr,
+        descriptionEn: result.descriptionEn,
+        descriptionAr: result.descriptionAr,
+        price: result.suggestedPrice,
+      });
+      if (result.tags?.length) {
+        this.tags.set(result.tags);
+      }
+      this.isAnalyzing.set(false);
+    },
+    error: () => {
+      this.errorMsg.set('Failed to analyze image. Please try again.');
+      this.isAnalyzing.set(false);
+    }
+  });
+}
 }
