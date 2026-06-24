@@ -141,12 +141,24 @@ export class AddProduct implements OnInit {
     });
   }
 
-  onGlbFileSelected(event: Event) {
-    const files = (event.target as HTMLInputElement).files;
-    if (files && files.length > 0) {
-      this.selectedGlbFile.set(files[0]);
+onGlbFileSelected(event: Event) {
+  const files = (event.target as HTMLInputElement).files;
+  if (files && files.length > 0) {
+    const file = files[0];
+    
+    const maxSize = 10 * 1024 * 1024; // 10MB
+    if (file.size > maxSize) {
+      this.errorMsg.set(
+        this.langService.currentLang() === 'ar'
+          ? 'حجم ملف الـ AR يجب أن يكون أقل من 10MB'
+          : 'AR model file must be less than 10MB'
+      );
+      return;
     }
+
+    this.selectedGlbFile.set(file);
   }
+}
 
   removeGlbFile() {
     this.selectedGlbFile.set(null);

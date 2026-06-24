@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, inject, signal } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
@@ -7,7 +7,6 @@ import { Product } from '../../models/product.model';
 import { LanguageService } from '../../../core/services/language.service';
 import { AppHoverCard } from '../../../core/directives/app-hover-card';
 import { ProductCard as ProductCardDirective } from '../../../core/directives/product-card';
-import { ArViewModalComponent } from '../../../shared/components/ar-view-modal/ar-view-modal.component';
 
 import { WishlistService } from '../../../wishlist feature/services/wishlist-service';
 import { CartApiService } from '../../../orders/services/cart-api.service';
@@ -16,7 +15,7 @@ import { AuthService } from '../../../auth/Services/auth';
 @Component({
   selector: 'app-product-card',
   standalone: true,
-  imports: [CommonModule, RouterLink, AppHoverCard, ProductCardDirective, ArViewModalComponent],
+  imports: [CommonModule, RouterLink, AppHoverCard, ProductCardDirective],
   templateUrl: './product-card.component.html',
   styleUrl: './product-card.component.scss'
 })
@@ -30,14 +29,6 @@ export class ProductCardComponent {
 
   @Input() product!: Product;
   @Output() quickView = new EventEmitter<Product>();
-
-  showArModal = signal(false);
-
-  onOpenAr(event: Event): void {
-    event.stopPropagation();
-    event.preventDefault();
-    this.showArModal.set(true);
-  }
 
   onQuickView(event: Event): void {
     event.stopPropagation();

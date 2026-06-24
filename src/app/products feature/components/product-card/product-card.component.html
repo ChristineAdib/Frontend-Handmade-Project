@@ -26,26 +26,12 @@
         {{ langService.currentLang() === 'ar' ? 'قطعة فريدة' : 'One of a Kind' }}
       </span>
     }
-<!-- AR View Badge -->
+<!-- AR Badge (indicator only) -->
 @if (product.arModelUrl) {
-  <button
-    type="button"
-    class="ar-badge-btn"
-    (click)="onOpenAr($event)"
-    [title]="langService.currentLang() === 'ar' ? 'عرض ثلاثي الأبعاد' : '3D & AR View'"
-  >
+  <span class="ar-badge-btn">
     <span class="material-symbols-outlined">view_in_ar</span>
     <span>AR</span>
-  </button>
-}
-
-<!-- AR Modal -->
-@if (showArModal()) {
-  <app-ar-view-modal
-    [glbUrl]="product.arModelUrl!"
-    [productTitle]="langService.currentLang() === 'ar' ? (product.titleAr || product.titleEn) : (product.titleEn || product.titleAr)"
-    (close)="showArModal.set(false)"
-  />
+  </span>
 }
     <!-- Hover Action Buttons (Wishlist & Cart) -->
     <div class="hover-actions-bar">

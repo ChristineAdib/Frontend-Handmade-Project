@@ -604,3 +604,26 @@
     height: 85%;
   }
 }
+
+/* AR Badge (indicator only) */
+.ar-badge-btn {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  background: linear-gradient(135deg, #8B4513, #a0522d);
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  z-index: 3;
+  box-shadow: 0 2px 8px rgba(139,69,19,0.3);
+  font-family: 'Inter', sans-serif;
+}
+
+.ar-badge-btn .material-symbols-outlined {
+  font-size: 14px;
+}
