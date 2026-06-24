@@ -27,6 +27,38 @@
     </div>
   </div>
 
+  <!-- Pinned Custom Request Context Card -->
+  @if (customRequest()) {
+    <div class="custom-request-context-card">
+      <div class="context-thumbnail">
+        <img [src]="customRequest().selectedDesign?.imageUrl || 'assets/placeholder-doll.png'" alt="Design Blueprint" />
+      </div>
+      <div class="context-info">
+        <h4 class="context-title">Handora Custom Studio - Crochet Doll</h4>
+        <p class="context-specs">
+          <span><strong>Size:</strong> {{ customRequest().customConfiguration?.size || 'Standard' }}</span> | 
+          <span><strong>Theme:</strong> {{ customRequest().customConfiguration?.bodyType || 'Default' }}</span>
+        </p>
+        <span class="context-status-badge status-{{ customRequest().status }}">
+          Status: {{ getRequestStatusLabel(customRequest().status) }}
+        </span>
+      </div>
+      <div class="context-actions">
+        @if (customRequest().status === 12 || customRequest().status === 13 || customRequest().status === 14) {
+          <!-- Paid, InProgress, Completed -->
+          <button class="btn btn-primary btn-sm btn-action" (click)="viewWorkspace(customRequest().id)">
+            View Workspace
+          </button>
+        } @else if (customRequest().status === 9 || customRequest().status === 8) {
+          <!-- OfferSent, Negotiation -->
+          <button class="btn btn-secondary btn-sm btn-action" (click)="viewOfferReview(customRequest().id)">
+            Review Offer
+          </button>
+        }
+      </div>
+    </div>
+  }
+
   <!-- Messages List -->
   <div #scrollContainer class="messages-container">
     @if (messages().length === 0) {
@@ -41,6 +73,39 @@
             @if (m.type === 2 && m.imageUrl) {
               <div class="message-image-container" (click)="openLightbox(m.imageUrl)">
                 <img [src]="m.imageUrl" [alt]="m.content || 'Attached image'" class="message-image" />
+              </div>
+            }
+
+            <!-- Custom Offer Card -->
+            @if (m.type === 3 && m.customOffer) {
+              <div class="custom-offer-message-card">
+                <div class="offer-card-header">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="offer-icon" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/>
+                  </svg>
+                  <span class="offer-badge">Custom Studio Offer</span>
+                </div>
+                <div class="offer-price-row">
+                  <span class="offer-price-label">Proposed Price:</span>
+                  <span class="offer-price-val">{{ m.customOffer.price | currency:'EGP ' }}</span>
+                </div>
+                <div class="offer-details-grid">
+                  <div class="detail-item">
+                    <span class="detail-label">Delivery:</span>
+                    <span class="detail-val">{{ m.customOffer.deliveryTimeDays }} Days</span>
+                  </div>
+                  <div class="detail-item">
+                    <span class="detail-label">Revisions:</span>
+                    <span class="detail-val">{{ m.customOffer.revisionsAllowed }} Allowed</span>
+                  </div>
+                </div>
+                @if (customRequest() && (customRequest().status === 8 || customRequest().status === 9)) {
+                  <div class="offer-card-actions">
+                    <button class="btn btn-primary btn-block btn-sm" (click)="viewOfferReview(m.customOffer.customRequestId)">
+                      Review & Accept Offer
+                    </button>
+                  </div>
+                }
               </div>
             }
 

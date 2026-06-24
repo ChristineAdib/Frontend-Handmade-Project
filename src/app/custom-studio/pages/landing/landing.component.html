@@ -1,0 +1,70 @@
+<div class="landing-container">
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <span class="badge">Handora Custom Studio</span>
+      <h1 class="hero-title">Design Your Perfect Crochet Doll</h1>
+      <p class="hero-subtitle">
+        Express your imagination. Configure your doll's size, outfit, hair, and accessories in real-time, then let our advanced AI generate handmade pattern previews to match you with master local artisans.
+      </p>
+      
+      <div class="hero-actions">
+        <button class="btn btn-primary" (click)="createNewRequest()" [disabled]="loadingDraft()">
+          <span *ngIf="!loadingDraft()">Start Customizing</span>
+          <span *ngIf="loadingDraft()">Creating Request...</span>
+        </button>
+        <button *ngIf="latestDraftId()" class="btn btn-secondary" (click)="continueDraft()">
+          Resume Latest Draft
+        </button>
+        <button class="btn btn-outline" routerLink="/custom-studio/my-designs">
+          My Saved Designs
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section class="how-it-works">
+    <h2 class="section-title">Crafting in 4 Simple Steps</h2>
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <h3>Configure Details</h3>
+        <p>Choose the size, colors, hairstyle, face options, outfits, and personalize with custom names or text labels.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <h3>AI Design Generation</h3>
+        <p>Our custom AI Studio orchestrates twin designs representing your settings, generating visual blueprints.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <h3>Seller Bid Matching</h3>
+        <p>Get matched with certified local crochet shops. Compare their rating, experience, pricing bids, and delivery.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">4</div>
+        <h3>Artisan Workspace</h3>
+        <p>Approve the offer, lock payment in escrow, and watch progress updates and milestone photos direct from the workspace.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Gallery Showcase -->
+  <section class="gallery-section">
+    <h2 class="section-title">Inspiration Gallery</h2>
+    <p class="gallery-subtitle">See what other buyers have designed and our local artisans have crafted with love.</p>
+    <div class="gallery-grid">
+      <div class="gallery-card" *ngFor="let item of dollExamples">
+        <div class="card-img-wrapper">
+          <img [src]="item.image" [alt]="item.name" />
+        </div>
+        <div class="card-content">
+          <h3>{{ item.name }}</h3>
+          <p>{{ item.desc }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

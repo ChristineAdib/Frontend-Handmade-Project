@@ -525,3 +525,185 @@
   align-items: center;
   gap: 0.4rem;
 }
+
+/* Custom Studio context card and offer cards */
+.custom-request-context-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1.5rem;
+  background: #ffffff;
+  border-bottom: 1px solid rgba(176, 110, 46, 0.15);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.context-thumbnail {
+  width: 50px;
+  height: 50px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fdfbf7;
+  border: 1px solid rgba(176, 110, 46, 0.2);
+}
+
+.context-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.context-info {
+  flex: 1;
+}
+
+.context-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: 0 0 2px 0;
+  color: #B06E2E;
+}
+
+.context-specs {
+  font-size: 0.8rem;
+  color: #5c4a3c;
+  margin: 0 0 4px 0;
+}
+
+.context-status-badge {
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: 600;
+  display: inline-block;
+  text-transform: uppercase;
+}
+
+.context-status-badge.status-8,
+.context-status-badge.status-9 {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.context-status-badge.status-12,
+.context-status-badge.status-13 {
+  background: #d4edda;
+  color: #155724;
+}
+
+.context-status-badge.status-14 {
+  background: #cce5ff;
+  color: #004085;
+}
+
+.context-actions {
+  display: flex;
+  align-items: center;
+}
+
+.btn-action {
+  font-size: 0.8rem !important;
+  font-weight: 600 !important;
+  padding: 0.35rem 0.75rem !important;
+  border-radius: 20px !important;
+  transition: all 0.2s ease !important;
+}
+
+.btn-action:hover {
+  transform: translateY(-1px);
+}
+
+/* Custom Offer card styling in message bubble */
+.custom-offer-message-card {
+  background: #ffffff;
+  border: 1px solid rgba(176, 110, 46, 0.25);
+  border-radius: 12px;
+  padding: 1rem;
+  margin-top: 5px;
+  width: 280px;
+  box-shadow: 0 4px 12px rgba(176, 110, 46, 0.08);
+}
+
+.offer-card-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 0.75rem;
+}
+
+.offer-icon {
+  color: #B06E2E;
+}
+
+.offer-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #B06E2E;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.offer-price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 0.75rem;
+  border-bottom: 1px dashed rgba(176, 110, 46, 0.15);
+  padding-bottom: 0.5rem;
+}
+
+.offer-price-label {
+  font-size: 0.85rem;
+  color: #7d6b5d;
+}
+
+.offer-price-val {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #2c1e14;
+}
+
+.offer-details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 1rem;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.detail-label {
+  font-size: 0.7rem;
+  color: #7d6b5d;
+  text-transform: uppercase;
+}
+
+.detail-val {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #2c1e14;
+}
+
+.offer-card-actions {
+  display: flex;
+}
+
+.offer-card-actions button {
+  width: 100%;
+  border-radius: 8px !important;
+  font-size: 0.8rem !important;
+  font-weight: 600 !important;
+  padding: 0.45rem !important;
+  background-color: #B06E2E !important;
+  border-color: #B06E2E !important;
+  color: #ffffff !important;
+  transition: all 0.2s ease;
+}
+
+.offer-card-actions button:hover {
+  background-color: #8c521e !important;
+  border-color: #8c521e !important;
+  transform: translateY(-1px);
+}

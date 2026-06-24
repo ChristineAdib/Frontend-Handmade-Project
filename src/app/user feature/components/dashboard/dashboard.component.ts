@@ -16,6 +16,7 @@ import { IWishListItem } from '../../../wishlist feature/models/iwish-list-item'
 import { OrderStatus, OrderStatusLabel } from '../../../orders/models/order-status';
 import { PaymentStatus, PaymentStatusLabel } from '../../../payments/models/payment-status';
 import { LanguageService } from '../../../core/services/language.service';
+import { CustomStudioService } from '../../../custom-studio/services/custom-studio.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -32,6 +33,7 @@ export class DashboardComponent implements OnInit {
   private readonly toastr = inject(ToastrService);
   private readonly router = inject(Router);
   protected readonly langService = inject(LanguageService);
+  private readonly customStudioService = inject(CustomStudioService);
 
   // Constants for status mapping
   OrderStatus = OrderStatus;
@@ -44,6 +46,7 @@ export class DashboardComponent implements OnInit {
   recentOrders = signal<OrderSummary[]>([]);
   userReviews = signal<UserReview[]>([]);
   wishlistItems = signal<IWishListItem[]>([]);
+  customRequests = signal<any[]>([]);
 
   // Navigation State
   activeTab = signal<string>('Overview');
@@ -55,18 +58,21 @@ export class DashboardComponent implements OnInit {
   isLoadingOrders = signal<boolean>(false);
   isLoadingReviews = signal<boolean>(false);
   isLoadingWishlist = signal<boolean>(false);
+  isLoadingCustomRequests = signal<boolean>(false);
 
   // Computed Stats
   totalOrdersCount = computed(() => this.recentOrders().length);
   followedShopsCount = computed(() => this.followedShops().length);
   wishlistCount = computed(() => this.wishlistItems().length);
   reviewsCount = computed(() => this.userReviews().length);
+  customRequestsCount = computed(() => this.customRequests().length);
 
   // Badge Visibility Signals
   hideOrdersCount = signal<boolean>(localStorage.getItem('hideOrdersCount') === 'true');
   hideWishlistCount = signal<boolean>(localStorage.getItem('hideWishlistCount') === 'true');
   hideShopsCount = signal<boolean>(localStorage.getItem('hideShopsCount') === 'true');
   hideReviewsCount = signal<boolean>(localStorage.getItem('hideReviewsCount') === 'true');
+  hideCustomRequestsCount = signal<boolean>(localStorage.getItem('hideCustomRequestsCount') === 'true');
 
   ngOnInit(): void {
     this.loadAllData();
@@ -78,6 +84,7 @@ export class DashboardComponent implements OnInit {
     this.loadOrders();
     this.loadReviews();
     this.loadWishlist();
+    this.loadCustomRequests();
   }
 
   loadProfile(): void {
@@ -151,6 +158,22 @@ export class DashboardComponent implements OnInit {
     });
   }
 
+  loadCustomRequests(): void {
+    this.isLoadingCustomRequests.set(true);
+    this.customStudioService.getBuyerRequests(1, 20).subscribe({
+      next: (res) => {
+        if (res.success && res.data) {
+          this.customRequests.set(res.data.items);
+        }
+        this.isLoadingCustomRequests.set(false);
+      },
+      error: (err) => {
+        console.error('Failed to load custom requests', err);
+        this.isLoadingCustomRequests.set(false);
+      }
+    });
+  }
+
   unfollowShop(shopId: string, event: Event): void {
     event.stopPropagation();
     if (confirm('Are you sure you want to unfollow this shop?')) {
@@ -199,7 +222,55 @@ export class DashboardComponent implements OnInit {
     } else if (tab === 'Reviews') {
       this.hideReviewsCount.set(true);
       localStorage.setItem('hideReviewsCount', 'true');
+    } else if (tab === 'CustomRequests') {
+      this.hideCustomRequestsCount.set(true);
+      localStorage.setItem('hideCustomRequestsCount', 'true');
     }
+  }
+
+  viewCustomRequest(req: any): void {
+    const status = req.status;
+    if (status === 1 || status === 2 || status === 3) {
+      this.router.navigate(['/custom-studio/wizard', req.id]);
+    } else if (status === 4) {
+      this.router.navigate(['/custom-studio/generating', req.id]);
+    } else if (status === 5) {
+      this.router.navigate(['/custom-studio/results', req.id]);
+    } else if (status === 6) {
+      this.router.navigate(['/custom-studio/summary', req.id]);
+    } else if (status === 7) {
+      this.router.navigate(['/custom-studio/matching', req.id]);
+    } else if (status === 8 || status === 9) {
+      this.router.navigate(['/custom-studio/negotiation', req.id]);
+    } else if (status === 10 || status === 11) {
+      this.router.navigate(['/custom-studio/offer-review', req.id]);
+    } else if (status >= 12 && status <= 14) {
+      this.router.navigate(['/custom-studio/workspace', req.id]);
+    } else {
+      this.router.navigate(['/custom-studio/negotiation', req.id]);
+    }
+  }
+
+  getCustomRequestStatusLabel(status: number): string {
+    const statusMap: { [key: number]: string } = {
+      1: 'Draft',
+      2: 'Configuring',
+      3: 'Ready for Generation',
+      4: 'Generating',
+      5: 'Generated',
+      6: 'Design Selected',
+      7: 'Seller Matched',
+      8: 'Negotiating',
+      9: 'Offer Received',
+      10: 'Offer Accepted',
+      11: 'Payment Pending',
+      12: 'Paid (Deposit)',
+      13: 'InProgress',
+      14: 'Completed',
+      15: 'Cancelled',
+      16: 'Rejected'
+    };
+    return statusMap[status] || 'Unknown';
   }
 
   toggleSidebar(): void {

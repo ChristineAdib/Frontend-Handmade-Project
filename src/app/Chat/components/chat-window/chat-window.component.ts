@@ -2,6 +2,8 @@ import { Component, inject, ViewChild, ElementRef, AfterViewChecked, computed, s
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ChatService } from '../../Services/chat.service';
+import { CustomStudioService } from '../../../custom-studio/services/custom-studio.service';
+import { Router } from '@angular/router';
 import { AuthService } from '../../../auth/Services/auth';
 import { MessageType } from '../../Models/MessageType';
 import { LanguageService } from '../../../core/services/language.service';
@@ -35,6 +37,10 @@ export class ChatWindowComponent implements AfterViewChecked {
 
   activeConversation = this.chatService.activeConversation;
   messages = this.chatService.activeMessages;
+  
+  private customStudioService = inject(CustomStudioService);
+  private router = inject(Router);
+  customRequest = signal<any>(null);
 
   // Regex pattern for Egyptian mobile numbers
   private readonly phoneRegex = /(?:\+?20|0020)?\s*0?1[0125](?:\s*[.\- ]?\s*\d){8}\b/i;
@@ -72,6 +78,27 @@ export class ChatWindowComponent implements AfterViewChecked {
     effect(() => {
       this.messages();
       this.shouldScrollToBottom = true;
+    });
+
+    // Check if the current conversation is associated with a Custom Request
+    effect(() => {
+      const conv = this.activeConversation();
+      if (conv) {
+        this.customStudioService.getCustomRequestByConversationId(conv.id).subscribe({
+          next: (res) => {
+            if (res.success && res.data) {
+              this.customRequest.set(res.data);
+            } else {
+              this.customRequest.set(null);
+            }
+          },
+          error: () => {
+            this.customRequest.set(null);
+          }
+        });
+      } else {
+        this.customRequest.set(null);
+      }
     });
   }
 
@@ -191,5 +218,35 @@ export class ChatWindowComponent implements AfterViewChecked {
 
   closeLightbox(): void {
     this.activeLightboxImage.set(null);
+  }
+
+  viewOfferReview(requestId: string): void {
+    this.router.navigate(['/custom-studio/offer-review', requestId]);
+  }
+
+  viewWorkspace(requestId: string): void {
+    this.router.navigate(['/custom-studio/workspace', requestId]);
+  }
+
+  getRequestStatusLabel(status: number): string {
+    const statusMap: { [key: number]: string } = {
+      1: 'Draft',
+      2: 'Configuring',
+      3: 'Ready for Generation',
+      4: 'Generating',
+      5: 'Generated',
+      6: 'Design Selected',
+      7: 'Seller Matched',
+      8: 'Negotiation',
+      9: 'Offer Sent',
+      10: 'Offer Accepted',
+      11: 'Payment Pending',
+      12: 'Paid (Deposit)',
+      13: 'In Crafting Progress',
+      14: 'Completed / Delivered',
+      15: 'Cancelled',
+      16: 'Rejected'
+    };
+    return statusMap[status] || 'Unknown';
   }
 }

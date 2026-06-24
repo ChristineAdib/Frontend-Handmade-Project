@@ -1,0 +1,158 @@
+<div class="history-page-container">
+  
+  <header class="history-header">
+    <div class="header-left">
+      <button class="back-btn" routerLink="/custom-studio">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+      </button>
+      <h2>My Custom Studio Designs</h2>
+    </div>
+  </header>
+
+  <!-- Loader Skeleton -->
+  <div class="skeleton-list" *ngIf="loading()">
+    <div class="skeleton-item" *ngFor="let item of [1, 2, 3]">
+      <div class="skeleton-circle"></div>
+      <div class="skeleton-text-block">
+        <div class="skeleton-line short"></div>
+        <div class="skeleton-line long"></div>
+      </div>
+    </div>
+  </div>
+
+  <main class="history-main" *ngIf="!loading()">
+    
+    <!-- Tab Controls -->
+    <nav class="history-tabs">
+      <button class="tab-link" [class.active]="activeTab() === 'drafts'" (click)="setTab('drafts')">
+        Active Drafts ({{ draftRequests().length }})
+      </button>
+      <button class="tab-link" [class.active]="activeTab() === 'negotiations'" (click)="setTab('negotiations')">
+        Negotiations & Bids ({{ negotiationRequests().length }})
+      </button>
+      <button class="tab-link" [class.active]="activeTab() === 'workspaces'" (click)="setTab('workspaces')">
+        Crafting Workspaces ({{ workspaceRequests().length }})
+      </button>
+      <button class="tab-link" [class.active]="activeTab() === 'completed'" (click)="setTab('completed')">
+        Completed ({{ completedRequests().length }})
+      </button>
+    </nav>
+
+    <!-- TAB: ACTIVE DRAFTS -->
+    <section class="tab-content" *ngIf="activeTab() === 'drafts'">
+      <div class="empty-state" *ngIf="draftRequests().length === 0">
+        <div class="empty-illustration">📝</div>
+        <h3>No active drafts found</h3>
+        <p>Start a new customization doll configurator step-by-step!</p>
+        <button class="btn btn-primary" routerLink="/custom-studio">
+          Go to Studio Landing
+        </button>
+      </div>
+
+      <div class="requests-list" *ngIf="draftRequests().length > 0">
+        <div class="request-card" *ngFor="let req of draftRequests(); trackBy: trackByRequestId" (click)="routeToNextStep(req)">
+          <div class="card-left">
+            <span class="avatar-tag">🧶</span>
+            <div class="meta">
+              <h3>Custom Crochet Doll</h3>
+              <p>Created on {{ req.createdAt | date:'mediumDate' }}</p>
+              <span class="badge status">{{ req.status }}</span>
+            </div>
+          </div>
+          <div class="card-right">
+            <button class="btn btn-outline dark" (click)="deleteDraft(req.id, $event)">
+              Delete
+            </button>
+            <button class="btn btn-primary">
+              Continue Designing
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB: NEGOTIATIONS -->
+    <section class="tab-content" *ngIf="activeTab() === 'negotiations'">
+      <div class="empty-state" *ngIf="negotiationRequests().length === 0">
+        <div class="empty-illustration">💬</div>
+        <h3>No active chats or bids</h3>
+        <p>Once you run AI generation and match with local shops, negotiations will list here.</p>
+      </div>
+
+      <div class="requests-list" *ngIf="negotiationRequests().length > 0">
+        <div class="request-card" *ngFor="let req of negotiationRequests(); trackBy: trackByRequestId" (click)="routeToNextStep(req)">
+          <div class="card-left">
+            <span class="avatar-tag">💬</span>
+            <div class="meta">
+              <h3>Artisan Bidding Discussion</h3>
+              <p>Budget: EGP {{ req.targetBudget || 400 }} | Created {{ req.createdAt | date:'shortDate' }}</p>
+              <span class="badge status" [ngClass]="req.status">{{ req.status }}</span>
+            </div>
+          </div>
+          <div class="card-right">
+            <button class="btn btn-primary">
+              Open Negotiation
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB: WORKSPACES -->
+    <section class="tab-content" *ngIf="activeTab() === 'workspaces'">
+      <div class="empty-state" *ngIf="workspaceRequests().length === 0">
+        <div class="empty-illustration">🔨</div>
+        <h3>No active crafting projects</h3>
+        <p>Projects currently being crochet by sellers will show progress milestones here.</p>
+      </div>
+
+      <div class="requests-list" *ngIf="workspaceRequests().length > 0">
+        <div class="request-card" *ngFor="let req of workspaceRequests(); trackBy: trackByRequestId" (click)="routeToNextStep(req)">
+          <div class="card-left">
+            <span class="avatar-tag">🔨</span>
+            <div class="meta">
+              <h3>Artisan Active Workspace</h3>
+              <p>Yarn crafting in progress | Started {{ req.createdAt | date:'shortDate' }}</p>
+              <span class="badge status active">{{ req.status }}</span>
+            </div>
+          </div>
+          <div class="card-right">
+            <button class="btn btn-primary">
+              Open Workspace
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB: COMPLETED -->
+    <section class="tab-content" *ngIf="activeTab() === 'completed'">
+      <div class="empty-state" *ngIf="completedRequests().length === 0">
+        <div class="empty-illustration">💝</div>
+        <h3>No completed custom projects yet</h3>
+        <p>Complete custom checkout orders and confirm deliveries to build your collection!</p>
+      </div>
+
+      <div class="requests-list" *ngIf="completedRequests().length > 0">
+        <div class="request-card" *ngFor="let req of completedRequests(); trackBy: trackByRequestId" (click)="routeToNextStep(req)">
+          <div class="card-left">
+            <span class="avatar-tag">💝</span>
+            <div class="meta">
+              <h3>Completed Crochet Doll</h3>
+              <p>Delivered on {{ req.createdAt | date:'mediumDate' }}</p>
+              <span class="badge status completed">Completed</span>
+            </div>
+          </div>
+          <div class="card-right">
+            <button class="btn btn-primary">
+              View Design Details
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>

@@ -1,0 +1,196 @@
+<div class="offer-review-container">
+  
+  <header class="offer-header">
+    <div class="header-left">
+      <button class="back-btn" [routerLink]="['/custom-studio/negotiation', requestId()]">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+      </button>
+      <h2>Artisan's Bidding Offer</h2>
+    </div>
+  </header>
+
+  <!-- Loader -->
+  <div class="loading-state" *ngIf="loading()">
+    <div class="spinner"></div>
+    <p>Loading artisan offer details...</p>
+  </div>
+
+  <main class="offer-main" *ngIf="!loading()">
+    
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="!activeOffer()">
+      <div class="empty-illustration">📭</div>
+      <h3>No Active Bids Yet</h3>
+      <p>The artisan has not submitted an official custom offer for your request. Continue chatting with them in the discussion panel.</p>
+      <button class="btn btn-primary" [routerLink]="['/custom-studio/negotiation', requestId()]">
+        Back to Chat Discussion
+      </button>
+    </div>
+
+    <!-- Active Offer Card -->
+    <div class="offer-details-grid" *ngIf="activeOffer() && !showCheckoutForm()">
+      
+      <!-- Left side: Summary of terms -->
+      <section class="offer-summary-card">
+        <div class="card card-inner">
+          <div class="artisan-info">
+            <div class="avatar">
+              <img *ngIf="activeOffer()!.shopLogo" [src]="activeOffer()!.shopLogo" [alt]="activeOffer()!.shopName" />
+              <span *ngIf="!activeOffer()!.shopLogo" class="avatar-fallback">{{ activeOffer()!.shopName[0] }}</span>
+            </div>
+            <div class="meta">
+              <h3>{{ activeOffer()!.shopName }}</h3>
+              <span class="status-badge" [ngClass]="activeOffer()!.status">{{ activeOffer()!.status }}</span>
+            </div>
+          </div>
+
+          <div class="terms-list">
+            <div class="term-row highlight">
+              <span class="label">Bidded Price</span>
+              <span class="val">EGP {{ activeOffer()!.price | number:'1.2-2' }}</span>
+            </div>
+            <div class="term-row">
+              <span class="label">Delivery Timeline</span>
+              <span class="val">{{ activeOffer()!.deliveryTimeDays }} Days</span>
+            </div>
+            <div class="term-row" *ngIf="activeOffer()!.revisionsAllowed">
+              <span class="label">Revisions Included</span>
+              <span class="val">{{ activeOffer()!.revisionsAllowed }} revisions</span>
+            </div>
+            <div class="term-row">
+              <span class="label">Submitted Date</span>
+              <span class="val">{{ activeOffer()!.createdAt | date:'mediumDate' }}</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right side: Artisan Notes and Actions -->
+      <section class="offer-notes-panel">
+        <div class="card card-inner">
+          <h3>Artisan Proposal Notes</h3>
+          <p class="notes-text" *ngIf="activeOffer()!.notes">"{{ activeOffer()!.notes }}"</p>
+          <p class="notes-text empty" *ngIf="!activeOffer()!.notes">No special notes provided by the artisan.</p>
+
+          <!-- Attachments list if any -->
+          <div class="attachments-section" *ngIf="activeOffer()!.attachments && activeOffer()!.attachments.length > 0">
+            <h4>Attachments / Materials Sketch</h4>
+            <div class="attachments-grid">
+              <div class="attachment-thumb" *ngFor="let img of activeOffer()!.attachments">
+                <img [src]="img" alt="Attachment Drawing" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Action buttons for active pending offer -->
+          <div class="actions-row" *ngIf="activeOffer()!.status === 'Pending' || activeOffer()!.status === 'PendingSellerConfirmation'">
+            <button class="btn btn-primary" [disabled]="submitting()" (click)="acceptOffer()">
+              Accept Offer
+            </button>
+            <button class="btn btn-outline dark" [disabled]="submitting()" (click)="showChangeRequestForm.set(true)">
+              Request Changes
+            </button>
+            <button class="btn btn-danger-link" [disabled]="submitting()" (click)="rejectOffer()">
+              Reject Offer
+            </button>
+          </div>
+
+          <div class="status-banner" *ngIf="activeOffer()!.status === 'Accepted'">
+            <div class="success-icon">✓</div>
+            <p>You accepted this offer. Proceed to checkout to verify address and pay escrow deposit.</p>
+            <button class="btn btn-primary" (click)="showCheckoutForm.set(true)">
+              Proceed to Shipping & Checkout
+            </button>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- SHIPPING & CHECKOUT FORM PANEL -->
+    <div class="checkout-card-form" *ngIf="showCheckoutForm()">
+      <div class="card">
+        <h3>Shipping Address & Escrow Checkout</h3>
+        <p class="step-desc">Provide shipping details to lock payment in Handora escrow. Funds are securely held and only released to the artisan once you confirm final delivery.</p>
+
+        <form (ngSubmit)="submitCheckout()" class="checkout-form-grid">
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="fname">First Name *</label>
+              <input type="text" id="fname" class="form-control" [(ngModel)]="checkoutForm.firstName" name="firstName" required />
+            </div>
+            <div class="form-group">
+              <label for="lname">Last Name *</label>
+              <input type="text" id="lname" class="form-control" [(ngModel)]="checkoutForm.lastName" name="lastName" required />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="street">Street Address *</label>
+            <input type="text" id="street" class="form-control" [(ngModel)]="checkoutForm.street" name="street" placeholder="e.g. 123 Nile Street, Apartment 4" required />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="city">City *</label>
+              <input type="text" id="city" class="form-control" [(ngModel)]="checkoutForm.city" name="city" required />
+            </div>
+            <div class="form-group">
+              <label for="country">Country *</label>
+              <input type="text" id="country" class="form-control" [(ngModel)]="checkoutForm.country" name="country" disabled />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="coupon">Coupon Code (Optional)</label>
+              <input type="text" id="coupon" class="form-control" [(ngModel)]="checkoutForm.couponCode" name="couponCode" placeholder="e.g. HANDORA10" />
+            </div>
+            <div class="form-group">
+              <label for="c-notes">Delivery Instructions (Optional)</label>
+              <input type="text" id="c-notes" class="form-control" [(ngModel)]="checkoutForm.notes" name="notes" placeholder="e.g. Call before arrival" />
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn btn-outline dark" (click)="showCheckoutForm.set(false)" [disabled]="submitting()">
+              Cancel
+            </button>
+            <button type="submit" class="btn btn-primary" [disabled]="submitting()">
+              <span *ngIf="!submitting()">Pay EGP {{ activeOffer()!.price | number:'1.2-2' }}</span>
+              <span *ngIf="submitting()">Processing Checkout...</span>
+            </button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+
+    <!-- CHANGE REQUEST MODAL DIALOG OVERLAY -->
+    <div class="modal-overlay" *ngIf="showChangeRequestForm()">
+      <div class="modal-card">
+        <h3>Request Offer Modification</h3>
+        <p>Write details explaining what colors, configurations, or terms you want changed before accepting the bid.</p>
+        
+        <div class="form-group">
+          <textarea class="form-control text-area" rows="5" placeholder="e.g. I want to change the size to 25cm and outfit color to Navy Blue..." 
+                    [ngModel]="changeFeedbackText()" 
+                    (ngModelChange)="changeFeedbackText.set($event)"></textarea>
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn btn-outline dark" (click)="showChangeRequestForm.set(false)" [disabled]="submitting()">
+            Cancel
+          </button>
+          <button class="btn btn-primary" (click)="submitChangeRequest()" [disabled]="submitting() || !changeFeedbackText().trim()">
+            Send Request
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>

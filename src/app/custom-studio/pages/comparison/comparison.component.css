@@ -1,0 +1,229 @@
+.comparison-page-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  background-color: #fffdf9;
+  color: #1e0e05;
+}
+
+/* Header bar styling */
+.comparison-header {
+  display: flex;
+  align-items: center;
+  padding-bottom: 24px;
+  border-bottom: 1px solid rgba(49, 23, 2, 0.08);
+  margin-bottom: 45px;
+}
+
+.back-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #5c3d2e;
+  padding: 6px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.back-btn:hover {
+  background-color: rgba(49, 23, 2, 0.05);
+  color: #c8813a;
+}
+
+.comparison-header h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 32px;
+  font-weight: 700;
+  margin: 0;
+  color: #3d2010;
+}
+
+/* Table Wrapper */
+.comparison-table-wrapper {
+  background: #ffffff;
+  border: 1px solid rgba(49, 23, 2, 0.08);
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(49, 23, 2, 0.03);
+}
+
+.comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.comparison-table th, .comparison-table td {
+  padding: 24px 30px;
+  border-bottom: 1px solid rgba(49, 23, 2, 0.06);
+}
+
+.comparison-table th {
+  background-color: #fffdf9;
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  color: #3d2010;
+  font-weight: 700;
+}
+
+.feature-col {
+  width: 25%;
+}
+
+.design-col {
+  width: 37.5%;
+}
+
+.feature-title {
+  font-weight: 700;
+  color: #3d2010;
+  text-transform: uppercase;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+}
+
+/* Image Display Cell */
+.image-cell .img-container {
+  height: 280px;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid rgba(49, 23, 2, 0.08);
+  background-color: #fffdf9;
+}
+
+.image-cell img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Badges and Difficulty indicators */
+.score-badge {
+  display: inline-block;
+  background-color: rgba(200, 129, 58, 0.08);
+  color: #c8813a;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 14px;
+  border: 1px solid rgba(200, 129, 58, 0.15);
+}
+
+.difficulty {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.difficulty.moderate {
+  background-color: rgba(255, 193, 7, 0.08);
+  color: #c0985c;
+}
+
+.difficulty.complex {
+  background-color: rgba(220, 53, 69, 0.08);
+  color: #dc3545;
+}
+
+.meta-desc {
+  font-size: 13px;
+  color: #8d776f;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.highlight-val {
+  font-size: 18px;
+  font-weight: 700;
+  color: #c8813a;
+}
+
+.prompt-text {
+  font-size: 13px;
+  color: #5c3d2e;
+  line-height: 1.6;
+  font-style: italic;
+}
+
+/* Action controls */
+.actions-row {
+  background-color: #fffdf9;
+}
+
+.actions-row td {
+  border-bottom: none;
+}
+
+.actions-row .btn {
+  width: 100%;
+  max-width: 220px;
+}
+
+/* Skeletons & Empty State */
+.skeleton-container {
+  padding: 40px;
+}
+
+.skeleton-table {
+  width: 100%;
+  height: 500px;
+  background-color: rgba(49, 23, 2, 0.03);
+  border-radius: 28px;
+  position: relative;
+  overflow: hidden;
+}
+
+.skeleton-table::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent);
+  transform: translateX(-100%);
+  animation: loading-sweep 1.6s infinite;
+}
+
+@keyframes loading-sweep {
+  100% { transform: translateX(100%); }
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.empty-illustration {
+  font-size: 60px;
+  margin-bottom: 20px;
+}
+
+.empty-state h3 {
+  font-size: 22px;
+  color: #3d2010;
+  margin-bottom: 8px;
+}
+
+.empty-state p {
+  color: #5c3d2e;
+  font-size: 15px;
+}
+
+@media (max-width: 768px) {
+  .comparison-table th, .comparison-table td {
+    padding: 16px;
+  }
+  .image-cell .img-container {
+    height: 160px;
+  }
+}

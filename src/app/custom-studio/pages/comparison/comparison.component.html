@@ -1,0 +1,118 @@
+<div class="comparison-page-container">
+  
+  <header class="comparison-header">
+    <div class="header-left">
+      <button class="back-btn" [routerLink]="['/custom-studio/results', requestId()]">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+      </button>
+      <h2>Compare Design Options</h2>
+    </div>
+  </header>
+
+  <!-- Loading Skeletons -->
+  <div class="skeleton-container" *ngIf="loading()">
+    <div class="skeleton-table"></div>
+  </div>
+
+  <main class="comparison-main" *ngIf="!loading()">
+    
+    <!-- If not enough designs to compare -->
+    <div class="empty-state" *ngIf="!designA()">
+      <div class="empty-illustration">🔬</div>
+      <h3>Insufficient Designs to Compare</h3>
+      <p>Please return to the configurator and run AI generation to obtain twin doll designs.</p>
+    </div>
+
+    <!-- Comparison Table Grid -->
+    <div class="comparison-table-wrapper" *ngIf="designA()">
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th class="feature-col">Feature Comparison</th>
+            <th class="design-col">Option #1</th>
+            <th class="design-col" *ngIf="designB()">Option #2</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Images Row -->
+          <tr>
+            <td class="feature-title">Design Preview</td>
+            <td class="image-cell">
+              <div class="img-container">
+                <img [src]="designA()!.imageUrl" alt="Option 1" />
+              </div>
+            </td>
+            <td class="image-cell" *ngIf="designB()">
+              <div class="img-container">
+                <img [src]="designB()!.imageUrl" alt="Option 2" />
+              </div>
+            </td>
+          </tr>
+
+          <!-- Matching Score Row -->
+          <tr>
+            <td class="feature-title">AI Matching Score</td>
+            <td>
+              <div class="score-badge">{{ designA()!.matchingScore | number:'1.0-1' }}% match</div>
+            </td>
+            <td *ngIf="designB()">
+              <div class="score-badge">{{ designB()!.matchingScore | number:'1.0-1' }}% match</div>
+            </td>
+          </tr>
+
+          <!-- Difficulty Level Row -->
+          <tr>
+            <td class="feature-title">Embroidering Difficulty</td>
+            <td>
+              <span class="difficulty moderate">Moderate</span>
+              <p class="meta-desc">Requires clean single/double crochet stitches, color transitions, and sewing face parts.</p>
+            </td>
+            <td *ngIf="designB()">
+              <span class="difficulty complex">Advanced</span>
+              <p class="meta-desc">Requires intricate loop stitches, multi-layered hair braids, and miniature accessories.</p>
+            </td>
+          </tr>
+
+          <!-- Crafting Time Row -->
+          <tr>
+            <td class="feature-title">Estimated Crafting Time</td>
+            <td class="highlight-val">~4 Days</td>
+            <td class="highlight-val" *ngIf="designB()">~6 Days</td>
+          </tr>
+
+          <!-- Yarn Recommendation Row -->
+          <tr>
+            <td class="feature-title">Recommended Yarn Type</td>
+            <td>Milk Cotton Yarn (5-ply)</td>
+            <td *ngIf="designB()">Combed Cotton & Acrylic Blend</td>
+          </tr>
+
+          <!-- AI Prompt Context Row -->
+          <tr>
+            <td class="feature-title">AI Prompt Details</td>
+            <td class="prompt-text">"{{ designA()!.prompt }}"</td>
+            <td class="prompt-text" *ngIf="designB()">"{{ designB()!.prompt }}"</td>
+          </tr>
+
+          <!-- Action Controls Row -->
+          <tr class="actions-row">
+            <td>Ready to Select?</td>
+            <td>
+              <button class="btn btn-primary" (click)="selectDesign(designA()!.id)">
+                Choose Option 1
+              </button>
+            </td>
+            <td *ngIf="designB()">
+              <button class="btn btn-primary" (click)="selectDesign(designB()!.id)">
+                Choose Option 2
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+</div>

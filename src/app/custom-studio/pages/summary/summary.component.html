@@ -1,0 +1,149 @@
+<div class="summary-page-container">
+  
+  <header class="summary-header">
+    <div class="header-left">
+      <button class="back-btn" [routerLink]="(requestDetails()?.generatedDesigns?.length || 0) > 0 ? ['/custom-studio/results', requestId()] : ['/custom-studio/wizard', requestId()]">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+      </button>
+      <h2>Design Summary Blueprint</h2>
+    </div>
+  </header>
+
+  <!-- Loading Skeletons -->
+  <div class="skeleton-container" *ngIf="loading()">
+    <div class="skeleton-layout"></div>
+  </div>
+
+  <main class="summary-main" *ngIf="!loading() && requestDetails()">
+    
+    <div class="summary-grid">
+      
+      <!-- LEFT PANEL: Selected Image Showcase -->
+      <section class="selected-design-panel">
+        <div class="design-card">
+          <div class="badge-chosen">Chosen Design</div>
+          <div class="design-img-wrapper" *ngIf="selectedDesign()">
+            <img [src]="selectedDesign()!.imageUrl" alt="Selected Doll Blueprint" />
+          </div>
+          <div class="design-img-wrapper" *ngIf="!selectedDesign()">
+            <div class="no-design-placeholder">No design image found</div>
+          </div>
+          
+          <div class="design-stats" *ngIf="selectedDesign()">
+            <div class="stat-item">
+              <span class="label">Matching Score</span>
+              <span class="value">{{ selectedDesign()!.matchingScore | number:'1.0-1' }}%</span>
+            </div>
+            <div class="stat-item">
+              <span class="label">Generation Speed</span>
+              <span class="value">{{ (selectedDesign()!.generationTimeMs / 1000) | number:'1.1-1' }}s</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT PANEL: Recipient Configuration Receipt -->
+      <section class="receipt-panel">
+        <div class="receipt-card">
+          <h3 class="receipt-title">Studio Specifications</h3>
+          
+          <div class="receipt-section" *ngIf="parsedConfig()">
+            <!-- Dimensions -->
+            <div class="receipt-row">
+              <span class="property">Archetype</span>
+              <span class="value">{{ parsedConfig()!.gender }}</span>
+            </div>
+            <div class="receipt-row">
+              <span class="property">Doll Height</span>
+              <span class="value">{{ parsedConfig()!.size }}</span>
+            </div>
+            <div class="receipt-row">
+              <span class="property">Body Type</span>
+              <span class="value">{{ parsedConfig()!.bodyType }}</span>
+            </div>
+            
+            <!-- Colors & Hair -->
+            <div class="receipt-row">
+              <span class="property">Skin Tone</span>
+              <span class="value color-value">
+                <span class="color-dot" [style.background-color]="parsedConfig()!.skinTone"></span>
+                {{ parsedConfig()!.skinTone }}
+              </span>
+            </div>
+            <div class="receipt-row">
+              <span class="property">Hair Styling</span>
+              <span class="value">
+                <span class="color-dot" [style.background-color]="parsedConfig()!.hairColor"></span>
+                {{ parsedConfig()!.hairStyle }} ({{ parsedConfig()!.hairTexture }})
+              </span>
+            </div>
+            <div class="receipt-row">
+              <span class="property">Bangs / Fringe</span>
+              <span class="value">{{ parsedConfig()!.hairBangs ? 'Yes' : 'No' }}</span>
+            </div>
+
+            <!-- Face -->
+            <div class="receipt-row">
+              <span class="property">Eyes & Smile</span>
+              <span class="value">{{ parsedConfig()!.smileType }} Smile</span>
+            </div>
+
+            <!-- Outfit -->
+            <div class="receipt-row">
+              <span class="property">Outfit Category</span>
+              <span class="value">{{ parsedConfig()!.outfitCategory }} ({{ parsedConfig()!.outfitStyle }})</span>
+            </div>
+            <div class="receipt-row" *ngIf="outfitColorsList().length > 0">
+              <span class="property">Outfit Colors</span>
+              <span class="value colors-value">
+                <span *ngFor="let c of outfitColorsList()" class="color-dot" [style.background-color]="c"></span>
+              </span>
+            </div>
+
+            <!-- Accessories -->
+            <div class="receipt-row">
+              <span class="property">Accessories</span>
+              <span class="value">{{ accessoriesList().length > 0 ? accessoriesList().join(', ') : 'None' }}</span>
+            </div>
+
+            <!-- Personalization -->
+            <div class="receipt-row" *ngIf="parsedConfig()!.personalizationName">
+              <span class="property">Wooden Tag Name</span>
+              <span class="value italic">"{{ parsedConfig()!.personalizationName }}"</span>
+            </div>
+            <div class="receipt-row" *ngIf="parsedConfig()!.personalizationMessage">
+              <span class="property">Tag Message</span>
+              <span class="value italic">"{{ parsedConfig()!.personalizationMessage }}"</span>
+            </div>
+          </div>
+
+          <!-- Price & Time Estimate -->
+          <div class="receipt-estimates">
+            <div class="estimate-row">
+              <span class="label">Est. Price Range</span>
+              <span class="val highlight">EGP 350 - EGP 500</span>
+            </div>
+            <div class="estimate-row">
+              <span class="label">Est. Delivery Duration</span>
+              <span class="val">4 - 6 Days</span>
+            </div>
+          </div>
+
+          <div class="receipt-actions">
+            <button *ngIf="selectedDesign()" class="btn btn-primary btn-proceed" (click)="proceedToMatching()">
+              Find Crafting Artisans
+            </button>
+            <button *ngIf="!selectedDesign()" class="btn btn-primary btn-proceed btn-sparkle" [routerLink]="['/custom-studio/generating', requestId()]">
+              ✨ Generate AI Designs
+            </button>
+          </div>
+
+        </div>
+      </section>
+
+    </div>
+
+  </main>
+</div>

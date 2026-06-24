@@ -49,7 +49,16 @@
       <div class="result-icon">&#x2714;</div>
       <h3>{{ langService.translate('paymentSuccessful') }}</h3>
       <p>{{ langService.translate('orderConfirmedProcessed') }}</p>
-      <a [routerLink]="['/orders', orderId]" class="btn-action">{{ langService.translate('viewOrder') }}</a>
+      
+      <!-- Go to Workspace Button (if custom request) -->
+      <div *ngIf="customRequestId()" style="margin-bottom: 1.2rem;">
+        <a [routerLink]="['/custom-studio/workspace', customRequestId()]" class="btn-action">
+          {{ langService.currentLang() === 'ar' ? 'انتقل إلى مساحة عمل الاستوديو الخاص بك' : 'Go to Custom Studio Workspace' }}
+        </a>
+      </div>
+
+      <a [routerLink]="['/orders', orderId]" class="btn-action" *ngIf="!customRequestId()">{{ langService.translate('viewOrder') }}</a>
+      <a [routerLink]="['/orders', orderId]" class="btn-link" *ngIf="customRequestId()">{{ langService.translate('viewOrder') }}</a>
       <a routerLink="/orders" class="btn-link">{{ langService.translate('myOrders') }}</a>
     </div>
 

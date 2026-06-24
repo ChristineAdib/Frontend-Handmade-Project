@@ -1,0 +1,153 @@
+<div class="workspace-page-container">
+  
+  <header class="workspace-header">
+    <div class="header-left">
+      <button class="back-btn" [routerLink]="['/custom-studio/negotiation', requestId()]">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+      </button>
+      <h2>Artisan Crafting Workspace</h2>
+    </div>
+    
+    <div class="header-actions" *ngIf="workspace()">
+      <button class="btn btn-secondary" [routerLink]="['/custom-studio/negotiation', requestId()]">
+        Chat with Artisan
+      </button>
+    </div>
+  </header>
+
+  <!-- Loader Skeleton -->
+  <div class="skeleton-workspace" *ngIf="loading()">
+    <div class="skeleton-timeline-card">
+      <div class="skeleton-block title"></div>
+      <div class="skeleton-block item" *ngFor="let i of [1, 2, 3, 4]"></div>
+    </div>
+    <div class="details-panel">
+      <div class="skeleton-aside-card">
+        <div class="skeleton-block title"></div>
+        <div class="skeleton-block item" style="height: 40px;"></div>
+      </div>
+      <div class="skeleton-aside-card" style="height: 200px;">
+        <div class="skeleton-block title"></div>
+        <div class="skeleton-block item" style="height: 60px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <main class="workspace-main" *ngIf="!loading()">
+    
+    <!-- Empty State / Not Initialized -->
+    <div class="empty-state" *ngIf="!workspace()">
+      <div class="empty-illustration">🔨</div>
+      <h3>Workspace Not Started</h3>
+      <p>This workspace will initialize once you accept an artisan's custom offer and proceed through payment deposit.</p>
+    </div>
+
+    <!-- Active Workspace -->
+    <div class="workspace-grid" *ngIf="workspace()">
+      
+      <!-- LEFT PANEL: Milestones timeline -->
+      <section class="timeline-panel">
+        <div class="card card-inner">
+          <h3>Crafting Milestones</h3>
+          
+          <div class="milestones-timeline">
+            <div class="timeline-item" *ngFor="let m of milestones" [ngClass]="getStatusClass(m.step)">
+              <div class="status-marker">
+                <span class="step-num">{{ m.step + 1 }}</span>
+                <span class="check-icon">✓</span>
+              </div>
+              <div class="timeline-info">
+                <h4>{{ m.name }}</h4>
+                <p>{{ m.desc }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT PANEL: Photos & Courier details -->
+      <section class="details-panel">
+        <div class="card card-inner status-card">
+          <h3>Workspace Details</h3>
+          
+          <div class="details-list">
+            <div class="detail-row">
+              <span class="label">Escrow Payment</span>
+              <span class="badge" [ngClass]="workspace()!.paymentStatus">
+                {{ workspace()!.paymentStatus }}
+              </span>
+            </div>
+            <div class="detail-row" *ngIf="workspace()!.trackingNumber">
+              <span class="label">Courier Tracking</span>
+              <span class="val highlight">{{ workspace()!.trackingNumber }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Estimated Delivery</span>
+              <span class="val">~5 Days</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Seller Actions Panel -->
+        <div class="card card-inner actions-card" *ngIf="isSeller()">
+          <h3>Artisan Controls</h3>
+          <p class="photo-desc">Use these tools to update the buyer on your progress and finalize details.</p>
+          
+          <div class="action-buttons-group" style="display: flex; flex-direction: column; gap: 15px; margin-top: 15px;">
+            <!-- Increment Milestone Step -->
+            <div class="action-block" *ngIf="workspace()!.milestoneStep < 5">
+              <button class="btn btn-primary" style="width: 100%;" (click)="incrementMilestone()" [disabled]="updatingProgress()">
+                {{ updatingProgress() ? 'Updating...' : 'Advance to Next Stage' }}
+              </button>
+              <span class="subtext" style="font-size: 0.8rem; color: #666; display: block; margin-top: 4px;">
+                Moves progress to: {{ milestones[workspace()!.milestoneStep + 1].name }}
+              </span>
+            </div>
+
+            <!-- Ship with Tracking Number -->
+            <div class="action-block ship-block" *ngIf="workspace()!.milestoneStep === 5">
+              <label for="trackingNum" style="display: block; margin-bottom: 5px; font-weight: 600;">Shipping Tracking Number</label>
+              <div class="tracking-input-row" style="display: flex; gap: 8px;">
+                <input type="text" id="trackingNum" #trackingInput placeholder="e.g. ARAMEX-98242" style="flex: 1; padding: 6px 12px; border: 1px solid #ccc; border-radius: 4px;" />
+                <button class="btn btn-success" (click)="shipProject(trackingInput.value)" [disabled]="updatingProgress()">
+                  Ship
+                </button>
+              </div>
+            </div>
+
+            <!-- Upload progress/final photo -->
+            <div class="action-block upload-block">
+              <label class="btn btn-secondary" style="width: 100%; text-align: center; cursor: pointer; display: block;">
+                Upload Progress / Final Photo
+                <input type="file" (change)="uploadPhoto($event)" style="display: none;" accept="image/*" [disabled]="uploadingPhoto()" />
+              </label>
+              <span class="subtext" style="font-size: 0.8rem; color: #666; display: block; margin-top: 4px;" *ngIf="uploadingPhoto()">Uploading image...</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Buyer Actions Panel -->
+        <div class="card card-inner actions-card buyer-actions" *ngIf="!isSeller() && workspace()!.milestoneStep === 6">
+          <h3>Delivery Confirmation</h3>
+          <p class="photo-desc">Your package is shipped. Once you receive your custom crochet doll, please click confirm below to release payment escrow to the artisan.</p>
+          <button class="btn btn-success" style="width: 100%; margin-top: 10px;" (click)="confirmDelivery()" [disabled]="updatingProgress()">
+            {{ updatingProgress() ? 'Processing...' : 'Confirm Delivery & Release Funds' }}
+          </button>
+        </div>
+
+        <!-- Progress photo upload by seller -->
+        <div class="card card-inner photo-card" *ngIf="workspace()!.finalPhotoUrl">
+          <h3>Artisan Workspace Photo</h3>
+          <p class="photo-desc">The seller has uploaded a photo of the completed custom crochet doll before dispatching it.</p>
+          <div class="workspace-photo">
+            <img [src]="workspace()!.finalPhotoUrl" alt="Completed Custom Doll Photo" />
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+  </main>
+</div>

@@ -1,0 +1,94 @@
+<div class="matching-page-container">
+  
+  <header class="matching-header">
+    <div class="header-left">
+      <button class="back-btn" [routerLink]="['/custom-studio/summary', requestId()]">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+      </button>
+      <h2>Recommended Crochet Artisans</h2>
+    </div>
+  </header>
+
+  <!-- Loading Skeletons -->
+  <div class="skeleton-container" *ngIf="loading()">
+    <div class="skeleton-card" *ngFor="let s of [1, 2]">
+      <div class="skeleton-avatar"></div>
+      <div class="skeleton-text"></div>
+    </div>
+  </div>
+
+  <main class="matching-main" *ngIf="!loading()">
+    
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="recommendations().length === 0">
+      <div class="empty-illustration">🕵️‍♂️</div>
+      <h3>No Matches Found</h3>
+      <p>Our algorithms could not find matching crochet shops at this moment. Please try again later or adjust your configuration details.</p>
+    </div>
+
+    <!-- Recommendations Grid -->
+    <div class="sellers-grid" *ngIf="recommendations().length > 0">
+      <div class="seller-card" *ngFor="let rec of recommendations()">
+        
+        <!-- Matching Score circle indicator -->
+        <div class="score-ring">
+          <span class="score-number">{{ rec.matchingScore | number:'1.0-1' }}%</span>
+          <span class="score-lbl">Match</span>
+        </div>
+
+        <div class="seller-profile-row">
+          <!-- Shop logo circle -->
+          <div class="shop-logo-circle">
+            <img *ngIf="rec.shopLogo" [src]="rec.shopLogo" [alt]="rec.shopName" />
+            <span *ngIf="!rec.shopLogo" class="avatar-fallback">{{ rec.shopName[0] }}</span>
+          </div>
+
+          <div class="shop-meta">
+            <h3>{{ rec.shopName }}</h3>
+            <!-- Star Ratings (Mock) -->
+            <div class="ratings-stars">
+              <span class="star">★</span>
+              <span class="star">★</span>
+              <span class="star">★</span>
+              <span class="star">★</span>
+              <span class="star">★</span>
+              <span class="rating-number">5.0 (42 orders)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bidding details -->
+        <div class="bid-details">
+          <div class="detail-col">
+            <span class="label">Bidded Price</span>
+            <span class="val highlight">EGP {{ rec.estimatedPrice | number:'1.2-2' }}</span>
+          </div>
+          <div class="detail-col">
+            <span class="label">Est. Completion</span>
+            <span class="val">{{ rec.estimatedDeliveryDays }} Days</span>
+          </div>
+        </div>
+
+        <!-- Matching justification text -->
+        <div class="matching-reason">
+          <div class="reason-header">Why recommended:</div>
+          <p>"{{ rec.reason }}"</p>
+        </div>
+
+        <!-- Discussion Action -->
+        <div class="card-action">
+          <button class="btn btn-primary btn-chat" 
+                  [disabled]="chatLoading() !== null" 
+                  (click)="startDiscussion(rec.shopId.toString())">
+            <span *ngIf="chatLoading() !== rec.shopId.toString()">Start Discussion</span>
+            <span *ngIf="chatLoading() === rec.shopId.toString()">Opening Chat...</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+</div>

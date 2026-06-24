@@ -1,0 +1,334 @@
+<div class="wizard-page-container">
+  <!-- Top bar with progress and auto-save feedback -->
+  <header class="wizard-header">
+    <div class="header-left">
+      <button class="back-btn" routerLink="/custom-studio">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+      </button>
+      <h2>Crochet Doll Configurator</h2>
+    </div>
+
+    <!-- Stepper indicator -->
+    <div class="step-indicator">
+      <span class="step-badge">Step {{ currentStep() }} of {{ totalSteps }}</span>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" [style.width.%]="(currentStep() / totalSteps) * 100"></div>
+      </div>
+    </div>
+
+    <!-- Save Status Indicator -->
+    <div class="save-badge" [ngClass]="saveStatus()">
+      <span class="dot"></span>
+      <span class="text">{{ saveStatus() }}</span>
+    </div>
+  </header>
+
+  <!-- Main Split Layout -->
+  <main class="wizard-content">
+    
+    <!-- LEFT SIDE: Live Preview Panel -->
+    <section class="preview-panel">
+      <div class="preview-card">
+        <h3>Live Studio Preview</h3>
+        <app-live-preview [config]="configModel()"></app-live-preview>
+        <div class="preview-shadow-text">Your updates reflect here instantly</div>
+      </div>
+    </section>
+
+    <!-- RIGHT SIDE: Configurator Form Steps -->
+    <section class="controls-panel">
+      <div class="card step-card-container">
+        
+        <!-- STEP 1: GENDER -->
+        <div *ngIf="currentStep() === 1" class="step-content">
+          <h3>Step 1: Doll Gender</h3>
+          <p class="step-desc">Select the gender archetype for your handmade crochet doll.</p>
+          <div class="options-grid">
+            <div class="option-card" [class.selected]="configModel().gender === 'Girl'" 
+                 (click)="updateConfigField('gender', 'Girl')">
+              <div class="option-icon">👧</div>
+              <h4>Girl archetype</h4>
+            </div>
+            <div class="option-card" [class.selected]="configModel().gender === 'Boy'" 
+                 (click)="updateConfigField('gender', 'Boy')">
+              <div class="option-icon">👦</div>
+              <h4>Boy archetype</h4>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 2: SIZE -->
+        <div *ngIf="currentStep() === 2" class="step-content">
+          <h3>Step 2: Doll Size</h3>
+          <p class="step-desc">Choose the physical height of the finished crochet doll.</p>
+          <div class="size-list">
+            <button *ngFor="let s of ['15 cm', '20 cm', '25 cm', '30 cm', '40 cm']"
+                    class="size-btn" [class.selected]="configModel().size === s"
+                    (click)="updateConfigField('size', s)">
+              {{ s }}
+            </button>
+            <button class="size-btn" [class.selected]="configModel().size === 'Custom'"
+                    (click)="updateConfigField('size', 'Custom')">
+              Custom Size
+            </button>
+          </div>
+        </div>
+
+        <!-- STEP 3: BODY TYPE -->
+        <div *ngIf="currentStep() === 3" class="step-content">
+          <h3>Step 3: Body Proportions</h3>
+          <p class="step-desc">Choose the body shape and proportion type.</p>
+          <div class="options-grid">
+            <div *ngFor="let bt of ['Slim', 'Normal', 'Chubby', 'Child', 'Adult']" 
+                 class="option-card small" [class.selected]="configModel().bodyType === bt"
+                 (click)="updateConfigField('bodyType', bt)">
+              <h4>{{ bt }}</h4>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 4: SKIN TONE -->
+        <div *ngIf="currentStep() === 4" class="step-content">
+          <h3>Step 4: Skin Tone</h3>
+          <p class="step-desc">Choose a skin color for the crochet face and limbs.</p>
+          <div class="color-palette">
+            <button *ngFor="let tone of skinTones" 
+                    class="color-btn" 
+                    [style.background-color]="tone.hex"
+                    [class.selected]="configModel().skinTone === tone.hex"
+                    [attr.aria-label]="tone.name"
+                    (click)="updateConfigField('skinTone', tone.hex)">
+              <span class="color-name">{{ tone.name }}</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- STEP 5: HAIR STYLING -->
+        <div *ngIf="currentStep() === 5" class="step-content">
+          <h3>Step 5: Hair Styling & Colors</h3>
+          <p class="step-desc">Customize hair aesthetics.</p>
+          
+          <h4 class="sub-heading">Hair Style</h4>
+          <div class="options-grid small">
+            <div *ngFor="let style of hairStylesOptions(); trackBy: trackByItem"
+                 class="option-card tiny" [class.selected]="configModel().hairStyle === style"
+                 (click)="updateConfigField('hairStyle', style)">
+              <span>{{ style }}</span>
+            </div>
+          </div>
+
+          <h4 class="sub-heading">Hair Color</h4>
+          <div class="color-palette">
+            <button *ngFor="let color of hairColors" 
+                    class="color-btn" 
+                    [style.background-color]="color.hex"
+                    [class.selected]="configModel().hairColor === color.hex"
+                    [attr.aria-label]="color.name"
+                    (click)="updateConfigField('hairColor', color.hex)">
+              <span class="color-name">{{ color.name }}</span>
+            </button>
+          </div>
+
+          <div class="toggles-row">
+            <label class="switch-container">
+              <input type="checkbox" [ngModel]="configModel().hairBangs" 
+                     (ngModelChange)="updateConfigField('hairBangs', $event)" />
+              <span class="slider"></span>
+              <span class="label-text">Forehead Bangs / Fringe</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- STEP 6: FACE DETAILS -->
+        <div *ngIf="currentStep() === 6" class="step-content">
+          <h3>Step 6: Face Details</h3>
+          <p class="step-desc">Express character with custom eye colors, smiles, and facial accents.</p>
+
+          <h4 class="sub-heading">Eye Color</h4>
+          <div class="color-palette">
+            <button *ngFor="let color of eyeColors" 
+                    class="color-btn" 
+                    [style.background-color]="color.hex"
+                    [class.selected]="configModel().eyeColor === color.hex"
+                    [attr.aria-label]="color.name"
+                    (click)="updateConfigField('eyeColor', color.hex)">
+              <span class="color-name">{{ color.name }}</span>
+            </button>
+          </div>
+
+          <h4 class="sub-heading">Facial Expression</h4>
+          <div class="options-grid small">
+            <div *ngFor="let smile of ['Happy', 'Grin', 'Cute', 'Shy']"
+                 class="option-card tiny" [class.selected]="configModel().smileType === smile"
+                 (click)="updateConfigField('smileType', smile)">
+              <span>{{ smile }}</span>
+            </div>
+          </div>
+
+          <h4 class="sub-heading">Accents</h4>
+          <div class="toggles-grid">
+            <label class="switch-container" *ngIf="configModel().gender === 'Girl'">
+              <input type="checkbox" [ngModel]="configModel().hasBlush" 
+                     (ngModelChange)="updateConfigField('hasBlush', $event)" />
+              <span class="slider"></span>
+              <span class="label-text">Rosy Blush Cheeks</span>
+            </label>
+
+            <label class="switch-container">
+              <input type="checkbox" [ngModel]="configModel().hasFreckles" 
+                     (ngModelChange)="updateConfigField('hasFreckles', $event)" />
+              <span class="slider"></span>
+              <span class="label-text">Cute Freckles</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- STEP 7: OUTFIT -->
+        <div *ngIf="currentStep() === 7" class="step-content">
+          <h3>Step 7: Outfit Design</h3>
+          <p class="step-desc">Choose the doll dress/outfit structure and yarn colors.</p>
+
+          <h4 class="sub-heading">Outfit Category</h4>
+          <div class="options-grid small">
+            <div *ngFor="let cat of outfitCategoriesOptions(); trackBy: trackByItem"
+                 class="option-card tiny" [class.selected]="configModel().outfitCategory === cat"
+                 (click)="updateConfigField('outfitCategory', cat)">
+              <span>{{ cat }}</span>
+            </div>
+          </div>
+
+          <h4 class="sub-heading">Primary Yarn Color</h4>
+          <div class="color-palette">
+            <button *ngFor="let color of outfitColorsOptions" 
+                    class="color-btn" 
+                    [style.background-color]="color"
+                    [class.selected]="configModel().outfitColors?.[0] === color"
+                    (click)="setOutfitColor(color, 0)">
+            </button>
+          </div>
+
+          <h4 class="sub-heading">Secondary Accent Color</h4>
+          <div class="color-palette">
+            <button *ngFor="let color of outfitColorsOptions" 
+                    class="color-btn" 
+                    [style.background-color]="color"
+                    [class.selected]="configModel().outfitColors?.[1] === color"
+                    (click)="setOutfitColor(color, 1)">
+            </button>
+          </div>
+        </div>
+
+        <!-- STEP 8: ACCESSORIES -->
+        <div *ngIf="currentStep() === 8" class="step-content">
+          <h3>Step 8: Handcrafted Accessories</h3>
+          <p class="step-desc">Select multiple add-on accessories. (Click to toggle)</p>
+          <div class="options-grid">
+            <div *ngFor="let acc of accessoriesOptions(); trackBy: trackByItem" 
+                 class="option-card" 
+                 [class.selected]="configModel().accessories?.includes(acc)"
+                 (click)="toggleAccessory(acc)">
+              <div class="option-icon">
+                <span *ngIf="acc === 'Hat'">🎩</span>
+                <span *ngIf="acc === 'Glasses'">👓</span>
+                <span *ngIf="acc === 'Scarf'">🧣</span>
+                <span *ngIf="acc === 'Flower'">🌸</span>
+                <span *ngIf="acc === 'Bag'">👜</span>
+              </div>
+              <h4>{{ acc }}</h4>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 9: PERSONALIZATION -->
+        <div *ngIf="currentStep() === 9" class="step-content">
+          <h3>Step 9: Wooden Tag Personalization</h3>
+          <p class="step-desc">Add a custom name or message to be embroidered or printed on a wooden tag attached to the doll.</p>
+          
+          <div class="form-group">
+            <label for="p-name">Doll Name / Label</label>
+            <input type="text" id="p-name" class="form-control" placeholder="e.g. Lily, Peter" 
+                   [ngModel]="configModel().personalizationName"
+                   (ngModelChange)="updateConfigField('personalizationName', $event)" />
+          </div>
+
+          <div class="form-group">
+            <label for="p-message">Short Message (Optional)</label>
+            <input type="text" id="p-message" class="form-control" placeholder="e.g. Happy Birthday!" 
+                   [ngModel]="configModel().personalizationMessage"
+                   (ngModelChange)="updateConfigField('personalizationMessage', $event)" />
+          </div>
+
+          <div class="form-group">
+            <label for="p-font">Choose Font style</label>
+            <select id="p-font" class="form-control" [ngModel]="configModel().personalizationFont"
+                    (ngModelChange)="updateConfigField('personalizationFont', $event)">
+              <option value="Arial">Modern Sans-Serif (Arial)</option>
+              <option value="Times New Roman">Classic Serif (Times New Roman)</option>
+              <option value="Courier New">Retro Typewriter (Courier New)</option>
+              <option value="Brush Script MT">Elegant Calligraphy</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- STEP 10: REFERENCE IMAGE -->
+        <div *ngIf="currentStep() === 10" class="step-content">
+          <h3>Step 10: Upload Reference Image</h3>
+          <p class="step-desc">Have a sketch or photo of the look you want? Upload it as context for our AI generator and local artisans.</p>
+          
+          <div class="upload-container" *ngIf="!uploadedImageUrl() && !uploadingImage()"
+               [class.dragging]="isDragging()"
+               (dragover)="onDragOver($event)"
+               (dragleave)="onDragLeave()"
+               (drop)="onFileDropped($event)">
+            <label class="upload-area">
+              <input type="file" (change)="onFileSelected($event)" accept="image/*" class="file-input" />
+              <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="#c8813a" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+              </svg>
+              <span>{{ isDragging() ? 'Drop your image here!' : 'Click or drag reference image' }}</span>
+              <span class="hint">JPG, PNG, or WebP up to 5MB</span>
+            </label>
+          </div>
+
+          <!-- Loading state -->
+          <div class="upload-loading" *ngIf="uploadingImage()">
+            <div class="spinner"></div>
+            <p>Uploading and verifying image security...</p>
+          </div>
+
+          <!-- Preview state -->
+          <div class="upload-preview" *ngIf="uploadedImageUrl()">
+            <img [src]="uploadedImageUrl()" alt="Uploaded Reference" class="preview-img" />
+            <button class="btn-remove" (click)="removeReferenceImage()">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+              Remove Image
+            </button>
+          </div>
+        </div>
+
+        <!-- STEP CONTROLS FOOTER -->
+        <footer class="step-footer">
+          <button class="btn btn-outline dark" (click)="prevStep()" [disabled]="currentStep() === 1">
+            Back
+          </button>
+          
+          <button class="btn btn-primary" *ngIf="currentStep() < totalSteps" (click)="nextStep()">
+            Next Step
+          </button>
+
+          <button class="btn btn-primary btn-generate" *ngIf="currentStep() === totalSteps" 
+                  [disabled]="!isConfigComplete()" (click)="goToReview()">
+            Go to Review
+          </button>
+        </footer>
+
+      </div>
+    </section>
+
+  </main>
+</div>

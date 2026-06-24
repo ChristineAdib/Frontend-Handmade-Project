@@ -1,0 +1,29 @@
+<div class="generating-page-container">
+  <div class="generating-card">
+    
+    <!-- Concentric AI Pulsing Rings -->
+    <div class="ai-orbit-container">
+      <div class="orbit ring-1"></div>
+      <div class="orbit ring-2"></div>
+      <div class="orbit ring-3"></div>
+      <div class="crochet-icon-center">🧶</div>
+    </div>
+
+    <h2 class="ai-title">Weaving Magic...</h2>
+    
+    <!-- Dynamic Typing / Cycling Messages -->
+    <div class="typing-text-wrapper">
+      <p class="typing-message">{{ thinkingMessages[currentMessageIndex()] }}</p>
+    </div>
+
+    <!-- Progress Indicator -->
+    <div class="progress-section">
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" [style.width.%]="progressValue()"></div>
+      </div>
+      <span class="progress-percentage">{{ progressValue() }}% Completed</span>
+    </div>
+
+    <p class="warning-text">Please do not refresh or close this window. AI model rendering takes about 10-15 seconds.</p>
+  </div>
+</div>
