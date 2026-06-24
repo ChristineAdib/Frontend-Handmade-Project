@@ -190,4 +190,60 @@ select.fi { cursor: pointer; }
 
 @media (max-width: 768px) {
   .form-grid { grid-template-columns: 1fr; }
-}
+}
+
+
+.agent-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 16px;
+  width: 100%;
+  padding: 14px 20px;
+  background: linear-gradient(135deg, #8B4513, #c1622c);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  box-shadow: 0 4px 15px rgba(139, 69, 19, 0.3);
+  transition: all 0.3s ease;
+}
+
+.agent-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(139, 69, 19, 0.4);
+  background: linear-gradient(135deg, #c1622c, #8B4513);
+}
+
+.agent-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.agent-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.agent-btn .btn-icon {
+  font-size: 18px;
+  animation: sparkle 2s infinite;
+}
+
+.agent-btn.loading .btn-icon {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes sparkle {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(1.2) rotate(10deg); }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
