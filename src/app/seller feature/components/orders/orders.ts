@@ -153,21 +153,24 @@ statuses = ['Processing', 'Shipped', 'Delivered'];
     };
     return map[status] ?? '';
   }
- 
- canTransition(current: string, next: string): boolean {
-  if (current === 'Delivered') return false;
-  if (current === 'Shipped' && next === 'Processing') return false;
-  return this.getAvailableStatusOptions(current).includes(next);
+isStatusEditable(currentStatus: string): boolean {
+  return ['Pending', 'Confirmed', 'Processing'].includes(currentStatus);
 }
 
 getAvailableStatusOptions(currentStatus: string): string[] {
-  if (currentStatus === 'Processing') return ['Processing', 'Shipped'];
-  if (currentStatus === 'Shipped') return ['Shipped'];
-  return [currentStatus]; // Delivered (أو أي حالة تانية) - مقفولة
+  if (currentStatus === 'Pending' || currentStatus === 'Confirmed') {
+    return [currentStatus, 'Processing'];
+  }
+  if (currentStatus === 'Processing') {
+    return ['Processing', 'Shipped'];
+  }
+  return [currentStatus]; // Shipped / Delivered → read-only
 }
 
-isStatusEditable(currentStatus: string): boolean {
-  return currentStatus === 'Processing' || currentStatus === 'Shipped';
+canTransition(current: string, next: string): boolean {
+  if (!this.isStatusEditable(current)) return false;
+  if (current === 'Shipped' && next === 'Processing') return false;
+  return this.getAvailableStatusOptions(current).includes(next);
 }
 
 onStatusChange(orderId: string, event: Event) {
