@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -11,13 +11,15 @@ import { ProductDetailResponse, ReviewResponse, CreateReviewRequest } from '../.
 import { CartApiService, CartItemDto } from '../../../orders/services/cart-api.service';
 import { ShopService } from '../../../shop feature/services/shop-service';
 import { WishlistService } from '../../../wishlist feature/services/wishlist-service';
+import { ModelViewerComponent } from '../model-viewer/model-viewer';
 
 @Component({
   selector: 'app-product-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, RouterLink, FormsModule, ModelViewerComponent],
   templateUrl: './product-detail.html',
-  styleUrl: './product-detail.scss'
+  styleUrl: './product-detail.scss',
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class ProductDetail implements OnInit {
   private route = inject(ActivatedRoute);
@@ -35,6 +37,7 @@ export class ProductDetail implements OnInit {
   loadingProduct = true;
   activeImageUrl: string = '';
   isProductOwner = false;
+  showModelViewer = signal(false);
 
   // Reviews list states
   reviews: ReviewResponse[] = [];
@@ -165,6 +168,24 @@ export class ProductDetail implements OnInit {
 
   changeActiveImage(url: string): void {
     this.activeImageUrl = url;
+  }
+
+  openModelViewer(): void {
+    if (this.product?.arModelUrl) {
+      this.showModelViewer.set(true);
+      document.body.style.overflow = 'hidden';
+    } else {
+      this.toastr.warning(
+        this.langService.currentLang() === 'ar'
+          ? 'لا يتوفر نموذج ثلاثي الأبعاد لهذا المنتج'
+          : 'No 3D model available for this product'
+      );
+    }
+  }
+
+  closeModelViewer(): void {
+    this.showModelViewer.set(false);
+    document.body.style.overflow = 'auto';
   }
 
   setNewRating(rating: number): void {

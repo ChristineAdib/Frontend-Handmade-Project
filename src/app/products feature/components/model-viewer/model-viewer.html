@@ -1,0 +1,87 @@
+<div class="model-viewer-wrap" #modelViewerContainer [dir]="langService.currentLang() === 'ar' ? 'rtl' : 'ltr'">
+  <!-- Header -->
+  <div class="viewer-header">
+    <div class="viewer-title">
+      <span class="material-symbols-outlined">view_in_ar</span>
+      {{ modelTitle }}
+    </div>
+    <button class="close-btn" (click)="exitFullscreen()" type="button">
+      <span class="material-symbols-outlined">close</span>
+    </button>
+  </div>
+
+  <!-- Main Viewer -->
+  <div class="viewer-container">
+    <!-- Loading State -->
+    @if (isLoading) {
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <p>{{ langService.currentLang() === 'ar' ? 'جاري تحميل النموذج...' : 'Loading 3D model...' }}</p>
+      </div>
+    }
+
+    <!-- Error State -->
+    @if (modelError) {
+      <div class="error-state">
+        <span class="material-symbols-outlined">sentiment_dissatisfied</span>
+        <p>{{ langService.currentLang() === 'ar' ? 'فشل تحميل النموذج ثلاثي الأبعاد' : 'Failed to load 3D model' }}</p>
+      </div>
+    }
+
+    <!-- Model Viewer -->
+    @if (!modelError) {
+      <model-viewer
+        #modelViewerElement
+        [src]="glbUrl"
+        alt="{{ modelTitle }}"
+        auto-rotate
+        camera-controls
+        touch-action="pan-y"
+        (load)="onModelLoad()"
+        (error)="onModelError()"
+        style="width: 100%; height: 100%; background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);">
+      </model-viewer>
+    }
+  </div>
+
+  <!-- Controls -->
+  @if (!modelError && !isLoading) {
+    <div class="viewer-controls">
+      <button 
+        type="button" 
+        class="control-btn"
+        (click)="toggleAutoRotate()"
+        [title]="autoRotate ? 'Disable auto-rotate' : 'Enable auto-rotate'">
+        <span class="material-symbols-outlined">{{ autoRotate ? 'blur_circular' : 'radio_button_unchecked' }}</span>
+        <span>{{ langService.currentLang() === 'ar' ? 'دوران تلقائي' : 'Auto Rotate' }}</span>
+      </button>
+
+      <button 
+        type="button" 
+        class="control-btn"
+        (click)="launchAr()"
+        [title]="'View in AR'">
+        <span class="material-symbols-outlined">ar_on</span>
+        <span>{{ langService.currentLang() === 'ar' ? 'عرض AR' : 'AR View' }}</span>
+      </button>
+
+      <button 
+        type="button" 
+        class="control-btn"
+        (click)="downloadModel()"
+        [title]="'Download GLB file'">
+        <span class="material-symbols-outlined">download</span>
+        <span>{{ langService.currentLang() === 'ar' ? 'تحميل' : 'Download' }}</span>
+      </button>
+
+      <button 
+        type="button" 
+        class="control-btn"
+        (click)="toggleFullscreen()"
+        [title]="isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'">
+        <span class="material-symbols-outlined">{{ isFullscreen ? 'fullscreen_exit' : 'fullscreen' }}</span>
+        <span>{{ isFullscreen ? (langService.currentLang() === 'ar' ? 'خروج' : 'Exit') : (langService.currentLang() === 'ar' ? 'ملء' : 'Fullscreen') }}</span>
+      </button>
+    </div>
+  }
+</div>

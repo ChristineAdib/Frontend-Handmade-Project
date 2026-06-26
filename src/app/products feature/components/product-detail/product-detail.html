@@ -177,6 +177,17 @@
             </div>
           </div>
 
+          <!-- 3D Model Button -->
+          @if (product.arModelUrl) {
+            <div class="model-viewer-button-row mb-4">
+              <button class="btn btn-model-viewer" (click)="openModelViewer()">
+                <span class="material-symbols-outlined">view_in_ar</span>
+                <span>{{ langService.currentLang() === 'ar' ? 'عرض النموذج ثلاثي الأبعاد' : 'View 3D Model' }}</span>
+              </button>
+              <p class="model-hint">{{ langService.currentLang() === 'ar' ? 'شاهد منتجك بصيغة ثلاثية الأبعاد وAR' : 'View this product in 3D and AR' }}</p>
+            </div>
+          }
+
           <!-- CTA Buttons -->
           <div class="action-buttons-row">
             @if (isProductOwner) {
@@ -470,5 +481,19 @@
         </div>
       </div>
     </div>
+  }
+
+  <!-- 3D Model Viewer Modal -->
+  @if (product; as prod) {
+    @if (showModelViewer() && prod.arModelUrl) {
+      <div class="model-viewer-modal-overlay" (click)="closeModelViewer()">
+        <div class="model-viewer-modal" (click)="$event.stopPropagation()">
+          <app-model-viewer 
+            [glbUrl]="prod.arModelUrl"
+            [modelTitle]="langService.currentLang() === 'ar' ? (prod.titleAr || prod.titleEn) : (prod.titleEn || prod.titleAr)">
+          </app-model-viewer>
+        </div>
+      </div>
+    }
   }
 </div>
