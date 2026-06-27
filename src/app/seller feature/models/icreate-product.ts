@@ -8,5 +8,6 @@ export interface ICreateProduct {
   categoryId: string;
   shopId: string;
   images: File[];
+  glbFile?: File;
   tags: string[];
 }

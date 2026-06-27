@@ -144,6 +144,12 @@
                     <div class="product-img-ph">🧵</div>
                   }
                   <span class="featured-badge">{{ langService.translate('featuredPiece') }}</span>
+                  @if (shop()!.products[0].arModelUrl) {
+                    <span class="ar-badge-btn">
+                      <span class="material-symbols-outlined">view_in_ar</span>
+                      <span>AR</span>
+                    </span>
+                  }
                 </div>
                 <div class="product-body featured-body">
                   <div class="product-title-row">
@@ -167,6 +173,12 @@
                   }
                   @if (product.discountPrice) {
                     <span class="small-badge">{{ langService.translate('sale') }}</span>
+                  }
+                  @if (product.arModelUrl) {
+                    <span class="ar-badge-btn">
+                      <span class="material-symbols-outlined">view_in_ar</span>
+                      <span>AR</span>
+                    </span>
                   }
                   @if (!isShopOwner()) {
                     <button class="quick-add" (click)="quickAdd(product.id, $event)">
