@@ -11,60 +11,8 @@
     </div>
 
     <div class="subscribe-content">
-      <div class="content-wrapper">
-        <span class="subscribe-label">{{ langService.translate('joinMailingList') }}</span>
-        
-        <h2 class="subscribe-title">
-          {{ langService.translate('getDiscountCodeText') }}
-        </h2>
-
-        <div class="subscribe-form" [class.success]="isSubmitted">
-          <input 
-            type="email" 
-            [(ngModel)]="email"
-            [placeholder]="langService.translate('emailPlaceholderSubscribe')"
-            class="email-input"
-            (keyup.enter)="onSubscribe()"
-            [disabled]="isLoading"
-          />
-          <button 
-            class="subscribe-btn" 
-            (click)="onSubscribe()"
-            [disabled]="!email || isLoading"
-            [class.loading]="isLoading"
-            [class.success]="isSubmitted"
-          >
-            <span class="btn-text" *ngIf="!isLoading && !isSubmitted">{{ langService.translate('subscribeBtn') }}</span>
-            <span class="btn-text" *ngIf="isLoading">{{ langService.translate('sendingBtn') }}</span>
-            <span class="btn-text" *ngIf="isSubmitted">{{ langService.translate('subscribedBtn') }}</span>
-            
-            <svg class="btn-icon arrow" *ngIf="!isLoading && !isSubmitted" width="18" height="18" viewBox="0 0 18 18" fill="none" [style.transform]="langService.currentLang() === 'ar' ? 'scaleX(-1)' : 'none'">
-              <path d="M3 9H15M15 9L10 4M15 9L10 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            
-            <svg class="btn-icon check" *ngIf="isSubmitted" width="18" height="18" viewBox="0 0 18 18" fill="none">
-              <path d="M3 9L8 14L15 4" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-
-            <svg class="btn-icon spinner" *ngIf="isLoading" width="18" height="18" viewBox="0 0 18 18">
-              <circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="2" fill="none" stroke-dasharray="20 40" stroke-linecap="round">
-                <animateTransform attributeName="transform" type="rotate" from="0 9 9" to="360 9 9" dur="1s" repeatCount="indefinite"/>
-              </circle>
-            </svg>
-          </button>
-        </div>
-
-        <p class="subscribe-disclaimer" *ngIf="!isSubmitted">
-          {{ langService.translate('onlineOnlyDisclaimer') }}
-        </p>
-
-        <div class="success-message" *ngIf="isSubmitted">
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-            <path d="M10 0C4.477 0 0 4.477 0 10s4.477 10 10 10 10-4.477 10-10S15.523 0 10 0z" fill="rgba(255,255,255,0.2)"/>
-            <path d="M6 10L9 13L14 7" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          <span>{{ langService.translate('subscribeSuccessMsg') }}</span>
-        </div>
+      <div class="brand-quote">
+        <p>Every piece is handcrafted with passion, tradition, and soul.</p>
       </div>
 
       <div class="bamboo-decoration">
@@ -83,7 +31,6 @@
           <path d="M180 220 Q200 200 210 180 Q190 190 180 220" fill="rgba(255,255,255,0.03)"/>
         </svg>
       </div>
-
       <div class="texture-overlay"></div>
     </div>
   </div>

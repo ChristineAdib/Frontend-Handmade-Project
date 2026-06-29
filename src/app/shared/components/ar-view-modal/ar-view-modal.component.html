@@ -1,0 +1,69 @@
+<div class="ar-modal-backdrop" (click)="onClose()">
+  <div class="ar-modal-content" (click)="$event.stopPropagation()">
+    
+    <!-- Header -->
+    <div class="ar-modal-header">
+      <h3 class="ar-modal-title">
+        {{ langService.currentLang() === 'ar' ? 'معاينة ثلاثية الأبعاد والتفاعل مع المنتج' : '3D Interactive View' }}
+      </h3>
+      <button class="ar-modal-close" (click)="onClose()">✕</button>
+    </div>
+
+    <!-- Body -->
+    <div class="ar-modal-body">
+      <div class="ar-viewer-container">
+        
+        <!-- 3D Model Viewer Column -->
+        <div class="model-column">
+          <model-viewer
+            [src]="glbUrl"
+            ar
+            ar-modes="webxr scene-viewer quick-look"
+            camera-controls
+            auto-rotate
+            touch-action="pan-y"
+            [alt]="productTitle"
+            class="model-canvas"
+          >
+            <button slot="ar-button" class="custom-ar-button">
+              <span class="material-symbols-outlined">view_in_ar</span>
+              {{ langService.currentLang() === 'ar' ? 'عرض في واقعك الحقيقي (AR)' : 'View in your space (AR)' }}
+            </button>
+          </model-viewer>
+        </div>
+
+        <!-- Instructions & QR Code (Laptop/Desktop View) -->
+        <div class="instructions-column" *ngIf="!isMobile">
+          <div class="qr-card">
+            <h4>{{ langService.currentLang() === 'ar' ? 'اعرض المنتج في منزلك!' : 'See it in your room!' }}</h4>
+            <p>
+              {{ langService.currentLang() === 'ar' ? 'امسح رمز الـ QR التالي باستخدام كاميرا هاتفك لعرض المنتج فوراً في الواقع المعزز (AR) وبحجمه الحقيقي.' : 'Scan the QR code below with your mobile camera to place this product at its real size in your home.' }}
+            </p>
+            <div class="qr-code-wrapper">
+              <img [src]="qrCodeUrl" alt="QR Code" class="qr-code-img" />
+            </div>
+          </div>
+          
+          <div class="interaction-tips">
+            <h5>{{ langService.currentLang() === 'ar' ? 'إرشادات التحكم ثلاثي الأبعاد:' : '3D Interaction Tips:' }}</h5>
+            <ul>
+              <li>{{ langService.currentLang() === 'ar' ? 'اسحب الماوس لتدوير المنتج في جميع الاتجاهات.' : 'Drag to rotate the product in any direction.' }}</li>
+              <li>{{ langService.currentLang() === 'ar' ? 'استخدم عجلة الماوس لتكبير وتصغير النموذج.' : 'Scroll to zoom in and out of the model.' }}</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Instructions for Mobile -->
+        <div class="instructions-column mobile-only" *ngIf="isMobile">
+          <div class="ar-instructions-alert">
+            <span class="material-symbols-outlined icon">info</span>
+            <p>
+              {{ langService.currentLang() === 'ar' ? 'اضغط على زر "عرض في واقعك الحقيقي (AR)" لفتح الكاميرا وعرض المنتج على أي سطح مستوٍ حولك.' : 'Tap the "View in your space (AR)" button to open your camera and place this product on any flat surface around you.' }}
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

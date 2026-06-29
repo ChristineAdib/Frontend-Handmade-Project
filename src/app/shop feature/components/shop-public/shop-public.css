@@ -616,6 +616,29 @@
   to { transform: rotate(360deg); }
 }
 
+/* AR Badge (indicator only) */
+.ar-badge-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: linear-gradient(135deg, #8B4513, #a0522d);
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  z-index: 3;
+  box-shadow: 0 2px 8px rgba(139,69,19,0.3);
+  font-family: 'Be Vietnam Pro', sans-serif;
+}
+
+.ar-badge-btn .material-symbols-outlined {
+  font-size: 14px;
+}
+
 @media (max-width: 768px) {
   .hero-inner { padding: 40px 16px 32px; }
   .shop-name { font-size: 32px; line-height: 40px; }

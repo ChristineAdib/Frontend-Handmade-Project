@@ -188,62 +188,92 @@ select.fi { cursor: pointer; }
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-@media (max-width: 768px) {
-  .form-grid { grid-template-columns: 1fr; }
+/* 3D Model Upload */
+.card-description {
+  font-size: 13px;
+  color: #8B6F5C;
+  margin: -0.5rem 0 1rem 0;
 }
 
-
-.agent-btn {
+.glb-upload-area {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  margin-top: 16px;
-  width: 100%;
-  padding: 14px 20px;
-  background: linear-gradient(135deg, #8B4513, #c1622c);
-  color: white;
-  border: none;
+  padding: 2rem;
+  border: 2px dashed #C4B09A;
   border-radius: 12px;
+  background: #FDF8F5;
   cursor: pointer;
-  font-size: 15px;
-  font-weight: 600;
-  letter-spacing: 0.3px;
-  box-shadow: 0 4px 15px rgba(139, 69, 19, 0.3);
-  transition: all 0.3s ease;
+  transition: all 0.2s;
+  gap: 8px;
+}
+.glb-upload-area:hover {
+  border-color: #C17B5C;
+  background: #FDF5F0;
 }
 
-.agent-btn:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(139, 69, 19, 0.4);
-  background: linear-gradient(135deg, #c1622c, #8B4513);
+.glb-upload-btn {
+  background: #C17B5C;
+  color: #fff;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.2s;
+}
+.glb-upload-btn:hover {
+  background: #A5623E;
 }
 
-.agent-btn:active:not(:disabled) {
-  transform: translateY(0);
+.glb-upload-area small {
+  font-size: 12px;
+  color: #8B6F5C;
 }
 
-.agent-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
+.glb-preview {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #E8F5E9;
+  border: 1.5px solid #4CAF50;
+  border-radius: 10px;
+  padding: 12px 16px;
 }
 
-.agent-btn .btn-icon {
-  font-size: 18px;
-  animation: sparkle 2s infinite;
+.glb-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #2E7D32;
+  font-size: 14px;
+  font-weight: 500;
 }
 
-.agent-btn.loading .btn-icon {
-  animation: spin 1s linear infinite;
+.glb-info .material-symbols-outlined {
+  font-size: 20px;
+  color: #4CAF50;
 }
 
-@keyframes sparkle {
-  0%, 100% { transform: scale(1) rotate(0deg); }
-  50% { transform: scale(1.2) rotate(10deg); }
+.remove-glb-btn {
+  background: #C62828;
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.remove-glb-btn:hover {
+  background: #B71C1C;
 }
 
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+@media (max-width: 768px) {
+  .form-grid { grid-template-columns: 1fr; }
 }

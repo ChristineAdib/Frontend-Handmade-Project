@@ -4,6 +4,11 @@
     <p class="form-subheading">{{ langService.translate('welcomeBackSanctuary') }}</p>
   </div>
 
+  @if (auth.errorMsg()) {
+    <div class="error-msg">{{ auth.errorMsg() }}</div>
+  }
+
+
   <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="form-fields-stack">
     <div class="exact-input-group">
       <label>{{ langService.translate('emailAddress') }}</label>

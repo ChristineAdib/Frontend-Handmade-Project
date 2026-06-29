@@ -88,6 +88,37 @@
 }
         </div>
 
+        <!-- 3D Model -->
+        <div class="card">
+          <h3 class="card-title">
+            <span class="material-symbols-outlined" style="font-size: 20px; margin-right: 8px;">view_in_ar</span>
+            {{ langService.currentLang() === 'ar' ? 'نموذج ثلاثي الأبعاد' : '3D Model' }}
+          </h3>
+          <p class="card-description">{{ langService.currentLang() === 'ar' ? 'حمّل ملف GLB لعرض منتجك بصيغة ثلاثية الأبعاد وAR' : 'Upload a GLB file to showcase your product in 3D and AR' }}</p>
+          
+          @if (selectedGlbFile() || existingGlbUrl()) {
+            <div class="glb-preview">
+              <div class="glb-info">
+                <span class="material-symbols-outlined">check_circle</span>
+                <span>{{ selectedGlbFile() ? selectedGlbFile()!.name : 'GLB Model Loaded' }}</span>
+              </div>
+              <button type="button" class="remove-glb-btn" (click)="removeGlbFile()">
+                {{ langService.currentLang() === 'ar' ? 'إزالة' : 'Remove' }}
+              </button>
+            </div>
+          } @else {
+            <div class="glb-upload-area">
+              <button type="button" class="glb-upload-btn" (click)="glbInput.click()">
+                <span class="material-symbols-outlined">upload_file</span>
+                <span>{{ langService.currentLang() === 'ar' ? 'اختر ملف GLB' : 'Choose GLB File' }}</span>
+              </button>
+              <small>{{ langService.currentLang() === 'ar' ? 'أو اسحب الملف هنا' : 'or drag file here' }}</small>
+              <small style="color: #999;">{{ langService.currentLang() === 'ar' ? 'حد أقصى 50 ميجابايت' : 'Max 50MB' }}</small>
+            </div>
+          }
+          <input #glbInput type="file" accept=".glb,.gltf" (change)="onGlbFileSelected($event)" hidden />
+        </div>
+
       </div>
 
       <!-- Right Column -->

@@ -24,6 +24,7 @@ export  const API_URLS = {
     // Auth
     login: `${base_domain}/auth/login`,
     profile: `${base_domain}/auth/profile`,
+    checkBanStatus: `${base_domain}/api/auth/check-status`,
 
     searchProducts: (title: string) =>
         `${base_domain}/products/?title=${title}`,

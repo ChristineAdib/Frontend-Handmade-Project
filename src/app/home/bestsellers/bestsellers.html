@@ -27,6 +27,12 @@
             {{ getDiscount(product) }}% {{ langService.translate('percentOff') }}
           </div>
 
+          <!-- AR Badge (indicator only) -->
+          <span *ngIf="product.arModelUrl" class="ar-badge-btn">
+            <span class="material-symbols-outlined">view_in_ar</span>
+            <span>AR</span>
+          </span>
+
           <a [routerLink]="['/products', product.id]" class="product-image-link">
             <!-- Main Image -->
             <div class="product-image-container">
