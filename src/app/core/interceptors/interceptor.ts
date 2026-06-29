@@ -4,8 +4,16 @@ import { catchError, throwError } from 'rxjs';
 import { AuthService } from '../../auth/Services/auth';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const token = localStorage.getItem('token');
-  const lang = localStorage.getItem('lang') || 'en';
+  const authService = inject(AuthService);
+  const token = authService.getToken();
+  
+  const lang = (() => {
+    try {
+      return localStorage.getItem('lang') || 'en';
+    } catch {
+      return 'en';
+    }
+  })();
 
   const headers: { [header: string]: string } = {
     'Accept-Language': lang
@@ -16,8 +24,6 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   }
 
   req = req.clone({ setHeaders: headers });
-
-  const authService = inject(AuthService);
 
   return next(req).pipe(
     catchError((err: HttpErrorResponse) => {

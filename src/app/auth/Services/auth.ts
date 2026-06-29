@@ -30,6 +30,11 @@ export class AuthService {
   private banPollingSubscription: Subscription | null = null;
   private readonly POLL_INTERVAL_MS = 30_000;
 
+  // In-memory session fallbacks for Tracking Prevention / private browsing
+  private inMemoryToken: string | null = null;
+  private inMemoryUser: AuthResponse | null = null;
+  private inMemoryExpiry: string | null = null;
+
   // ── Login ──────────────────────────────────────────────────
   login(model: LoginRequest): Observable<ApiResponse<AuthResponse>> {
     return this.http.post<ApiResponse<AuthResponse>>(
@@ -88,25 +93,39 @@ export class AuthService {
 
   forceLogoutBanned(): void {
     this.stopBanPolling();
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    localStorage.removeItem('expiry');
+    this.inMemoryToken = null;
+    this.inMemoryUser = null;
+    this.inMemoryExpiry = null;
+    try {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      localStorage.removeItem('expiry');
+    } catch (e) {
+      console.warn('Failed to clear localStorage for ban:', e);
+    }
 
     if (this.logoutTimer) clearTimeout(this.logoutTimer);
 
     this.authChange$.next();
-    // رسالة للمستخدم قبل الـ redirect
-    localStorage.setItem('banned_msg', 'true');
+    // Message to user before redirect
+    try {
+      localStorage.setItem('banned_msg', 'true');
+    } catch {}
     window.location.href = '/login';
   }
 
   // ── Session ────────────────────────────────────────────────
   restoreSession() {
-    const expiry = localStorage.getItem('expiry');
+    let expiry = this.inMemoryExpiry;
+    try {
+      expiry = localStorage.getItem('expiry') ?? this.inMemoryExpiry;
+    } catch (e) {
+      console.warn('Failed to restore expiry from localStorage:', e);
+    }
     if (expiry) {
       this.startTokenTimer(expiry);
     }
-    // لو كان logged in → ابدأ الـ polling
+    // If logged in → start polling
     if (this.isLoggedIn()) {
       this.startBanPolling();
     }
@@ -114,9 +133,16 @@ export class AuthService {
   }
 
   private setSession(auth: AuthResponse) {
-    localStorage.setItem('token', auth.token);
-    localStorage.setItem('user', JSON.stringify(auth));
-    localStorage.setItem('expiry', auth.tokenExpiry);
+    this.inMemoryToken = auth.token;
+    this.inMemoryUser = auth;
+    this.inMemoryExpiry = auth.tokenExpiry;
+    try {
+      localStorage.setItem('token', auth.token);
+      localStorage.setItem('user', JSON.stringify(auth));
+      localStorage.setItem('expiry', auth.tokenExpiry);
+    } catch (e) {
+      console.warn('Failed to set session in localStorage:', e);
+    }
     this.authChange$.next();
   }
 
@@ -125,12 +151,20 @@ export class AuthService {
   }
 
   getToken(): string | null {
-    return localStorage.getItem('token');
+    try {
+      return localStorage.getItem('token') ?? this.inMemoryToken;
+    } catch {
+      return this.inMemoryToken;
+    }
   }
 
   getUser(): AuthResponse | null {
-    const user = localStorage.getItem('user');
-    return user ? JSON.parse(user) : null;
+    try {
+      const user = localStorage.getItem('user');
+      return user ? JSON.parse(user) : this.inMemoryUser;
+    } catch {
+      return this.inMemoryUser;
+    }
   }
 
   isLoggedIn(): boolean {
@@ -139,9 +173,16 @@ export class AuthService {
 
   logout() {
     this.stopBanPolling();
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    localStorage.removeItem('expiry');
+    this.inMemoryToken = null;
+    this.inMemoryUser = null;
+    this.inMemoryExpiry = null;
+    try {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      localStorage.removeItem('expiry');
+    } catch (e) {
+      console.warn('Failed to clear localStorage on logout:', e);
+    }
 
     if (this.logoutTimer) clearTimeout(this.logoutTimer);
 
