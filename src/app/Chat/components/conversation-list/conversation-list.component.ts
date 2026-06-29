@@ -1,12 +1,14 @@
 import { Component, inject, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { Conversation } from '../../Models/conversation.model';
 import { ChatService } from '../../Services/chat.service';
 import { AuthService } from '../../../auth/Services/auth';
 import { MessageType } from '../../Models/MessageType';
 import { LanguageService } from '../../../core/services/language.service';
 import { parseUtcDate } from '../../../core/utils/date-utils';
+import { CustomStudioService } from '../../../custom-studio/services/custom-studio.service';
 
 @Component({
   selector: 'app-conversation-list',
@@ -19,6 +21,12 @@ export class ConversationListComponent {
   protected chatService = inject(ChatService);
   private authService = inject(AuthService);
   protected langService = inject(LanguageService);
+  private customStudioService = inject(CustomStudioService);
+  private router = inject(Router);
+
+  resolveImageUrl(url: string | null | undefined): string {
+    return this.customStudioService.resolveImageUrl(url);
+  }
 
   searchQuery = signal<string>('');
 
@@ -91,5 +99,6 @@ export class ConversationListComponent {
 
   selectConversation(conversation: Conversation) {
     this.chatService.openConversation(conversation);
+    this.router.navigate(['/chat', conversation.id]);
   }
 }

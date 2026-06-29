@@ -1,0 +1,102 @@
+<div class="offer-review-container">
+  <header class="offer-header">
+    <div class="header-left">
+      <button class="back-btn" [routerLink]="['/custom-studio/negotiation', requestId()]">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+      </button>
+      <h2>Review Custom Offer</h2>
+    </div>
+  </header>
+
+  <div class="loading-state" *ngIf="loading()">
+    <div class="spinner"></div>
+    <p>Loading artisan offer details...</p>
+  </div>
+
+  <main class="offer-main" *ngIf="!loading()">
+    <div class="empty-state" *ngIf="!customService()">
+      <div class="empty-illustration">No Proposed Service</div>
+      <h3>No Proposed Custom Service Yet</h3>
+      <p>The artisan has not proposed a custom service for your request yet. Continue chatting with them in the discussion panel.</p>
+      <button class="btn btn-primary" [routerLink]="['/custom-studio/negotiation', requestId()]">Back to Chat Discussion</button>
+    </div>
+
+    <div class="premium-offer-page" *ngIf="customService()">
+      <section class="offer-visual-panel">
+        <div class="large-design-frame">
+          <img [src]="resolveImageUrl(selectedDesign()?.imageUrl || designSummary().designImage || requestDetails()?.referenceImageUrl)" alt="AI Generated Doll" referrerpolicy="no-referrer" />
+        </div>
+        <div class="summary-panel">
+          <h3>Customization Summary</h3>
+          <div class="summary-list">
+            <div class="summary-row" *ngFor="let item of summaryPairs()">
+              <span>{{ item.label }}</span>
+              <strong>{{ item.value }}</strong>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="offer-command-panel">
+        <div class="seller-line">
+          <div class="avatar">
+            <span class="avatar-fallback">{{ requestDetails()?.selectedSellerName?.[0] || 'S' }}</span>
+          </div>
+          <div>
+            <span class="eyebrow">Artisan / Shop</span>
+            <h3>{{ requestDetails()?.selectedSellerName || 'Artisan Shop' }}</h3>
+            <span class="status-badge" [ngClass]="customService()!.status">{{ customService()!.status }}</span>
+          </div>
+        </div>
+
+        <div class="service-title-display" style="margin-top: 1rem; border-bottom: 1px dashed rgba(176, 110, 46, 0.15); padding-bottom: 0.75rem;">
+          <span class="eyebrow" style="font-size: 0.75rem; color: #7d6b5d; text-transform: uppercase;">Proposed Service Title</span>
+          <h3 style="margin: 0.25rem 0 0 0; font-size: 1.15rem; color: #2c1e14; font-weight: 700;">{{ customService()!.title }}</h3>
+        </div>
+
+        <div class="price-panel">
+          <span>Price</span>
+          <strong>EGP {{ customService()!.price | number:'1.2-2' }}</strong>
+        </div>
+
+        <div class="offer-facts">
+          <div>
+            <span>Estimated Delivery</span>
+            <strong>{{ customService()!.estimatedDeliveryDays }} days</strong>
+          </div>
+          <div>
+            <span>Delivery Date</span>
+            <strong>{{ estimatedDeliveryDate() | date:'mediumDate' }}</strong>
+          </div>
+        </div>
+
+        <div class="included-panel">
+          <h3>Included Features</h3>
+          <ul>
+            <li *ngFor="let feature of includedFeatures()">{{ feature }}</li>
+          </ul>
+        </div>
+
+        <div class="notes-panel">
+          <h3>Artisan Proposal Notes</h3>
+          <p *ngIf="customService()!.notes">{{ customService()!.notes }}</p>
+          <p class="muted" *ngIf="!customService()!.notes">No special notes provided by the artisan.</p>
+        </div>
+
+        <div class="actions-row" *ngIf="customService()!.status === 'Pending Buyer Approval' || customService()!.status === 'Pending'">
+          <button class="btn btn-primary" [disabled]="submitting()" (click)="acceptOffer()">Approve & Checkout</button>
+          <button class="btn btn-outline dark" [disabled]="submitting()" (click)="rejectOffer()">Reject Proposal</button>
+          <button class="btn btn-secondary" [disabled]="submitting()" (click)="contactSeller()">Message Seller</button>
+        </div>
+
+        <div class="status-banner" *ngIf="customService()!.status === 'Approved'">
+          <div class="success-icon" style="color: #4CAF50; font-size: 1.5rem; margin-right: 8px;">✓</div>
+          <p>You approved this custom service. Proceed to checkout to pay the deposit.</p>
+          <button class="btn btn-primary" [routerLink]="['/checkout']" [queryParams]="{ requestId: requestId() }">Proceed to Checkout</button>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>

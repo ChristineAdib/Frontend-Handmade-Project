@@ -1,0 +1,175 @@
+<div class="results-page-container">
+  
+  <header class="results-header">
+    <div class="header-left">
+      <button class="back-btn" (click)="goBack()">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+      </button>
+      <h2>Generated AI Designs</h2>
+    </div>
+
+    <!-- Generation Attempts counter -->
+    <div class="attempts-badge" *ngIf="requestDetails()">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" class="sparkle-icon">
+        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+      </svg>
+      <span>AI Attempts Used: {{ requestDetails()!.generationCount }}/2</span>
+    </div>
+
+    <!-- Comparison button -->
+    <div class="header-actions">
+      <button class="btn btn-secondary" [routerLink]="['/custom-studio/comparison', requestId()]">
+        Compare Side-by-Side
+      </button>
+    </div>
+  </header>
+
+  <!-- Loading Skeletons -->
+  <div class="skeleton-container" *ngIf="loading()">
+    <div class="skeleton-card" *ngFor="let s of [1, 2]">
+      <div class="skeleton-img"></div>
+      <div class="skeleton-title"></div>
+      <div class="skeleton-desc"></div>
+    </div>
+  </div>
+
+  <!-- Main designs layout -->
+  <main class="results-main" *ngIf="!loading()">
+    
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="designs().length === 0">
+      <div class="empty-illustration">🎨</div>
+      <h3>No Designs Generated Yet</h3>
+      <p>Go back to the configurator and finalize your doll steps to run the AI generator.</p>
+      <button class="btn btn-primary" (click)="goBack()">
+        Return to Configurator
+      </button>
+    </div>
+
+    <div class="designs-grid" *ngIf="designs().length > 0">
+      <div class="design-card" *ngFor="let design of designs(); let i = index; trackBy: trackByDesignId">
+        
+        <!-- Image display with hover actions -->
+        <div class="design-img-wrapper">
+          <img [src]="resolveImageUrl(design.imageUrl)" alt="AI Generated Doll Design" referrerpolicy="no-referrer" />
+          
+          <!-- Matching Score Circle Overlay -->
+          <div class="matching-badge">
+            <svg class="progress-ring" width="54" height="54">
+              <circle class="progress-ring-circle-bg" stroke="rgba(255,255,255,0.2)" stroke-width="4" fill="transparent" r="22" cx="27" cy="27"/>
+              <circle class="progress-ring-circle" stroke="#d4a96a" stroke-dasharray="138" [attr.stroke-dashoffset]="138 - (138 * design.matchingScore) / 100" stroke-width="4" fill="transparent" r="22" cx="27" cy="27"/>
+            </svg>
+            <span class="score-text">{{ design.matchingScore | number:'1.0-1' }}%</span>
+          </div>
+
+          <!-- Utility controls -->
+          <div class="image-actions">
+            <button class="btn-img-action" (click)="saveDesignDetails(design)" [class.active]="design.isSaved" title="Bookmark Design">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" stroke="currentColor" stroke-width="2">
+                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+              </svg>
+            </button>
+            <button class="btn-img-action" (click)="downloadImage(resolveImageUrl(design.imageUrl), design.id)" title="Download Design Image">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Card Content Details -->
+        <div class="design-info">
+          <h3>Option #{{ i + 1 }}</h3>
+          <p class="design-prompt"><strong>AI Prompt:</strong> "{{ design.prompt }}"</p>
+          <div class="meta-row">
+            <span><strong>Crafting Level:</strong> Moderate</span>
+            <span><strong>Crafting Time:</strong> ~4 days</span>
+          </div>
+
+          <!-- Design Score (AI) -->
+          <div class="design-scores-section" *ngIf="getDesignScores(design.matchingScore) as scores">
+            <div class="score-row">
+              <span class="score-label">Creativity</span>
+              <div class="score-bar-bg">
+                <div class="score-bar-fill" [style.width.%]="scores.creativity"></div>
+              </div>
+              <span class="score-val">{{ scores.creativity }}%</span>
+            </div>
+            <div class="score-row">
+              <span class="score-label">Crochet Difficulty</span>
+              <div class="score-bar-bg">
+                <div class="score-bar-fill" [style.width.%]="scores.difficulty"></div>
+              </div>
+              <span class="score-val">{{ scores.difficulty }}%</span>
+            </div>
+            <div class="score-row text-badges">
+              <span><strong>Material Cost:</strong> <span class="badge cost">{{ scores.cost }}</span></span>
+              <span><strong>Popularity:</strong> <span class="badge pop">{{ scores.popularity }}</span></span>
+            </div>
+          </div>
+
+          <!-- Smart Suggestions -->
+          <div class="smart-suggestions-section" *ngIf="getSmartSuggestions(design.prompt) as suggestions">
+            <div class="suggestions-header">✨ Smart AI Suggestions</div>
+            <ul>
+              <li *ngFor="let sug of suggestions">{{ sug }}</li>
+            </ul>
+          </div>
+
+          <!-- Refinement Section -->
+          <div class="refinement-section">
+            <div class="refinement-header">🎨 Refine Design (AI Editing)</div>
+            <div class="quick-prompts">
+              <button class="quick-prompt-pill" (click)="applyRefinementPrompt(design.id, 'Make the hair longer and wavy')">Make hair wavy</button>
+              <button class="quick-prompt-pill" (click)="applyRefinementPrompt(design.id, 'Change the jacket to blue')">Blue jacket</button>
+              <button class="quick-prompt-pill" (click)="applyRefinementPrompt(design.id, 'Add a pink bag')">Add pink bag</button>
+              <button class="quick-prompt-pill" (click)="applyRefinementPrompt(design.id, 'Change shoes to white sneakers')">White sneakers</button>
+              <button class="quick-prompt-pill" (click)="applyRefinementPrompt(design.id, 'Remove the hat')">Remove hat</button>
+            </div>
+            <div class="refinement-input-row">
+              <textarea 
+                placeholder="Describe updates (e.g., Change the jacket to blue)..." 
+                [value]="refinementPrompts()[design.id] || ''"
+                (input)="updateRefinementPrompt(design.id, $any($event.target).value)">
+              </textarea>
+              <button class="btn-refine" 
+                      [disabled]="refining() !== null" 
+                      (click)="refineDesign(design.id)">
+                <span *ngIf="refining() !== design.id">Refine ✨</span>
+                <span *ngIf="refining() === design.id">Refining...</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Select & Confirm & Regenerate Actions -->
+        <div class="design-card-footer" style="display: flex; gap: 15px; width: 100%; justify-content: center; padding: 15px 0;">
+          <button class="btn btn-primary btn-select" (click)="selectDesign(design.id)" style="flex: 1; max-width: 250px;">
+            Use This Design
+          </button>
+          
+          <ng-container *ngIf="requestDetails()">
+            <button *ngIf="requestDetails()!.generationCount < 2" 
+                    class="btn btn-outline" 
+                    (click)="regenerateDesigns()" 
+                    style="flex: 1; max-width: 250px; border: 1px solid #b06e2e; color: #b06e2e; background: transparent;">
+              Regenerate Design (1 Remaining)
+            </button>
+            
+            <div *ngIf="requestDetails()!.generationCount >= 2" 
+                 class="regeneration-limit-note" 
+                 style="display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; max-width: 250px; background: rgba(0,0,0,0.03); border: 1px dashed rgba(0,0,0,0.15); border-radius: 8px; padding: 6px; font-size: 0.8rem; color: #7d6b5d; line-height: 1.2;">
+              <span style="font-weight: 600; color: #a55a5a;">Regeneration limit reached</span>
+              <span style="font-size: 0.7rem;">No more attempts remaining.</span>
+            </div>
+          </ng-container>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+</div>

@@ -1,7 +1,7 @@
 import { Injectable, signal, computed, inject, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import * as signalr from '@microsoft/signalr';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, Subject } from 'rxjs';
 import { NotificationItem } from '../Models/Notification';
 import { NotificationType } from '../Models/NotificationType';
 import { ApiResponse } from '../../auth/models/api-response.model';
@@ -17,6 +17,7 @@ export class NotificationService implements OnDestroy {
   readonly notifications       = signal<NotificationItem[]>([]);
   readonly unreadCount         = signal<number>(0);
   readonly isConnected         = signal<boolean>(false);
+  readonly notificationReceived$ = new Subject<NotificationItem>();
 
   readonly unreadNotifications = computed(() =>
     this.notifications().filter(n => !n.isRead)
@@ -112,6 +113,7 @@ export class NotificationService implements OnDestroy {
       if (normalized.type !== NotificationType.Message) {
         this.notifications.update(prev => [normalized, ...prev]);
       }
+      this.notificationReceived$.next(normalized);
     });
 
     this.hubConnection!.on('UnreadCountUpdated', (count: number) => {

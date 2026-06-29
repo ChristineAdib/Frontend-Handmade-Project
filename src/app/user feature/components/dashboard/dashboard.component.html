@@ -54,6 +54,12 @@
         <span class="badge-count" *ngIf="reviewsCount() > 0 && !hideReviewsCount()">{{ reviewsCount() }}</span>
       </button>
 
+      <button class="menu-item" [class.active]="activeTab() === 'CustomRequests'" (click)="selectTab('CustomRequests')">
+        <span class="material-symbols-outlined">design_services</span>
+        <span class="menu-text">Custom Studio</span>
+        <span class="badge-count" *ngIf="customRequestsCount() > 0 && !hideCustomRequestsCount()">{{ customRequestsCount() }}</span>
+      </button>
+
       <hr class="menu-divider" />
 
       <a class="menu-item" routerLink="/profile/edit">
@@ -531,6 +537,66 @@
                     <p class="review-comment-text mb-0 text-dark">
                       "{{ review.comment || langService.translate('noComment') }}"
                     </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= CUSTOM REQUESTS TAB ================= -->
+        <div *ngIf="activeTab() === 'CustomRequests'" class="tab-view animate-fade">
+          <div class="section-title-bar mb-4">
+            <h2>Custom Studio Requests</h2>
+            <p class="text-muted">Manage your custom crochet designs, negotiations, custom offers, and crafting timelines.</p>
+          </div>
+
+          <div *ngIf="isLoadingCustomRequests()" class="skeleton-wrapper">
+            <div class="skeleton skeleton-row mb-3" *ngFor="let i of [1, 2, 3]"></div>
+          </div>
+
+          <div *ngIf="!isLoadingCustomRequests()">
+            <div *ngIf="customRequests().length === 0" class="empty-state-card card-glow text-center p-5">
+              <span class="material-symbols-outlined empty-icon-large text-warning">design_services</span>
+              <h4>No Custom Designs Yet</h4>
+              <p class="text-muted">Start creating a personalized amigurumi or crochet doll with our Custom Studio wizard!</p>
+              <button class="btn btn-primary btn-sm mt-3" routerLink="/custom-studio">
+                Open Custom Studio
+              </button>
+            </div>
+
+            <div *ngIf="customRequests().length > 0" class="requests-list-container d-flex flex-column gap-3">
+              <div class="review-display-card card-glow p-4 border-0 rounded-4" *ngFor="let req of customRequests()">
+                <div class="row align-items-center g-3">
+                  <div class="col-auto">
+                    <div class="avatar-circle rounded-3" style="width: 60px; height: 60px; background: #fff8f0; display: flex; align-items: center; justify-content: center; font-size: 24px; border: 1px solid rgba(176,110,46,0.15)">
+                      🧸
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+                      <h6 class="product-link-title m-0" style="font-weight: 700; color: #B06E2E;">
+                        Crochet Doll - Custom Request
+                      </h6>
+                      <span class="review-date-text text-muted font-xs">
+                        Placed on {{ req.createdAt | date:'mediumDate' }}
+                      </span>
+                    </div>
+
+                    <div class="d-flex align-items-center gap-3 mt-2">
+                      <span class="text-muted font-sm">
+                        Budget: <strong>{{ req.targetBudget ? (req.targetBudget | currency:'EGP ') : 'Flexible' }}</strong>
+                      </span>
+                      <span class="text-muted font-sm">|</span>
+                      <span class="badge" style="background: rgba(176, 110, 46, 0.1); color: #B06E2E; padding: 4px 10px; border-radius: 12px; font-weight: 600; font-size: 0.75rem; text-transform: uppercase;">
+                        {{ getCustomRequestStatusLabel(req.status) }}
+                      </span>
+                    </div>
+                  </div>
+                  <div class="col-auto">
+                    <button class="btn btn-outline-primary btn-sm" (click)="viewCustomRequest(req)">
+                      Open Request
+                    </button>
                   </div>
                 </div>
               </div>

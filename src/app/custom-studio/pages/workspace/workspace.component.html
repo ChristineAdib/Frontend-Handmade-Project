@@ -1,0 +1,249 @@
+<div class="workspace-page-container">
+  <header class="workspace-header">
+    <div class="header-left">
+      <button class="back-btn" [routerLink]="['/custom-studio/negotiation', requestId()]">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+      </button>
+      <h2>Artisan Crafting Workspace</h2>
+    </div>
+
+
+  </header>
+
+  <div class="skeleton-workspace" *ngIf="loading()">
+    <div class="skeleton-timeline-card">
+      <div class="skeleton-block title"></div>
+      <div class="skeleton-block item" *ngFor="let i of [1, 2, 3, 4]"></div>
+    </div>
+    <div class="details-panel">
+      <div class="skeleton-aside-card">
+        <div class="skeleton-block title"></div>
+        <div class="skeleton-block item" style="height: 40px;"></div>
+      </div>
+      <div class="skeleton-aside-card" style="height: 200px;">
+        <div class="skeleton-block title"></div>
+        <div class="skeleton-block item" style="height: 60px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <main class="workspace-main" *ngIf="!loading()">
+    <div class="empty-state" *ngIf="!workspace()">
+      <div class="empty-illustration">Workspace</div>
+      <h3>Workspace Not Started</h3>
+      <p>This workspace will initialize once you accept an artisan's custom offer and proceed through payment deposit.</p>
+    </div>
+
+    <ng-container *ngIf="workspace()">
+      <section class="workspace-overview-bar">
+        <button class="approved-reference" (click)="openReferenceImage()" type="button">
+          <img [src]="resolveImageUrl(selectedDesign()?.imageUrl || designSummary().designImage || requestDetails()?.referenceImageUrl)" alt="Approved AI Generated Doll" referrerpolicy="no-referrer" />
+          <span>Official Design Reference</span>
+        </button>
+
+        <div class="overview-grid">
+          <div>
+            <span>Project Status</span>
+            <strong>{{ workspace()!.status }}</strong>
+          </div>
+          <div>
+            <span>Order Number</span>
+            <strong>{{ orderNumber() }}</strong>
+          </div>
+          <div>
+            <span>Seller</span>
+            <strong>{{ requestDetails()?.selectedSellerName || 'Seller' }}</strong>
+          </div>
+          <div>
+            <span>Buyer</span>
+            <strong>{{ requestDetails()?.buyerName || 'Buyer' }}</strong>
+          </div>
+          <div>
+            <span>Service Name</span>
+            <strong>{{ customService()?.title || 'Custom Crochet Doll' }}</strong>
+          </div>
+          <div>
+            <span>Price</span>
+            <strong>EGP {{ customService()?.price | number:'1.2-2' }}</strong>
+          </div>
+          <div>
+            <span>Delivery Date</span>
+            <strong>{{ estimatedDeliveryDate() | date:'mediumDate' }}</strong>
+          </div>
+          <div>
+            <span>Progress</span>
+            <strong>{{ progressPercent() }}%</strong>
+          </div>
+        </div>
+
+        <div class="quick-actions" style="grid-column: span 6; display: flex; gap: 10px;">
+          <button class="btn btn-outline dark" (click)="openReferenceImage()">Enlarge Image</button>
+        </div>
+
+        <div class="summary-badges-container" style="grid-column: span 6; display: flex; flex-wrap: wrap; gap: 8px; margin-top: 1rem; border-top: 1px dashed rgba(176, 110, 46, 0.15); padding-top: 0.75rem;">
+          <span style="font-size: 0.72rem; color: #7d6b5d; font-weight: 700; text-transform: uppercase; display: flex; align-items: center; margin-right: 8px;">Design Summary:</span>
+          @for (badge of summaryBadges(); track badge.label) {
+            <span class="summary-badge-item" style="font-size: 0.75rem; background: #fbf6f0; border: 1px solid rgba(176, 110, 46, 0.15); border-radius: 6px; padding: 2px 8px; color: #2c1e14;">
+              <strong style="color: #7d6b5d;">{{ badge.label }}:</strong> {{ badge.value }}
+            </span>
+          }
+        </div>
+      </section>
+
+      <div class="locked-banner" *ngIf="isCompleted()">
+        Workspace locked. Messages, timeline, files, images, and order summary remain view-only.
+      </div>
+
+      <!-- Tab Navigation -->
+      <div class="workspace-tabs-nav">
+        <button class="tab-btn" [class.active]="activeTab() === 'timeline'" (click)="activeTab.set('timeline')">
+          Timeline & Specs
+        </button>
+        <button class="tab-btn" [class.active]="activeTab() === 'chat'" (click)="activeTab.set('chat')">
+          Chat Room
+        </button>
+      </div>
+
+      <div class="workspace-grid" *ngIf="activeTab() === 'timeline'">
+        <section class="timeline-panel">
+          <div class="card card-inner">
+            <h3>Project Crafting Timeline</h3>
+            <div class="milestones-timeline">
+              <div class="timeline-item" *ngFor="let entry of sortedTimelineEntries()" [class.completed]="entry.isCompleted">
+                <div class="status-marker" [class.completed]="entry.isCompleted">
+                  <span class="marker-symbol" style="display: flex; align-items: center; justify-content: center; height: 100%;">
+                    <svg *ngIf="entry.isCompleted" viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="3" style="color: #fff;">
+                      <path d="M20 6L9 17l-5-5"/>
+                    </svg>
+                    <svg *ngIf="!entry.isCompleted" viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" style="color: #a19082;">
+                      <circle cx="12" cy="12" r="10"/>
+                    </svg>
+                  </span>
+                </div>
+                <div class="timeline-info">
+                  <h4>{{ entry.title }}</h4>
+                  <p>{{ entry.description }}</p>
+                  <span class="timeline-time" *ngIf="entry.isCompleted && entry.timestamp" style="font-size: 0.72rem; color: #a19082; display: block; margin-top: 2px;">
+                    Completed: {{ entry.timestamp | date:'medium' }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="details-panel">
+          <div class="card card-inner reference-card">
+            <h3>Image Reference Panel</h3>
+            <button class="reference-image-button" (click)="openReferenceImage()" type="button">
+              <img [src]="resolveImageUrl(selectedDesign()?.imageUrl || designSummary().designImage || requestDetails()?.referenceImageUrl)" alt="Approved AI Doll Reference" referrerpolicy="no-referrer" />
+            </button>
+            <div class="reference-summary">
+              <div class="ref-summary-grid">
+                <div class="ref-summary-item"><strong>Gender:</strong> {{ designSummary().gender || 'Not specified' }}</div>
+                <div class="ref-summary-item"><strong>Height:</strong> {{ designSummary().height || 'Not specified' }}</div>
+                <div class="ref-summary-item"><strong>Skin Tone:</strong> {{ designSummary().skinTone || 'Not specified' }}</div>
+                <div class="ref-summary-item"><strong>Hair Style:</strong> {{ designSummary().hairStyle || 'Not specified' }}</div>
+                <div class="ref-summary-item"><strong>Hair Color:</strong> {{ designSummary().hairColor || 'Not specified' }}</div>
+                <div class="ref-summary-item"><strong>Outfit:</strong> {{ designSummary().outfit || 'Not specified' }}</div>
+                <div class="ref-summary-item"><strong>Accessories:</strong> {{ designSummary().accessories || 'Not specified' }}</div>
+                <div class="ref-summary-item"><strong>Personalization:</strong> {{ designSummary().personalization || 'Not specified' }}</div>
+                <div class="ref-summary-item" *ngIf="designSummary().referenceImage">
+                  <strong>Reference Image:</strong>
+                  <a [href]="resolveImageUrl(designSummary().referenceImage)" target="_blank" class="ref-image-link">View Customer Upload</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card card-inner status-card">
+            <h3>Order Summary</h3>
+            <div class="details-list">
+              <div class="detail-row">
+                <span class="label">Escrow Payment</span>
+                <span class="badge" [ngClass]="workspace()!.paymentStatus">{{ workspace()!.paymentStatus }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="label">Price</span>
+                <span class="val">EGP {{ customService()?.price || 0 | number:'1.2-2' }}</span>
+              </div>
+              <div class="detail-row" *ngIf="workspace()!.trackingNumber">
+                <span class="label">Courier Tracking</span>
+                <span class="val highlight">{{ workspace()!.trackingNumber }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="label">Estimated Delivery</span>
+                <span class="val">{{ customService()?.estimatedDeliveryDays || 0 }} days</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card card-inner actions-card" *ngIf="isSeller() && !isCompleted()">
+            <h3>Artisan Controls</h3>
+            <p class="photo-desc">Update progress and upload production photos for the buyer.</p>
+            <div class="action-buttons-group">
+              <div class="action-block" *ngIf="workspace()!.milestoneStep < 5">
+                <button class="btn btn-primary" (click)="incrementMilestone()" [disabled]="updatingProgress()">
+                  {{ updatingProgress() ? 'Updating...' : 'Advance to Next Stage' }}
+                </button>
+                <span class="subtext">Moves progress to: {{ milestones[workspace()!.milestoneStep + 1].name }}</span>
+              </div>
+
+              <div class="action-block ship-block" *ngIf="workspace()!.milestoneStep === 5">
+                <label for="trackingNum">Shipping Tracking Number</label>
+                <div class="tracking-input-row">
+                  <input type="text" id="trackingNum" #trackingInput placeholder="e.g. ARAMEX-98242" />
+                  <button class="btn btn-success" (click)="shipProject(trackingInput.value)" [disabled]="updatingProgress()">Ship</button>
+                </div>
+              </div>
+
+              <div class="action-block upload-block">
+                <label class="btn btn-secondary">
+                  Upload Progress / Final Photo
+                  <input type="file" (change)="uploadPhoto($event)" accept="image/*" [disabled]="uploadingPhoto()" />
+                </label>
+                <span class="subtext" *ngIf="uploadingPhoto()">Uploading image...</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card card-inner actions-card buyer-actions" *ngIf="!isSeller() && workspace()!.milestoneStep === 6 && !isCompleted()">
+            <h3>Delivery Confirmation</h3>
+            <p class="photo-desc">Once you receive your custom crochet doll, confirm delivery to release escrow to the artisan.</p>
+            <button class="btn btn-success" (click)="confirmDelivery()" [disabled]="updatingProgress()">
+              {{ updatingProgress() ? 'Processing...' : 'Confirm Delivery & Release Funds' }}
+            </button>
+          </div>
+
+          <div class="card card-inner photo-card" *ngIf="workspace()!.finalPhotoUrl">
+            <h3>Images</h3>
+            <p class="photo-desc">Uploaded workspace production photo.</p>
+            <div class="workspace-photo">
+              <img [src]="resolveImageUrl(workspace()!.finalPhotoUrl)" alt="Completed Custom Doll Photo" referrerpolicy="no-referrer" />
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Chat Tab -->
+      <div class="chat-tab-container" *ngIf="activeTab() === 'chat'">
+        <div class="chat-wrapper-card" *ngIf="chatReady()">
+          <app-chat-window></app-chat-window>
+        </div>
+        <div class="chat-loading-fallback" *ngIf="!chatReady()">
+          <div class="spinner"></div>
+          <p>Connecting to secure chat channel...</p>
+        </div>
+      </div>
+    </ng-container>
+  </main>
+
+  <div class="lightbox-overlay" *ngIf="activeReferenceImage()" (click)="closeReferenceImage()">
+    <button class="lightbox-close" (click)="closeReferenceImage()" aria-label="Close image">&times;</button>
+    <div class="lightbox-content" (click)="$event.stopPropagation()">
+      <img [src]="activeReferenceImage()" alt="Approved AI design enlarged" />
+    </div>
+  </div>
+</div>

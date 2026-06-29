@@ -1,0 +1,56 @@
+<div class="negotiation-page-container">
+  
+  <header class="negotiation-header">
+    <div class="header-left">
+      <button class="back-btn" [routerLink]="['/custom-studio/matching', requestId()]">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+      </button>
+      <h2>Workspace Discussion</h2>
+    </div>
+  </header>
+
+  <!-- Split Panel showing Request context above and Chat below -->
+  <main class="negotiation-main">
+    
+    <!-- Top contextual header card for the Custom request -->
+    <section class="context-card" *ngIf="requestDetails()">
+      <div class="context-inner">
+        <div class="context-left">
+          <div class="design-mini-img" *ngIf="selectedDesign()">
+            <img [src]="resolveImageUrl(selectedDesign()!.imageUrl)" alt="Doll Design Blueprint" referrerpolicy="no-referrer" />
+          </div>
+          <div class="design-meta">
+            <h3>Design Blueprint Context</h3>
+            <p *ngIf="requestDetails()!.selectedSellerName">Negotiating with: <strong>{{ requestDetails()!.selectedSellerName }}</strong></p>
+            <p class="specs-summary">Specs: {{ requestDetails()!.productType }} ({{ requestDetails()!.wizardStep }} Step)</p>
+          </div>
+        </div>
+
+        <div class="context-actions">
+          <button class="btn btn-outline" *ngIf="selectedDesign()" (click)="downloadImage(resolveImageUrl(selectedDesign()!.imageUrl), 'crochet-doll-blueprint')">
+            Download Blueprints
+          </button>
+          
+          <!-- View Offer Link if an offer is present -->
+          <button class="btn btn-primary btn-offer" [routerLink]="['/custom-studio/offer-review', requestId()]">
+            View Artisan's Offer
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Chat Area -->
+    <section class="chat-workspace-section">
+      <div class="loading-state" *ngIf="loading() || !chatReady()">
+        <div class="spinner"></div>
+        <p>Connecting to secure discussion channel...</p>
+      </div>
+
+      <!-- Reuse existing chat window component -->
+      <app-chat-window *ngIf="chatReady()"></app-chat-window>
+    </section>
+
+  </main>
+</div>

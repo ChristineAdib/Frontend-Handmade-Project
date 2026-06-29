@@ -10,4 +10,5 @@ export interface Message {
   senderName: string;
   conversationId: string;
   createdAt: string;
+  customOffer?: any;
 }
