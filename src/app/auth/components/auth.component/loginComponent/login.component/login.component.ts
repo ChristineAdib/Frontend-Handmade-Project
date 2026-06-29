@@ -31,15 +31,15 @@ export class LoginComponent implements AfterViewInit, OnInit {
     rememberMe: [false]
   });
 
-  ngOnInit() {
-    const savedEmail = localStorage.getItem('remembered_email');
-    if (savedEmail) {
-      this.loginForm.patchValue({
-        email: savedEmail,
-        rememberMe: true
-      });
-    }
+ngOnInit() {
+  const wasBanned = localStorage.getItem('banned_msg');
+  if (wasBanned) {
+    localStorage.removeItem('banned_msg');
+    this.auth.errorMsg.set(
+      'Your account has been suspended. Please contact support.'
+    );
   }
+}
 
   togglePass() { this.showPass.update(v => !v); }
 

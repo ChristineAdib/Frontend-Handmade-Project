@@ -19,6 +19,8 @@ export interface Product {
   shopName: string;
   quantity?: number;
   isOnePiece?: boolean;
+  arModelUrl?: string;
+  glbUrl?: string;
 }
 
 export interface AiReviewSummary {
@@ -54,6 +56,8 @@ export interface ProductDetailResponse {
   createdAt: string;
   updatedAt?: string;
   aiSummary?: AiReviewSummary;
+  arModelUrl?: string;
+  glbUrl?: string;
 }
 
 export interface CategorySummary {

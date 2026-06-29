@@ -26,7 +26,13 @@
         {{ langService.currentLang() === 'ar' ? 'قطعة فريدة' : 'One of a Kind' }}
       </span>
     }
-
+<!-- AR Badge (indicator only) -->
+@if (product.arModelUrl) {
+  <span class="ar-badge-btn">
+    <span class="material-symbols-outlined">view_in_ar</span>
+    <span>AR</span>
+  </span>
+}
     <!-- Hover Action Buttons (Wishlist & Cart) -->
     <div class="hover-actions-bar">
       <button 
