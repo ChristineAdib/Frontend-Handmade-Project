@@ -23,7 +23,10 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     headers['Authorization'] = `Bearer ${token}`;
   }
 
-  req = req.clone({ setHeaders: headers });
+  req = req.clone({ 
+    setHeaders: headers,
+    withCredentials: true 
+  });
 
   return next(req).pipe(
     catchError((err: HttpErrorResponse) => {

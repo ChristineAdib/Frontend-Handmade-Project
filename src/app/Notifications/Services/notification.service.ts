@@ -48,7 +48,10 @@ export class NotificationService implements OnDestroy {
     }
 
     this.hubConnection = new signalr.HubConnectionBuilder()
-      .withUrl(this.hubUrl, { accessTokenFactory: () => token })
+      .withUrl(this.hubUrl, { 
+        accessTokenFactory: () => token,
+        withCredentials: true
+      })
       .withAutomaticReconnect()
       .configureLogging(signalr.LogLevel.Warning)
       .build();
