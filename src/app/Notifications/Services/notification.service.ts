@@ -47,11 +47,18 @@ export class NotificationService implements OnDestroy {
       }
     }
 
+    const connectionOptions: any = {
+      accessTokenFactory: () => token
+    };
+
+    if (environment.authMode === 'cookie') {
+      connectionOptions.withCredentials = true;
+    } else {
+      connectionOptions.withCredentials = false;
+    }
+
     this.hubConnection = new signalr.HubConnectionBuilder()
-      .withUrl(this.hubUrl, { 
-        accessTokenFactory: () => token,
-        withCredentials: true
-      })
+      .withUrl(this.hubUrl, connectionOptions)
       .withAutomaticReconnect()
       .configureLogging(signalr.LogLevel.Warning)
       .build();
