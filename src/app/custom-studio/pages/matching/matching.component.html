@@ -41,7 +41,7 @@
         <div class="seller-profile-row">
           <!-- Shop logo circle -->
           <div class="shop-logo-circle">
-            <img *ngIf="rec.shopLogo" [src]="rec.shopLogo" [alt]="rec.shopName" />
+            <img *ngIf="rec.shopLogo" [src]="rec.shopLogo" [alt]="rec.shopName" referrerpolicy="no-referrer" />
             <span *ngIf="!rec.shopLogo" class="avatar-fallback">{{ rec.shopName[0] }}</span>
           </div>
 
@@ -74,7 +74,11 @@
         <!-- Matching justification text -->
         <div class="matching-reason">
           <div class="reason-header">Why recommended:</div>
-          <p>"{{ rec.reason }}"</p>
+          <ul class="reason-list">
+            <li *ngFor="let item of (rec.reason || '').split(' | ')">
+              {{ item }}
+            </li>
+          </ul>
         </div>
 
         <!-- Discussion Action -->

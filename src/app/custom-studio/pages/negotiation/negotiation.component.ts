@@ -27,6 +27,10 @@ export class NegotiationComponent implements OnInit, OnDestroy {
   loading = signal<boolean>(true);
   chatReady = signal<boolean>(false);
 
+  resolveImageUrl(url: string | null | undefined): string {
+    return this.customStudioService.resolveImageUrl(url);
+  }
+
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {

@@ -1,174 +1,305 @@
 .generating-page-container {
   min-height: 100vh;
-  background-color: #fffdf9;
+  background-color: #fffdfb;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px;
-  color: #1e0e05;
+  padding: 30px 24px;
+  color: #3d2010;
+  font-family: 'Outfit', 'Inter', sans-serif;
 }
 
 .generating-card {
   text-align: center;
-  max-width: 480px;
+  max-width: 500px;
   width: 100%;
-  padding: 40px 30px;
+  padding: 50px 40px;
   background: #ffffff;
-  border: 1px solid rgba(49, 23, 2, 0.08);
-  border-radius: 28px;
-  box-shadow: 0 15px 40px rgba(49, 23, 2, 0.05);
+  border: 1.5px solid rgba(92, 61, 46, 0.06);
+  border-radius: 32px;
+  box-shadow: 
+    0 20px 50px rgba(92, 61, 46, 0.05),
+    0 4px 12px rgba(92, 61, 46, 0.02);
+  animation: scaleUp-generating 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* AI Pulsing Rings */
-.ai-orbit-container {
+@keyframes scaleUp-generating {
+  from { transform: scale(0.97); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* Luxury Yarn Spindle Orbits */
+.yarn-weaver-wrapper {
   position: relative;
-  width: 160px;
-  height: 160px;
-  margin: 0 auto 30px auto;
+  width: 180px;
+  height: 180px;
+  margin: 0 auto 36px auto;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.ai-orbit-container::before {
-  content: '✂️';
-  position: absolute;
-  top: -10px;
-  left: 15px;
-  font-size: 22px;
-  animation: float 4s ease-in-out infinite alternate;
-}
-
-.ai-orbit-container::after {
+.yarn-weaver-wrapper::before {
   content: '🪡';
   position: absolute;
-  bottom: -10px;
-  right: 15px;
-  font-size: 22px;
-  animation: float 3s ease-in-out infinite alternate-reverse;
+  top: -8px;
+  left: 20px;
+  font-size: 26px;
+  animation: needle-float 4s ease-in-out infinite alternate;
 }
 
-@keyframes float {
+.yarn-weaver-wrapper::after {
+  content: '✂️';
+  position: absolute;
+  bottom: -8px;
+  right: 20px;
+  font-size: 26px;
+  animation: needle-float 3.5s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes needle-float {
   0% { transform: translateY(0) rotate(0deg); }
-  100% { transform: translateY(-10px) rotate(15deg); }
+  100% { transform: translateY(-8px) rotate(12deg); }
 }
 
 .orbit {
   position: absolute;
   border-radius: 50%;
-  border: 2px solid transparent;
-  animation: spin-pulse 3s linear infinite;
+  border: 2px dashed transparent;
+  animation: spin-yarn 4s linear infinite;
 }
 
-.ring-1 {
-  width: 150px;
-  height: 150px;
-  border-top-color: rgba(200, 129, 58, 0.15);
-  border-bottom-color: rgba(200, 129, 58, 0.15);
-  animation-duration: 4s;
+.ring-outer {
+  width: 170px;
+  height: 170px;
+  border-top-color: rgba(200, 129, 58, 0.35);
+  border-bottom-color: rgba(200, 129, 58, 0.35);
+  animation-duration: 6s;
+  box-shadow: 0 0 10px rgba(200, 129, 58, 0.05);
 }
 
-.ring-2 {
-  width: 110px;
-  height: 110px;
-  border-left-color: rgba(212, 169, 106, 0.3);
-  border-right-color: rgba(212, 169, 106, 0.3);
-  animation-duration: 2.5s;
+.ring-middle {
+  width: 125px;
+  height: 125px;
+  border-left-color: rgba(212, 169, 106, 0.5);
+  border-right-color: rgba(212, 169, 106, 0.5);
+  animation-duration: 3.5s;
   animation-direction: reverse;
 }
 
-.ring-3 {
-  width: 70px;
-  height: 70px;
-  border-top-color: #c8813a;
-  border-bottom-color: #c8813a;
-  animation-duration: 1.5s;
+.ring-inner {
+  width: 80px;
+  height: 80px;
+  border-top-color: #3d2010;
+  border-bottom-color: #3d2010;
+  border-width: 2.5px;
+  animation-duration: 2s;
 }
 
-.crochet-icon-center {
-  font-size: 32px;
+.center-spindle {
+  width: 44px;
+  height: 44px;
+  background: radial-gradient(circle, #fffdfb 0%, #faf7f2 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(92, 61, 46, 0.1);
   z-index: 10;
-  animation: heartbeat 1.5s ease-in-out infinite;
 }
 
-@keyframes spin-pulse {
-  0% {
-    transform: rotate(0deg) scale(1);
-  }
-  50% {
-    transform: rotate(180deg) scale(1.05);
-  }
-  100% {
-    transform: rotate(360deg) scale(1);
-  }
+.crochet-spindle {
+  font-size: 26px;
+  animation: heartbeat-spindle 1.2s ease-in-out infinite;
+  display: block;
 }
 
-@keyframes heartbeat {
+@keyframes spin-yarn {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes heartbeat-spindle {
   0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.15); }
+  50% { transform: scale(1.12); }
 }
 
-/* Titles and message styling */
+/* Typography headers */
+.weaver-badge {
+  font-size: 11px;
+  font-weight: 700;
+  color: #c8813a;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  display: inline-block;
+  background: rgba(200, 129, 58, 0.06);
+  padding: 4px 12px;
+  border-radius: 20px;
+  margin-bottom: 12px;
+}
+
 .ai-title {
   font-family: 'Playfair Display', serif;
   font-size: 28px;
   color: #3d2010;
   font-weight: 700;
-  margin-bottom: 12px;
+  margin: 0 0 6px 0;
+  letter-spacing: -0.3px;
 }
 
+.ai-subtitle {
+  font-size: 14px;
+  color: #8d776f;
+  margin: 0 0 30px 0;
+  line-height: 1.5;
+}
+
+/* Typing text status */
 .typing-text-wrapper {
-  height: 24px;
-  margin-bottom: 30px;
-  display: flex;
+  background: #faf7f2;
+  border-radius: 14px;
+  padding: 10px 20px;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 10px;
+  margin-bottom: 36px;
+  border: 1px solid rgba(92, 61, 46, 0.03);
+}
+
+.glowing-node {
+  width: 6px;
+  height: 6px;
+  background-color: #c8813a;
+  border-radius: 50%;
+  animation: glow-pulse 1s infinite alternate;
+}
+
+@keyframes glow-pulse {
+  from { opacity: 0.4; box-shadow: 0 0 0px #c8813a; }
+  to { opacity: 1; box-shadow: 0 0 8px #c8813a; }
 }
 
 .typing-message {
-  font-size: 15px;
+  font-size: 13.5px;
   color: #c8813a;
   font-weight: 600;
   margin: 0;
-  letter-spacing: 0.5px;
-  animation: fadeInOut 2.5s infinite;
+  letter-spacing: 0.3px;
+  animation: step-fade 2.5s infinite;
 }
 
-@keyframes fadeInOut {
-  0%, 100% { opacity: 0; transform: translateY(5px); }
-  10%, 90% { opacity: 1; transform: translateY(0); }
+@keyframes step-fade {
+  0%, 100% { opacity: 0; transform: translateY(3px); }
+  12%, 88% { opacity: 1; transform: translateY(0); }
 }
 
-/* Progress bar styling */
+/* Progress bar section */
 .progress-section {
   width: 100%;
-  margin-bottom: 24px;
+  margin-bottom: 30px;
 }
 
 .progress-bar-bg {
   width: 100%;
-  height: 8px;
-  background-color: rgba(49, 23, 2, 0.08);
+  height: 6px;
+  background-color: rgba(92, 61, 46, 0.08);
   border-radius: 20px;
   overflow: hidden;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .progress-bar-fill {
   height: 100%;
-  background-color: #c8813a;
+  background-color: #3d2010;
   border-radius: 20px;
-  transition: width 0.6s ease;
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.progress-meta-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #725244;
 }
 
 .progress-percentage {
-  font-size: 13px;
   font-weight: 700;
-  color: #5c3d2e;
+  color: #3d2010;
+}
+
+/* Progress step lists */
+.progress-step-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  text-align: left;
+  border-top: 1.5px solid rgba(92, 61, 46, 0.06);
+  padding-top: 24px;
+  margin-bottom: 30px;
+}
+
+.step-tick {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  opacity: 0.35;
+  transition: all 0.4s ease;
+}
+
+.step-tick.active {
+  opacity: 1;
+}
+
+.step-tick.active .tick-bullet {
+  background-color: #c8813a;
+  box-shadow: 0 0 6px rgba(200, 129, 58, 0.4);
+}
+
+.step-tick.done {
+  opacity: 0.6;
+}
+
+.step-tick.done .tick-bullet {
+  background-color: #28a745;
+  box-shadow: none;
+}
+
+.step-tick.done .tick-bullet::after {
+  content: '';
+  width: 4px;
+  height: 4px;
+  background-color: #ffffff;
+  border-radius: 50%;
+  display: block;
+}
+
+.tick-bullet {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: rgba(92, 61, 46, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+.tick-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: #3d2010;
+}
+
+.step-tick.done .tick-text {
+  text-decoration: line-through;
+  color: #725244;
 }
 
 .warning-text {
-  font-size: 12px;
+  font-size: 11.5px;
   color: #8d776f;
   line-height: 1.5;
   margin: 0;

@@ -56,6 +56,7 @@ export interface CustomConfiguration {
   personalizationDate?: string;
   personalizationFont?: string;
   personalizationTextColor?: string;
+  referenceImageUrl?: string;
 }
 
 export interface CustomConfigurationDto {
@@ -75,6 +76,7 @@ export interface GeneratedDesignDto {
   isSaved: boolean;
   isDownloaded: boolean;
   patternStepsMarkdown: string;
+  designSummaryJson?: string;
 }
 
 export interface SellerRecommendationDto {
@@ -101,6 +103,16 @@ export interface CustomOfferDto {
   notes: string;
   status: string;
   createdAt: string;
+  
+  conversationId?: string;
+  buyerId?: string;
+  sellerId?: string;
+  designId?: string;
+  acceptedAt?: string;
+  rejectedAt?: string;
+  paidAt?: string;
+  orderId?: string;
+  workspaceId?: string;
 }
 
 export interface ProjectWorkspaceDto {
@@ -110,13 +122,17 @@ export interface ProjectWorkspaceDto {
   status: string;
   milestoneStep: number;
   paymentStatus: string;
+  chatConversationId: string;
+  orderId?: string;
+  customServiceId?: string;
+  timelineEntries?: any[];
   finalPhotoUrl?: string;
   trackingNumber?: string;
-  chatConversationId?: string;
 }
 
 export interface CustomRequestDetailDto {
   id: string;
+  conversationId?: string;
   productType: string;
   status: string;
   wizardStep: string;
@@ -124,6 +140,7 @@ export interface CustomRequestDetailDto {
   targetBudget?: number;
   deadlineDate?: string;
   selectedDesignId?: string;
+  selectedDesign?: GeneratedDesignDto;
   selectedSellerId?: string;
   selectedSellerName?: string;
   buyerId: string;
@@ -136,6 +153,43 @@ export interface CustomRequestDetailDto {
   sellerRecommendations: SellerRecommendationDto[];
   customOffers: CustomOfferDto[];
   projectWorkspace?: ProjectWorkspaceDto;
+  customService?: CustomServiceDto;
+}
+
+export interface CreateSellerOfferCommand {
+  requestId: string;
+  shopId: string;
+  price: number;
+  deliveryTimeDays: number;
+  revisionsAllowed: number;
+  notes: string;
+  attachments?: string[];
+  status?: string;
+  offerId?: string;
+}
+
+export interface CreateCustomServiceCommand {
+  requestId: string;
+  shopId: string;
+  title: string;
+  price: number;
+  estimatedDeliveryDays: number;
+  notes: string;
+}
+
+export interface CustomServiceDto {
+  id: string;
+  title: string;
+  price: number;
+  estimatedDeliveryDays: number;
+  notes: string;
+  status: string;
+  buyerId: string;
+  sellerId: string;
+  conversationId?: string;
+  customRequestId: string;
+  generatedDesignId?: string;
+  createdAt: string;
 }
 
 export interface CustomRequestSummaryDto {
@@ -286,7 +340,7 @@ export function mapFlatToNested(flat: CustomConfiguration): any {
     Outfit: outfit,
     Accessories: accessories,
     Personalization: personalization,
-    ReferenceImageUrl: null as string | null,
+    ReferenceImageUrl: flat.referenceImageUrl || null,
     AdditionalNotes: flat.personalizationMessage || ''
   };
 }
@@ -340,6 +394,49 @@ export function mapNestedToFlat(nested: any): CustomConfiguration {
     personalizationMessage: nested.AdditionalNotes || '',
     personalizationDate: '',
     personalizationFont,
-    personalizationTextColor: 'Black'
+    personalizationTextColor: 'Black',
+    referenceImageUrl: nested.ReferenceImageUrl || null
   };
+}
+
+export interface DesignSummary {
+  gender?: string;
+  height?: string;
+  skinTone?: string;
+  hairStyle?: string;
+  hairColor?: string;
+  outfit?: string;
+  accessories?: string;
+  personalization?: string;
+  referenceImage?: string;
+  designImage?: string;
+  face?: string;
+}
+
+export function parseDesignSummary(design: any): DesignSummary {
+  if (!design) return {};
+  
+  let result: DesignSummary = {};
+  if (design.designSummaryJson) {
+    try {
+      const parsed = JSON.parse(design.designSummaryJson);
+      result = {
+        gender: String(parsed.Gender || parsed.gender || ''),
+        height: String(parsed.Height || parsed.height || parsed.Size || parsed.size || ''),
+        skinTone: String(parsed.SkinTone || parsed.skinTone || ''),
+        hairStyle: String(parsed.HairStyle || parsed.hairStyle || (parsed.Hair || parsed.hair)?.Style || ''),
+        hairColor: String(parsed.HairColor || parsed.hairColor || (parsed.Hair || parsed.hair)?.Color || ''),
+        outfit: String(parsed.OutfitStyle || parsed.outfitStyle || parsed.Outfit || parsed.outfit || (parsed.Outfit || parsed.outfit)?.Description || ''),
+        accessories: String(parsed.Accessories || parsed.accessories || (parsed.Accessories || parsed.accessories)?.Description || ''),
+        personalization: String(parsed.Personalization || parsed.personalization || (parsed.Personalization || parsed.personalization)?.LabelText || parsed.AdditionalNotes || ''),
+        referenceImage: String(parsed.ReferenceImage || parsed.referenceImage || parsed.ReferenceImageUrl || parsed.referenceImageUrl || ''),
+        face: String(parsed.Face || parsed.face || 'Normal')
+      };
+    } catch (e) {
+      console.error('Failed to parse design summary json:', e);
+    }
+  }
+  
+  result.designImage = design.imageUrl || result.designImage;
+  return result;
 }

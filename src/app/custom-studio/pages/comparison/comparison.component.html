@@ -41,12 +41,12 @@
             <td class="feature-title">Design Preview</td>
             <td class="image-cell">
               <div class="img-container">
-                <img [src]="designA()!.imageUrl" alt="Option 1" />
+                <img [src]="resolveImageUrl(designA()!.imageUrl)" alt="Option 1" referrerpolicy="no-referrer" />
               </div>
             </td>
             <td class="image-cell" *ngIf="designB()">
               <div class="img-container">
-                <img [src]="designB()!.imageUrl" alt="Option 2" />
+                <img [src]="resolveImageUrl(designB()!.imageUrl)" alt="Option 2" referrerpolicy="no-referrer" />
               </div>
             </td>
           </tr>

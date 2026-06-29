@@ -19,7 +19,7 @@
       <div class="context-inner">
         <div class="context-left">
           <div class="design-mini-img" *ngIf="selectedDesign()">
-            <img [src]="selectedDesign()!.imageUrl" alt="Doll Design Blueprint" />
+            <img [src]="resolveImageUrl(selectedDesign()!.imageUrl)" alt="Doll Design Blueprint" referrerpolicy="no-referrer" />
           </div>
           <div class="design-meta">
             <h3>Design Blueprint Context</h3>
@@ -29,7 +29,7 @@
         </div>
 
         <div class="context-actions">
-          <button class="btn btn-outline" *ngIf="selectedDesign()" (click)="downloadImage(selectedDesign()!.imageUrl, 'crochet-doll-blueprint')">
+          <button class="btn btn-outline" *ngIf="selectedDesign()" (click)="downloadImage(resolveImageUrl(selectedDesign()!.imageUrl), 'crochet-doll-blueprint')">
             Download Blueprints
           </button>
           

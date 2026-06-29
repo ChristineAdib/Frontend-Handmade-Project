@@ -27,7 +27,12 @@
     <!-- Iframe -->
     <div *ngIf="showIframe()" class="iframe-wrap">
       <div class="iframe-header">
-        <span class="lock-icon">&#x1F512;</span>
+        <span class="lock-icon" style="display: inline-flex; align-items: center;">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px;">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0110 0v4"/>
+          </svg>
+        </span>
         <span>{{ langService.translate('securedByPaymob') }}</span>
       </div>
       <iframe [src]="iframeUrl() | safeUrl" class="payment-iframe"
@@ -46,7 +51,11 @@
 
     <!-- Success -->
     <div *ngIf="paymentDone() && paymentSuccess()" class="payment-result success">
-      <div class="result-icon">&#x2714;</div>
+      <div class="result-icon" style="display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+        <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="3" style="color: #28a745;">
+          <path d="M20 6L9 17l-5-5"/>
+        </svg>
+      </div>
       <h3>{{ langService.translate('paymentSuccessful') }}</h3>
       <p>{{ langService.translate('orderConfirmedProcessed') }}</p>
       
@@ -64,7 +73,11 @@
 
     <!-- Failed -->
     <div *ngIf="paymentDone() && paymentFailed()" class="payment-result failed">
-      <div class="result-icon">&#x2718;</div>
+      <div class="result-icon" style="display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+        <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="3" style="color: #dc3545;">
+          <path d="M18 6L6 18M6 6l12 12"/>
+        </svg>
+      </div>
       <h3>{{ langService.currentLang() === 'ar' ? 'فشلت عملية الدفع' : 'Payment Failed' }}</h3>
       <p>{{ langService.translate('somethingWentWrongTryAgain') }}</p>
       <button (click)="initPayment()" class="btn-action">{{ langService.translate('tryAgain') }}</button>

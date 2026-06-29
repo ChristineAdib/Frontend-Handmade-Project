@@ -52,14 +52,15 @@ export class MatchingComponent implements OnInit {
 
   startDiscussion(sellerShopId: string): void {
     this.chatLoading.set(sellerShopId);
-    this.toastr.info('Opening artisan chat workspace...');
+    this.toastr.info('Opening discussion...');
     
     this.customStudioService.createDiscussion(this.requestId(), sellerShopId).subscribe({
       next: (res) => {
         this.chatLoading.set(null);
-        if (res.success) {
-          this.toastr.success('Workspace conversation initialized!');
-          this.router.navigate(['/custom-studio/negotiation', this.requestId()]);
+        if (res.success && res.data) {
+          this.toastr.success('Conversation initialized!');
+          const convId = res.data.id || res.data.conversationId;
+          this.router.navigate(['/chat', convId], { queryParams: { requestId: this.requestId() } });
         } else {
           this.toastr.error('Failed to start chat discussion');
         }

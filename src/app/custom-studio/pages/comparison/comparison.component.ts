@@ -24,6 +24,10 @@ export class ComparisonComponent implements OnInit {
   designB = signal<GeneratedDesignDto | null>(null);
   loading = signal<boolean>(true);
 
+  resolveImageUrl(url: string | null | undefined): string {
+    return this.customStudioService.resolveImageUrl(url);
+  }
+
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {

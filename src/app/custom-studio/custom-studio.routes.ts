@@ -6,11 +6,15 @@ export const CUSTOM_STUDIO_ROUTES: Routes = [
     loadComponent: () => import('./pages/landing/landing.component').then(m => m.LandingComponent)
   },
   {
-    path: 'wizard',
+    path: 'photo',
+    loadComponent: () => import('./pages/photo/photo.component').then(m => m.PhotoComponent)
+  },
+  {
+    path: 'customize',
     loadComponent: () => import('./pages/wizard/wizard.component').then(m => m.WizardComponent)
   },
   {
-    path: 'wizard/:id',
+    path: 'customize/:id',
     loadComponent: () => import('./pages/wizard/wizard.component').then(m => m.WizardComponent)
   },
   {

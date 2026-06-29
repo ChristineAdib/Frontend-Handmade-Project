@@ -15,8 +15,11 @@ import {
   CreateCustomRequestCommand,
   SaveConfigurationCommand,
   CheckoutCustomRequestCommand,
+  CreateSellerOfferCommand,
   ProductType,
-  WizardStep
+  WizardStep,
+  CreateCustomServiceCommand,
+  CustomServiceDto
 } from '../models/custom-studio.models';
 
 @Injectable({
@@ -26,6 +29,23 @@ export class CustomStudioService {
   private http = inject(HttpClient);
   private apiUrl = `${environment.domain}/api/custom-studio`;
   private isDemoMode = environment.demoMode || false;
+
+  resolveImageUrl(url: string | null | undefined): string {
+    if (!url) return 'assets/placeholder-doll.png';
+    let normalized = url.replace(/\\/g, '/');
+    
+    // Normalize localhost URLs to use the current environment's API URL
+    const localhostRegex = /^https?:\/\/localhost:\d+/i;
+    if (localhostRegex.test(normalized)) {
+      normalized = normalized.replace(localhostRegex, environment.apiUrl);
+    }
+    
+    if (normalized.startsWith('http://') || normalized.startsWith('https://') || normalized.startsWith('//') || normalized.startsWith('data:image')) {
+      return normalized;
+    }
+    const cleanUrl = normalized.startsWith('/') ? normalized.substring(1) : normalized;
+    return `${environment.apiUrl}/${cleanUrl}`;
+  }
 
   // #region Mock Database (localStorage) for Demo Mode
 
@@ -49,7 +69,7 @@ export class CustomStudioService {
         buyerId: 'buyer-user-id',
         buyerName: 'Demo Buyer',
         createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-        referenceImageUrl: 'https://images.unsplash.com/photo-1584992772048-2b86ab25f85e?q=80&w=600',
+        referenceImageUrl: 'https://res.cloudinary.com/demo/image/upload/w_600/sample.jpg',
         customConfiguration: {
           id: 'c1111111-2222-3333-4444-555555555555',
           productType: 'CrochetDoll',
@@ -67,7 +87,7 @@ export class CustomStudioService {
         generatedDesigns: [
           {
             id: 'd1111111-2222-3333-4444-555555555555',
-            imageUrl: 'https://images.unsplash.com/photo-1584992772048-2b86ab25f85e?q=80&w=600',
+            imageUrl: 'https://res.cloudinary.com/demo/image/upload/w_600/sample.jpg',
             prompt: 'chibi crochet princess doll, braids hair, pastel pink gown',
             provider: 'Google Image Gen 3',
             generationTimeMs: 1200,
@@ -111,7 +131,8 @@ export class CustomStudioService {
           status: 'Initiated',
           milestoneStep: 1, // Sourcing Materials
           paymentStatus: 'Paid',
-          chatConversationId: 'chat-11111111-2222-3333-4444-555555555555'
+          chatConversationId: 'chat-11111111-2222-3333-4444-555555555555',
+          timelineEntries: []
         }
       },
       {
@@ -126,7 +147,7 @@ export class CustomStudioService {
         buyerId: 'buyer-user-id',
         buyerName: 'Demo Buyer',
         createdAt: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
-        referenceImageUrl: 'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?q=80&w=600',
+        referenceImageUrl: 'https://res.cloudinary.com/demo/image/upload/w_600/couple.jpg',
         customConfiguration: {
           id: 'c2222222-2222-3333-4444-555555555555',
           productType: 'CrochetDoll',
@@ -144,7 +165,7 @@ export class CustomStudioService {
         generatedDesigns: [
           {
             id: 'd2222222-2222-3333-4444-555555555555',
-            imageUrl: 'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?q=80&w=600',
+            imageUrl: 'https://res.cloudinary.com/demo/image/upload/w_600/couple.jpg',
             prompt: 'crochet sailor boy doll, curly hair, blue white stripes',
             provider: 'Google Image Gen 3',
             generationTimeMs: 1450,
@@ -196,25 +217,25 @@ export class CustomStudioService {
         buyerId: 'buyer-user-id',
         buyerName: 'Demo Buyer',
         createdAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(),
-        referenceImageUrl: 'https://images.unsplash.com/photo-1608889175123-8ec330b86f84?q=80&w=600',
+        referenceImageUrl: 'https://res.cloudinary.com/demo/image/upload/w_600/dog.jpg',
         customConfiguration: {
           id: 'c3333333-2222-3333-4444-555555555555',
           productType: 'CrochetDoll',
           configurationDataJson: JSON.stringify({
             gender: 'Female',
-            size: 'Large (25cm)',
-            bodyType: 'Standard',
-            skinTone: 'Fair',
-            hairStyle: 'Buns',
-            hairColor: 'Green',
-            outfitStyle: 'Forest Elf Green Outfit',
+            size: 'Large (30cm)',
+            bodyType: 'Classic',
+            skinTone: 'Espresso',
+            hairStyle: 'Ponytail',
+            hairColor: 'Auburn',
+            outfitStyle: 'Forest Elf Green Tunic',
             outfitColors: ['Green', 'Brown']
           })
         },
         generatedDesigns: [
           {
             id: 'd3333333-2222-3333-4444-555555555555',
-            imageUrl: 'https://images.unsplash.com/photo-1608889175123-8ec330b86f84?q=80&w=600',
+            imageUrl: 'https://res.cloudinary.com/demo/image/upload/w_600/dog.jpg',
             prompt: 'crochet elf doll green braids hair, forest theme',
             provider: 'Google Image Gen 3',
             generationTimeMs: 1100,
@@ -258,7 +279,8 @@ export class CustomStudioService {
           status: 'Completed',
           milestoneStep: 5,
           paymentStatus: 'Paid',
-          chatConversationId: 'chat-33333333-2222-3333-4444-555555555555'
+          chatConversationId: 'chat-33333333-2222-3333-4444-555555555555',
+          timelineEntries: []
         }
       }
     ];
@@ -433,7 +455,7 @@ export class CustomStudioService {
       const db = this.getMockDatabase();
       const index = db.findIndex(r => r.id === id);
       if (index !== -1) {
-        db[index].referenceImageUrl = 'https://images.unsplash.com/photo-1544816155-12df9643f363?q=80&w=600';
+        db[index].referenceImageUrl = 'https://res.cloudinary.com/demo/image/upload/w_600/horses.jpg';
         this.saveMockDatabase(db);
         return of({ success: true, message: '', data: db[index] }).pipe(delay(600));
       }
@@ -442,6 +464,37 @@ export class CustomStudioService {
     const formData = new FormData();
     formData.append('file', file);
     return this.http.post<ApiResponse<CustomRequestDetailDto>>(`${this.apiUrl}/request/${id}/reference-image`, formData);
+  }
+
+  analyzePhotoForDoll(id: string, file: File): Observable<ApiResponse<CustomRequestDetailDto>> {
+    if (this.isDemoMode) {
+      const db = this.getMockDatabase();
+      const index = db.findIndex(r => r.id === id);
+      if (index !== -1) {
+        db[index].referenceImageUrl = 'https://res.cloudinary.com/demo/image/upload/w_600/horses.jpg';
+        db[index].customConfiguration = {
+          id: 'config-id',
+          productType: 'CrochetDoll',
+          configurationDataJson: JSON.stringify({
+            gender: 'Girl',
+            size: '20 cm',
+            bodyType: 'Standard',
+            skinTone: 'Ivory (Very Fair)',
+            hair: { style: 'Long', color: 'Chestnut Brown', length: 'Medium' },
+            face: { eyebrowStyle: 'Normal', eyeColor: 'Black', smileType: 'Happy', hasFreckles: false, hasBlush: true },
+            outfit: { type: 'Casual', desc: 'Casual outfit' },
+            accessories: { type: 'None', desc: 'None' },
+            personalization: { engravedText: '', font: 'Classic' }
+          })
+        };
+        this.saveMockDatabase(db);
+        return of({ success: true, message: '', data: db[index] }).pipe(delay(1000));
+      }
+      return throwError(() => new Error('Request not found'));
+    }
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<ApiResponse<CustomRequestDetailDto>>(`${this.apiUrl}/request/${id}/analyze-photo`, formData);
   }
 
   generateAiImages(id: string): Observable<ApiResponse<CustomRequestDetailDto>> {
@@ -454,20 +507,20 @@ export class CustomStudioService {
 
         const designs: GeneratedDesignDto[] = [
           {
-            id: `design-d1-${id}`,
-            imageUrl: 'https://images.unsplash.com/photo-1584992772048-2b86ab25f85e?q=80&w=600',
-            prompt: 'Amigurumi crochet princess doll in pink dress',
-            provider: 'Google Gemini 1.5 Flash',
-            generationTimeMs: 1250,
-            matchingScore: 94.5,
+            id: `design-gen-${Math.random().toString(36).substring(2, 11)}`,
+            imageUrl: 'https://res.cloudinary.com/demo/image/upload/w_600/sample.jpg',
+            prompt: `crochet doll matching ${prompt}`,
+            provider: 'Google Image Gen 3',
+            generationTimeMs: 1100,
+            matchingScore: 89.5,
             isSelected: false,
             isSaved: false,
             isDownloaded: false,
-            patternStepsMarkdown: '### Chibi Princess Pattern\n- Head: standard amigurumi spherical body.\n- Hair: blonde curls in braids.\n- Body: knit-in dress rows.'
+            patternStepsMarkdown: '### Generated Pattern\n- Head: standard spherical amigurumi.'
           },
           {
-            id: `design-d2-${id}`,
-            imageUrl: 'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?q=80&w=600',
+            id: `design-gen-${Math.random().toString(36).substring(2, 11)}`,
+            imageUrl: 'https://res.cloudinary.com/demo/image/upload/w_600/couple.jpg',
             prompt: 'Amigurumi crochet princess doll with crown, gold accents',
             provider: 'Google Gemini 1.5 Flash',
             generationTimeMs: 1100,
@@ -489,6 +542,42 @@ export class CustomStudioService {
       return throwError(() => new Error('Request not found'));
     }
     return this.http.post<ApiResponse<CustomRequestDetailDto>>(`${this.apiUrl}/request/${id}/generate`, {});
+  }
+
+  refineAiImage(id: string, designId: string, prompt: string): Observable<ApiResponse<CustomRequestDetailDto>> {
+    if (this.isDemoMode) {
+      const db = this.getMockDatabase();
+      const index = db.findIndex(r => r.id === id);
+      if (index !== -1) {
+        db[index].status = 'Generating';
+        this.saveMockDatabase(db);
+
+        const newDesignId = `design-ref-${Math.random().toString(36).substr(2, 9)}`;
+        const refinedDesign: GeneratedDesignDto = {
+          id: newDesignId,
+          imageUrl: 'https://res.cloudinary.com/demo/image/upload/w_600/wasp.jpg',
+          prompt: prompt,
+          provider: 'Pollinations.ai (Flux)',
+          generationTimeMs: 1800,
+          matchingScore: 95.8,
+          isSelected: true,
+          isSaved: false,
+          isDownloaded: false,
+          patternStepsMarkdown: `### Refined Pattern\n- Custom prompt: ${prompt}\n- Features updated.`
+        };
+
+        db[index].generatedDesigns.forEach(d => d.isSelected = false);
+        db[index].generatedDesigns.push(refinedDesign);
+        db[index].selectedDesignId = newDesignId;
+        db[index].status = 'DesignSelected';
+        db[index].generationCount += 1;
+        this.saveMockDatabase(db);
+
+        return of({ success: true, message: '', data: db[index] }).pipe(delay(2000));
+      }
+      return throwError(() => new Error('Request not found'));
+    }
+    return this.http.post<ApiResponse<CustomRequestDetailDto>>(`${this.apiUrl}/request/${id}/refine`, { designId, prompt });
   }
 
   getGeneratedDesigns(id: string): Observable<ApiResponse<GeneratedDesignDto[]>> {
@@ -643,7 +732,8 @@ export class CustomStudioService {
           status: 'Initiated',
           milestoneStep: 1, // Sourcing Materials
           paymentStatus: 'Pending',
-          chatConversationId: `chat-${db[index].selectedSellerId}`
+          chatConversationId: `chat-${db[index].selectedSellerId}`,
+          timelineEntries: []
         };
         this.saveMockDatabase(db);
         return of({ success: true, message: '', data: db[index] }).pipe(delay(200));
@@ -797,5 +887,107 @@ export class CustomStudioService {
       return throwError(() => new Error('Request or Workspace not found'));
     }
     return this.http.post<ApiResponse<CustomRequestDetailDto>>(`${this.apiUrl}/request/${id}/workspace/confirm`, {});
+  }
+
+  createSellerOffer(id: string, command: CreateSellerOfferCommand): Observable<ApiResponse<CustomOfferDto>> {
+    if (this.isDemoMode) {
+      const db = this.getMockDatabase();
+      const index = db.findIndex(r => r.id === id);
+      if (index !== -1) {
+        const offer: CustomOfferDto = {
+          id: `offer-${Math.random().toString(36).substring(2, 11)}`,
+          customRequestId: id,
+          shopId: command.shopId,
+          shopName: "Your Shop",
+          price: command.price,
+          deliveryTimeDays: command.deliveryTimeDays,
+          revisionsAllowed: command.revisionsAllowed,
+          attachments: command.attachments || [],
+          notes: command.notes,
+          status: 'Pending',
+          createdAt: new Date().toISOString()
+        };
+        db[index].customOffers.push(offer);
+        db[index].status = 'OfferSent';
+        this.saveMockDatabase(db);
+        return of({ success: true, message: '', data: offer }).pipe(delay(200));
+      }
+      return throwError(() => new Error('Request not found'));
+    }
+    return this.http.post<ApiResponse<CustomOfferDto>>(`${this.apiUrl}/request/${id}/offer`, command);
+  }
+
+  createCustomService(command: CreateCustomServiceCommand): Observable<ApiResponse<CustomServiceDto>> {
+    if (this.isDemoMode) {
+      const db = this.getMockDatabase();
+      const index = db.findIndex(r => r.id === command.requestId);
+      if (index !== -1) {
+        const service: CustomServiceDto = {
+          id: `service-${Math.random().toString(36).substring(2, 11)}`,
+          title: command.title,
+          price: command.price,
+          estimatedDeliveryDays: command.estimatedDeliveryDays,
+          notes: command.notes,
+          status: 'Pending Buyer Approval',
+          buyerId: db[index].buyerId,
+          sellerId: db[index].selectedSellerId || 'seller-user-id',
+          conversationId: `chat-${db[index].selectedSellerId || 'seller-user-id'}`,
+          customRequestId: command.requestId,
+          generatedDesignId: db[index].selectedDesignId,
+          createdAt: new Date().toISOString()
+        };
+        db[index].customService = service;
+        db[index].status = 'OfferSent';
+        this.saveMockDatabase(db);
+        return of({ success: true, message: '', data: service }).pipe(delay(200));
+      }
+      return throwError(() => new Error('Request not found in demo database'));
+    }
+    return this.http.post<ApiResponse<CustomServiceDto>>(`${this.apiUrl}/service`, command);
+  }
+
+  approveCustomService(serviceId: string): Observable<ApiResponse<CustomRequestDetailDto>> {
+    if (this.isDemoMode) {
+      const db = this.getMockDatabase();
+      const found = db.find(r => r.customService?.id === serviceId);
+      if (found) {
+        found.status = 'OfferAccepted';
+        if (found.customService) {
+          found.customService.status = 'Approved';
+        }
+        found.projectWorkspace = {
+          id: `ws-${found.id}`,
+          customRequestId: found.id,
+          selectedOfferId: '',
+          status: 'Initiated',
+          milestoneStep: 1,
+          paymentStatus: 'Pending',
+          chatConversationId: `chat-${found.selectedSellerId}`,
+          customServiceId: serviceId,
+          timelineEntries: []
+        };
+        this.saveMockDatabase(db);
+        return of({ success: true, message: '', data: found }).pipe(delay(200));
+      }
+      return throwError(() => new Error('Service not found in demo database'));
+    }
+    return this.http.post<ApiResponse<CustomRequestDetailDto>>(`${this.apiUrl}/service/${serviceId}/approve`, {});
+  }
+
+  rejectCustomService(serviceId: string): Observable<ApiResponse<CustomRequestDetailDto>> {
+    if (this.isDemoMode) {
+      const db = this.getMockDatabase();
+      const found = db.find(r => r.customService?.id === serviceId);
+      if (found) {
+        found.status = 'Negotiation';
+        if (found.customService) {
+          found.customService.status = 'Rejected';
+        }
+        this.saveMockDatabase(db);
+        return of({ success: true, message: '', data: found }).pipe(delay(200));
+      }
+      return throwError(() => new Error('Service not found in demo database'));
+    }
+    return this.http.post<ApiResponse<CustomRequestDetailDto>>(`${this.apiUrl}/service/${serviceId}/reject`, {});
   }
 }

@@ -34,9 +34,13 @@ export class GeneratingComponent implements OnInit, OnDestroy {
   
   private messageInterval: any;
   private progressInterval: any;
+  mode = signal<string | null>(null);
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
+    const modeParam = this.route.snapshot.queryParamMap.get('mode');
+    this.mode.set(modeParam);
+
     if (id) {
       this.requestId.set(id);
       this.startTimers();
@@ -84,14 +88,22 @@ export class GeneratingComponent implements OnInit, OnDestroy {
           }, 800);
         } else {
           this.toastr.error('Generation failed: ' + (res.message || 'Unknown error'));
-          this.router.navigate(['/custom-studio/wizard', id]);
+          if (this.mode() === 'photo') {
+            this.router.navigate(['/custom-studio/photo']);
+          } else {
+            this.router.navigate(['/custom-studio/customize', id]);
+          }
         }
       },
       error: (err) => {
         this.clearTimers();
         console.error(err);
-        this.toastr.error('AI Generation encountered an error. Redirecting back to wizard.');
-        this.router.navigate(['/custom-studio/wizard', id]);
+        this.toastr.error('AI Generation encountered an error.');
+        if (this.mode() === 'photo') {
+          this.router.navigate(['/custom-studio/photo']);
+        } else {
+          this.router.navigate(['/custom-studio/customize', id]);
+        }
       }
     });
   }

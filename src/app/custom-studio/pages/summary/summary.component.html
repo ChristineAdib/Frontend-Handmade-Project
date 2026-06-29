@@ -2,7 +2,7 @@
   
   <header class="summary-header">
     <div class="header-left">
-      <button class="back-btn" [routerLink]="(requestDetails()?.generatedDesigns?.length || 0) > 0 ? ['/custom-studio/results', requestId()] : ['/custom-studio/wizard', requestId()]">
+      <button class="back-btn" [routerLink]="(requestDetails()?.generatedDesigns?.length || 0) > 0 ? ['/custom-studio/results', requestId()] : ['/custom-studio/customize', requestId()]">
         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5">
           <path d="M19 12H5M12 19l-7-7 7-7"/>
         </svg>
@@ -25,7 +25,7 @@
         <div class="design-card">
           <div class="badge-chosen">Chosen Design</div>
           <div class="design-img-wrapper" *ngIf="selectedDesign()">
-            <img [src]="selectedDesign()!.imageUrl" alt="Selected Doll Blueprint" />
+            <img [src]="resolveImageUrl(selectedDesign()!.imageUrl)" alt="Selected Doll Blueprint" referrerpolicy="no-referrer" />
           </div>
           <div class="design-img-wrapper" *ngIf="!selectedDesign()">
             <div class="no-design-placeholder">No design image found</div>

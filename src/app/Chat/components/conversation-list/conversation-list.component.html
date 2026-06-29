@@ -39,7 +39,7 @@
           <div class="avatar-col">
             <div class="avatar-circle">
               @if (getOtherParticipantImage(c)) {
-                <img [src]="getOtherParticipantImage(c)" alt="Avatar" class="avatar-img" />
+                <img [src]="resolveImageUrl(getOtherParticipantImage(c))" alt="Avatar" class="avatar-img" referrerpolicy="no-referrer" />
               } @else {
                 {{ getOtherParticipantName(c)[0] | uppercase }}
               }

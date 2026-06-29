@@ -1,18 +1,25 @@
 <div class="generating-page-container">
   <div class="generating-card">
     
-    <!-- Concentric AI Pulsing Rings -->
-    <div class="ai-orbit-container">
-      <div class="orbit ring-1"></div>
-      <div class="orbit ring-2"></div>
-      <div class="orbit ring-3"></div>
-      <div class="crochet-icon-center">🧶</div>
+    <!-- Concentric AI Pulsing Rings representing weaving yarn threads -->
+    <div class="yarn-weaver-wrapper">
+      <div class="orbit ring-outer"></div>
+      <div class="orbit ring-middle"></div>
+      <div class="orbit ring-inner"></div>
+      <div class="center-spindle">
+        <span class="crochet-spindle">🧶</span>
+      </div>
     </div>
 
-    <h2 class="ai-title">Weaving Magic...</h2>
+    <div class="weaver-header">
+      <span class="weaver-badge">Handora AI Atelier</span>
+      <h2 class="ai-title">Weaving Custom Design...</h2>
+      <p class="ai-subtitle">Translating selections into high-resolution amigurumi blueprints</p>
+    </div>
     
-    <!-- Dynamic Typing / Cycling Messages -->
+    <!-- Dynamic Cycling Messages -->
     <div class="typing-text-wrapper">
+      <span class="glowing-node"></span>
       <p class="typing-message">{{ thinkingMessages[currentMessageIndex()] }}</p>
     </div>
 
@@ -21,9 +28,32 @@
       <div class="progress-bar-bg">
         <div class="progress-bar-fill" [style.width.%]="progressValue()"></div>
       </div>
-      <span class="progress-percentage">{{ progressValue() }}% Completed</span>
+      <div class="progress-meta-row">
+        <span class="progress-lbl">Spinning yarn threads...</span>
+        <span class="progress-percentage">{{ progressValue() }}%</span>
+      </div>
     </div>
 
-    <p class="warning-text">Please do not refresh or close this window. AI model rendering takes about 10-15 seconds.</p>
+    <!-- Step ticks for immersion -->
+    <div class="progress-step-list">
+      <div class="step-tick" [class.active]="progressValue() >= 15" [class.done]="progressValue() >= 35">
+        <span class="tick-bullet"></span>
+        <span class="tick-text">Reading configurations & reference images</span>
+      </div>
+      <div class="step-tick" [class.active]="progressValue() >= 35" [class.done]="progressValue() >= 65">
+        <span class="tick-bullet"></span>
+        <span class="tick-text">Harmonizing wool colors & sizes</span>
+      </div>
+      <div class="step-tick" [class.active]="progressValue() >= 65" [class.done]="progressValue() >= 85">
+        <span class="tick-bullet"></span>
+        <span class="tick-text">Drafting amigurumi pattern stitch maps</span>
+      </div>
+      <div class="step-tick" [class.active]="progressValue() >= 85" [class.done]="progressValue() >= 100">
+        <span class="tick-bullet"></span>
+        <span class="tick-text">Finalizing high-res image renderings</span>
+      </div>
+    </div>
+
+    <p class="warning-text">Generating twin designs takes about 10-15 seconds. Please do not refresh your browser.</p>
   </div>
 </div>

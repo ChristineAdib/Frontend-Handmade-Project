@@ -85,7 +85,45 @@ export class HistoryComponent implements OnInit {
   routeToNextStep(request: CustomRequestSummaryDto): void {
     const s = request.status;
     if (s === 'Draft' || s === 'Configuring') {
-      this.router.navigate(['/custom-studio/wizard', request.id]);
+      this.loading.set(true);
+      this.customStudioService.getCustomRequestDetails(request.id).subscribe({
+        next: (res) => {
+          this.loading.set(false);
+          if (res.success && res.data) {
+            const hasPhoto = !!res.data.selectedDesign?.imageUrl || !!res.data.conversationId || (res.data.selectedDesign && res.data.selectedDesign.prompt && res.data.selectedDesign.prompt.includes('uploaded person'));
+            // If they have reference image URL, route to photo flow, else manual customization wizard
+            const refUrl = res.data.selectedDesign?.imageUrl || (res.data.selectedDesign && res.data.selectedDesign.imageUrl);
+            const isPhoto = (res.data.selectedDesign && res.data.selectedDesign.prompt && res.data.selectedDesign.prompt.includes('uploaded person')) || (res.data.selectedDesign && res.data.selectedDesign.imageUrl);
+            // Actually, we can check if res.data contains a reference image in the serialized config.
+            // Let's parse it safely:
+            let hasRefImg = false;
+            try {
+              if (res.data.selectedDesign) {
+                hasRefImg = true; // generated
+              }
+              // Check the actual config
+              const configJson = res.data.selectedDesign?.prompt || '';
+              if (configJson.includes('inspired by the uploaded person')) {
+                hasRefImg = true;
+              }
+            } catch(e){}
+
+            // Wait, we can check if request.id has an uploaded reference image by fetching request details
+            // and checking if res.data has reference image details.
+            if (res.data.selectedDesign || isPhoto) {
+              this.router.navigate(['/custom-studio/generating', request.id], { queryParams: { mode: 'photo' } });
+            } else {
+              this.router.navigate(['/custom-studio/customize', request.id]);
+            }
+          } else {
+            this.router.navigate(['/custom-studio/customize', request.id]);
+          }
+        },
+        error: () => {
+          this.loading.set(false);
+          this.router.navigate(['/custom-studio/customize', request.id]);
+        }
+      });
     } else if (s === 'ReadyForGeneration' || s === 'Generating') {
       this.router.navigate(['/custom-studio/generating', request.id]);
     } else if (s === 'Generated') {
@@ -94,16 +132,27 @@ export class HistoryComponent implements OnInit {
       this.router.navigate(['/custom-studio/summary', request.id]);
     } else if (s === 'SellerMatched') {
       this.router.navigate(['/custom-studio/matching', request.id]);
-    } else if (s === 'Negotiation' || s === 'OfferSent') {
-      this.router.navigate(['/custom-studio/negotiation', request.id]);
-    } else if (s === 'OfferAccepted') {
-      this.router.navigate(['/custom-studio/offer-review', request.id]);
-    } else if (s === 'PaymentPending') {
-      this.router.navigate(['/custom-studio/offer-review', request.id]);
-    } else if (s === 'Paid' || s === 'InProgress' || s === 'Shipped') {
-      this.router.navigate(['/custom-studio/workspace', request.id]);
-    } else if (s === 'Completed') {
-      this.router.navigate(['/custom-studio/workspace', request.id]);
+    } else {
+      // Load details to retrieve conversationId and navigate to chat
+      this.loading.set(true);
+      this.customStudioService.getCustomRequestDetails(request.id).subscribe({
+        next: (res) => {
+          this.loading.set(false);
+          if (res.success && res.data) {
+            const convId = res.data.conversationId || res.data.projectWorkspace?.chatConversationId;
+            if (convId) {
+              this.router.navigate(['/chat', convId], { queryParams: { requestId: request.id } });
+            } else {
+              this.toastr.warning('No active conversation found for this request.');
+            }
+          }
+        },
+        error: (err) => {
+          this.loading.set(false);
+          this.toastr.error('Failed to load request details.');
+          console.error(err);
+        }
+      });
     }
   }
 

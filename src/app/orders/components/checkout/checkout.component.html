@@ -90,10 +90,33 @@
         <!-- RIGHT: Summary -->
         <div class="checkout-summary">
           <h3>{{ langService.translate('summary') }}</h3>
-          <p class="summary-note">{{ langService.translate('checkoutSummaryNote') }}</p>
-          <a routerLink="/cart" class="btn-edit-cart">
-            {{ langService.translate('editCart') }} {{ langService.currentLang() === 'ar' ? '&larr;' : '&rarr;' }}
-          </a>
+          
+          @if (requestId() && customRequest()) {
+            <div class="custom-checkout-item-details" style="margin-top: 1rem; border-top: 1px solid rgba(176, 110, 46, 0.1); padding-top: 1rem;">
+              <div class="item-visual-frame" style="width: 100%; aspect-ratio: 16/10; border-radius: 8px; overflow: hidden; border: 1px solid rgba(176, 110, 46, 0.15); margin-bottom: 0.75rem;">
+                <img [src]="customRequest()!.selectedDesign?.imageUrl || customRequest()!.referenceImageUrl" alt="Custom Doll Design" style="width: 100%; height: 100%; object-fit: cover;" referrerpolicy="no-referrer" />
+              </div>
+              <h4 style="margin: 0 0 0.5rem 0; font-size: 0.95rem; font-weight: 700; color: #2c1e14;">{{ customRequest()!.customService?.title || 'Custom Crochet Doll' }}</h4>
+              
+              <div class="summary-price-box" style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                <span style="font-size: 0.85rem; color: #7d6b5d;">Service Price</span>
+                <span style="font-weight: 700; color: #2c1e14;">{{ customRequest()!.customService?.price | currency:'EGP ' }}</span>
+              </div>
+              <div class="summary-delivery-box" style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                <span style="font-size: 0.85rem; color: #7d6b5d;">Estimated Delivery</span>
+                <span style="font-weight: 600; color: #2c1e14;">{{ customRequest()!.customService?.estimatedDeliveryDays }} Days</span>
+              </div>
+              
+              <a [routerLink]="['/custom-studio/negotiation', requestId()]" class="btn-edit-cart" style="display: block; margin-top: 1rem; text-align: center; font-size: 0.82rem;">
+                &larr; Back to Negotiation Chat
+              </a>
+            </div>
+          } @else {
+            <p class="summary-note">{{ langService.translate('checkoutSummaryNote') }}</p>
+            <a routerLink="/cart" class="btn-edit-cart">
+              {{ langService.translate('editCart') }} {{ langService.currentLang() === 'ar' ? '&larr;' : '&rarr;' }}
+            </a>
+          }
         </div>
       </div>
 

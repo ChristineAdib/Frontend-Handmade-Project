@@ -231,7 +231,26 @@ export class DashboardComponent implements OnInit {
   viewCustomRequest(req: any): void {
     const status = req.status;
     if (status === 1 || status === 2 || status === 3) {
-      this.router.navigate(['/custom-studio/wizard', req.id]);
+      this.isLoadingCustomRequests.set(true);
+      this.customStudioService.getCustomRequestDetails(req.id).subscribe({
+        next: (res) => {
+          this.isLoadingCustomRequests.set(false);
+          if (res.success && res.data) {
+            const isPhoto = (res.data.selectedDesign && res.data.selectedDesign.prompt && res.data.selectedDesign.prompt.includes('inspired by the uploaded person')) || !!res.data.referenceImageUrl;
+            if (res.data.selectedDesign || isPhoto) {
+              this.router.navigate(['/custom-studio/generating', req.id], { queryParams: { mode: 'photo' } });
+            } else {
+              this.router.navigate(['/custom-studio/customize', req.id]);
+            }
+          } else {
+            this.router.navigate(['/custom-studio/customize', req.id]);
+          }
+        },
+        error: () => {
+          this.isLoadingCustomRequests.set(false);
+          this.router.navigate(['/custom-studio/customize', req.id]);
+        }
+      });
     } else if (status === 4) {
       this.router.navigate(['/custom-studio/generating', req.id]);
     } else if (status === 5) {
@@ -240,14 +259,27 @@ export class DashboardComponent implements OnInit {
       this.router.navigate(['/custom-studio/summary', req.id]);
     } else if (status === 7) {
       this.router.navigate(['/custom-studio/matching', req.id]);
-    } else if (status === 8 || status === 9) {
-      this.router.navigate(['/custom-studio/negotiation', req.id]);
-    } else if (status === 10 || status === 11) {
-      this.router.navigate(['/custom-studio/offer-review', req.id]);
-    } else if (status >= 12 && status <= 14) {
-      this.router.navigate(['/custom-studio/workspace', req.id]);
     } else {
-      this.router.navigate(['/custom-studio/negotiation', req.id]);
+      // Load details to retrieve conversationId and navigate to chat
+      this.isLoadingCustomRequests.set(true);
+      this.customStudioService.getCustomRequestDetails(req.id).subscribe({
+        next: (res) => {
+          this.isLoadingCustomRequests.set(false);
+          if (res.success && res.data) {
+            const convId = res.data.conversationId || res.data.projectWorkspace?.chatConversationId;
+            if (convId) {
+              this.router.navigate(['/chat', convId], { queryParams: { requestId: req.id } });
+            } else {
+              this.toastr.warning('No active conversation found for this request.');
+            }
+          }
+        },
+        error: (err) => {
+          this.isLoadingCustomRequests.set(false);
+          this.toastr.error('Failed to load request details.');
+          console.error(err);
+        }
+      });
     }
   }
 

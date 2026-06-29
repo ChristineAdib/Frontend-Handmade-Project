@@ -10,5 +10,6 @@ export interface Conversation {
   sellerImage?: string;
   lastMessage: MessageItem | null;
   unreadCount: number;
+  customRequestId?: string;
   createdAt: string;
 }

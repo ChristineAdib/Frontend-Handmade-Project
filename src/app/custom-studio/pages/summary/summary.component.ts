@@ -28,6 +28,10 @@ export class SummaryComponent implements OnInit {
   outfitColorsList = computed(() => this.parsedConfig()?.outfitColors || []);
   accessoriesList = computed(() => this.parsedConfig()?.accessories || []);
 
+  resolveImageUrl(url: string | null | undefined): string {
+    return this.customStudioService.resolveImageUrl(url);
+  }
+
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {

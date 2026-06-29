@@ -358,3 +358,175 @@
     gap: 30px;
   }
 }
+
+.premium-offer-page {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(360px, 0.8fr);
+  gap: 28px;
+  align-items: start;
+}
+
+.offer-visual-panel,
+.offer-command-panel,
+.summary-panel {
+  background: #ffffff;
+  border: 1px solid rgba(49, 23, 2, 0.08);
+  border-radius: 8px;
+  box-shadow: 0 12px 30px rgba(49, 23, 2, 0.04);
+}
+
+.offer-visual-panel {
+  overflow: hidden;
+}
+
+.large-design-frame {
+  aspect-ratio: 4 / 3;
+  background: #f8f3ec;
+}
+
+.large-design-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.summary-panel {
+  border: 0;
+  box-shadow: none;
+  padding: 24px;
+}
+
+.summary-panel h3,
+.included-panel h3,
+.notes-panel h3 {
+  margin: 0 0 14px;
+  font-size: 18px;
+  color: #3d2010;
+}
+
+.summary-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.summary-row,
+.offer-facts > div {
+  background: #fffdf9;
+  border: 1px solid rgba(49, 23, 2, 0.07);
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.summary-row span,
+.offer-facts span,
+.price-panel span,
+.eyebrow {
+  display: block;
+  color: #8d776f;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.summary-row strong,
+.offer-facts strong {
+  display: block;
+  margin-top: 4px;
+  color: #3d2010;
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+
+.offer-command-panel {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  position: sticky;
+  top: 20px;
+}
+
+.seller-line {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+.seller-line h3 {
+  margin: 2px 0 6px;
+  color: #3d2010;
+  font-size: 20px;
+}
+
+.price-panel {
+  background: #1e0e05;
+  color: white;
+  border-radius: 8px;
+  padding: 18px;
+}
+
+.price-panel strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 30px;
+}
+
+.offer-facts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.included-panel ul {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.included-panel li {
+  position: relative;
+  padding-left: 22px;
+  color: #5c3d2e;
+  font-size: 14px;
+}
+
+.included-panel li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: #28a745;
+  font-weight: 800;
+}
+
+.notes-panel p {
+  margin: 0;
+  color: #5c3d2e;
+  line-height: 1.55;
+}
+
+.muted {
+  color: #8d776f;
+}
+
+@media (max-width: 992px) {
+  .premium-offer-page {
+    grid-template-columns: 1fr;
+  }
+
+  .offer-command-panel {
+    position: static;
+  }
+}
+
+@media (max-width: 640px) {
+  .summary-list,
+  .offer-facts,
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}
