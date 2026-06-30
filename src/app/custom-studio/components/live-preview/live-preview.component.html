@@ -1,0 +1,221 @@
+<div class="doll-preview-container">
+  <!-- Interactive Crochet Doll SVG -->
+  <svg viewBox="0 0 300 400" class="doll-svg">
+    <!-- Drop Shadow / Floor Circle -->
+    <ellipse cx="150" cy="350" rx="60" ry="12" fill="rgba(30, 14, 5, 0.15)" />
+
+    <!-- ── BODY LAYER ────────────────────────────────────────── -->
+    <g id="body-group" [ngClass]="bodyType()">
+      <!-- Arms -->
+      <path [attr.d]="bodyType() === 'Child' ? 'M 105 230 C 85 240 85 270 95 275 C 105 280 115 250 115 230' : 'M 95 220 C 70 230 70 270 85 275 C 100 280 110 250 110 220'" [attr.fill]="skinTone()" class="animate-prop" />
+      <path [attr.d]="bodyType() === 'Child' ? 'M 195 230 C 215 240 215 270 205 275 C 195 280 185 250 185 230' : 'M 205 220 C 230 230 230 270 215 275 C 200 280 190 250 190 220'" [attr.fill]="skinTone()" class="animate-prop" />
+
+      <!-- Legs -->
+      <rect [attr.x]="bodyType() === 'Slim' ? '125' : '115'" y="290" [attr.width]="bodyType() === 'Slim' ? '20' : '30'" height="50" rx="10" [attr.fill]="skinTone()" class="animate-prop" />
+      <rect [attr.x]="bodyType() === 'Slim' ? '155' : '155'" y="290" [attr.width]="bodyType() === 'Slim' ? '20' : '30'" height="50" rx="10" [attr.fill]="skinTone()" class="animate-prop" />
+
+      <!-- Main Torso -->
+      <path [attr.d]="bodyType() === 'Chubby' ? 'M 110 200 C 95 220 90 270 100 300 L 200 300 C 210 270 205 220 190 200 Z' :
+                       bodyType() === 'Slim' ? 'M 120 200 C 115 220 115 260 120 290 L 180 290 C 185 260 185 220 180 200 Z' :
+                       bodyType() === 'Child' ? 'M 115 200 C 105 215 100 250 110 270 L 190 270 C 200 250 195 215 185 200 Z' :
+                       'M 115 200 C 105 220 100 260 110 290 L 190 290 C 200 260 195 220 185 200 Z'" [attr.fill]="skinTone()" class="animate-prop" />
+    </g>
+
+    <!-- ── BACK HAIR LAYER ───────────────────────────────────── -->
+    <g id="back-hair" class="animate-prop">
+      <!-- Long Hair Backing -->
+      <path *ngIf="hairStyle() === 'Long' || hairStyle() === 'Braids'" d="M 80 150 C 70 230 70 270 100 290 C 120 295 180 295 200 290 C 230 270 230 230 220 150 Z" [attr.fill]="hairColor()" class="animate-prop" />
+      <!-- Ponytail Backing -->
+      <path *ngIf="hairStyle() === 'Ponytail'" d="M 200 120 C 250 120 260 210 210 220 C 190 220 185 190 195 160 Z" [attr.fill]="hairColor()" class="animate-prop" />
+      <!-- Buns Backing -->
+      <circle *ngIf="hairStyle() === 'Buns'" cx="90" cy="75" r="28" [attr.fill]="hairColor()" class="animate-prop" />
+      <circle *ngIf="hairStyle() === 'Buns'" cx="210" cy="75" r="28" [attr.fill]="hairColor()" class="animate-prop" />
+    </g>
+
+    <!-- ── HEAD LAYER ────────────────────────────────────────── -->
+    <g id="head-group" class="animate-prop">
+      <!-- Ears -->
+      <circle cx="85" cy="130" r="8" [attr.fill]="skinTone()" class="animate-prop" />
+      <circle cx="215" cy="130" r="8" [attr.fill]="skinTone()" class="animate-prop" />
+
+      <!-- Head Shape -->
+      <circle cx="150" cy="130" r="65" [attr.fill]="skinTone()" class="animate-prop" />
+    </g>
+
+    <!-- ── FACE LAYER ────────────────────────────────────────── -->
+    <g id="face-details">
+      <!-- Blush Cheeks -->
+      <g *ngIf="hasBlush()">
+        <circle cx="105" cy="148" r="8" fill="#ffb4a2" opacity="0.5" />
+        <circle cx="195" cy="148" r="8" fill="#ffb4a2" opacity="0.5" />
+      </g>
+
+      <!-- Freckles -->
+      <g *ngIf="hasFreckles()" fill="#b5835a" opacity="0.7">
+        <circle cx="112" cy="143" r="1.5" />
+        <circle cx="116" cy="141" r="1.5" />
+        <circle cx="120" cy="144" r="1.2" />
+        <circle cx="180" cy="144" r="1.2" />
+        <circle cx="184" cy="141" r="1.5" />
+        <circle cx="188" cy="143" r="1.5" />
+      </g>
+
+      <!-- Eyebrows -->
+      <g stroke="#1e0e05" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.8">
+        <!-- Normal -->
+        <path *ngIf="eyebrowStyle() === 'Normal'" d="M 100 115 Q 115 110 120 115" />
+        <path *ngIf="eyebrowStyle() === 'Normal'" d="M 200 115 Q 185 110 180 115" />
+        <!-- Soft Curved -->
+        <path *ngIf="eyebrowStyle() === 'Soft'" d="M 98 113 C 108 105 118 108 122 113" />
+        <path *ngIf="eyebrowStyle() === 'Soft'" d="M 202 113 C 192 105 182 108 178 113" />
+        <!-- Thick / Bold -->
+        <path *ngIf="eyebrowStyle() === 'Thick'" d="M 98 114 L 120 113" stroke-width="4" />
+        <path *ngIf="eyebrowStyle() === 'Thick'" d="M 202 114 L 180 113" stroke-width="4" />
+      </g>
+
+      <!-- Eyes -->
+      <g class="animate-prop">
+        <!-- Left Eye -->
+        <circle cx="115" cy="130" r="7" [attr.fill]="eyeColor()" />
+        <circle cx="113" cy="127" r="2.5" fill="#ffffff" />
+        <!-- Right Eye -->
+        <circle cx="185" cy="130" r="7" [attr.fill]="eyeColor()" />
+        <circle cx="183" cy="127" r="2.5" fill="#ffffff" />
+      </g>
+
+      <!-- Mouth / Smile -->
+      <g stroke="#3d2010" stroke-width="2.5" stroke-linecap="round" fill="none">
+        <!-- Happy Smile -->
+        <path *ngIf="smileType() === 'Happy'" d="M 140 148 Q 150 156 160 148" />
+        <!-- Wide Grin -->
+        <path *ngIf="smileType() === 'Grin'" d="M 137 146 Q 150 162 163 146 Z" fill="#ffb4a2" />
+        <!-- Simple Cute Dot/Line -->
+        <circle *ngIf="smileType() === 'Cute'" cx="150" cy="148" r="3" fill="#3d2010" stroke="none" />
+        <!-- Shy Wave -->
+        <path *ngIf="smileType() === 'Shy'" d="M 143 148 Q 147 145 150 148 T 157 148" />
+      </g>
+    </g>
+
+    <!-- ── FRONT HAIR LAYER ──────────────────────────────────── -->
+    <g id="front-hair" class="animate-prop">
+      <!-- Short/Crop Hair Crown -->
+      <path *ngIf="hairStyle() === 'Short'" d="M 80 115 C 80 50 220 50 220 115 C 210 110 200 110 190 115 C 170 95 130 95 110 115 C 95 110 85 110 80 115 Z" [attr.fill]="hairColor()" class="animate-prop" />
+      
+      <!-- Long/Curly Hair Crown -->
+      <path *ngIf="hairStyle() === 'Long' || hairStyle() === 'Curly' || hairStyle() === 'Buns' || hairStyle() === 'Ponytail'" d="M 82 120 C 80 45 220 45 218 120 C 205 110 190 110 180 120 C 160 90 140 90 120 120 C 110 110 95 110 82 120 Z" [attr.fill]="hairColor()" class="animate-prop" />
+      
+      <!-- Braids Crown overlay -->
+      <path *ngIf="hairStyle() === 'Braids'" d="M 82 120 C 80 45 220 45 218 120 C 200 110 180 110 170 120 C 160 95 140 95 130 120 Z" [attr.fill]="hairColor()" class="animate-prop" />
+
+      <!-- Curly Hair Extra Waves overlay -->
+      <g *ngIf="hairStyle() === 'Curly'" [attr.fill]="hairColor()" class="animate-prop">
+        <circle cx="80" cy="140" r="16" />
+        <circle cx="220" cy="140" r="16" />
+        <circle cx="75" cy="180" r="18" />
+        <circle cx="225" cy="180" r="18" />
+        <circle cx="75" cy="220" r="16" />
+        <circle cx="225" cy="220" r="16" />
+      </g>
+
+      <!-- Braids flowing loops -->
+      <g *ngIf="hairStyle() === 'Braids'" [attr.fill]="hairColor()" class="animate-prop">
+        <!-- Left Braid -->
+        <path d="M 75 130 L 60 250 C 55 270 75 270 80 250 L 85 130 Z" />
+        <circle cx="68" cy="260" r="6" fill="#c8813a" /> <!-- Braid tie -->
+        <!-- Right Braid -->
+        <path d="M 225 130 L 240 250 C 245 270 225 270 220 250 L 215 130 Z" />
+        <circle cx="232" cy="260" r="6" fill="#c8813a" /> <!-- Braid tie -->
+      </g>
+
+      <!-- Bangs / Fringe -->
+      <path *ngIf="hairBangs()" d="M 98 90 Q 150 115 202 90 Q 150 75 98 90 Z" [attr.fill]="hairColor()" class="animate-prop" />
+    </g>
+
+    <!-- ── OUTFIT LAYER ──────────────────────────────────────── -->
+    <g id="outfit-group" class="animate-prop">
+      <!-- Dress -->
+      <g *ngIf="outfitCategory() === 'Dress'">
+        <path d="M 112 200 Q 150 196 188 200 L 205 290 Q 150 295 95 290 Z" [attr.fill]="getPrimaryOutfitColor()" class="animate-prop" />
+        <!-- Dress collar / ribbon -->
+        <path d="M 130 200 Q 150 215 170 200" stroke="rgba(30,14,5,0.15)" stroke-width="3" fill="none" />
+        <path d="M 150 206 L 144 216 L 156 216 Z" [attr.fill]="getSecondaryOutfitColor()" />
+      </g>
+
+      <!-- Shirt and Pants / Overalls -->
+      <g *ngIf="outfitCategory() === 'Shirt' || outfitCategory() === 'Overalls'">
+        <!-- Torso Shirt -->
+        <path d="M 114 200 Q 150 196 186 200 L 186 255 Q 150 258 114 255 Z" [attr.fill]="getPrimaryOutfitColor()" class="animate-prop" />
+        <!-- Pants / Shorts -->
+        <path d="M 114 255 L 186 255 L 190 292 L 155 292 L 150 270 L 145 292 L 110 292 Z" [attr.fill]="getSecondaryOutfitColor()" class="animate-prop" />
+      </g>
+
+      <!-- Hoodie -->
+      <g *ngIf="outfitCategory() === 'Hoodie'">
+        <path d="M 112 200 Q 150 196 188 200 L 190 290 Q 150 292 110 290 Z" [attr.fill]="getPrimaryOutfitColor()" class="animate-prop" />
+        <!-- Hood Drawstring / Pocket -->
+        <rect x="130" y="250" width="40" height="25" rx="5" [attr.fill]="getSecondaryOutfitColor()" class="animate-prop" />
+        <line x1="142" y1="210" x2="142" y2="235" stroke="#fffdf9" stroke-width="2" stroke-linecap="round" />
+        <line x1="158" y1="210" x2="158" y2="235" stroke="#fffdf9" stroke-width="2" stroke-linecap="round" />
+      </g>
+    </g>
+
+    <!-- ── ACCESSORIES LAYER ─────────────────────────────────── -->
+    <g id="accessories-group">
+      <!-- Cute Hat -->
+      <g *ngIf="hasAccessory('Hat')" class="animate-prop">
+        <path d="M 90 85 C 90 20 210 20 210 85 Z" [attr.fill]="getSecondaryOutfitColor()" />
+        <ellipse cx="150" cy="85" rx="66" ry="12" [attr.fill]="getPrimaryOutfitColor()" />
+        <!-- Pom Pom -->
+        <circle cx="150" cy="20" r="12" fill="#ffffff" />
+      </g>
+
+      <!-- Glasses -->
+      <g *ngIf="hasAccessory('Glasses')" stroke="#1e0e05" stroke-width="3.5" fill="none" opacity="0.9">
+        <circle cx="115" cy="130" r="16" />
+        <circle cx="185" cy="130" r="16" />
+        <line x1="131" y1="130" x2="169" y2="130" />
+      </g>
+
+      <!-- Warm Scarf -->
+      <g *ngIf="hasAccessory('Scarf')" class="animate-prop">
+        <rect x="110" y="190" width="80" height="18" rx="8" [attr.fill]="getSecondaryOutfitColor()" />
+        <!-- Hanging Scarf tassel -->
+        <path d="M 165 200 L 165 250 L 180 250 L 178 200 Z" [attr.fill]="getSecondaryOutfitColor()" />
+      </g>
+
+      <!-- Little Flower Pin -->
+      <g *ngIf="hasAccessory('Flower')" transform="translate(195, 90)">
+        <circle cx="0" cy="0" r="6" fill="#fff" />
+        <circle cx="-8" cy="-5" r="5" fill="#f4d068" />
+        <circle cx="8" cy="-5" r="5" fill="#f4d068" />
+        <circle cx="-8" cy="5" r="5" fill="#f4d068" />
+        <circle cx="8" cy="5" r="5" fill="#f4d068" />
+        <circle cx="0" cy="-10" r="5" fill="#f4d068" />
+        <circle cx="0" cy="10" r="5" fill="#f4d068" />
+      </g>
+
+      <!-- Shoulder Bag -->
+      <g *ngIf="hasAccessory('Bag')">
+        <!-- Strap -->
+        <path d="M 112 200 Q 145 235 185 270" stroke="#7f4f24" stroke-width="3" stroke-linecap="round" fill="none" />
+        <!-- Purse -->
+        <rect x="175" y="255" width="22" height="18" rx="4" fill="#7f4f24" />
+        <path d="M 175 255 L 186 264 L 197 255 Z" fill="#9c6644" />
+      </g>
+    </g>
+  </svg>
+
+  <!-- Personalization Badge / Wooden Label -->
+  <div class="personalization-badge" *ngIf="personalizationName() || personalizationMessage()">
+    <div class="wooden-label">
+      <p class="doll-name" 
+         [style.font-family]="personalizationFont()" 
+         [style.color]="personalizationTextColor()">
+        {{ personalizationName() || 'Handora Doll' }}
+      </p>
+      <p class="doll-message" *ngIf="personalizationMessage()">
+        "{{ personalizationMessage() }}"
+      </p>
+    </div>
+  </div>
+</div>

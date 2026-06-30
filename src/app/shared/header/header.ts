@@ -5,8 +5,8 @@ import { ChatService } from '../../Chat/Services/chat.service';
 import { LanguageService } from '../../core/services/language.service';
 import { CategoryService } from '../../Categories/Services/category.service';
 import { CategoryResponse } from '../../Categories/Models/CategoryResponse';
-import { filter } from 'rxjs';
-import { Component, inject, signal, HostListener, computed, OnInit } from '@angular/core';
+import { filter, Subscription } from 'rxjs';
+import { Component, inject, signal, HostListener, computed, OnInit, OnDestroy } from '@angular/core';
 import { CartApiService } from '../../orders/services/cart-api.service';
 import { WishlistService } from '../../wishlist feature/services/wishlist-service';
 import { CommonModule } from '@angular/common';
@@ -15,6 +15,7 @@ import { environment } from '../../../environments/environment';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { NotificationService } from '../../Notifications/Services/notification.service';
 import { parseUtcDate } from '../../core/utils/date-utils';
+import { CustomStudioService } from '../../custom-studio/services/custom-studio.service';
  
 // Static fallback — shown when backend is down or returns empty list
 const FALLBACK_CATEGORIES: CategoryResponse[] = [
@@ -29,7 +30,7 @@ const FALLBACK_CATEGORIES: CategoryResponse[] = [
   templateUrl: './header.html',
   styleUrl: './header.css',
 })
-export class Header implements OnInit {
+export class Header implements OnInit, OnDestroy {
   private authService    = inject(AuthService);
   private router         = inject(Router);
   private toastr         = inject(ToastrService);
@@ -40,6 +41,8 @@ export class Header implements OnInit {
   private categoryService   = inject(CategoryService);
   private sanitizer         = inject(DomSanitizer);
   protected notificationService = inject(NotificationService);
+  private customStudioService = inject(CustomStudioService);
+  private notifSub?: Subscription;
  
   // ── Local signal for displayed categories ──────────────────
   displayedCategories = signal<CategoryResponse[]>([]);
@@ -96,6 +99,7 @@ export class Header implements OnInit {
         this.notificationService.loadUnreadCount();
         this.notificationService.loadNotifications(1, 10);
       }
+      this.setupNotificationListener();
     }
  
     this.router.events.pipe(
@@ -110,9 +114,48 @@ export class Header implements OnInit {
           this.notificationService.loadUnreadCount();
           this.notificationService.loadNotifications(1, 10);
         }
+        this.setupNotificationListener();
       } else {
         this.chatService.disconnectRealTime();
         this.notificationService.stopConnection();
+        if (this.notifSub) {
+          this.notifSub.unsubscribe();
+          this.notifSub = undefined;
+        }
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.notifSub) {
+      this.notifSub.unsubscribe();
+    }
+  }
+
+  private setupNotificationListener(): void {
+    if (this.notifSub) return;
+    this.notifSub = this.notificationService.notificationReceived$.subscribe({
+      next: (notif) => {
+        if (notif.referenceType === 'CustomRequest' && 
+            (notif.type === 16 || notif.type === 19 || notif.titleEn?.includes('Paid') || notif.titleEn?.includes('Deposit'))) {
+          const currentUrl = this.router.url;
+          if (currentUrl.includes('/chat/')) {
+            this.router.navigate(['/custom-studio/workspace', notif.referenceId]);
+            this.toastr.success(this.langService.currentLang() === 'ar' 
+              ? 'تم دفع العربون! جاري فتح مساحة عمل الكروشيه...' 
+              : 'Deposit paid! Opening crochet workspace...');
+          } else {
+            this.toastr.info(
+              this.langService.currentLang() === 'ar'
+                ? 'تم دفع عربون طلب الكروشيه المخصص. اضغط هنا لفتح مساحة العمل.'
+                : 'Deposit paid for custom crochet request. Click to open workspace.',
+              this.langService.currentLang() === 'ar' ? 'طلب مخصص جديد' : 'New Custom Request',
+              { timeOut: 8000 }
+            ).onTap.subscribe(() => {
+              this.router.navigate(['/custom-studio/workspace', notif.referenceId]);
+            });
+          }
+        }
       }
     });
   }
@@ -194,6 +237,33 @@ export class Header implements OnInit {
   handleNotificationClick(notif: any): void {
     this.notificationService.markAsRead(notif.id);
     this.activeDropdown.set(null);
+
+    if (notif.referenceType === 'CustomRequest' && notif.referenceId) {
+      this.customStudioService.getCustomRequestDetails(notif.referenceId).subscribe({
+        next: (res) => {
+          if (res.success && res.data) {
+            const status = res.data.status;
+            const isBuyer = !this.isSeller();
+            const isPaidOrHigher = ['Paid', 'InProgress', 'Completed', 'Shipped'].includes(status);
+            const isReviewState = ['OfferSent', 'OfferAccepted', 'PaymentPending'].includes(status);
+            
+            if (isPaidOrHigher) {
+              this.router.navigate([`/custom-studio/workspace/${notif.referenceId}`]);
+            } else if (isReviewState && isBuyer) {
+              this.router.navigate([`/custom-studio/offer-review/${notif.referenceId}`]);
+            } else {
+              this.router.navigate([`/custom-studio/negotiation/${notif.referenceId}`]);
+            }
+          } else {
+            this.router.navigate(['/custom-studio']);
+          }
+        },
+        error: () => {
+          this.router.navigate(['/custom-studio']);
+        }
+      });
+      return;
+    }
 
     const type = Number(notif.type);
     

@@ -1110,6 +1110,7 @@
   .nav__links { display: none; }
   .nav__sell-btn { display: none; }
   .nav__gift-btn { display: none; }
+  .nav__studio-btn { display: none; }
   .nav__burger { display: flex; }
   .nav__inner { padding: 0 16px; }
   .logo { margin-right: 0; }
@@ -1388,4 +1389,40 @@
   align-self: center;
   flex-shrink: 0;
   box-shadow: 0 0 4px rgba(200, 129, 58, 0.6);
+}
+
+/* ── CUSTOM STUDIO BUTTON ── */
+.nav__studio-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: rgba(59, 109, 17, 0.08);
+  border: 2px solid rgba(59, 109, 17, 0.25);
+  border-radius: 100px;
+  color: #3b6d11;
+  font-family: 'Jost', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.nav__studio-btn:hover {
+  background: #3b6d11;
+  border-color: #3b6d11;
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(59, 109, 17, 0.3);
+}
+
+.nav__studio-btn svg {
+  transition: transform 0.3s ease;
+}
+
+.nav__studio-btn:hover svg {
+  transform: rotate(15deg) scale(1.1);
 }

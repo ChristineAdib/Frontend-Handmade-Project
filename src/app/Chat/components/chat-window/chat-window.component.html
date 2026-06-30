@@ -1,4 +1,5 @@
-<div class="chat-window-container">
+<div class="chat-window-container" [class.show-offer-center]="showOfferCenter() && isSeller()">
+  <div class="chat-main-section">
   <!-- Header -->
   <div class="chat-header">
     <div class="left-section">
@@ -11,7 +12,7 @@
 
       <div class="avatar-circle header-avatar">
         @if (getOtherParticipantImage()) {
-          <img [src]="getOtherParticipantImage()" alt="Avatar" class="avatar-img" />
+          <img [src]="resolveImageUrl(getOtherParticipantImage())" alt="Avatar" class="avatar-img" referrerpolicy="no-referrer" />
         } @else {
           {{ getOtherParticipantName()[0] | uppercase }}
         }
@@ -25,124 +26,449 @@
         </div>
       </div>
     </div>
+    
+    <div class="header-right-section" *ngIf="isSeller() && customRequest()">
+      <button class="btn btn-outline btn-sm btn-offer-center" (click)="toggleOfferCenter()" title="Offer Center">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" style="margin-right: 4px; display: inline-block; vertical-align: middle;">
+          <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+          <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+        </svg>
+        Offer Center
+      </button>
+    </div>
   </div>
 
-  <!-- Messages List -->
-  <div #scrollContainer class="messages-container">
-    @if (messages().length === 0) {
-      <div class="empty-chat">
-        <p>{{ langService.translate('noMessagesYet') }}</p>
+  <!-- Pinned Custom Request Context Card -->
+  @if (customRequest()) {
+    <div class="custom-request-context-card">
+      <div class="context-main-row">
+        <div class="context-thumbnail" (click)="openLightbox(getSelectedDesignImageUrl() || '')" title="Click to view full design">
+          <img [src]="resolveImageUrl(getSelectedDesignImageUrl())" alt="Design Blueprint" referrerpolicy="no-referrer" />
+          <span class="preview-zoom-badge">🔍</span>
+        </div>
+        <div class="context-info">
+          <h4 class="context-title">Handora Custom Studio - Crochet Doll</h4>
+          <p class="context-specs">
+            <span><strong>Size:</strong> {{ getDesignSummary().height || 'Standard' }}</span> | 
+            <span><strong>Archetype:</strong> {{ getDesignSummary().gender || 'Default' }}</span>
+          </p>
+          <span class="context-status-badge status-{{ getStatusNumber(customRequest().status) }}">
+            Status: {{ getRequestStatusLabel(customRequest().status) }}
+          </span>
+        </div>
+        
+        <!-- Action Buttons in Pinned Card -->
+        <div class="context-nav-actions">
+          <button class="btn btn-secondary btn-sm" (click)="openLightbox(getSelectedDesignImageUrl() || '')">
+            View Full Design
+          </button>
+          <button class="btn btn-outline btn-sm" (click)="downloadSelectedDesignImage()">
+            Download Image
+          </button>
+          <button class="btn btn-outline btn-sm" (click)="showDetailedSpecs.set(!showDetailedSpecs())">
+            {{ showDetailedSpecs() ? 'Hide Details' : 'View Design Details' }}
+          </button>
+        </div>
+
+        <div class="context-actions">
+          @if (isSellerOrAdmin()) {
+            <button class="btn btn-primary btn-sm btn-action" [disabled]="isAdmin()" (click)="toggleOfferCenter()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" style="margin-right: 4px; display: inline-block; vertical-align: middle;">
+                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+              </svg>
+              Offer Center
+            </button>
+            @if (getStatusNumber(customRequest().status) === 12 || getStatusNumber(customRequest().status) === 13 || getStatusNumber(customRequest().status) === 14) {
+              <button class="btn btn-secondary btn-sm btn-action" (click)="viewWorkspace(customRequest().id)">
+                View Workspace
+              </button>
+            }
+          } @else {
+            <!-- Buyer -->
+            @if (getStatusNumber(customRequest().status) === 12 || getStatusNumber(customRequest().status) === 13 || getStatusNumber(customRequest().status) === 14) {
+              <button class="btn btn-primary btn-sm btn-action" (click)="viewWorkspace(customRequest().id)">
+                View Workspace
+              </button>
+            } @else if (getStatusNumber(customRequest().status) === 8 || getStatusNumber(customRequest().status) === 9 || getStatusNumber(customRequest().status) === 10 || getStatusNumber(customRequest().status) === 11) {
+              <button class="btn btn-secondary btn-sm btn-action" (click)="viewOfferReview(customRequest().id)">
+                Review Offer
+              </button>
+            }
+          }
+        </div>
       </div>
-    } @else {
-      @for (m of messages(); track m.id) {
-        <div class="message-bubble-wrapper" [class.sent]="isSentByMe(m.senderId)">
-          <div class="message-bubble">
-            <!-- Image content if type is Image -->
-            @if (m.type === 2 && m.imageUrl) {
-              <div class="message-image-container" (click)="openLightbox(m.imageUrl)">
-                <img [src]="m.imageUrl" [alt]="m.content || 'Attached image'" class="message-image" />
+
+      <!-- Collapsible Detailed Specs and Reference Photo Section -->
+      <div class="context-detail-drawer" *ngIf="showDetailedSpecs()">
+        <div class="drawer-grid">
+          <!-- Design Specs Summary -->
+          <div class="specs-summary-col">
+            <h5>Design Details</h5>
+            <div class="spec-detail-items">
+              <div class="spec-row" *ngFor="let item of getSummaryPairs()">
+                <span class="spec-label">{{ item.label }}:</span>
+                <span class="spec-val">{{ item.value }}</span>
               </div>
-            }
+            </div>
+          </div>
 
-            <!-- Text Content -->
-            @if (m.content) {
-              <p class="message-text">{{ m.content }}</p>
-            }
-
-            <!-- Message Footer (Time & Status) -->
-            <div class="message-footer">
-              <span class="message-time">{{ formatMessageTime(m.createdAt) }}</span>
-              @if (isSentByMe(m.senderId)) {
-                <span class="status-checkmarks" [class.read]="m.isRead">
-                  @if (m.isRead) {
-                    <!-- Double Check (Read) -->
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
-                      <path d="M12.354 4.354a.5.5 0 0 0-.708-.708L5 10.293 1.854 7.146a.5.5 0 1 0-.708.708l3.5 3.5a.5.5 0 0 0 .708 0zm-2.12 0a.5.5 0 0 0-.708-.708L5 8.293 2.646 5.939a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0z"/>
-                    </svg>
-                  } @else {
-                    <!-- Single Check (Sent) -->
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
-                      <path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425z"/>
-                    </svg>
-                  }
-                </span>
-              }
+          <!-- Reference Photo (if uploaded) -->
+          <div class="reference-photo-col" *ngIf="getDesignSummary().referenceImage">
+            <h5>Reference Photo</h5>
+            <div class="reference-thumbnail" (click)="openLightbox(getDesignSummary().referenceImage || '')">
+              <img [src]="resolveImageUrl(getDesignSummary().referenceImage)" alt="Reference Photo" referrerpolicy="no-referrer" />
+              <span class="zoom-overlay">Click to Zoom</span>
             </div>
           </div>
         </div>
-      }
-    }
-  </div>
-
-  <!-- Attachment Preview Bar -->
-  @if (imageUrl() || isUploading()) {
-    <div class="attachment-preview-bar">
-      @if (isUploading()) {
-        <div class="preview-uploading">
-          <div class="spinner-ring small">
-            <div></div><div></div><div></div><div></div>
-          </div>
-          <span class="upload-status">{{ langService.translate('uploadingPhoto') }}</span>
-        </div>
-      } @else if (imageUrl()) {
-        <div class="preview-thumbnail-wrapper">
-          <img [src]="imageUrl()" alt="Selected attachment preview" class="preview-thumbnail" />
-          <button type="button" class="btn-remove-attachment" (click)="clearUploadedImage($event)" [title]="langService.translate('removeAttachment')">&times;</button>
-        </div>
-      }
-      @if (uploadError()) {
-        <div class="upload-error-msg">{{ uploadError() }}</div>
-      }
+      </div>
     </div>
   }
 
-  <!-- Footer Input Controls -->
-  <div class="chat-input-area">
-    <!-- Attach button -->
-    <button 
-      class="icon-btn" 
-      (click)="fileInput.click()"
-      [title]="langService.translate('attachPhoto')"
-      [attr.aria-label]="langService.translate('attachPhoto')"
-    >
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-        <path d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm10.648 1.864a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3a.5.5 0 0 1 .5-.5"/>
-      </svg>
-    </button>
-    <input 
-      #fileInput
-      type="file" 
-      accept="image/*"
-      style="display: none;" 
-      (change)="onFileSelected($event)"
-    />
+  <!-- Chat Dialogue Pane -->
+  <div class="chat-dialogue-pane">
+    <!-- Floating Offer Center Button for Seller/Admin -->
+    @if (isSellerOrAdmin()) {
+      <button 
+        class="floating-create-service-btn" 
+        [disabled]="isAdmin()" 
+        (click)="toggleOfferCenter()"
+        title="Toggle Offer Center"
+      >
+        <span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" style="margin-right: 4px; display: inline-block; vertical-align: middle;">
+            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+          </svg>
+          Offer Center
+        </span>
+      </button>
+    }
 
-    <!-- Text input box -->
-    <form (ngSubmit)="send()" class="input-form">
-      <input 
-        type="text" 
-        [ngModel]="newMessage()" 
-        (ngModelChange)="newMessage.set($event)"
-        name="messageText"
-        [placeholder]="langService.translate('typeAMessage')" 
-        autocomplete="off"
-      />
-      
-      <!-- Send button -->
-      <button type="submit" class="send-btn" [disabled]="(!newMessage().trim() && !imageUrl().trim()) || isUploading() || !!validationError()" aria-label="Send message">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
-          <path d="M15.964.686a.5.5 0 0 0-.65-.65L.767 5.855H.766l-.452.18a.5.5 0 0 0-.082.887l.41.26.001.002 4.995 3.178 3.178 4.995.002.002.26.41a.5.5 0 0 0 .886-.083zm-1.833 1.89L6.637 10.07l-.215-.338a.5.5 0 0 0-.154-.154l-.338-.215 7.494-7.494 1.178-.471z"/>
+    <!-- Messages List -->
+    <div #scrollContainer class="messages-container" [class.locked-blur]="isChatLocked()">
+      @if (messages().length === 0) {
+        <div class="empty-chat">
+          <p>{{ langService.translate('noMessagesYet') }}</p>
+        </div>
+      } @else {
+        @for (m of messages(); track m.id) {
+          <div class="message-bubble-wrapper" [class.sent]="isSentByMe(m.senderId)">
+            <div class="message-bubble">
+              <!-- Image content if type is Image -->
+              @if (m.type === 2 && m.imageUrl) {
+                <div class="message-image-container" (click)="openLightbox(resolveImageUrl(m.imageUrl))">
+                  <img [src]="resolveImageUrl(m.imageUrl)" alt="Design Reference Image" class="message-image" referrerpolicy="no-referrer" />
+                </div>
+              }
+
+              <!-- Custom Offer Card -->
+              @if (m.type === 3 && m.customOffer) {
+                <div class="custom-offer-message-card" [class.accepted]="m.customOffer.status === 'Accepted' || m.customOffer.status === 'Paid'">
+                  <div class="offer-card-header">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="offer-icon" viewBox="0 0 24 24">
+                      <rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect>
+                      <line x1="12" y1="18" x2="12" y2="6"></line>
+                    </svg>
+                    <span class="offer-badge">Custom Studio Offer</span>
+                    <span class="offer-status-label status-{{ m.customOffer.status.toLowerCase() }}">{{ m.customOffer.status }}</span>
+                  </div>
+                  <div class="offer-price-row">
+                    <span class="offer-price-label">Price:</span>
+                    <span class="offer-price-val">{{ m.customOffer.price | currency:'EGP ' }}</span>
+                  </div>
+                  <div class="offer-details-grid">
+                    <div class="detail-item">
+                      <span class="detail-label">Delivery:</span>
+                      <span class="detail-val">{{ m.customOffer.deliveryTimeDays }} Days</span>
+                    </div>
+                    <div class="detail-item">
+                      <span class="detail-label">Revisions:</span>
+                      <span class="detail-val">{{ m.customOffer.revisionsAllowed }} Allowed</span>
+                    </div>
+                  </div>
+
+                  <!-- Collapsible Details Section -->
+                  <div class="offer-collapsible-details" *ngIf="expandedOfferId() === m.customOffer.id">
+                    @if (m.customOffer.notes) {
+                      <div class="offer-notes-section">
+                        <span class="label">Description / Notes:</span>
+                        <p class="notes-txt">{{ m.customOffer.notes }}</p>
+                      </div>
+                    }
+                    
+                    <div class="offer-design-snapshot-preview" *ngIf="getSelectedDesignImageUrl()">
+                      <span class="label">Design Snapshot:</span>
+                      <div class="snapshot-thumbnail" (click)="openLightbox(getSelectedDesignImageUrl() || '')">
+                        <img [src]="resolveImageUrl(getSelectedDesignImageUrl())" alt="Design Snapshot" referrerpolicy="no-referrer" />
+                        <span class="overlay">🔍 Zoom</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="offer-card-action-buttons" style="margin-top: 10px; display: flex; flex-direction: column; gap: 8px;">
+                    <button class="btn btn-outline btn-block btn-xs" (click)="toggleOfferDetails(m.customOffer.id)">
+                      {{ expandedOfferId() === m.customOffer.id ? 'Hide Details' : 'View Details' }}
+                    </button>
+                    
+                    <div class="buyer-decision-actions" *ngIf="!isSeller() && (m.customOffer.status === 'Pending' || m.customOffer.status === 'Sent')" style="display: flex; gap: 8px;">
+                      <button class="btn btn-primary btn-sm" style="flex: 1;" (click)="acceptCustomOffer(m.customOffer.customRequestId, m.customOffer.id)">
+                        Accept Offer
+                      </button>
+                      <button class="btn btn-outline btn-sm reject-btn" style="flex: 1; border-color: #dc3545; color: #dc3545;" (click)="rejectCustomOffer(m.customOffer.customRequestId, m.customOffer.id)">
+                        Reject
+                      </button>
+                    </div>
+
+                    <div class="buyer-post-accept-actions" *ngIf="!isSeller() && m.customOffer.status === 'Accepted'">
+                      <button class="btn btn-secondary btn-sm btn-block" (click)="navigateToCheckout(m.customOffer.customRequestId)">
+                        Proceed to Checkout
+                      </button>
+                    </div>
+
+                    <div class="buyer-post-accept-actions" *ngIf="!isSeller() && m.customOffer.status === 'Paid'">
+                      <button class="btn btn-success btn-sm btn-block" (click)="viewWorkspace(m.customOffer.customRequestId)">
+                        View Project Workspace
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              }
+
+              <!-- Text Content / AI Design Card -->
+              @if (m.content) {
+                @if (isAiDesignCard(m.content)) {
+                  @if (parseAiDesignCard(m.content); as card) {
+                    <div class="ai-design-card">
+                      <div class="card-header">
+                        <svg class="card-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                        </svg>
+                        <span class="card-title">AI Design Specifications</span>
+                      </div>
+                      
+                      <div class="design-image-wrapper" (click)="openLightbox(resolveImageUrl(card.imageUrl))">
+                        <img [src]="resolveImageUrl(card.imageUrl)" class="design-img" alt="AI Generated Design" referrerpolicy="no-referrer" />
+                        <span class="zoom-overlay">🔍 Zoom</span>
+                      </div>
+
+                      <div class="design-specs-list">
+                        <div class="spec-row">
+                          <span class="spec-name">Gender</span>
+                          <span class="spec-val">{{ card.specifications.gender }}</span>
+                        </div>
+                        <div class="spec-row">
+                          <span class="spec-name">Size</span>
+                          <span class="spec-val">{{ card.specifications.size }}</span>
+                        </div>
+                        <div class="spec-row">
+                          <span class="spec-name">Hair</span>
+                          <span class="spec-val">{{ card.specifications.hair }}</span>
+                        </div>
+                        <div class="spec-row">
+                          <span class="spec-name">Face Expression</span>
+                          <span class="spec-val">{{ card.specifications.face }}</span>
+                        </div>
+                        <div class="spec-row">
+                          <span class="spec-name">Skin Tone</span>
+                          <span class="spec-val">{{ card.specifications.skin }}</span>
+                        </div>
+                        <div class="spec-row">
+                          <span class="spec-name">Accessories</span>
+                          <span class="spec-val">{{ card.specifications.accessories }}</span>
+                        </div>
+                        <div class="spec-row">
+                          <span class="spec-name">Outfit</span>
+                          <span class="spec-val">{{ card.specifications.outfit }}</span>
+                        </div>
+                        <div class="spec-row">
+                          <span class="spec-name">Personalization</span>
+                          <span class="spec-val">{{ card.specifications.personalization }}</span>
+                        </div>
+                        @if (card.specifications.referencePhoto) {
+                          <div class="spec-row">
+                            <span class="spec-name">Reference Photo</span>
+                            <span class="spec-val">
+                              <a [href]="resolveImageUrl(card.specifications.referencePhoto)" target="_blank" class="ref-link">View Photo</a>
+                            </span>
+                          </div>
+                        }
+                      </div>
+
+                      <div class="design-card-footer">
+                        <span>ID: {{ card.designId }}</span>
+                        <span>Time: {{ card.generationTime }}</span>
+                      </div>
+                    </div>
+                  }
+                } @else {
+                  <p class="message-text">{{ m.content }}</p>
+                }
+              }
+
+              <!-- Message Footer (Time & Status) -->
+              <div class="message-footer">
+                <span class="message-time">{{ formatMessageTime(m.createdAt) }}</span>
+                @if (isSentByMe(m.senderId)) {
+                  <span class="status-checkmarks" [class.read]="m.isRead">
+                    @if (m.isRead) {
+                      <!-- Double Check (Read) -->
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M12.354 4.354a.5.5 0 0 0-.708-.708L5 10.293 1.854 7.146a.5.5 0 1 0-.708.708l3.5 3.5a.5.5 0 0 0 .708 0zm-2.12 0a.5.5 0 0 0-.708-.708L5 8.293 2.646 5.939a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0z"/>
+                      </svg>
+                    } @else {
+                      <!-- Single Check (Sent) -->
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425z"/>
+                      </svg>
+                    }
+                  </span>
+                }
+              </div>
+            </div>
+          </div>
+        }
+      }
+    </div>
+
+    <!-- Attachment Preview Bar -->
+    @if (imageUrl() || isUploading()) {
+      <div class="attachment-preview-bar">
+        @if (isUploading()) {
+          <div class="preview-uploading">
+            <div class="spinner-ring small">
+              <div></div><div></div><div></div><div></div>
+            </div>
+            <span class="upload-status">{{ langService.translate('uploadingPhoto') }}</span>
+          </div>
+        } @else if (imageUrl()) {
+          <div class="preview-thumbnail-wrapper">
+            <img [src]="resolveImageUrl(imageUrl())" alt="Selected attachment preview" class="preview-thumbnail" referrerpolicy="no-referrer" />
+            <button type="button" class="btn-remove-attachment" (click)="clearUploadedImage($event)" [title]="langService.translate('removeAttachment')">&times;</button>
+          </div>
+        }
+        @if (uploadError()) {
+          <div class="upload-error-msg">{{ uploadError() }}</div>
+        }
+      </div>
+    }
+
+    <!-- Completed Workspace Banner -->
+    @if (isWorkspaceCompleted()) {
+      <div class="workspace-completed-banner">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" class="banner-icon">
+          <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
+        </svg>
+        <span>This workspace is completed and locked. Direct messaging has been archived.</span>
+      </div>
+    }
+
+    <!-- Footer Input Controls -->
+    <div class="chat-input-area" [class.locked-disabled]="isChatLocked() || isWorkspaceCompleted() || isAdmin()">
+      <!-- Attach button -->
+      <button 
+        class="icon-btn" 
+        (click)="fileInput.click()"
+        [title]="langService.translate('attachPhoto')"
+        [attr.aria-label]="langService.translate('attachPhoto')"
+        [disabled]="isChatLocked() || isWorkspaceCompleted() || isAdmin()"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm10.648 1.864a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3a.5.5 0 0 1 .5-.5"/>
         </svg>
       </button>
-    </form>
-  </div>
+      <input 
+        #fileInput
+        type="file" 
+        accept="image/*"
+        style="display: none;" 
+        (change)="onFileSelected($event)"
+        [disabled]="isChatLocked() || isWorkspaceCompleted() || isAdmin()"
+      />
 
-  <!-- Validation message below the chat input -->
-  @if (validationError()) {
-    <div class="chat-validation-error">
-      {{ validationError() }}
+      <!-- Text input box -->
+      <form (ngSubmit)="send()" class="input-form">
+        <input 
+          type="text" 
+          [ngModel]="newMessage()" 
+          (ngModelChange)="newMessage.set($event)"
+          name="messageText"
+          [placeholder]="isChatLocked() ? 'Chat locked until service approved' : (isWorkspaceCompleted() ? 'Direct messaging has been archived' : (isAdmin() ? 'Viewing workspace in read-only mode' : langService.translate('typeAMessage')))" 
+          autocomplete="off"
+          [disabled]="isChatLocked() || isWorkspaceCompleted() || isAdmin()"
+        />
+        
+        <!-- Send button -->
+        <button type="submit" class="send-btn" [disabled]="(!newMessage().trim() && !imageUrl().trim()) || isUploading() || !!validationError() || isChatLocked() || isWorkspaceCompleted() || isAdmin()" aria-label="Send message">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M15.964.686a.5.5 0 0 0-.65-.65L.767 5.855H.766l-.452.18a.5.5 0 0 0-.082.887l.41.26.001.002 4.995 3.178 3.178 4.995.002.002.26.41a.5.5 0 0 0 .886-.083zm-1.833 1.89L6.637 10.07l-.215-.338a.5.5 0 0 0-.154-.154l-.338-.215 7.494-7.494 1.178-.471z"/>
+          </svg>
+        </button>
+      </form>
     </div>
-  }
+
+    <!-- Validation message below the chat input -->
+    @if (validationError() && !isChatLocked() && !isWorkspaceCompleted() && !isAdmin()) {
+      <div class="chat-validation-error">
+        {{ validationError() }}
+      </div>
+    }
+
+    <!-- Lock Overlay Screen -->
+    @if (isChatLocked()) {
+      <div class="chat-lock-overlay">
+        <div class="lock-card">
+          <div class="lock-icon-wrapper">
+            <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lock-icon">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+          </div>
+          <h3>Service Created</h3>
+          <p class="lock-desc">The seller has created the custom service details for your handmade order. You must approve the service and complete the payment to unlock direct messaging.</p>
+          
+          @if (proposedService()) {
+            <div class="pending-offer-details">
+              <div class="offer-row">
+                <span class="offer-label">Service Title</span>
+                <span class="offer-value">{{ proposedService()!.title }}</span>
+              </div>
+              <div class="offer-row">
+                <span class="offer-label">Price</span>
+                <span class="offer-value">{{ proposedService()!.price | currency:'EGP ' }}</span>
+              </div>
+              <div class="offer-row">
+                <span class="offer-label">Delivery Time</span>
+                <span class="offer-value">{{ proposedService()!.estimatedDeliveryDays }} Days</span>
+              </div>
+              @if (proposedService()!.notes) {
+                <div class="offer-notes-box">
+                  <span class="notes-header">Service Specifications:</span>
+                  <p class="notes-content">"{{ proposedService()!.notes }}"</p>
+                </div>
+              }
+            </div>
+          }
+          
+          <div class="lock-actions" style="display: flex; flex-direction: column; gap: 10px; width: 100%;">
+            @if (getStatusNumber(customRequest()?.status) === 9) {
+              <button class="btn btn-primary btn-block btn-lg" [disabled]="submittingAction()" (click)="approveService()">
+                @if (submittingAction()) { Approving... } @else { Approve Custom Service }
+              </button>
+              <button class="btn btn-outline btn-block btn-lg" style="border-color: #dc3545; color: #dc3545;" [disabled]="submittingAction()" (click)="rejectService()">
+                Reject Proposal
+              </button>
+            } @else {
+              <button class="btn btn-primary btn-block btn-lg" (click)="completePayment(customRequest().id)">
+                Complete Payment (EGP {{ proposedService()?.price }})
+              </button>
+            }
+          </div>
+        </div>
+      </div>
+    }
+  </div>
 
   <!-- Lightbox Modal for Full Screen Image -->
   @if (activeLightboxImage()) {
@@ -150,6 +476,261 @@
       <button class="lightbox-close" (click)="closeLightbox()" [attr.aria-label]="langService.translate('closeFullscreen')">&times;</button>
       <div class="lightbox-content" (click)="$event.stopPropagation()">
         <img [src]="activeLightboxImage()" alt="Fullscreen view" />
+      </div>
+    </div>
+  }
+
+  <!-- Create Custom Offer Modal Overlay -->
+  @if (showCreateOfferModal()) {
+    <div class="modal-overlay" (click)="showCreateOfferModal.set(false)">
+      <div class="modal-card" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>{{ editingOfferId() ? 'Edit Custom Offer' : 'Create Custom Offer' }}</h3>
+          <button class="close-modal-btn" (click)="showCreateOfferModal.set(false)">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p class="modal-instruction">Propose a tailored amigurumi customization offer for this buyer request.</p>
+          
+          <div class="form-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <!-- Price -->
+            <div class="form-group">
+              <label for="offerPrice">Price (EGP) <span class="required">*</span></label>
+              <div class="price-input-wrapper">
+                <span class="currency-prefix">EGP</span>
+                <input 
+                  id="offerPrice" 
+                  type="number" 
+                  [ngModel]="offerPrice()" 
+                  (ngModelChange)="offerPrice.set($event)" 
+                  placeholder="0.00" 
+                  min="1"
+                />
+              </div>
+            </div>
+
+            <!-- Delivery Days -->
+            <div class="form-group">
+              <label for="offerDeliveryDays">Delivery Time (Days) <span class="required">*</span></label>
+              <input 
+                id="offerDeliveryDays" 
+                type="number" 
+                [ngModel]="offerDeliveryDays()" 
+                (ngModelChange)="offerDeliveryDays.set($event)" 
+                placeholder="e.g. 7" 
+                min="1"
+              />
+            </div>
+          </div>
+
+          <!-- Included Features (Revisions) -->
+          <div class="form-group" style="margin-top: 10px;">
+            <label for="offerRevisions">Included Revisions</label>
+            <select 
+              id="offerRevisions" 
+              [ngModel]="offerRevisions()" 
+              (ngModelChange)="offerRevisions.set($event)"
+              style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid rgba(176, 110, 46, 0.15);"
+            >
+              <option [value]="1">1 Revision</option>
+              <option [value]="2">2 Revisions</option>
+              <option [value]="3">3 Revisions</option>
+              <option [value]="5">5 Revisions</option>
+              <option [value]="10">10 Revisions</option>
+            </select>
+          </div>
+
+          <!-- Description -->
+          <div class="form-group" style="margin-top: 10px;">
+            <label for="offerNotes">Description & Materials <span class="required">*</span></label>
+            <textarea 
+              id="offerNotes" 
+              [ngModel]="offerNotes()" 
+              (ngModelChange)="offerNotes.set($event)" 
+              placeholder="Describe amigurumi specifications, amigurumi size, yarn types..."
+              rows="3"
+              style="width: 100%;"
+            ></textarea>
+          </div>
+
+          <!-- Optional Notes -->
+          <div class="form-group" style="margin-top: 10px;">
+            <label for="offerOptionalNotes">Optional Notes</label>
+            <textarea 
+              id="offerOptionalNotes" 
+              [ngModel]="offerOptionalNotes()" 
+              (ngModelChange)="offerOptionalNotes.set($event)" 
+              placeholder="Add shipping terms or package details if any..."
+              rows="2"
+              style="width: 100%;"
+            ></textarea>
+          </div>
+
+          <!-- Detailed Offer Snapshot (Active Design Request) -->
+          <div class="form-group" style="margin-top: 15px;" *ngIf="getSelectedDesign()">
+            <label style="font-weight: 600; color: #b06e2e; display: block; margin-bottom: 8px;">Linked Design Snapshot (Active Request)</label>
+            
+            <div class="snapshot-container" style="background: #fdfcfb; border: 1px solid rgba(176, 110, 46, 0.15); border-radius: 12px; padding: 12px;">
+              
+              <!-- Images Section -->
+              <div class="snapshot-images" style="display: flex; gap: 12px; margin-bottom: 12px;">
+                <!-- Generated Design Image -->
+                <div style="flex: 1; text-align: center;">
+                  <span style="display: block; font-size: 0.7rem; color: #8c7b6e; font-weight: 600; margin-bottom: 4px;">AI GENERATED DOLL</span>
+                  <img [src]="resolveImageUrl(getSelectedDesignImageUrl() || '')" 
+                       alt="AI Generated Reference Doll" 
+                       style="width: 100%; height: 120px; object-fit: cover; border-radius: 8px; border: 1px solid rgba(0,0,0,0.05);" 
+                       referrerpolicy="no-referrer" />
+                </div>
+                
+                <!-- Reference Photo (if exists) -->
+                <div *ngIf="getDesignSummary().referenceImage" style="flex: 1; text-align: center;">
+                  <span style="display: block; font-size: 0.7rem; color: #8c7b6e; font-weight: 600; margin-bottom: 4px;">REFERENCE PHOTO</span>
+                  <img [src]="resolveImageUrl(getDesignSummary().referenceImage || '')" 
+                       alt="Buyer Reference Photo" 
+                       style="width: 100%; height: 120px; object-fit: cover; border-radius: 8px; border: 1px solid rgba(0,0,0,0.05);" 
+                       referrerpolicy="no-referrer" />
+                </div>
+              </div>
+
+              <!-- AI Prompt Section -->
+              <div class="snapshot-prompt" style="background: rgba(176, 110, 46, 0.03); border: 1px solid rgba(176, 110, 46, 0.08); border-radius: 6px; padding: 8px; margin-bottom: 12px;">
+                <span style="display: block; font-size: 0.7rem; color: #b06e2e; font-weight: 600; margin-bottom: 2px;">AI PROMPT</span>
+                <p style="margin: 0; font-size: 0.75rem; color: #5a4b3d; font-style: italic; line-height: 1.3;">
+                  "{{ getSelectedDesign()?.prompt }}"
+                </p>
+              </div>
+
+              <!-- Specifications Grid -->
+              <div class="snapshot-specs-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px 12px; font-size: 0.75rem;">
+                <div>
+                  <strong style="color: #8c7b6e;">Gender:</strong> 
+                  <span style="color: #2c1e14; margin-left: 4px;">{{ getDesignSummary().gender || 'Not specified' }}</span>
+                </div>
+                <div>
+                  <strong style="color: #8c7b6e;">Height/Size:</strong> 
+                  <span style="color: #2c1e14; margin-left: 4px;">{{ getDesignSummary().height || 'Not specified' }}</span>
+                </div>
+                <div>
+                  <strong style="color: #8c7b6e;">Skin Tone:</strong> 
+                  <span style="color: #2c1e14; margin-left: 4px;">{{ getDesignSummary().skinTone || 'Not specified' }}</span>
+                </div>
+                <div>
+                  <strong style="color: #8c7b6e;">Face Expression:</strong> 
+                  <span style="color: #2c1e14; margin-left: 4px;">{{ getDesignSummary().face || 'Normal' }}</span>
+                </div>
+                <div>
+                  <strong style="color: #8c7b6e;">Hair:</strong> 
+                  <span style="color: #2c1e14; margin-left: 4px;">
+                    {{ getDesignSummary().hairStyle }}{{ getDesignSummary().hairColor ? ', ' + getDesignSummary().hairColor : '' }}
+                  </span>
+                </div>
+                <div>
+                  <strong style="color: #8c7b6e;">Outfit:</strong> 
+                  <span style="color: #2c1e14; margin-left: 4px;">{{ getDesignSummary().outfit || 'Not specified' }}</span>
+                </div>
+                <div style="grid-column: span 2;">
+                  <strong style="color: #8c7b6e;">Accessories:</strong> 
+                  <span style="color: #2c1e14; margin-left: 4px;">{{ getDesignSummary().accessories || 'None' }}</span>
+                </div>
+                <div style="grid-column: span 2;" *ngIf="getDesignSummary().personalization && getDesignSummary().personalization !== 'Not specified'">
+                  <strong style="color: #8c7b6e;">Personalization:</strong> 
+                  <span style="color: #2c1e14; margin-left: 4px;">{{ getDesignSummary().personalization }}</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 10px; padding: 15px; border-top: 1px solid rgba(176, 110, 46, 0.1); background: #fbf8f5;">
+          <button class="btn btn-outline" style="min-width: 90px;" (click)="showCreateOfferModal.set(false)">Cancel</button>
+          <button class="btn btn-secondary" style="min-width: 110px;" [disabled]="submittingOffer()" (click)="submitCustomOffer('Draft')">Save Draft</button>
+          <button class="btn btn-primary" style="min-width: 110px;" [disabled]="submittingOffer()" (click)="submitCustomOffer('Sent')">
+            @if (submittingOffer()) { Sending... } @else { Send Offer }
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+  </div> <!-- End of .chat-main-section -->
+
+  <!-- Offer Center Sidebar -->
+  @if (isSeller() && customRequest()) {
+    <div class="offer-center-sidebar" [class.active]="showOfferCenter()">
+      <div class="sidebar-header">
+        <h3>
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" style="margin-right: 6px; display: inline-block; vertical-align: middle;">
+            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+          </svg>
+          Offer Center
+        </h3>
+        <button class="close-sidebar-btn" (click)="toggleOfferCenter()">&times;</button>
+      </div>
+
+      <div class="sidebar-content">
+        <div class="sidebar-info-card">
+          <h4>Custom Doll Specifications</h4>
+          <div class="specs-mini-grid">
+            <div class="spec-mini-item" *ngFor="let item of getSummaryPairs()">
+              <span class="label">{{ item.label }}:</span>
+              <span class="val">{{ item.value }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="offers-list-section">
+          <div class="section-header">
+            <h4>Offers ({{ customOffers().length }})</h4>
+            <button class="btn btn-primary btn-xs" (click)="openCreateOfferModal()">
+              + New Offer
+            </button>
+          </div>
+
+          <div class="offers-scroll-list">
+            @if (customOffers().length === 0) {
+              <div class="empty-offers-state">
+                <p>No custom offers proposed yet.</p>
+              </div>
+            } @else {
+              @for (off of customOffers(); track off.id) {
+                <div class="sidebar-offer-item status-{{ off.status.toLowerCase() }}">
+                  <div class="offer-header">
+                    <span class="offer-price">EGP {{ off.price | number:'1.2-2' }}</span>
+                    <span class="status-badge-mini">{{ off.status }}</span>
+                  </div>
+                  <div class="offer-meta">
+                    <span style="display: inline-flex; align-items: center; gap: 4px;">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                      </svg>
+                      {{ off.deliveryTimeDays }} Days
+                    </span> | 
+                    <span style="display: inline-flex; align-items: center; gap: 4px;">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                        <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path>
+                      </svg>
+                      {{ off.revisionsAllowed }} Revs
+                    </span>
+                  </div>
+                  @if (off.notes) {
+                    <p class="offer-notes-preview">"{{ off.notes }}"</p>
+                  }
+                  <div class="offer-item-actions" *ngIf="off.status === 'Draft' || off.status === 'Sent' || off.status === 'Pending'" style="margin-top: 8px;">
+                    <button class="btn btn-outline btn-xs btn-block" (click)="editOffer(off)">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" style="margin-right: 4px; display: inline-block; vertical-align: middle;">
+                        <path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                      </svg>
+                      Edit Offer
+                    </button>
+                  </div>
+                  <div class="offer-date">{{ off.createdAt | date:'short' }}</div>
+                </div>
+              }
+            }
+          </div>
+        </div>
       </div>
     </div>
   }

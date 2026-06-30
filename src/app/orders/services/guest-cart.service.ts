@@ -7,28 +7,36 @@ import { CartDto, CartItemDto } from './cart-api.service';
 export class GuestCartService {
   private readonly productsService = inject(ProductsService);
   private readonly storageKey = 'guest_cart';
+  private inMemoryCart: CartDto = { cartId: 'guest', items: [], totalItems: 0, totalPrice: 0 };
 
   getCart(): CartDto {
     if (typeof window === 'undefined') {
       return { cartId: 'guest', items: [], totalItems: 0, totalPrice: 0 };
     }
-    const stored = localStorage.getItem(this.storageKey);
-    if (!stored) {
-      return { cartId: 'guest', items: [], totalItems: 0, totalPrice: 0 };
-    }
     try {
+      const stored = localStorage.getItem(this.storageKey);
+      if (!stored) {
+        return this.inMemoryCart;
+      }
       const cart = JSON.parse(stored) as CartDto;
       this.recalculateCart(cart);
+      this.inMemoryCart = cart;
       return cart;
-    } catch {
-      return { cartId: 'guest', items: [], totalItems: 0, totalPrice: 0 };
+    } catch (e) {
+      console.warn('localStorage is not available, using in-memory cart:', e);
+      return this.inMemoryCart;
     }
   }
 
   private saveCart(cart: CartDto): void {
     if (typeof window === 'undefined') return;
     this.recalculateCart(cart);
-    localStorage.setItem(this.storageKey, JSON.stringify(cart));
+    this.inMemoryCart = cart;
+    try {
+      localStorage.setItem(this.storageKey, JSON.stringify(cart));
+    } catch (e) {
+      console.warn('Failed to save to localStorage:', e);
+    }
   }
 
   private recalculateCart(cart: CartDto): void {
@@ -89,7 +97,12 @@ export class GuestCartService {
   }
 
   clearCart(): void {
+    this.inMemoryCart = { cartId: 'guest', items: [], totalItems: 0, totalPrice: 0 };
     if (typeof window === 'undefined') return;
-    localStorage.removeItem(this.storageKey);
+    try {
+      localStorage.removeItem(this.storageKey);
+    } catch (e) {
+      console.warn('Failed to clear localStorage:', e);
+    }
   }
 }

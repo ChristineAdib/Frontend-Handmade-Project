@@ -8,28 +8,36 @@ import { IWishListItem } from '../models/iwish-list-item';
 export class GuestWishlistService {
   private readonly productsService = inject(ProductsService);
   private readonly storageKey = 'guest_wishlist';
+  private inMemoryWishlist: IWishList = { id: 'guest', userId: 'guest', items: [], totalItems: 0 };
 
   getWishList(): IWishList {
     if (typeof window === 'undefined') {
       return { id: 'guest', userId: 'guest', items: [], totalItems: 0 };
     }
-    const stored = localStorage.getItem(this.storageKey);
-    if (!stored) {
-      return { id: 'guest', userId: 'guest', items: [], totalItems: 0 };
-    }
     try {
+      const stored = localStorage.getItem(this.storageKey);
+      if (!stored) {
+        return this.inMemoryWishlist;
+      }
       const wishlist = JSON.parse(stored) as IWishList;
       wishlist.totalItems = wishlist.items.length;
+      this.inMemoryWishlist = wishlist;
       return wishlist;
-    } catch {
-      return { id: 'guest', userId: 'guest', items: [], totalItems: 0 };
+    } catch (e) {
+      console.warn('localStorage is not available, using in-memory wishlist:', e);
+      return this.inMemoryWishlist;
     }
   }
 
   private saveWishList(wishlist: IWishList): void {
     if (typeof window === 'undefined') return;
     wishlist.totalItems = wishlist.items.length;
-    localStorage.setItem(this.storageKey, JSON.stringify(wishlist));
+    this.inMemoryWishlist = wishlist;
+    try {
+      localStorage.setItem(this.storageKey, JSON.stringify(wishlist));
+    } catch (e) {
+      console.warn('Failed to save to localStorage:', e);
+    }
   }
 
   async addItem(productId: string): Promise<IWishList> {
@@ -66,7 +74,12 @@ export class GuestWishlistService {
   }
 
   clearWishList(): void {
+    this.inMemoryWishlist = { id: 'guest', userId: 'guest', items: [], totalItems: 0 };
     if (typeof window === 'undefined') return;
-    localStorage.removeItem(this.storageKey);
+    try {
+      localStorage.removeItem(this.storageKey);
+    } catch (e) {
+      console.warn('Failed to clear localStorage:', e);
+    }
   }
 }

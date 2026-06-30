@@ -1,3 +1,68 @@
-<p [dir]="langService.currentLang() === 'ar' ? 'rtl' : 'ltr'">
-  {{ langService.translate('customRequests') }} {{ langService.currentLang() === 'ar' ? 'تعمل!' : 'works!' }}
-</p>
+<div class="custom-requests-container" [dir]="langService.currentLang() === 'ar' ? 'rtl' : 'ltr'">
+  <header class="page-header">
+    <div class="header-content">
+      <h2>Custom Studio Requests</h2>
+      <p class="subtitle">Review and manage customized project requests from buyers matching your crafting category.</p>
+    </div>
+  </header>
+
+  <!-- Loader -->
+  <div class="loading-state" *ngIf="isLoading()">
+    <div class="spinner"></div>
+    <p>Loading custom requests...</p>
+  </div>
+
+  <div class="requests-content" *ngIf="!isLoading()">
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="requests().length === 0">
+      <div class="empty-illustration">🪡</div>
+      <h3>No Custom Requests Yet</h3>
+      <p>Custom doll requests matching your shop rating and category will appear here. Keep your profile updated to match with buyers!</p>
+    </div>
+
+    <!-- Requests List Grid -->
+    <div class="requests-grid" *ngIf="requests().length > 0">
+      <div class="request-card" *ngFor="let req of requests()">
+        <div class="card-header">
+          <div class="request-type-badge">Crochet Doll</div>
+          <span class="status-badge status-{{ req.status }}">
+            {{ getStatusLabel(req.status) }}
+          </span>
+        </div>
+        
+        <div class="card-body">
+          <h4 class="buyer-name">{{ req.buyerName }}</h4>
+          
+          <div class="specs-grid">
+            <div class="spec-item">
+              <span class="spec-label">Target Budget:</span>
+              <span class="spec-value highlight">{{ req.targetBudget ? (req.targetBudget | currency:'EGP ') : 'Flexible' }}</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">Deadline:</span>
+              <span class="spec-value">{{ req.deadlineDate ? (req.deadlineDate | date:'mediumDate') : 'Flexible' }}</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">Date Placed:</span>
+              <span class="spec-value">{{ req.createdAt | date:'shortDate' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-actions">
+          @if (req.status === 12 || req.status === 13 || req.status === 14) {
+            <!-- Paid, InProgress, Completed -->
+            <button class="btn btn-primary btn-block" (click)="viewWorkspace(req.id)">
+              Go to Crafting Workspace
+            </button>
+          } @else {
+            <!-- Negotiating, Matching, Draft, etc. -->
+            <button class="btn btn-secondary btn-block" (click)="viewRequest(req.id)">
+              Chat & Send Offer
+            </button>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

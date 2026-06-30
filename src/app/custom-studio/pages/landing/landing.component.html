@@ -1,0 +1,42 @@
+<div class="landing-container">
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <span class="badge">Handora Custom Studio</span>
+      <h1 class="hero-title">Design Your Perfect Crochet Doll</h1>
+      <p class="hero-subtitle">
+        Express your imagination. Select a design workflow below to create your custom amigurumi doll and connect with master artisans.
+      </p>
+      
+      <div class="design-modes-container">
+        <!-- Card 1: Create from Photo -->
+        <div class="mode-card photo-mode" routerLink="/custom-studio/photo">
+          <div class="mode-icon">🖼</div>
+          <div class="mode-details">
+            <h3>Create from Photo</h3>
+            <p>Upload a real person's photo and let AI automatically generate a crochet doll that looks like them.</p>
+          </div>
+          <button class="btn-mode-action">Start from Photo</button>
+        </div>
+
+        <!-- Card 2: Build Your Own Doll -->
+        <div class="mode-card build-mode" routerLink="/custom-studio/customize">
+          <div class="mode-icon">🎨</div>
+          <div class="mode-details">
+            <h3>Build Your Own Doll</h3>
+            <p>Customize every detail manually and let AI generate your perfect crochet doll.</p>
+          </div>
+          <button class="btn-mode-action">Start Customizing</button>
+        </div>
+      </div>
+
+      <!-- Saved Designs link -->
+      <div class="resume-actions">
+        <button class="btn btn-outline btn-sm" routerLink="/custom-studio/my-designs">
+          📋 My Saved Designs
+        </button>
+      </div>
+    </div>
+  </section>
+</div>

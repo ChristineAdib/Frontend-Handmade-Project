@@ -246,10 +246,7 @@
   color: #8b6a4a !important;
   font-weight: 400 !important;
 }
-.free-shipping span:first-child {
-  color: #27ae60 !important;
-  font-weight: 600 !important;
-}
+
 .summary-divider {
   height: 1px;
   background: #e0d5c1;

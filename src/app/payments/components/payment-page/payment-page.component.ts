@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, OnDestroy, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { SafeUrlPipe } from '../../../core/pipes/safe-url.pipe';
 import { PaymentService } from '../../services/payment.service';
 import { OrderService } from '../../../orders/services/order.service';
@@ -15,6 +15,7 @@ import { LanguageService } from '../../../core/services/language.service';
 })
 export class PaymentPageComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   readonly paymentService = inject(PaymentService);
   readonly orderService = inject(OrderService);
   protected readonly langService = inject(LanguageService);
@@ -25,6 +26,7 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
   readonly paymentFailed = signal<boolean>(false);
   readonly iframeUrl = signal<string>('');
   readonly showIframe = signal<boolean>(false);
+  readonly customRequestId = signal<string | null>(null);
 
   orderId = '';
 
@@ -48,17 +50,35 @@ export class PaymentPageComponent implements OnInit, OnDestroy {
     }
   }
 
+  private checkCustomRequest(order: any): void {
+    if (!order || !order.items) return;
+    const customStudioItem = order.items.find((item: any) => 
+      item.productName?.startsWith('Custom Studio Request') || 
+      item.productName?.includes('Custom Studio Request')
+    );
+    if (customStudioItem) {
+      this.customRequestId.set(customStudioItem.productId);
+    }
+  }
+
   private startPolling(): void {
     this.pollTimer = setInterval(async () => {
       await this.orderService.getById(this.orderId);
       const order = this.orderService.selectedOrder();
       if (!order) return;
 
+      this.checkCustomRequest(order);
+
       if (order.paymentStatus === 2) {
         this.paymentSuccess.set(true);
         this.paymentDone.set(true);
         this.showIframe.set(false);
         this.clearPoll();
+        
+        // Auto Redirect if custom request!
+        if (this.customRequestId()) {
+          this.router.navigate(['/custom-studio/workspace', this.customRequestId()]);
+        }
       } else if (order.paymentStatus === 3) {
         this.paymentFailed.set(true);
         this.paymentDone.set(true);

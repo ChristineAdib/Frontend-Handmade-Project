@@ -1,0 +1,170 @@
+.negotiation-page-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #fffdf9;
+  color: #1e0e05;
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 107px);
+  box-sizing: border-box;
+}
+
+/* Header bar styling */
+.negotiation-header {
+  display: flex;
+  align-items: center;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(49, 23, 2, 0.08);
+  margin-bottom: 24px;
+}
+
+.back-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #5c3d2e;
+  padding: 6px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.back-btn:hover {
+  background-color: rgba(49, 23, 2, 0.05);
+  color: #c8813a;
+}
+
+.negotiation-header h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 32px;
+  font-weight: 700;
+  margin: 0;
+  color: #3d2010;
+}
+
+/* Main workspace layout */
+.negotiation-main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 20px;
+  min-height: 0; /* Important for flex child scrolling */
+}
+
+/* Context card */
+.context-card {
+  background: #ffffff;
+  border: 1px solid rgba(49, 23, 2, 0.08);
+  border-radius: 20px;
+  padding: 16px 24px;
+  box-shadow: 0 8px 24px rgba(49, 23, 2, 0.02);
+}
+
+.context-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.context-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.design-mini-img {
+  width: 50px;
+  height: 50px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(49, 23, 2, 0.08);
+  background-color: #fffdf9;
+}
+
+.design-mini-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.design-meta h3 {
+  font-size: 16px;
+  color: #3d2010;
+  margin: 0 0 4px 0;
+}
+
+.design-meta p {
+  font-size: 13px;
+  color: #5c3d2e;
+  margin: 0;
+}
+
+.specs-summary {
+  font-size: 11px !important;
+  color: #8d776f !important;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-top: 2px !important;
+}
+
+.context-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-offer {
+  padding: 10px 20px;
+}
+
+/* Chat area integration */
+.chat-workspace-section {
+  flex: 1;
+  background: #ffffff;
+  border: 1px solid rgba(49, 23, 2, 0.08);
+  border-radius: 24px;
+  box-shadow: 0 10px 30px rgba(49, 23, 2, 0.03);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0; /* Crucial for scrolling */
+}
+
+/* Loading state */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  padding: 60px;
+  flex: 1;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(200, 129, 58, 0.1);
+  border-left-color: #c8813a;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 768px) {
+  .context-inner {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .context-actions {
+    flex-direction: column;
+  }
+}

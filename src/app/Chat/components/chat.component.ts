@@ -27,14 +27,19 @@ export class ChatComponent implements OnInit, OnDestroy {
     // Verify WebSocket/SignalR connection is running
     await this.chatService.initializeRealTime();
 
-    // Check if there is a shopId parameter in the route
-    const shopId = this.route.snapshot.paramMap.get('shopId');
-    if (shopId) {
-      try {
-        const conversation = await this.chatService.startConversationByShop(shopId);
-        await this.chatService.openConversation(conversation);
-      } catch (err) {
-        console.error('Failed to auto-start conversation by shopId:', err);
+    // Check if there is a parameter in the route (can be conversationId or shopId)
+    const paramId = this.route.snapshot.paramMap.get('shopId');
+    if (paramId) {
+      const existingConversation = this.chatService.conversations().find(c => c.id === paramId);
+      if (existingConversation) {
+        await this.chatService.openConversation(existingConversation);
+      } else {
+        try {
+          const conversation = await this.chatService.startConversationByShop(paramId);
+          await this.chatService.openConversation(conversation);
+        } catch (err) {
+          console.error('Failed to auto-start conversation by parameter ID:', err);
+        }
       }
     }
   }

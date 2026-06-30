@@ -1,0 +1,92 @@
+<div class="photo-studio-container">
+  <div class="header-section">
+    <button class="back-link" routerLink="/custom-studio">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M19 12H5M12 19l-7-7 7-7" />
+      </svg>
+      Back to Studio Modes
+    </button>
+    <h2>Create from Person Photo</h2>
+    <p class="subtitle">Upload a photo of a real person, and our AI will automatically detect features to craft a custom crochet doll inspired by them.</p>
+  </div>
+
+  <div class="upload-wrapper">
+    <div class="upload-card">
+      <div class="card-header">
+        <span class="step-badge">AI Generation Mode</span>
+        <h3>Real Person Portrait</h3>
+      </div>
+
+      <div class="card-body">
+        <!-- If no photo selected -->
+        <div class="upload-dropzone" 
+             *ngIf="!selectedPhotoUrl()" 
+             (click)="fileInput.click()"
+             (dragover)="onDragOver($event)"
+             (drop)="onDrop($event)">
+          <div class="dropzone-inner">
+            <div class="upload-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                <circle cx="8.5" cy="8.5" r="1.5"/>
+                <polyline points="21 15 16 10 5 21"/>
+              </svg>
+            </div>
+            <h4>Drag & Drop your photo here</h4>
+            <p class="or-text">or click to browse local files</p>
+            <span class="file-limits">Supports JPG, JPEG or PNG (Max 5MB)</span>
+          </div>
+        </div>
+
+        <input #fileInput type="file" (change)="onFileSelected($event)" accept="image/*" style="display: none;" />
+
+        <!-- If photo selected -->
+        <div class="preview-container" *ngIf="selectedPhotoUrl()">
+          <div class="image-preview-wrapper">
+            <img [src]="selectedPhotoUrl()" alt="Person portrait preview" class="preview-img" />
+            <button class="remove-photo-btn" (click)="clearPhoto()">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+          </div>
+          <div class="photo-info">
+            <span class="file-name">{{ selectedFileName() }}</span>
+            <button class="change-photo-link" (click)="fileInput.click()">Change photo</button>
+          </div>
+        </div>
+
+        <!-- Optional prompt note instructions -->
+        <div class="notes-field">
+          <label for="dollNotes">Special Instructions or Notes (Optional)</label>
+          <textarea id="dollNotes" 
+                    [(ngModel)]="additionalNotes" 
+                    placeholder="e.g. Include their favourite glasses, style a specific hat, or write a custom name tag..."></textarea>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <button class="btn btn-outline" routerLink="/custom-studio">Cancel</button>
+        <button class="btn btn-primary" 
+                [disabled]="!selectedFile() || generating()"
+                (click)="startAiGeneration()">
+          <span *ngIf="!generating()">Generate Crochet Doll</span>
+          <span *ngIf="generating()">Starting AI Pipeline...</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Analyzing Overlay Spinner -->
+  <div class="analyzing-lock-overlay" *ngIf="generating()">
+    <div class="analyzing-content">
+      <div class="spinner-container">
+        <div class="custom-spinner"></div>
+        <div class="scan-line"></div>
+      </div>
+      <h3>Analyzing Portrait Details...</h3>
+      <p>Gemini is scanning facial proportions, hairstyle structures, skin undertones, and accessories to configure your amigurumi doll blueprint.</p>
+    </div>
+  </div>
+</div>
