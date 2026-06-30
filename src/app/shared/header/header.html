@@ -93,13 +93,7 @@
         <a routerLink="/shops" routerLinkActive="is-active" class="nav__link">{{ langService.translate('artisans') }}</a>
       </li>
  
-      <li>
-        <a routerLink="/about" routerLinkActive="is-active" class="nav__link">{{ langService.translate('about') }}</a>
-      </li>
- 
-      <li>
-        <a routerLink="/contact" routerLinkActive="is-active" class="nav__link">{{ langService.translate('contact') }}</a>
-      </li>
+      
     </ul>
  
     <!-- RIGHT: ACTIONS -->
@@ -155,21 +149,7 @@
         </svg>
       </button>
       <!-- Become a Seller — أيقونة أوضح (متجر/بازار) -->
-      @if (!isSeller()) {
-        <a routerLink="/become-seller" class="nav__seller-icon" [attr.data-tooltip]="langService.translate('becomeSeller')">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
-               stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 21h18"/>
-            <path d="M5 21V10"/>
-            <path d="M19 21V10"/>
-            <path d="M3 10l1.5-6h15L21 10"/>
-            <path d="M3 10h18"/>
-            <circle cx="18" cy="6" r="3" fill="#fff" stroke="currentColor"/>
-            <path d="M18 4.8v2.4"/>
-            <path d="M16.8 6h2.4"/>
-          </svg>
-        </a>
-      }
+      
  
       <div class="nav__icons-group">
 
@@ -195,18 +175,17 @@
           }
         </a>
         <!-- Cart -->
-        <a routerLink="/cart" class="nav__icon-btn nav__cart" [title]="langService.currentLang() === 'ar' ? 'عربة التسوق' : 'Cart'">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
-               stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
-            <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
-            <line x1="3" y1="6" x2="21" y2="6"/>
-            <path d="M16 10a4 4 0 0 1-8 0"/>
-          </svg>
-          @if (cartCount() > 0) {
-            <span class="nav__badge">{{ cartCount() }}</span>
-          }
-        </a>
- 
+      <a routerLink="/cart" class="nav__icon-btn nav__cart" ...>
+       <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+     stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+  <line x1="3" y1="6" x2="21" y2="6"/>
+  <path d="M16 10a4 4 0 0 1-8 0"/>
+</svg>
+    @if (cartCount() > 0) {
+    <span class="nav__badge">{{ cartCount() }}</span>
+  }
+   </a>
         <!-- Chat -->
         @if (isLoggedIn()) {
           <a routerLink="/chat" class="nav__icon-btn nav__cart" [title]="langService.translate('chat')">
@@ -299,7 +278,7 @@
         }
       </div>
  
-      <div class="nav__divider"></div>
+   
  
       <!-- Account -->
       <div class="nav__item--drop"
@@ -362,18 +341,19 @@
               </button>
             }
           </div>
-        </div>
+        </div> 
       </div>
  
       <!-- Start Selling -->
       @if (!isLoggedIn()) {
         <a routerLink="/register" class="nav__sell-btn">
-          {{ langService.currentLang() === 'ar' ? 'ابدأ' : 'Start' }}
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
-               stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-            <path d="M5 12h14M12 5l7 7-7 7"/>
-          </svg>
-        </a>
+       <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+       stroke="currentColor" stroke-width="2" stroke-linecap="round">
+    <path d="M20 12v10H4V12"/><rect x="2" y="7" width="20" height="5" rx="1"/>
+    <path d="M12 22V7"/>
+     </svg>
+  {{ langService.currentLang() === 'ar' ? 'ابدأ البيع' : 'Become a Seller' }}
+</a>
       }
  
       <button class="nav__burger" [class.nav__burger--open]="mobileMenuOpen()" (click)="toggleMobileMenu()">
