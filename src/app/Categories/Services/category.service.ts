@@ -23,7 +23,8 @@ export class CategoryService {
     this.error.set(null);
     try {
       const data = await firstValueFrom(
-        this.http.get<CategoryResponse[]>(this.apiUrl)
+        this.http.get<CategoryResponse[]>(this.apiUrl,
+      {withCredentials:  true})
       );
       this.categories.set(data);
     } catch {
@@ -39,7 +40,7 @@ export class CategoryService {
     this.error.set(null);
     try {
       const data = await firstValueFrom(
-        this.http.get<CategoryResponse>(`${this.apiUrl}/${id}`)
+        this.http.get<CategoryResponse>(`${this.apiUrl}/${id}`, {withCredentials:  true})
       );
       this.selectedCategory.set(data);
     } catch {
@@ -55,7 +56,7 @@ export class CategoryService {
     this.error.set(null);
     try {
       const data = await firstValueFrom(
-        this.http.get<CategorySummary[]>(`${this.apiUrl}/${parentId}/subcategories`)
+        this.http.get<CategorySummary[]>(`${this.apiUrl}/${parentId}/subcategories`, {withCredentials:  true})
       );
       this.subCategories.set(data);
     } catch {

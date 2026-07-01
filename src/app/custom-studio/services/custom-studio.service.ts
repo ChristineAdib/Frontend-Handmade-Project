@@ -316,7 +316,8 @@ export class CustomStudioService {
       this.saveMockDatabase(db);
       return of({ success: true, message: '', data: newRequest }).pipe(delay(200));
     }
-    return this.http.post<ApiResponse<CustomRequestDetailDto>>(`${this.apiUrl}/request`, command);
+    return this.http.post<ApiResponse<CustomRequestDetailDto>>(`${this.apiUrl}/request`, command,
+      {withCredentials:  true});
   }
 
   getCustomRequestDetails(id: string): Observable<ApiResponse<CustomRequestDetailDto>> {

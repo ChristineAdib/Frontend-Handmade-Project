@@ -11,10 +11,12 @@ export class GiftAssistantApiService {
   private baseUrl = `${environment.domain}/api/gift-assistant`;
 
   chat(sessionId: string, message: string): Observable<any> {
-    return this.http.post<any>(`${this.baseUrl}/chat`, { sessionId, message });
+    return this.http.post<any>(`${this.baseUrl}/chat`, { sessionId, message },
+      {withCredentials:  true});
   }
 
   resetSession(sessionId: string): Observable<any> {
-    return this.http.post<any>(`${this.baseUrl}/reset`, { sessionId });
+    return this.http.post<any>(`${this.baseUrl}/reset`, { sessionId },
+      {withCredentials:  true});
   }
 }
