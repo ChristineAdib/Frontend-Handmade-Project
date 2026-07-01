@@ -1,5 +1,5 @@
 <!-- ANNOUNCEMENT BAR -->
-<div class="ann-bar">
+<div class="ann-bar" [class.ann-bar--hidden]="scrollState() !== 'top'">
   <div class="ann-track">
     <span>✦ Free shipping on orders over 200 EGP</span>
     <span>✦ Every piece tells a story</span>
@@ -13,7 +13,10 @@
 </div>
  
 <!-- MAIN NAV -->
-<nav class="nav" [class.nav--scrolled]="isScrolled()">
+<nav class="nav" 
+     [class.nav--scrolled]="isScrolled()"
+     [class.nav--hidden]="scrollState() === 'scrolled-down'"
+     [class.nav--sticky]="scrollState() === 'scrolled-up'">
   <div class="nav__inner">
  
     <!-- LEFT: LOGO -->
@@ -139,22 +142,7 @@
           <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
         </svg>
       </button>
-      <!-- Become a Seller -->
-      @if (!isSeller()) {
-        <a routerLink="/become-seller" class="nav__seller-icon" [attr.data-tooltip]="langService.translate('becomeSeller')">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
-               stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 21h18"/>
-            <path d="M5 21V10"/>
-            <path d="M19 21V10"/>
-            <path d="M3 10l1.5-6h15L21 10"/>
-            <path d="M3 10h18"/>
-            <circle cx="18" cy="6" r="3" fill="#fff" stroke="currentColor"/>
-            <path d="M18 4.8v2.4"/>
-            <path d="M16.8 6h2.4"/>
-          </svg>
-        </a>
-      }
+      <!-- Become a Seller button replaced by pill button on the right -->
       <!-- Become a Seller — أيقونة أوضح (متجر/بازار) -->
       
  
@@ -350,16 +338,19 @@
         </div> 
       </div>
  
-      <!-- Start Selling -->
-      @if (!isLoggedIn()) {
-        <a routerLink="/register" class="nav__sell-btn">
-       <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-       stroke="currentColor" stroke-width="2" stroke-linecap="round">
-    <path d="M20 12v10H4V12"/><rect x="2" y="7" width="20" height="5" rx="1"/>
-    <path d="M12 22V7"/>
-     </svg>
-  {{ langService.currentLang() === 'ar' ? 'ابدأ البيع' : 'Become a Seller' }}
-</a>
+      <!-- Become a Seller Button -->
+      @if (!isSeller()) {
+        <a routerLink="/become-seller" class="nav__become-seller-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 21h18"/>
+            <path d="M5 21V10"/>
+            <path d="M19 21V10"/>
+            <path d="M3 10l1.5-6h15L21 10"/>
+            <path d="M3 10h18"/>
+          </svg>
+          <span>{{ langService.translate('becomeSeller') }}</span>
+        </a>
       }
  
       <button class="nav__burger" [class.nav__burger--open]="mobileMenuOpen()" (click)="toggleMobileMenu()">

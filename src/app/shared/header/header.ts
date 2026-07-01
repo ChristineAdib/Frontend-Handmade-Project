@@ -6,7 +6,7 @@ import { LanguageService } from '../../core/services/language.service';
 import { CategoryService } from '../../Categories/Services/category.service';
 import { CategoryResponse } from '../../Categories/Models/CategoryResponse';
 import { filter, Subscription } from 'rxjs';
-import { Component, inject, signal, HostListener, computed, OnInit, OnDestroy } from '@angular/core';
+import { Component, inject, signal, HostListener, computed, OnInit, OnDestroy, NgZone } from '@angular/core';
 import { CartApiService } from '../../orders/services/cart-api.service';
 import { WishlistService } from '../../wishlist feature/services/wishlist-service';
 import { CommonModule } from '@angular/common';
@@ -43,6 +43,12 @@ export class Header implements OnInit, OnDestroy {
   protected notificationService = inject(NotificationService);
   private customStudioService = inject(CustomStudioService);
   private notifSub?: Subscription;
+  private ngZone         = inject(NgZone);
+
+  // ── Scroll state management ────────────────────────────────
+  public scrollState = signal<string>('top');
+  public isScrolled = signal<boolean>(false);
+  private scrollCleanUpFn?: () => void;
  
   // ── Local signal for displayed categories ──────────────────
   displayedCategories = signal<CategoryResponse[]>([]);
@@ -89,6 +95,7 @@ export class Header implements OnInit, OnDestroy {
     this.cartService.getCart();
     this.wishlistService.getWishList().subscribe();
     this.loadCategories();
+    this.setupScrollListener();
  
     if (this.isLoggedIn()) {
       this.chatService.initializeRealTime();
@@ -127,9 +134,57 @@ export class Header implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    if (this.scrollCleanUpFn) {
+      this.scrollCleanUpFn();
+    }
     if (this.notifSub) {
       this.notifSub.unsubscribe();
     }
+  }
+
+  private setupScrollListener(): void {
+    let lastScrollY = window.scrollY;
+    
+    this.ngZone.runOutsideAngular(() => {
+      const handleScroll = () => {
+        const scrollY = window.scrollY;
+        const diff = scrollY - lastScrollY;
+        
+        let newState = this.scrollState();
+        let newScrolled = this.isScrolled();
+
+        if (scrollY <= 0) {
+          newState = 'top';
+          newScrolled = false;
+        } else if (scrollY < 50) {
+          newState = 'scrolled-up';
+          newScrolled = true;
+        } else {
+          newScrolled = true;
+          if (Math.abs(diff) > 5) {
+            if (diff > 0) {
+              newState = 'scrolled-down';
+            } else {
+              newState = 'scrolled-up';
+            }
+          }
+        }
+
+        lastScrollY = scrollY;
+
+        if (newState !== this.scrollState() || newScrolled !== this.isScrolled()) {
+          this.ngZone.run(() => {
+            this.scrollState.set(newState);
+            this.isScrolled.set(newScrolled);
+          });
+        }
+      };
+
+      window.addEventListener('scroll', handleScroll, { passive: true });
+      this.scrollCleanUpFn = () => {
+        window.removeEventListener('scroll', handleScroll);
+      };
+    });
   }
 
   private setupNotificationListener(): void {
@@ -179,14 +234,10 @@ export class Header implements OnInit, OnDestroy {
   wishlistCount = computed(() => this.wishlistService.wishlist()?.totalItems ?? 0);
  
   // ── UI state ───────────────────────────────────────────────
-  isScrolled     = signal(false);
   mobileMenuOpen = signal(false);
   searchOpen     = signal(false);
   searchQuery    = signal('');
   activeDropdown = signal<string | null>(null);
- 
-  @HostListener('window:scroll')
-  onScroll() { this.isScrolled.set(window.scrollY > 30); }
  
   toggleMobileMenu() {
     this.mobileMenuOpen.update(v => !v);
