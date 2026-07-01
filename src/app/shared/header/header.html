@@ -101,10 +101,9 @@
         <a routerLink="/contact" routerLinkActive="is-active" class="nav__link">{{ langService.translate('contact') }}</a>
       </li>
     </ul>
- 
-    <!-- RIGHT: ACTIONS -->
-    <div class="nav__actions">
- 
+
+    <!-- FEATURED BUTTONS -->
+    <div class="nav__featured-buttons">
       <!-- Gift Finder -->
       <a routerLink="/gift-assistant" class="nav__gift-btn">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
@@ -117,25 +116,17 @@
       </a>
 
       <!-- Custom Studio -->
-<a routerLink="/custom-studio" class="nav__gift-btn">
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-       stroke="currentColor" stroke-width="2" stroke-linecap="round">
-    <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
-  </svg>
-  {{ langService.currentLang() === 'ar' ? 'ستوديو مخصص' : 'Custom Studio' }}
-</a>
-
-
- 
-      <!-- Custom Studio -->
-      <!-- <a routerLink="/custom-studio" class="nav__studio-btn">
+      <a routerLink="/custom-studio" class="nav__gift-btn">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275Z"/>
-          <path d="m5 3 1 2.5L8.5 6 6 7 5 9.5 4 7 1.5 6 4 5.5Z" opacity="0.6"/>
+             stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
         </svg>
-        {{ langService.currentLang() === 'ar' ? 'الاستوديو الخاص' : 'Custom Studio' }}
-      </a> -->
+        {{ langService.currentLang() === 'ar' ? 'ستوديو مخصص' : 'Custom Studio' }}
+      </a>
+    </div>
+
+    <!-- ICONS WRAPPER -->
+    <div class="nav__icons-wrapper">
  
       <!-- Search -->
       <button class="nav__search-icon" (click)="toggleSearch()" [title]="langService.translate('search')">
@@ -154,7 +145,7 @@
           <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
         </svg>
       </button>
-      <!-- Become a Seller — أيقونة أوضح (متجر/بازار) -->
+      <!-- Become a Seller -->
       @if (!isSeller()) {
         <a routerLink="/become-seller" class="nav__seller-icon" [attr.data-tooltip]="langService.translate('becomeSeller')">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
@@ -173,7 +164,7 @@
  
       <div class="nav__icons-group">
 
-        <!-- ✦ SELLER DASHBOARD ICON — هنا الجديد -->
+        <!-- SELLER DASHBOARD ICON -->
         @if (isSeller()) {
           <a routerLink="/seller" class="nav__icon-btn nav__cart" [title]="langService.translate('sellerDashboard')">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
@@ -233,7 +224,7 @@
                 <span class="nav__badge">{{ notificationService.unreadCount() }}</span>
               }
             </button>
-
+ 
             <!-- Notifications Dropdown -->
             <div class="nav__drop nav__drop--right nav__notifications-dropdown" [class.nav__drop--open]="activeDropdown() === 'notif'">
               <div class="nav__drop-inner">
@@ -348,7 +339,6 @@
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                 {{ langService.translate('chat') }}
               </a>
-              <!-- ✦ Seller Dashboard شالناه من هنا -->
               @if (!isSeller()) {
                 <a routerLink="/become-seller" class="nav__drop-item nav__drop-item--sell">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21h18M5 21V10M19 21V10M3 10l1.5-6h15L21 10M3 10h18"/><circle cx="18" cy="6" r="3" fill="#fff" stroke="currentColor"/><path d="M18 4.8v2.4M16.8 6h2.4"/></svg>
