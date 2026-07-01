@@ -10,6 +10,7 @@ import { AuthResponse } from '../models/auth-response.mode';
 import { ApiResponse } from '../models/api-response.model';
 import { environment } from '../../../environments/environment';
 import { API_URLS } from '../../constants/API_URLS';
+import { AuthTokenService } from './auth-token.service';
 
 type AuthTab = 'login' | 'register' | 'otp';
 
@@ -19,6 +20,7 @@ type AuthTab = 'login' | 'register' | 'otp';
 export class AuthService {
 
   private http = inject(HttpClient);
+  private authTokenService = inject(AuthTokenService);
   private apiUrl = `${environment.apiUrl}/api/auth`;
 
   activeTab  = signal<AuthTab>('login');
@@ -34,6 +36,14 @@ export class AuthService {
   private inMemoryToken: string | null = null;
   private inMemoryUser: AuthResponse | null = null;
   private inMemoryExpiry: string | null = null;
+
+  constructor() {
+    if (environment.authMode === 'bearer') {
+      this.silentReauthenticate().subscribe();
+    } else {
+      this.restoreSession();
+    }
+  }
 
   // ── Login ──────────────────────────────────────────────────
   login(model: LoginRequest): Observable<ApiResponse<AuthResponse>> {
@@ -96,6 +106,7 @@ export class AuthService {
     this.inMemoryToken = null;
     this.inMemoryUser = null;
     this.inMemoryExpiry = null;
+    this.authTokenService.setToken(null);
     try {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
@@ -115,6 +126,25 @@ export class AuthService {
   }
 
   // ── Session ────────────────────────────────────────────────
+  silentReauthenticate(): Observable<ApiResponse<AuthResponse>> {
+    return this.http.get<ApiResponse<AuthResponse>>(
+      API_URLS.checkBanStatus,
+      { withCredentials: true }
+    ).pipe(
+      tap(res => {
+        if (res.success && res.data) {
+          this.setSession(res.data);
+          this.startTokenTimer(res.data.tokenExpiry);
+          this.startBanPolling();
+        }
+      }),
+      catchError(err => {
+        console.warn('Silent re-authentication failed:', err);
+        return of(err);
+      })
+    );
+  }
+
   restoreSession() {
     let expiry = this.inMemoryExpiry;
     try {
@@ -136,6 +166,7 @@ export class AuthService {
     this.inMemoryToken = auth.token;
     this.inMemoryUser = auth;
     this.inMemoryExpiry = auth.tokenExpiry;
+    this.authTokenService.setToken(auth.token);
     try {
       localStorage.setItem('token', auth.token);
       localStorage.setItem('user', JSON.stringify(auth));
@@ -151,6 +182,9 @@ export class AuthService {
   }
 
   getToken(): string | null {
+    if (environment.authMode === 'bearer') {
+      return this.authTokenService.token();
+    }
     try {
       return localStorage.getItem('token') ?? this.inMemoryToken;
     } catch {
@@ -176,6 +210,7 @@ export class AuthService {
     this.inMemoryToken = null;
     this.inMemoryUser = null;
     this.inMemoryExpiry = null;
+    this.authTokenService.setToken(null);
     try {
       localStorage.removeItem('token');
       localStorage.removeItem('user');

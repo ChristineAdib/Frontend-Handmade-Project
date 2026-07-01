@@ -2,6 +2,7 @@ import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { catchError, throwError } from 'rxjs';
 import { AuthService } from '../../auth/Services/auth';
+import { environment } from '../../../environments/environment';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
@@ -19,13 +20,15 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     'Accept-Language': lang
   };
 
-  if (token) {
+  if (environment.authMode === 'bearer' && token) {
     headers['Authorization'] = `Bearer ${token}`;
   }
 
+  const useCredentials = req.withCredentials || (environment.authMode === 'cookie');
+
   req = req.clone({ 
     setHeaders: headers,
-    withCredentials: true 
+    withCredentials: useCredentials 
   });
 
   return next(req).pipe(
