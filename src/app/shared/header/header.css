@@ -13,16 +13,29 @@
   position: sticky;
   top: 0;
   z-index: 1030;
+  --ann-height: 36px;
+  --nav-height: 80px;
+}
+@media (max-width: 640px) {
+  :host {
+    --ann-height: 30px;
+    --nav-height: 72px;
+  }
 }
  
 /* ── ANNOUNCEMENT BAR ── */
 .ann-bar {
   background: #1e0e05;
   color: #d4a96a;
-  height: 36px;
+  height: var(--ann-height);
   overflow: hidden;
   display: flex;
   align-items: center;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateY(0);
+}
+.ann-bar--hidden {
+  transform: translateY(calc(-1 * var(--ann-height)));
 }
  
 .ann-track {
@@ -44,18 +57,30 @@
  
 /* ── NAV ── */
 .nav {
-   background: #f5f0eb;
+  background: #f5f0eb;
   border-bottom: 1px solid rgba(180, 120, 60, 0.08);
-  transition: box-shadow 0.4s ease, background 0.4s ease;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, background 0.3s ease, backdrop-filter 0.3s ease;
   position: relative;
+  transform: translateY(0);
+  pointer-events: auto;
 }
  
 .nav--scrolled {
-   background: rgba(245, 240, 235, 0.96);
-  backdrop-filter: blur(24px) saturate(1.2);
-  -webkit-backdrop-filter: blur(24px) saturate(1.2);
-  box-shadow: 0 2px 32px rgba(60, 30, 10, 0.06);
+  background: rgba(245, 240, 235, 0.75) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  box-shadow: 0 8px 30px rgba(49, 23, 2, 0.08) !important;
   border-bottom-color: rgba(180, 120, 60, 0.12);
+}
+
+.nav--hidden {
+  transform: translateY(calc(-1 * (var(--ann-height) + var(--nav-height)))) !important;
+  pointer-events: none !important;
+}
+
+.nav--sticky {
+  transform: translateY(calc(-1 * var(--ann-height))) !important;
+  pointer-events: auto !important;
 }
  
 /* ═══ INNER ═══ */
@@ -63,22 +88,21 @@
   max-width: 1400px;
   margin: 0 auto;
   padding: 0 40px;
-  height: 110px;
+  height: 80px;
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 40px;
+  gap: 60px;
 }
  
 /* ── LEFT: LOGO ── */
 .logo {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 12px;
   text-decoration: none;
   flex-shrink: 0;
-  width: 230px;
-  margin-right: 8px;
+  width: 280px;
   margin-left: -90px;
 }
 
@@ -138,8 +162,8 @@
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 20px;
-  width: 300px;
+  gap: 32px;
+  width: auto;
   list-style: none;
   margin: 0;
   padding: 0;
@@ -466,8 +490,9 @@
 .nav__featured-buttons {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  width: 300px;
+  justify-content: flex-start;
+  gap: 20px;
+  width: auto;
   flex-shrink: 0;
 }
 
@@ -475,9 +500,10 @@
 .nav__icons-wrapper {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  width: 320px;
+  justify-content: flex-end;
+  gap: 12px;
   flex-shrink: 0;
+  margin-left: auto;
 }
 
 /* Icon Buttons Compact Size & SVG Center Overrides */
@@ -579,36 +605,21 @@
   color: #3d2010;
   border-radius: 50%;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.25s ease;
   position: relative;
   overflow: visible;
 }
- 
-.nav__search-icon::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: #c8813a;
-  border-radius: 50%;
-  transform: scale(0);
-  transition: transform 0.3s ease;
-  z-index: 0;
-}
- 
-.nav__search-icon:hover::before { transform: scale(1); }
 .nav__search-icon:hover {
-  color: #fff;
-  transform: scale(1.05);
-  box-shadow: 0 4px 14px rgba(200, 129, 58, 0.25);
+  background: rgba(92, 51, 23, 0.06);
+  color: #c8813a;
+  transform: translateY(-1px);
 }
- 
 .nav__search-icon svg {
   position: relative;
   z-index: 1;
-  transition: transform 0.3s ease;
+  transition: transform 0.25s ease;
 }
- 
-.nav__search-icon:hover svg { transform: scale(1.15); }
+.nav__search-icon:hover svg { transform: scale(1.05); }
  
 .nav__divider {
   width: 1px;
@@ -637,35 +648,23 @@
   border-radius: 50%;
   cursor: pointer;
   text-decoration: none;
-  transition: all 0.3s ease;
+  transition: all 0.25s ease;
   overflow: visible;
 }
-
-.nav__icon-btn::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: #c8813a;
-  border-radius: 50%;
-  transform: scale(0);
-  transition: transform 0.3s ease;
-  z-index: 0;
-}
  
-.nav__icon-btn:hover::before { transform: scale(1); }
 .nav__icon-btn:hover {
-  color: #fff;
-  transform: scale(1.05);
-  box-shadow: 0 4px 14px rgba(200, 129, 58, 0.25);
+  background: rgba(92, 51, 23, 0.06);
+  color: #c8813a;
+  transform: translateY(-1px);
 }
  
 .nav__icon-btn svg {
   position: relative;
   z-index: 1;
-  transition: transform 0.3s ease;
+  transition: transform 0.25s ease;
 }
  
-.nav__icon-btn:hover svg { transform: scale(1.15); }
+.nav__icon-btn:hover svg { transform: scale(1.05); }
  
 .nav__cart { position: relative; }
  
@@ -706,36 +705,21 @@
   color: #3d2010;
   border-radius: 50%;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.25s ease;
   position: relative;
   overflow: visible;
 }
- 
-.nav__account-icon::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: #c8813a;
-  border-radius: 50%;
-  transform: scale(0);
-  transition: transform 0.3s ease;
-  z-index: 0;
-}
- 
-.nav__account-icon:hover::before { transform: scale(1); }
 .nav__account-icon:hover {
-  color: #fff;
-  transform: scale(1.05);
-  box-shadow: 0 4px 14px rgba(200, 129, 58, 0.25);
+  background: rgba(92, 51, 23, 0.06);
+  color: #c8813a;
+  transform: translateY(-1px);
 }
- 
 .nav__account-icon svg {
   position: relative;
   z-index: 1;
-  transition: transform 0.3s ease;
+  transition: transform 0.25s ease;
 }
- 
-.nav__account-icon:hover svg { transform: scale(1.15); }
+.nav__account-icon:hover svg { transform: scale(1.05); }
  
 .nav__profile-img {
   position: absolute !important;
@@ -820,55 +804,51 @@
   transform: translateX(-50%) translateY(0);
 }
  
-/* ── START SELLING ── */
-
- .nav__sell-btn {
+/* ── BECOME A SELLER BUTTON ── */
+.nav__become-seller-btn {
   display: flex;
   align-items: center;
   gap: 8px;
   padding: 10px 22px;
-  background: #6b3a1f;
+  background: #563118; /* Dark brown chocolate */
   color: #fff;
   border-radius: 100px;
   font-family: 'Jost', sans-serif;
-  font-size: 14px;
+  font-size: 13.5px;
   font-weight: 600;
   text-decoration: none;
   white-space: nowrap;
-  border: 1.5px solid #6b3a1f;
+  border: 1.5px solid #563118;
   letter-spacing: 0.2px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   flex-shrink: 0;
   position: relative;
   overflow: hidden;
   line-height: 1;
-  animation: 
-    sellPulse 2s infinite 1.5s,
-    sellShake 0.6s ease-in-out 1s;
+  box-shadow: 0 4px 12px rgba(86, 49, 24, 0.15);
 }
  
-.nav__sell-btn::before {
+.nav__become-seller-btn::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: #c8813a;
+  background: #734322;
   transform: translateX(-100%);
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   z-index: 0;
 }
  
-.nav__sell-btn:hover::before { transform: translateX(0); }
-.nav__sell-btn:hover {
-  border-color: #c8813a;
+.nav__become-seller-btn:hover::before { transform: translateX(0); }
+.nav__become-seller-btn:hover {
+  border-color: #734322;
   color: #fff;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(200, 129, 58, 0.35);
-  animation: none;
+  transform: translateY(-1.5px);
+  box-shadow: 0 6px 18px rgba(86, 49, 24, 0.25);
 }
  
-.nav__sell-btn svg,
-.nav__sell-btn span { position: relative; z-index: 1; }
-.nav__sell-btn:hover svg { transform: translateX(4px); }
+.nav__become-seller-btn svg,
+.nav__become-seller-btn span { position: relative; z-index: 1; transition: transform 0.3s ease; }
+.nav__become-seller-btn:hover svg { transform: scale(1.1); }
  
 /* ── SEARCH OVERLAY ── */
 .nav__search-bar {
@@ -1122,10 +1102,9 @@
 /* ── RESPONSIVE ── */
 @media (max-width: 1300px) {
   .nav__inner { gap: 20px; padding: 0 20px; }
-  .logo { width: 190px; }
-  .nav__links { width: 260px; }
-  .nav__featured-buttons { width: 260px; }
-  .nav__icons-wrapper { width: 280px; }
+  .logo { width: 220px; }
+  .nav__links { width: auto; }
+  .nav__featured-buttons { width: auto; }
   .nav__gift-btn { padding: 8px 12px; font-size: 13px; }
 }
 
@@ -1138,7 +1117,7 @@
 @media (max-width: 960px) {
   .nav__links { display: none; }
   .nav__featured-buttons { display: none; }
-  .nav__sell-btn { display: none; }
+  .nav__become-seller-btn { display: none; }
   .nav__gift-btn { display: none; }
   .nav__studio-btn { display: none; }
   .nav__burger { display: flex; }
