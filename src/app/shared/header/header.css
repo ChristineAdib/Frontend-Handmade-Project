@@ -135,7 +135,8 @@
 .nav__links {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
+  gap: 20px;
   width: 300px;
   list-style: none;
   margin: 0;
