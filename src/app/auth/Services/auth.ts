@@ -49,7 +49,8 @@ export class AuthService {
   login(model: LoginRequest): Observable<ApiResponse<AuthResponse>> {
     return this.http.post<ApiResponse<AuthResponse>>(
       `${this.apiUrl}/login`,
-      model
+      model,
+      {withCredentials:  true}
     ).pipe(
       tap(res => {
         if (res.success && res.data) {
@@ -64,7 +65,7 @@ export class AuthService {
   loginWithGoogle(credential: string): Observable<ApiResponse<AuthResponse>> {
     return this.http.post<ApiResponse<AuthResponse>>(
       `${this.apiUrl}/google`,
-      { credential }
+      {withCredentials:  true}
     ).pipe(
       tap(res => {
         if (res.success && res.data) {
@@ -82,7 +83,7 @@ export class AuthService {
 
     this.banPollingSubscription = interval(this.POLL_INTERVAL_MS).pipe(
       switchMap(() =>
-        this.http.get<ApiResponse<any>>(API_URLS.checkBanStatus).pipe(
+        this.http.get<ApiResponse<any>>(API_URLS.checkBanStatus, {withCredentials:  true}).pipe(
           catchError(err => of(err))
         )
       )
@@ -245,11 +246,11 @@ export class AuthService {
 
   // ── Other endpoints ────────────────────────────────────────
   forgotPassword(email: string): Observable<ApiResponse<any>> {
-    return this.http.post<ApiResponse<any>>(`${this.apiUrl}/forgot-password`, { email });
+    return this.http.post<ApiResponse<any>>(`${this.apiUrl}/forgot-password`, { email }, {withCredentials:  true});
   }
 
   resetPassword(model: any): Observable<ApiResponse<any>> {
-    return this.http.post<ApiResponse<any>>(`${this.apiUrl}/reset-password`, model);
+    return this.http.post<ApiResponse<any>>(`${this.apiUrl}/reset-password`, model, {withCredentials:  true});
   }
 
   register(model: RegisterRequest) {
@@ -262,15 +263,17 @@ export class AuthService {
     if (model.phoneNumber) formData.append('phoneNumber', model.phoneNumber);
     if (model.bio) formData.append('bio', model.bio);
     if (model.profileImage) formData.append('profileImage', model.profileImage);
-    return this.http.post(`${this.apiUrl}/register`, formData);
+    return this.http.post(`${this.apiUrl}/register`, formData,
+      {withCredentials:  true});
   }
 
   verifyOtp(model: any) {
-    return this.http.post(`${this.apiUrl}/verify-otp`, model);
+    return this.http.post(`${this.apiUrl}/verify-otp`, model,
+      {withCredentials:  true});
   }
 
   resendOtp(model: any) {
-    return this.http.post(`${this.apiUrl}/resend-otp`, model);
+    return this.http.post(`${this.apiUrl}/resend-otp`, model, {withCredentials:  true});
   }
 
   extractError(err: any, fallback: string = 'An error occurred.'): string {

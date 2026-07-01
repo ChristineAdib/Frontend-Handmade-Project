@@ -127,7 +127,8 @@ export class ChatService implements OnDestroy {
   async loadConversations(): Promise<void> {
     try {
       const res = await firstValueFrom(
-        this.http.get<ApiResponse<Conversation[]>>(`${this.apiUrl}/conversations`)
+        this.http.get<ApiResponse<Conversation[]>>(`${this.apiUrl}/conversations`,
+      {withCredentials:  true})
       );
       if (res.success && res.data) {
         // Sort conversations: newest last message first
@@ -149,7 +150,8 @@ export class ChatService implements OnDestroy {
   async loadMessages(conversationId: string): Promise<void> {
     try {
       const res = await firstValueFrom(
-        this.http.get<ApiResponse<Message[]>>(`${this.apiUrl}/${conversationId}/messages`)
+        this.http.get<ApiResponse<Message[]>>(`${this.apiUrl}/${conversationId}/messages`,
+      {withCredentials:  true})
       );
       if (res.success && res.data) {
         this.activeMessages.set(res.data);
@@ -170,7 +172,7 @@ export class ChatService implements OnDestroy {
     }
     try {
       const res = await firstValueFrom(
-        this.http.post<ApiResponse<Conversation>>(`${this.apiUrl}/start`, { sellerId })
+        this.http.post<ApiResponse<Conversation>>(`${this.apiUrl}/start`, { sellerId }, {withCredentials:  true })
       );
       if (res.success && res.data) {
         const exists = this.conversations().some((c) => c.id === res.data.id);
@@ -194,7 +196,7 @@ export class ChatService implements OnDestroy {
   async startConversationByShop(shopId: string): Promise<Conversation> {
     try {
       const res = await firstValueFrom(
-        this.http.post<ApiResponse<Conversation>>(`${this.apiUrl}/start-by-shop/${shopId}`, {})
+        this.http.post<ApiResponse<Conversation>>(`${this.apiUrl}/start-by-shop/${shopId}`, {}, {withCredentials:  true })
       );
       if (res.success && res.data) {
         const exists = this.conversations().some((c) => c.id === res.data.id);
@@ -224,7 +226,7 @@ export class ChatService implements OnDestroy {
     try {
       const body = { conversationId, content, type, imageUrl };
       const res = await firstValueFrom(
-        this.http.post<ApiResponse<Message>>(`${this.apiUrl}/send`, body)
+        this.http.post<ApiResponse<Message>>(`${this.apiUrl}/send`, body, {withCredentials:  true })
       );
 
       if (res.success && res.data) {
@@ -256,7 +258,7 @@ export class ChatService implements OnDestroy {
   async markAsRead(conversationId: string): Promise<void> {
     try {
       await firstValueFrom(
-        this.http.patch(`${this.apiUrl}/${conversationId}/read`, {})
+        this.http.patch(`${this.apiUrl}/${conversationId}/read`, {}, {withCredentials:  true })
       );
       
       // Update unread status locally
@@ -288,7 +290,7 @@ export class ChatService implements OnDestroy {
       formData.append('file', file);
 
       const res = await firstValueFrom(
-        this.http.post<ApiResponse<string>>(`${this.apiUrl}/upload`, formData)
+        this.http.post<ApiResponse<string>>(`${this.apiUrl}/upload`, formData, {withCredentials:  true })
       );
 
       if (res.success && res.data) {

@@ -24,11 +24,9 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     headers['Authorization'] = `Bearer ${token}`;
   }
 
-  const useCredentials = req.withCredentials || (environment.authMode === 'cookie');
-
   req = req.clone({ 
     setHeaders: headers,
-    withCredentials: useCredentials 
+    withCredentials: true 
   });
 
   return next(req).pipe(
