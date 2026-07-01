@@ -1,12 +1,14 @@
 import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
-import { inject } from '@angular/core';
+import { inject, Injector } from '@angular/core';
 import { catchError, throwError } from 'rxjs';
 import { AuthService } from '../../auth/Services/auth';
+import { AuthTokenService } from '../../auth/Services/auth-token.service';
 import { environment } from '../../../environments/environment';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const authService = inject(AuthService);
-  const token = authService.getToken();
+  const injector = inject(Injector);
+  const authTokenService = inject(AuthTokenService);
+  const token = authTokenService.token();
   
   const lang = (() => {
     try {
@@ -32,6 +34,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   return next(req).pipe(
     catchError((err: HttpErrorResponse) => {
       if (err.status === 403) {
+        const authService = injector.get(AuthService);
         authService.forceLogoutBanned();
       }
       return throwError(() => err);

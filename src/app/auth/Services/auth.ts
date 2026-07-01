@@ -39,7 +39,22 @@ export class AuthService {
 
   constructor() {
     if (environment.authMode === 'bearer') {
-      this.silentReauthenticate().subscribe();
+      let hasToken = false;
+      try {
+        const savedToken = localStorage.getItem('token');
+        if (savedToken) {
+          this.authTokenService.setToken(savedToken);
+          hasToken = true;
+        }
+      } catch (e) {
+        console.warn('Failed to restore token from localStorage on startup:', e);
+      }
+      
+      if (hasToken) {
+        this.silentReauthenticate().subscribe();
+      } else {
+        this.restoreSession();
+      }
     } else {
       this.restoreSession();
     }
@@ -141,9 +156,28 @@ export class AuthService {
       }),
       catchError(err => {
         console.warn('Silent re-authentication failed:', err);
+        this.logoutQuietly();
         return of(err);
       })
     );
+  }
+
+  logoutQuietly() {
+    this.stopBanPolling();
+    this.inMemoryToken = null;
+    this.inMemoryUser = null;
+    this.inMemoryExpiry = null;
+    this.authTokenService.setToken(null);
+    try {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      localStorage.removeItem('expiry');
+    } catch (e) {
+      console.warn('Failed to clear localStorage on quiet logout:', e);
+    }
+
+    if (this.logoutTimer) clearTimeout(this.logoutTimer);
+    this.authChange$.next();
   }
 
   restoreSession() {
