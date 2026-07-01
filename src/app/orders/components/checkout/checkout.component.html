@@ -89,32 +89,139 @@
 
         <!-- RIGHT: Summary -->
         <div class="checkout-summary">
-          <h3>{{ langService.translate('summary') }}</h3>
+          <h3>{{ langService.translate('orderSummary') }}</h3>
           
-          @if (requestId() && customRequest()) {
-            <div class="custom-checkout-item-details" style="margin-top: 1rem; border-top: 1px solid rgba(176, 110, 46, 0.1); padding-top: 1rem;">
-              <div class="item-visual-frame" style="width: 100%; aspect-ratio: 16/10; border-radius: 8px; overflow: hidden; border: 1px solid rgba(176, 110, 46, 0.15); margin-bottom: 0.75rem;">
-                <img [src]="customRequest()!.selectedDesign?.imageUrl || customRequest()!.referenceImageUrl" alt="Custom Doll Design" style="width: 100%; height: 100%; object-fit: cover;" referrerpolicy="no-referrer" />
+          <div class="summary-items-container">
+            @if (requestId() && customRequest()) {
+              <div class="summary-item-card">
+                <div class="summary-item-image-wrapper">
+                  <img [src]="customRequest()!.selectedDesign?.imageUrl || customRequest()!.referenceImageUrl" 
+                       [alt]="customRequest()!.customService?.title || 'Custom Crochet Doll'" 
+                       class="summary-item-image" 
+                       referrerpolicy="no-referrer" />
+                  <span class="summary-item-quantity-badge">1</span>
+                </div>
+                <div class="summary-item-info">
+                  <h4 class="summary-item-name">
+                    {{ customRequest()!.customService?.title || (langService.currentLang() === 'ar' ? 'طلب خاص - دمية كروشيه' : 'Custom Crochet Doll') }}
+                  </h4>
+                  @if (getCustomConfiguration(); as config) {
+                    <div class="summary-item-variants">
+                      @if (config.gender) {
+                        <span class="variant-tag">{{ config.gender }}</span>
+                      }
+                      @if (config.size) {
+                        <span class="variant-tag">{{ config.size }}</span>
+                      }
+                      @if (config.skinTone) {
+                        <span class="variant-tag">
+                          {{ langService.currentLang() === 'ar' ? 'بشرة: ' + config.skinTone : config.skinTone + ' skin' }}
+                        </span>
+                      }
+                      @if (config.hairColor) {
+                        <span class="variant-tag">
+                          {{ langService.currentLang() === 'ar' ? 'شعر: ' + config.hairColor : config.hairColor + ' hair' }}
+                        </span>
+                      }
+                    </div>
+                  }
+                </div>
+                <div class="summary-item-price-column">
+                  <span class="summary-item-price">
+                    {{ customRequest()!.customService?.price | currency:'EGP':'symbol' }}
+                  </span>
+                </div>
               </div>
-              <h4 style="margin: 0 0 0.5rem 0; font-size: 0.95rem; font-weight: 700; color: #2c1e14;">{{ customRequest()!.customService?.title || 'Custom Crochet Doll' }}</h4>
-              
-              <div class="summary-price-box" style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                <span style="font-size: 0.85rem; color: #7d6b5d;">Service Price</span>
-                <span style="font-weight: 700; color: #2c1e14;">{{ customRequest()!.customService?.price | currency:'EGP ' }}</span>
-              </div>
-              <div class="summary-delivery-box" style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                <span style="font-size: 0.85rem; color: #7d6b5d;">Estimated Delivery</span>
-                <span style="font-weight: 600; color: #2c1e14;">{{ customRequest()!.customService?.estimatedDeliveryDays }} Days</span>
-              </div>
-              
-              <a [routerLink]="['/custom-studio/negotiation', requestId()]" class="btn-edit-cart" style="display: block; margin-top: 1rem; text-align: center; font-size: 0.82rem;">
-                &larr; Back to Negotiation Chat
-              </a>
+            } @else {
+              @if (cart(); as cartData) {
+                @if (cartData.items.length > 0) {
+                  <div class="summary-items-scrollable">
+                    @for (item of cartData.items; track item.productId) {
+                      <div class="summary-item-card">
+                        <div class="summary-item-image-wrapper">
+                          @if (item.imageUrl) {
+                            <img [src]="getImageUrl(item)" 
+                                 [alt]="langService.currentLang() === 'ar' ? (item.titleAr || item.titleEn) : item.titleEn" 
+                                 class="summary-item-image" />
+                          } @else {
+                            <div class="summary-item-image-placeholder"></div>
+                          }
+                          <span class="summary-item-quantity-badge">{{ item.quantity }}</span>
+                        </div>
+                        <div class="summary-item-info">
+                          <h4 class="summary-item-name">
+                            {{ langService.currentLang() === 'ar' ? (item.titleAr || item.titleEn) : item.titleEn }}
+                          </h4>
+                          <div class="summary-item-unit-price">
+                            @if (item.discountPrice !== null && item.discountPrice < item.price) {
+                              <span class="unit-price-old">{{ item.price | currency:'EGP':'symbol' }}</span>
+                              <span class="unit-price-current">{{ item.discountPrice | currency:'EGP':'symbol' }}</span>
+                            } @else {
+                              <span class="unit-price-current">{{ item.price | currency:'EGP':'symbol' }}</span>
+                            }
+                          </div>
+                        </div>
+                        <div class="summary-item-price-column">
+                          <span class="summary-item-price">
+                            {{ item.totalPrice | currency:'EGP':'symbol' }}
+                          </span>
+                        </div>
+                      </div>
+                    }
+                  </div>
+                } @else {
+                  <p class="summary-empty">
+                    {{ langService.currentLang() === 'ar' ? 'سلتك فارغة حالياً' : 'Your cart is empty' }}
+                  </p>
+                }
+              }
+            }
+          </div>
+
+          <div class="summary-price-details">
+            <!-- Subtotal -->
+            <div class="summary-price-row">
+              <span class="price-label">{{ langService.translate('subtotal') }}</span>
+              <span class="price-value">{{ getSubtotal() | currency:'EGP':'symbol' }}</span>
             </div>
+
+            <!-- Discount -->
+            @if (getDiscount() > 0) {
+              <div class="summary-price-row discount-row">
+                <span class="price-label">{{ langService.currentLang() === 'ar' ? 'الخصم' : 'Discount' }}</span>
+                <span class="price-value">-{{ getDiscount() | currency:'EGP':'symbol' }}</span>
+              </div>
+            }
+
+            <!-- Shipping -->
+            <div class="summary-price-row">
+              <span class="price-label">{{ langService.translate('shipping') }}</span>
+              <span class="price-value">
+                @if (checkoutForm.value.deliveryMethodId) {
+                  {{ getSelectedDeliveryCost() | currency:'EGP':'symbol' }}
+                } @else {
+                  <span class="shipping-placeholder">
+                    {{ langService.currentLang() === 'ar' ? 'اختر طريقة التوصيل' : 'Select delivery method' }}
+                  </span>
+                }
+              </span>
+            </div>
+
+            <!-- Total -->
+            <div class="summary-total-divider"></div>
+            <div class="summary-price-row total-row">
+              <span class="total-label-text">{{ langService.currentLang() === 'ar' ? 'الإجمالي النهائي' : 'Grand Total' }}</span>
+              <span class="total-value-text">{{ getGrandTotal() | currency:'EGP':'symbol' }}</span>
+            </div>
+          </div>
+
+          @if (requestId() && customRequest()) {
+            <a [routerLink]="['/custom-studio/negotiation', requestId()]" class="btn-edit-cart mt-3">
+              {{ langService.currentLang() === 'ar' ? '← العودة إلى المحادثة' : '← Back to Negotiation' }}
+            </a>
           } @else {
-            <p class="summary-note">{{ langService.translate('checkoutSummaryNote') }}</p>
-            <a routerLink="/cart" class="btn-edit-cart">
-              {{ langService.translate('editCart') }} {{ langService.currentLang() === 'ar' ? '&larr;' : '&rarr;' }}
+            <a routerLink="/cart" class="btn-edit-cart mt-3">
+              {{ langService.translate('editCart') }} {{ langService.currentLang() === 'ar' ? '←' : '→' }}
             </a>
           }
         </div>

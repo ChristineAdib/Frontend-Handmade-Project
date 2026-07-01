@@ -4,9 +4,10 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { OrderService } from '../../services/order.service';
 import { LanguageService } from '../../../core/services/language.service';
-import { CartApiService } from '../../services/cart-api.service';
+import { CartApiService, CartItemDto } from '../../services/cart-api.service';
 import { CustomStudioService } from '../../../custom-studio/services/custom-studio.service';
-import { CustomRequestDetailDto } from '../../../custom-studio/models/custom-studio.models';
+import { CustomRequestDetailDto, CustomConfiguration } from '../../../custom-studio/models/custom-studio.models';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-checkout',
@@ -26,6 +27,7 @@ export class CheckoutComponent implements OnInit {
 
   requestId = signal<string | null>(null);
   customRequest = signal<CustomRequestDetailDto | null>(null);
+  readonly cart = this.cartApiService.cart;
 
   checkoutForm = this.fb.group({
     firstName: ['', Validators.required],
@@ -54,8 +56,62 @@ export class CheckoutComponent implements OnInit {
             console.error('Failed to load custom request details for checkout:', err);
           }
         });
+      } else {
+        this.cartApiService.getCart();
       }
     });
+  }
+
+  getSelectedDeliveryCost(): number {
+    const id = this.checkoutForm.value.deliveryMethodId;
+    const method = this.orderService.deliveryMethods().find(m => m.id === id);
+    return method ? method.cost : 0;
+  }
+
+  getSubtotal(): number {
+    if (this.requestId() && this.customRequest()) {
+      return this.customRequest()?.customService?.price || 0;
+    }
+    const cart = this.cart();
+    if (!cart) return 0;
+    return cart.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  }
+
+  getDiscount(): number {
+    if (this.requestId() && this.customRequest()) {
+      return 0;
+    }
+    const cart = this.cart();
+    if (!cart) return 0;
+    return cart.items.reduce((sum, item) => {
+      if (item.discountPrice !== null && item.discountPrice < item.price) {
+        return sum + (item.price - item.discountPrice) * item.quantity;
+      }
+      return sum;
+    }, 0);
+  }
+
+  getGrandTotal(): number {
+    return this.getSubtotal() - this.getDiscount() + this.getSelectedDeliveryCost();
+  }
+
+  getImageUrl(item: CartItemDto): string {
+    if (!item.imageUrl) return '';
+    if (item.imageUrl.startsWith('http://') || item.imageUrl.startsWith('https://') || item.imageUrl.startsWith('//')) {
+      return item.imageUrl;
+    }
+    return `${environment.apiUrl}/${item.imageUrl}`;
+  }
+
+  getCustomConfiguration(): CustomConfiguration | null {
+    const config = this.customRequest()?.customConfiguration?.configurationDataJson;
+    if (!config) return null;
+    try {
+      return JSON.parse(config) as CustomConfiguration;
+    } catch (e) {
+      console.error('Failed to parse custom configuration:', e);
+      return null;
+    }
   }
 
   async onSubmit(): Promise<void> {
