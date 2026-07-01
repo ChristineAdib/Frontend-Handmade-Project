@@ -383,7 +383,7 @@ export const translations = {
     // Extended localization
     shopByCraft: 'Shop by Craft',
     viewAllCrafts: 'View All Crafts',
-    artisans: 'Artisans',
+    artisans: 'Creators',
     allProducts: 'All Products',
     startSelling: 'Start Selling',
     myAccount: 'My Account',
@@ -867,7 +867,7 @@ export const translations = {
     // Extended localization
     shopByCraft: 'تسوق حسب الحرفة',
     viewAllCrafts: 'عرض كل الحرف',
-    artisans: 'حرفيّونا',
+    artisans: 'المبدعون',
     allProducts: 'جميع المنتجات',
     startSelling: 'ابدأ البيع',
     myAccount: 'حسابي',
