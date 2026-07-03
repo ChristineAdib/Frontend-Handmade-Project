@@ -1,8 +1,8 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CustomStudioService } from '../../services/custom-studio.service';
-import { CustomRequestDetailDto, GeneratedDesignDto } from '../../models/custom-studio.models';
+import { CustomRequestDetailDto, GeneratedDesignDto, parseDesignSummary, DesignSummary } from '../../models/custom-studio.models';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
@@ -23,6 +23,9 @@ export class ResultsComponent implements OnInit {
   designs = signal<GeneratedDesignDto[]>([]);
   loading = signal<boolean>(true);
   regenerating = signal<boolean>(false);
+
+  // Active Design showcasing state
+  activeDesignIndex = signal<number>(0);
 
   // Refinement details
   refinementPrompts = signal<{[key: string]: string}>({});
@@ -215,5 +218,60 @@ export class ResultsComponent implements OnInit {
 
   trackByDesignId(index: number, design: GeneratedDesignDto): string {
     return design.id;
+  }
+
+  setActiveDesign(idx: number): void {
+    this.activeDesignIndex.set(idx);
+  }
+
+  parseSummary(design: GeneratedDesignDto): DesignSummary {
+    return parseDesignSummary(design);
+  }
+
+  getWhyYouLoveIt(design: GeneratedDesignDto): string {
+    const summary = this.parseSummary(design);
+    const details: string[] = [];
+    if (summary.hairStyle && summary.hairStyle !== 'Bald') {
+      details.push(`charming ${summary.hairStyle.toLowerCase()} hair`);
+    }
+    if (summary.accessories && summary.accessories !== 'None') {
+      details.push(`delightful ${summary.accessories.toLowerCase()}`);
+    }
+    if (summary.outfit && summary.outfit !== 'Default Outfit') {
+      details.push(`beautiful ${summary.outfit.toLowerCase()}`);
+    }
+    
+    if (details.length > 0) {
+      const joined = details.join(', ');
+      return `A delicate and charming design featuring ${joined}, and a timeless look perfect for collectors.`;
+    }
+    return "A delicate and charming design with soft curls, stylish features, and a timeless look perfect for collectors.";
+  }
+
+  getColorPalette(design: GeneratedDesignDto): string[] {
+    const summary = this.parseSummary(design);
+    const colors: string[] = [];
+    if (summary.hairColor) {
+      const c = summary.hairColor.toLowerCase();
+      if (c.includes('brown')) colors.push('#7c5835');
+      else if (c.includes('yellow') || c.includes('blonde')) colors.push('#e6c27e');
+      else if (c.includes('black')) colors.push('#2c2c2c');
+      else if (c.includes('red')) colors.push('#a83b2c');
+      else if (c.startsWith('#')) colors.push(summary.hairColor);
+    }
+    
+    // Add Handaura brand warm aesthetic colors to fill 4 circles
+    const presets = ['#e2c293', '#b37e4e', '#8c5827', '#fdfbf7'];
+    presets.forEach(p => {
+      if (colors.length < 4 && !colors.includes(p)) {
+        colors.push(p);
+      }
+    });
+    
+    // Fallback if empty
+    while (colors.length < 4) {
+      colors.push('#8c5827');
+    }
+    return colors;
   }
 }

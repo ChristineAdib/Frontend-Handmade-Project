@@ -1,126 +1,227 @@
 <div class="contact-container" [dir]="langService.currentLang() === 'ar' ? 'rtl' : 'ltr'">
-  <!-- Hero Header -->
+  <!-- Hero Section -->
   <header class="contact-hero">
+    <div class="hero-bg" style="background-image: url('/images/contact_bg.jpg');"></div>
     <div class="hero-overlay"></div>
     <div class="hero-content">
-      <span class="hero-tag">✦ {{ langService.currentLang() === 'ar' ? 'تواصل معنا' : 'Get In Touch' }}</span>
+      <span class="hero-tag">✦ {{ langService.currentLang() === 'ar' ? 'اتصل بنا' : 'Get In Touch' }}</span>
       <h1 class="hero-title">{{ langService.translate('contactUs') }}</h1>
       <p class="hero-subtitle">{{ langService.translate('contactSubtitle') }}</p>
     </div>
   </header>
 
-  <!-- Split Grid -->
-  <div class="contact-grid">
-    <!-- Contact Info Cards -->
-    <div class="contact-info">
-      <div class="info-card">
-        <div class="info-icon">📧</div>
-        <div class="info-details">
-          <h3>{{ langService.currentLang() === 'ar' ? 'البريد الإلكتروني' : 'Email Address' }}</h3>
-          <a href="mailto:contact@handmadehub.com" class="info-link">contact@handmadehub.com</a>
+  <!-- Main Grid Layout -->
+  <section class="contact-main container-fluid">
+    <div class="contact-layout-grid">
+      <!-- Left Column: Information Cards (40%) -->
+      <div class="info-column">
+        <!-- Address Card -->
+        <div class="info-card-custom">
+          <div class="card-icon-wrapper">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+              <circle cx="12" cy="10" r="3"></circle>
+            </svg>
+          </div>
+          <div class="card-text-wrapper">
+            <h4 class="card-label">{{ langService.translate('cardAddress') }}</h4>
+            <p class="card-value">{{ langService.translate('cardAddressVal') }}</p>
+          </div>
+        </div>
+
+        <!-- Phone Card -->
+        <div class="info-card-custom">
+          <div class="card-icon-wrapper">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+            </svg>
+          </div>
+          <div class="card-text-wrapper">
+            <h4 class="card-label">{{ langService.translate('cardPhone') }}</h4>
+            <a href="tel:+201234567890" class="card-value card-link">{{ langService.translate('cardPhoneVal') }}</a>
+          </div>
+        </div>
+
+        <!-- Email Card -->
+        <div class="info-card-custom">
+          <div class="card-icon-wrapper">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+              <polyline points="22,6 12,13 2,6"></polyline>
+            </svg>
+          </div>
+          <div class="card-text-wrapper">
+            <h4 class="card-label">{{ langService.translate('cardEmail') }}</h4>
+            <a href="mailto:support@handaura.com" class="card-value card-link">{{ langService.translate('cardEmailVal') }}</a>
+          </div>
+        </div>
+
+        <!-- Working Hours Card -->
+        <div class="info-card-custom">
+          <div class="card-icon-wrapper">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+          </div>
+          <div class="card-text-wrapper">
+            <h4 class="card-label">{{ langService.translate('cardHours') }}</h4>
+            <p class="card-value card-multiline">{{ langService.translate('cardHoursVal') }}</p>
+          </div>
         </div>
       </div>
 
-      <div class="info-card">
-        <div class="info-icon">📱</div>
-        <div class="info-details">
-          <h3>{{ langService.currentLang() === 'ar' ? 'رقم الهاتف' : 'Phone Number' }}</h3>
-          <a href="tel:+201000000000" class="info-link">+20 100 000 0000</a>
-        </div>
-      </div>
+      <!-- Right Column: Contact Form (60%) -->
+      <div class="form-column">
+        <div class="form-container-card">
+          <h2 class="form-heading">{{ langService.translate('formTitle') }}</h2>
+          <form #cForm="ngForm" (ngSubmit)="onSubmit(cForm)" novalidate>
+            <div class="form-row">
+              <!-- Full Name -->
+              <div class="form-group-custom">
+                <label for="name" class="form-label-custom">{{ langService.translate('formName') }}</label>
+                <input 
+                  type="text" 
+                  id="name" 
+                  name="name"
+                  class="form-input-custom"
+                  [(ngModel)]="contactForm.name"
+                  #nameModel="ngModel"
+                  required
+                  [placeholder]="langService.translate('placeholderName')"
+                  [disabled]="isSubmitting()"
+                  [ngClass]="{ 'is-invalid': cForm.submitted && nameModel.invalid }"
+                />
+              </div>
 
-      <div class="info-card">
-        <div class="info-icon">📍</div>
-        <div class="info-details">
-          <h3>{{ langService.currentLang() === 'ar' ? 'الموقع' : 'Location' }}</h3>
-          <p class="info-text">{{ langService.translate('cairoEgypt') }}</p>
+              <!-- Email Address -->
+              <div class="form-group-custom">
+                <label for="email" class="form-label-custom">{{ langService.translate('formEmail') }}</label>
+                <input 
+                  type="email" 
+                  id="email" 
+                  name="email"
+                  class="form-input-custom"
+                  [(ngModel)]="contactForm.email"
+                  #emailModel="ngModel"
+                  required
+                  email
+                  [placeholder]="langService.translate('placeholderEmail')"
+                  [disabled]="isSubmitting()"
+                  [ngClass]="{ 'is-invalid': cForm.submitted && emailModel.invalid }"
+                />
+              </div>
+            </div>
+
+            <!-- Subject -->
+            <div class="form-group-custom">
+              <label for="subject" class="form-label-custom">{{ langService.translate('formSubject') }}</label>
+              <input 
+                type="text" 
+                id="subject" 
+                name="subject"
+                class="form-input-custom"
+                [(ngModel)]="contactForm.subject"
+                #subjectModel="ngModel"
+                required
+                [placeholder]="langService.translate('placeholderSubject')"
+                [disabled]="isSubmitting()"
+                [ngClass]="{ 'is-invalid': cForm.submitted && subjectModel.invalid }"
+              />
+            </div>
+
+            <!-- Message -->
+            <div class="form-group-custom">
+              <label for="message" class="form-label-custom">{{ langService.translate('formMessage') }}</label>
+              <textarea 
+                id="message" 
+                name="message"
+                class="form-textarea-custom"
+                [(ngModel)]="contactForm.message"
+                #messageModel="ngModel"
+                required
+                [placeholder]="langService.translate('placeholderMessage')"
+                rows="4"
+                [disabled]="isSubmitting()"
+                [ngClass]="{ 'is-invalid': cForm.submitted && messageModel.invalid }"
+              ></textarea>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-submit-wrapper">
+              <button type="submit" class="btn-submit-custom" [disabled]="isSubmitting()">
+                <span class="btn-text-flex" *ngIf="!isSubmitting()">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="send-icon">
+                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                  </svg>
+                  {{ langService.translate('submitBtn') }}
+                </span>
+                <span class="btn-text-flex" *ngIf="isSubmitting()">
+                  <span class="spinner-custom"></span>
+                  {{ langService.translate('sendingMessage') }}
+                </span>
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
+  </section>
 
-    <!-- Contact Form Card -->
-    <div class="form-card">
-      <h2 class="form-title">{{ langService.translate('contactFormTitle') }}</h2>
-      
-      <form #cForm="ngForm" (ngSubmit)="onSubmit(cForm)" novalidate>
-        <!-- Full Name -->
-        <div class="form-group">
-          <label for="name">{{ langService.translate('fullName') }} *</label>
-          <input 
-            type="text" 
-            id="name" 
-            name="name"
-            class="form-control"
-            [(ngModel)]="contactForm.name"
-            #nameModel="ngModel"
-            required
-            [placeholder]="langService.translate('fullNamePlaceholder')"
-            [disabled]="isSubmitting()"
-            [ngClass]="{ 'is-invalid': cForm.submitted && nameModel.invalid }"
-          />
-        </div>
-
-        <!-- Email Address -->
-        <div class="form-group">
-          <label for="email">{{ langService.currentLang() === 'ar' ? 'البريد الإلكتروني' : 'Email Address' }} *</label>
-          <input 
-            type="email" 
-            id="email" 
-            name="email"
-            class="form-control"
-            [(ngModel)]="contactForm.email"
-            #emailModel="ngModel"
-            required
-            email
-            placeholder="name@example.com"
-            [disabled]="isSubmitting()"
-            [ngClass]="{ 'is-invalid': cForm.submitted && emailModel.invalid }"
-          />
-        </div>
-
-        <!-- Subject -->
-        <div class="form-group">
-          <label for="subject">{{ langService.translate('subjectLabel') }} *</label>
-          <input 
-            type="text" 
-            id="subject" 
-            name="subject"
-            class="form-control"
-            [(ngModel)]="contactForm.subject"
-            #subjectModel="ngModel"
-            required
-            [placeholder]="langService.currentLang() === 'ar' ? 'عنوان الرسالة...' : 'Enter message subject...'"
-            [disabled]="isSubmitting()"
-            [ngClass]="{ 'is-invalid': cForm.submitted && subjectModel.invalid }"
-          />
-        </div>
-
-        <!-- Message -->
-        <div class="form-group">
-          <label for="message">{{ langService.translate('messageLabel') }} *</label>
-          <textarea 
-            id="message" 
-            name="message"
-            class="form-control textarea-control"
-            [(ngModel)]="contactForm.message"
-            #messageModel="ngModel"
-            required
-            [placeholder]="langService.translate('messagePlaceholder')"
-            rows="5"
-            [disabled]="isSubmitting()"
-            [ngClass]="{ 'is-invalid': cForm.submitted && messageModel.invalid }"
-          ></textarea>
-        </div>
-
-        <!-- Submit Button -->
-        <button type="submit" class="submit-btn" [disabled]="isSubmitting()">
-          <span *ngIf="!isSubmitting()">{{ langService.translate('sendMessageBtn') }}</span>
-          <span *ngIf="isSubmitting()" class="spinner-wrapper">
-            <span class="spinner"></span>
-            {{ langService.translate('sendingMessage') }}
-          </span>
-        </button>
-      </form>
+  <!-- Google Map Section -->
+  <section class="map-section container-fluid">
+    <div class="map-container-card">
+      <iframe 
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d110502.2120054707!2d31.188358488052187!3d30.059618469372132!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14583fa60b21beeb%3A0x79dfb296e8423b75!2sCairo%2C%20Cairo%20Governorate!5e0!3m2!1sen!2seg!4v1700000000000!5m2!1sen!2seg" 
+        width="100%" 
+        height="350" 
+        style="border:0;" 
+        allowfullscreen="" 
+        loading="lazy" 
+        referrerpolicy="no-referrer-when-downgrade"
+        class="map-iframe">
+      </iframe>
     </div>
-  </div>
+  </section>
+
+  <!-- FAQ Accordion Section -->
+  <section class="faq-section container-fluid">
+    <h2 class="faq-heading">{{ langService.translate('faqTitle') }}</h2>
+    <div class="faq-accordion-container">
+      @for (faq of faqs; track faq.questionKey; let idx = $index) {
+        <div class="faq-item" [ngClass]="{'open': faq.open}">
+          <button class="faq-trigger" (click)="toggleFaq(idx)">
+            <span class="faq-question">{{ langService.translate(faq.questionKey) }}</span>
+            <span class="faq-icon-arrow">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </span>
+          </button>
+          <div class="faq-content">
+            <p class="faq-answer">{{ langService.translate(faq.answerKey) }}</p>
+          </div>
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- Bottom CTA Section -->
+  <section class="bottom-cta container-fluid">
+    <div class="bottom-cta-banner" style="background-image: linear-gradient(to right, rgba(253, 251, 247, 0.95), rgba(253, 251, 247, 0.8)), url('/images/contact_cta.jpg');">
+      <div class="cta-left-content">
+        <h2 class="bottom-cta-title">{{ langService.translate('bottomCtaTitle') }}</h2>
+        <p class="bottom-cta-desc">{{ langService.translate('bottomCtaSub') }}</p>
+      </div>
+      <div class="cta-right-content">
+        <a routerLink="/chat" class="btn-chat-custom">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="chat-icon">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+          </svg>
+          {{ langService.translate('bottomCtaBtn') }}
+        </a>
+      </div>
+    </div>
+  </section>
 </div>

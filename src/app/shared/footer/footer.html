@@ -1,25 +1,38 @@
-<footer style="background-color: #1a0a00; margin-top: 4rem;">
-  <div class="container py-4">
-    <div class="row align-items-center">
+<footer class="site-footer">
+  <div class="footer__inner">
 
-      <div class="col-md-4 text-center text-md-start mb-3 mb-md-0">
-        <span style="color: #c8813a; font-weight: 500;">Handoura</span>
-        <p class="mb-0 small" style="color: #888;">Handmade with love in Egypt</p>
-      </div>
-
-      <div class="col-md-4 text-center mb-3 mb-md-0">
-        <div class="d-flex justify-content-center gap-3">
-          <a routerLink="/home"     style="color:#888; font-size:13px; text-decoration:none;">Home</a>
-          <a routerLink="/products" style="color:#888; font-size:13px; text-decoration:none;">Products</a>
-          <a routerLink="/about"    style="color:#888; font-size:13px; text-decoration:none;">About</a>
-          <a routerLink="/contact"  style="color:#888; font-size:13px; text-decoration:none;">Contact</a>
-        </div>
-      </div>
-
-      <div class="col-md-4 text-center text-md-end">
-        <p class="mb-0 small" style="color: #555;">© 2026 Handoura. All rights reserved.</p>
-      </div>
-
+    <!-- Brand -->
+    <div class="footer__brand">
+      <span class="footer__logo">Handaura</span>
+      <p class="footer__tagline">
+        {{ langService.currentLang() === 'ar' ? 'مصنوع بحب في مصر' : 'Handmade with love in Egypt' }}
+      </p>
     </div>
+
+    <!-- Navigation Links -->
+    <nav class="footer__nav" [attr.aria-label]="langService.currentLang() === 'ar' ? 'روابط التنقل' : 'Footer navigation'">
+      <a routerLink="/home" class="footer__link">
+        {{ langService.currentLang() === 'ar' ? 'الرئيسية' : 'Home' }}
+      </a>
+      <a routerLink="/products" class="footer__link">
+        {{ langService.currentLang() === 'ar' ? 'المنتجات' : 'Products' }}
+      </a>
+      <a routerLink="/shops" class="footer__link">
+        {{ langService.currentLang() === 'ar' ? 'الحرفيون' : 'Artisans' }}
+      </a>
+      <a routerLink="/about" class="footer__link">
+        {{ langService.currentLang() === 'ar' ? 'من نحن' : 'About' }}
+      </a>
+      <a routerLink="/contact" class="footer__link">
+        {{ langService.currentLang() === 'ar' ? 'تواصل معنا' : 'Contact' }}
+      </a>
+    </nav>
+
+    <!-- Copyright -->
+    <p class="footer__copy">
+      &copy; {{ currentYear }} Handaura.
+      {{ langService.currentLang() === 'ar' ? 'جميع الحقوق محفوظة.' : 'All rights reserved.' }}
+    </p>
+
   </div>
 </footer>

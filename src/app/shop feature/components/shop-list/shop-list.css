@@ -212,7 +212,7 @@
 
 .shops-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
   gap: 30px;
 }
 
@@ -388,7 +388,6 @@
   }
 }
 
-/* ── RESPONSIVE ── */
 @media (max-width: 768px) {
   .artisans-header {
     height: 280px;
@@ -404,3 +403,19 @@
     gap: 20px;
   }
 }
+
+@media (max-width: 480px) {
+  .artisans-header { height: 220px; padding: 0 16px; }
+  .header-title { font-size: 28px; }
+  .artisans-container { padding-bottom: 3rem; }
+}
+
+@media (max-width: 360px) {
+  .artisans-header { height: 180px; }
+  .header-title { font-size: 22px; }
+  .header-tag { font-size: 9px; letter-spacing: 1.5px; }
+}
+
+/* RTL support */
+[dir="rtl"] .header-content { text-align: center; }
+[dir="rtl"] .artisans-header { direction: rtl; }

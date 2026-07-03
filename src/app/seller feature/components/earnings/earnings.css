@@ -96,7 +96,7 @@
 /* Stats Cards Grid */
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   gap: 1.5rem;
   margin-bottom: 2.5rem;
 }
@@ -753,6 +753,67 @@
   border-right: 3px solid #FF9800;
 }
 
-[dir="rtl"] .bank-detail-row {
-  flex-direction: row-reverse;
+
+@media (max-width: 480px) {
+  .financials-container {
+    padding: 12px;
+  }
+  .page-title {
+    font-size: 24px;
+  }
+  .stat-card {
+    padding: 1.25rem 1rem;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .withdraw-btn {
+    font-size: 13px;
+    padding: 10px;
+  }
+  .history-section {
+    padding: 1.25rem 1rem;
+  }
+  .transactions-table {
+    min-width: 550px;
+  }
+  .modal-content {
+    padding: 1.25rem;
+  }
+  .available-badge {
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    text-align: center;
+  }
+  .modal-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .modal-actions .btn {
+    width: 100%;
+  }
+  .payout-method-card {
+    padding: 1.25rem 1rem;
+  }
+  .payout-method-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .bank-detail-row {
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    text-align: center;
+  }
+  [dir="rtl"] .bank-detail-row {
+    flex-direction: column;
+  }
+  .bank-info-in-modal {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 4px;
+  }
 }

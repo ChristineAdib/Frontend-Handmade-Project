@@ -1261,3 +1261,30 @@
     padding: 24px;
   }
 }
+
+@media (max-width: 576px) {
+  .wizard-header-container {
+    padding: 16px;
+  }
+  .preview-panel {
+    padding: 16px;
+  }
+  .controls-panel {
+    padding: 16px;
+  }
+  .step-card-container {
+    padding: 16px;
+    border-radius: 16px;
+  }
+  .preview-card-wrapper {
+    max-width: 100%;
+  }
+  .step-footer {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .btn-step-back, .btn-step-next, .btn-step-review {
+    width: 100%;
+    justify-content: center;
+  }
+}

@@ -158,3 +158,43 @@
   font-size: 12px;
   text-decoration: underline;
 }
+
+@media (max-width: 480px) {
+  .payment-page {
+    padding: 1rem 0.5rem;
+  }
+  .payment-card {
+    padding: 1.5rem 1rem;
+    border-radius: 8px;
+  }
+  .payment-iframe {
+    height: 380px;
+  }
+}
+
+@media (max-width: 360px) {
+  .payment-header h2 {
+    font-size: 20px;
+  }
+  .payment-iframe {
+    height: 320px;
+  }
+  .payment-card {
+    padding: 1.25rem 0.75rem;
+  }
+}
+
+@media (max-width: 280px) {
+  .payment-header h2 {
+    font-size: 18px;
+  }
+  .payment-iframe {
+    height: 260px;
+  }
+}
+
+/* RTL Support */
+[dir="rtl"] .iframe-header {
+  flex-direction: row-reverse;
+}
+

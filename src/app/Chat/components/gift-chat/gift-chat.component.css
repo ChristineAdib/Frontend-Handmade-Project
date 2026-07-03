@@ -894,6 +894,55 @@
 
 @media (max-width: 640px) {
   .gift-assistant-page {
-    height: calc(100vh - 102px);
+    height: calc(100vh - 92px);
   }
 }
+
+/* RTL Support */
+[dir="rtl"] .gift-assistant-page {
+  direction: rtl;
+}
+
+[dir="rtl"] .preference-panel {
+  border-right: none;
+  border-left: 1px solid rgba(180, 120, 60, 0.1);
+}
+
+[dir="rtl"] .user-bubble {
+  border-radius: 18px 18px 18px 4px;
+}
+
+[dir="rtl"] .ai-bubble {
+  border-radius: 18px 18px 4px 18px;
+}
+
+[dir="rtl"] .panel-title {
+  flex-direction: row-reverse;
+}
+
+/* Extra Mobile Responsiveness */
+@media (max-width: 360px) {
+  .gift-assistant-page {
+    padding: 0;
+    border-radius: 0;
+  }
+  .msg-bubble {
+    padding: 10px 14px;
+    font-size: 0.85rem;
+  }
+  .message-row {
+    max-width: 90%;
+  }
+}
+
+@media (max-width: 280px) {
+  .msg-avatar {
+    width: 28px;
+    height: 28px;
+  }
+  .msg-bubble {
+    padding: 8px 10px;
+    font-size: 0.8rem;
+  }
+}
+

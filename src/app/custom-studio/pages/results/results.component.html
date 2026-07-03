@@ -43,133 +43,298 @@
       <div class="empty-illustration">🎨</div>
       <h3>No Designs Generated Yet</h3>
       <p>Go back to the configurator and finalize your doll steps to run the AI generator.</p>
-      <button class="btn btn-primary" (click)="goBack()">
+      <button class="btn-secondary" (click)="goBack()">
         Return to Configurator
       </button>
     </div>
 
-    <div class="designs-grid" *ngIf="designs().length > 0">
-      <div class="design-card" *ngFor="let design of designs(); let i = index; trackBy: trackByDesignId">
+    <!-- Showcase Interactive Layout -->
+    <div class="designs-showcase-container" *ngIf="designs().length > 0">
+      <div class="showcase-content-grid" *ngIf="designs()[activeDesignIndex()] as design">
         
-        <!-- Image display with hover actions -->
-        <div class="design-img-wrapper">
-          <img [src]="resolveImageUrl(design.imageUrl)" alt="AI Generated Doll Design" referrerpolicy="no-referrer" />
-          
-          <!-- Matching Score Circle Overlay -->
-          <div class="matching-badge">
-            <svg class="progress-ring" width="54" height="54">
-              <circle class="progress-ring-circle-bg" stroke="rgba(255,255,255,0.2)" stroke-width="4" fill="transparent" r="22" cx="27" cy="27"/>
-              <circle class="progress-ring-circle" stroke="#d4a96a" stroke-dasharray="138" [attr.stroke-dashoffset]="138 - (138 * design.matchingScore) / 100" stroke-width="4" fill="transparent" r="22" cx="27" cy="27"/>
+        <!-- Option Header on top -->
+        <div class="option-header-row">
+          <h3>Option #{{ activeDesignIndex() + 1 }}</h3>
+          <button class="star-fav-btn" (click)="saveDesignDetails(design)" [class.active]="design.isSaved" title="Add to Favorites">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" stroke="currentColor" stroke-width="1.8">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
             </svg>
-            <span class="score-text">{{ design.matchingScore | number:'1.0-1' }}%</span>
+          </button>
+        </div>
+
+        <!-- Row of 3 Items side-by-side -->
+        <div class="showcase-row-three-cols">
+          <!-- Col 1: Main Image + Thumbnails -->
+          <div class="showcase-col-image">
+            <div class="main-image-wrapper">
+              <img [src]="resolveImageUrl(design.imageUrl)" alt="AI Generated Doll Design" referrerpolicy="no-referrer" class="main-doll-img" />
+              
+              <!-- Circular Match Score Overlay -->
+              <div class="match-score-badge">
+                <svg class="progress-ring" width="60" height="60">
+                  <circle class="progress-ring-circle-bg" stroke="rgba(255,255,255,0.15)" stroke-width="4.5" fill="transparent" r="25" cx="30" cy="30"/>
+                  <circle class="progress-ring-circle" stroke="#d4a96a" stroke-dasharray="157" [attr.stroke-dashoffset]="157 - (157 * design.matchingScore) / 100" stroke-width="4.5" fill="transparent" r="25" cx="30" cy="30"/>
+                </svg>
+                <div class="score-overlay-text">
+                  <span class="score-num">{{ design.matchingScore | number:'1.0-1' }}%</span>
+                  <span class="score-lbl">Match</span>
+                </div>
+              </div>
+
+              <!-- Utility Hover Controls -->
+              <div class="main-image-controls">
+                <button class="control-btn" (click)="saveDesignDetails(design)" [class.saved]="design.isSaved" title="Bookmark Design">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" stroke="currentColor" stroke-width="2">
+                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+                  </svg>
+                </button>
+                <button class="control-btn" (click)="downloadImage(resolveImageUrl(design.imageUrl), design.id)" title="Download Design Image">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Thumbnail Gallery underneath -->
+            <div class="thumbnail-gallery">
+              <div 
+                *ngFor="let item of designs(); let idx = index" 
+                class="thumbnail-card" 
+                [class.active]="idx === activeDesignIndex()"
+                (click)="setActiveDesign(idx)">
+                <img [src]="resolveImageUrl(item.imageUrl)" alt="Option {{ idx + 1 }}" />
+                <div class="thumbnail-active-check" *ngIf="idx === activeDesignIndex()">
+                  <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                </div>
+                <span class="thumb-lbl">Option {{ idx + 1 }}</span>
+              </div>
+            </div>
           </div>
 
-          <!-- Utility controls -->
-          <div class="image-actions">
-            <button class="btn-img-action" (click)="saveDesignDetails(design)" [class.active]="design.isSaved" title="Bookmark Design">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" stroke="currentColor" stroke-width="2">
-                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+          <!-- Col 2: Design Details Card -->
+          <div class="right-panel-card details-card">
+            <h4 class="card-title-small">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
               </svg>
-            </button>
-            <button class="btn-img-action" (click)="downloadImage(resolveImageUrl(design.imageUrl), design.id)" title="Download Design Image">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+              Design Details
+            </h4>
+            <div class="details-rows-list">
+              <div class="details-item">
+                <span class="detail-label">Height</span>
+                <span class="detail-value">{{ parseSummary(design).height || '28 cm' }}</span>
+              </div>
+              <div class="details-item">
+                <span class="detail-label">Yarn Type</span>
+                <span class="detail-value">Cotton Blend</span>
+              </div>
+              <div class="details-item">
+                <span class="detail-label">Color Palette</span>
+                <div class="palette-swatches-row">
+                  <span 
+                    *ngFor="let col of getColorPalette(design)" 
+                    class="palette-swatch-dot" 
+                    [style.background-color]="col"
+                    [title]="col">
+                  </span>
+                </div>
+              </div>
+              <div class="details-item">
+                <span class="detail-label">Difficulty</span>
+                <span class="detail-value">Intermediate</span>
+              </div>
+              <div class="details-item">
+                <span class="detail-label">Est. Time to Make</span>
+                <span class="detail-value">8–10 hours</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Col 3: Why You'll Love It Card -->
+          <div class="right-panel-card love-it-card">
+            <h4 class="card-title-small">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
               </svg>
-            </button>
+              Why You'll Love It
+            </h4>
+            <p class="love-it-desc">{{ getWhyYouLoveIt(design) }}</p>
           </div>
         </div>
 
-        <!-- Card Content Details -->
-        <div class="design-info">
-          <h3>Option #{{ i + 1 }}</h3>
-          <p class="design-prompt"><strong>AI Prompt:</strong> "{{ design.prompt }}"</p>
-          <div class="meta-row">
-            <span><strong>Crafting Level:</strong> Moderate</span>
-            <span><strong>Crafting Time:</strong> ~4 days</span>
-          </div>
+      </div>
 
-          <!-- Design Score (AI) -->
-          <div class="design-scores-section" *ngIf="getDesignScores(design.matchingScore) as scores">
-            <div class="score-row">
-              <span class="score-label">Creativity</span>
-              <div class="score-bar-bg">
-                <div class="score-bar-fill" [style.width.%]="scores.creativity"></div>
+      <!-- Mid-row Content: Design Overview (Replacing AI Prompt) + Smart AI Suggestions -->
+      <div class="showcase-middle-row" *ngIf="designs()[activeDesignIndex()] as design">
+        
+        <!-- Premium Design Overview Panel (Replaces AI Prompt) -->
+        <div class="middle-panel-card overview-card">
+          <div class="panel-header">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="panel-header-icon">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="9" y1="9" x2="15" y2="9"></line>
+              <line x1="9" y1="13" x2="15" y2="13"></line>
+              <line x1="9" y1="17" x2="13" y2="17"></line>
+            </svg>
+            <h3>Design Overview</h3>
+          </div>
+          <div class="overview-chips-grid">
+            <div class="overview-chip">
+              <span class="chip-title">Match Score</span>
+              <span class="chip-badge score">{{ design.matchingScore | number:'1.0-1' }}% Match</span>
+            </div>
+            <div class="overview-chip">
+              <span class="chip-title">Crafting Difficulty</span>
+              <span class="chip-badge difficulty">Intermediate</span>
+            </div>
+            <div class="overview-chip">
+              <span class="chip-title">Estimated Crafting Time</span>
+              <span class="chip-badge time">~4 days</span>
+            </div>
+            <div class="overview-chip">
+              <span class="chip-title">Material Type</span>
+              <span class="chip-badge material">Cotton Blend</span>
+            </div>
+            <div class="overview-chip">
+              <span class="chip-title">Doll Size</span>
+              <span class="chip-badge size">Height {{ parseSummary(design).height || '28 cm' }}</span>
+            </div>
+            <div class="overview-chip">
+              <span class="chip-title">Style</span>
+              <span class="chip-badge style">Amigurumi</span>
+            </div>
+            <div class="overview-chip">
+              <span class="chip-title">Recommended Skill Level</span>
+              <span class="chip-badge skill">Moderate</span>
+            </div>
+            <div class="overview-chip">
+              <span class="chip-title">Color Palette</span>
+              <div class="chip-palette-row">
+                <span *ngFor="let col of getColorPalette(design)" class="palette-dot" [style.background-color]="col"></span>
               </div>
-              <span class="score-val">{{ scores.creativity }}%</span>
             </div>
-            <div class="score-row">
-              <span class="score-label">Crochet Difficulty</span>
-              <div class="score-bar-bg">
-                <div class="score-bar-fill" [style.width.%]="scores.difficulty"></div>
+          </div>
+        </div>
+
+        <!-- Smart AI Suggestions Panel -->
+        <div class="middle-panel-card suggestions-card" *ngIf="getSmartSuggestions(design.prompt) as suggestions">
+          <div class="panel-header">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="panel-header-icon suggestions">
+              <path d="M9 21h6"></path>
+              <path d="M9 17h6"></path>
+              <path d="M12 2v1"></path>
+              <path d="M12 13V7"></path>
+              <path d="M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10z"></path>
+            </svg>
+            <h3>Smart AI Suggestions</h3>
+          </div>
+          <ul class="suggestions-list-bullets">
+            <li *ngFor="let sug of suggestions">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" class="bullet-sparkle">
+                <path d="M12 2l2.4 7.2 7.2 2.4-7.2 2.4-2.4 7.2-2.4-7.2-7.2-2.4 7.2-2.4z"/>
+              </svg>
+              <span>{{ sug }}</span>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+
+      <!-- Bottom Statistics & Action Panels -->
+      <div class="showcase-bottom-row" *ngIf="designs()[activeDesignIndex()] as design">
+        
+        <!-- Dynamic Scores Section -->
+        <div class="bottom-stats-card" *ngIf="getDesignScores(design.matchingScore) as scores">
+          
+          <div class="stats-progress-bars">
+            <!-- Creativity -->
+            <div class="stat-progress-item">
+              <div class="stat-label-row">
+                <span class="stat-name">
+                  <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="stat-icon">
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                    <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                  </svg>
+                  Creativity
+                </span>
+                <span class="stat-percentage">{{ scores.creativity }}%</span>
               </div>
-              <span class="score-val">{{ scores.difficulty }}%</span>
+              <div class="stat-progress-bar-bg">
+                <div class="stat-progress-bar-fill creativity" [style.width.%]="scores.creativity"></div>
+              </div>
             </div>
-            <div class="score-row text-badges">
-              <span><strong>Material Cost:</strong> <span class="badge cost">{{ scores.cost }}</span></span>
-              <span><strong>Popularity:</strong> <span class="badge pop">{{ scores.popularity }}</span></span>
+
+            <!-- Crochet Difficulty -->
+            <div class="stat-progress-item">
+              <div class="stat-label-row">
+                <span class="stat-name">
+                  <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="stat-icon">
+                    <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path>
+                    <path d="M12 6a6 6 0 0 0-6 6"></path>
+                  </svg>
+                  Crochet Difficulty
+                </span>
+                <span class="stat-percentage">{{ scores.difficulty }}%</span>
+              </div>
+              <div class="stat-progress-bar-bg">
+                <div class="stat-progress-bar-fill difficulty" [style.width.%]="scores.difficulty"></div>
+              </div>
             </div>
           </div>
 
-          <!-- Smart Suggestions -->
-          <div class="smart-suggestions-section" *ngIf="getSmartSuggestions(design.prompt) as suggestions">
-            <div class="suggestions-header">✨ Smart AI Suggestions</div>
-            <ul>
-              <li *ngFor="let sug of suggestions">{{ sug }}</li>
-            </ul>
-          </div>
-
-          <!-- Refinement Section -->
-          <div class="refinement-section">
-            <div class="refinement-header">🎨 Refine Design (AI Editing)</div>
-            <div class="quick-prompts">
-              <button class="quick-prompt-pill" (click)="applyRefinementPrompt(design.id, 'Make the hair longer and wavy')">Make hair wavy</button>
-              <button class="quick-prompt-pill" (click)="applyRefinementPrompt(design.id, 'Change the jacket to blue')">Blue jacket</button>
-              <button class="quick-prompt-pill" (click)="applyRefinementPrompt(design.id, 'Add a pink bag')">Add pink bag</button>
-              <button class="quick-prompt-pill" (click)="applyRefinementPrompt(design.id, 'Change shoes to white sneakers')">White sneakers</button>
-              <button class="quick-prompt-pill" (click)="applyRefinementPrompt(design.id, 'Remove the hat')">Remove hat</button>
+          <div class="stats-badges-row">
+            <div class="stat-badge-box">
+              <span class="stat-badge-lbl">Material Cost</span>
+              <span class="badge cost-badge">{{ scores.cost }}</span>
             </div>
-            <div class="refinement-input-row">
-              <textarea 
-                placeholder="Describe updates (e.g., Change the jacket to blue)..." 
-                [value]="refinementPrompts()[design.id] || ''"
-                (input)="updateRefinementPrompt(design.id, $any($event.target).value)">
-              </textarea>
-              <button class="btn-refine" 
-                      [disabled]="refining() !== null" 
-                      (click)="refineDesign(design.id)">
-                <span *ngIf="refining() !== design.id">Refine ✨</span>
-                <span *ngIf="refining() === design.id">Refining...</span>
-              </button>
+            <div class="stat-badge-box">
+              <span class="stat-badge-lbl">Popularity</span>
+              <span class="badge popularity-badge">{{ scores.popularity }}</span>
             </div>
           </div>
 
         </div>
 
-        <!-- Select & Confirm & Regenerate Actions -->
-        <div class="design-card-footer" style="display: flex; gap: 15px; width: 100%; justify-content: center; padding: 15px 0;">
-          <button class="btn btn-primary btn-select" (click)="selectDesign(design.id)" style="flex: 1; max-width: 250px;">
+        <!-- Action Footer -->
+        <div class="showcase-actions-card">
+          <button class="btn-primary-pill btn-use-design" (click)="selectDesign(design.id)">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="btn-check-icon">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
             Use This Design
           </button>
           
           <ng-container *ngIf="requestDetails()">
-            <button *ngIf="requestDetails()!.generationCount < 2" 
-                    class="btn btn-outline" 
-                    (click)="regenerateDesigns()" 
-                    style="flex: 1; max-width: 250px; border: 1px solid #b06e2e; color: #b06e2e; background: transparent;">
+            <button 
+              *ngIf="requestDetails()!.generationCount < 2" 
+              class="btn-secondary-pill btn-regenerate" 
+              (click)="regenerateDesigns()">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-refresh-icon">
+                <polyline points="23 4 23 10 17 10"></polyline>
+                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+              </svg>
               Regenerate Design (1 Remaining)
             </button>
             
-            <div *ngIf="requestDetails()!.generationCount >= 2" 
-                 class="regeneration-limit-note" 
-                 style="display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; max-width: 250px; background: rgba(0,0,0,0.03); border: 1px dashed rgba(0,0,0,0.15); border-radius: 8px; padding: 6px; font-size: 0.8rem; color: #7d6b5d; line-height: 1.2;">
-              <span style="font-weight: 600; color: #a55a5a;">Regeneration limit reached</span>
-              <span style="font-size: 0.7rem;">No more attempts remaining.</span>
+            <div *ngIf="requestDetails()!.generationCount >= 2" class="regeneration-limit-pill">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="15" y1="9" x2="9" y2="15"></line>
+                <line x1="9" y1="9" x2="15" y2="15"></line>
+              </svg>
+              <span>Attempts Reached</span>
             </div>
           </ng-container>
         </div>
 
       </div>
-    </div>
 
+    </div>
   </main>
 </div>

@@ -133,3 +133,10 @@
   font-family: 'Playfair Display', serif;
   font-weight: 500;
 }
+
+@media (max-width: 360px) {
+  .doll-preview-container {
+    padding: 16px;
+    border-radius: 20px;
+  }
+}

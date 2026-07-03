@@ -368,3 +368,15 @@
     left: 12px;
   }
 }
+
+@media (max-width: 1024px) {
+  .luxury-card {
+    .image-wrapper {
+      .hover-actions-bar {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  }
+}
+

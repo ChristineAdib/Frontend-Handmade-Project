@@ -264,6 +264,11 @@ export class Header implements OnInit, OnDestroy {
     }
   }
  
+  isChatPage(): boolean {
+    const path = this.router.url.split('?')[0].split('#')[0];
+    return path === '/chat' || path.startsWith('/chat/') || path.startsWith('/ar/chat/') || path.startsWith('/en/chat/');
+  }
+
   // ── Auth helpers ───────────────────────────────────────────
   isLoggedIn(): boolean { return this.authService.isLoggedIn(); }
   isSeller(): boolean {
@@ -289,6 +294,11 @@ export class Header implements OnInit, OnDestroy {
     this.notificationService.markAsRead(notif.id);
     this.activeDropdown.set(null);
 
+    if (notif.referenceType === 'CustomOrder' && notif.referenceId) {
+      this.router.navigate([`/orders/${notif.referenceId}`]);
+      return;
+    }
+
     if (notif.referenceType === 'CustomRequest' && notif.referenceId) {
       this.customStudioService.getCustomRequestDetails(notif.referenceId).subscribe({
         next: (res) => {
@@ -299,7 +309,12 @@ export class Header implements OnInit, OnDestroy {
             const isReviewState = ['OfferSent', 'OfferAccepted', 'PaymentPending'].includes(status);
             
             if (isPaidOrHigher) {
-              this.router.navigate([`/custom-studio/workspace/${notif.referenceId}`]);
+              const orderId = res.data.projectWorkspace?.orderId;
+              if (orderId) {
+                this.router.navigate([`/orders/${orderId}`]);
+              } else {
+                this.router.navigate([`/orders`]);
+              }
             } else if (isReviewState && isBuyer) {
               this.router.navigate([`/custom-studio/offer-review/${notif.referenceId}`]);
             } else {

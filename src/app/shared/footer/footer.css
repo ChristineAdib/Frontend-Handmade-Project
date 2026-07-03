@@ -1,0 +1,107 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@700&family=Jost:wght@300;400;500;600&display=swap');
+
+/* ============================================================
+   SITE FOOTER
+   ============================================================ */
+.site-footer {
+  background-color: #1a0a00;
+  margin-top: 4rem;
+  padding: clamp(24px, 4vw, 40px) 0;
+}
+
+.footer__inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding-inline: clamp(16px, 5vw, 48px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(16px, 3vw, 32px);
+  flex-wrap: wrap;
+}
+
+/* ── BRAND ── */
+.footer__brand {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.footer__logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(18px, 3vw, 24px);
+  font-weight: 700;
+  color: #c8813a;
+  line-height: 1;
+}
+
+.footer__tagline {
+  font-family: 'Jost', sans-serif;
+  font-size: clamp(11px, 1.5vw, 13px);
+  color: #888;
+  margin: 0;
+}
+
+/* ── NAV ── */
+.footer__nav {
+  display: flex;
+  align-items: center;
+  gap: clamp(12px, 2.5vw, 24px);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.footer__link {
+  font-family: 'Jost', sans-serif;
+  font-size: clamp(12px, 1.4vw, 13px);
+  color: #888;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.2s ease;
+}
+
+.footer__link:hover {
+  color: #c8813a;
+}
+
+/* ── COPYRIGHT ── */
+.footer__copy {
+  font-family: 'Jost', sans-serif;
+  font-size: clamp(11px, 1.4vw, 13px);
+  color: #555;
+  margin: 0;
+  white-space: nowrap;
+}
+
+/* ── MOBILE STACKING ── */
+@media (max-width: 680px) {
+  .footer__inner {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 16px;
+  }
+
+  .footer__brand {
+    align-items: center;
+  }
+
+  .footer__nav {
+    gap: 14px;
+  }
+
+  .footer__copy {
+    white-space: normal;
+    text-align: center;
+  }
+}
+
+/* ── RTL SUPPORT ── */
+[dir="rtl"] .footer__inner {
+  direction: rtl;
+}
+
+[dir="rtl"] .footer__link {
+  direction: rtl;
+}

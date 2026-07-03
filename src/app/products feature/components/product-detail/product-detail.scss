@@ -835,3 +835,41 @@
   0% { transform: scale(1); opacity: 0.8; }
   100% { transform: scale(1.15); opacity: 1; }
 }
+
+@media (max-width: 768px) {
+  .luxury-detail-page {
+    .product-info-panel {
+      .product-title {
+        font-size: 1.6rem;
+      }
+      .price-box {
+        .price-final, .price-discount-wrapper .price-discount {
+          font-size: 1.5rem;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .luxury-detail-page {
+    .product-info-panel {
+      .action-buttons-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+
+        .btn-luxury-primary, .btn-luxury-outline {
+          width: 100%;
+          border-radius: 24px;
+        }
+
+        .btn-luxury-wishlist {
+          align-self: center;
+          width: 100%;
+          border-radius: 24px;
+        }
+      }
+    }
+  }
+}

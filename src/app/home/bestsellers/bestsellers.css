@@ -627,3 +627,15 @@
 .ar-badge-btn .material-symbols-outlined {
   font-size: 14px;
 }
+
+@media (max-width: 360px) {
+  .bestsellers-section { padding: 40px 0; }
+  .section-title { font-size: 28px !important; }
+  .container { padding: 0 12px; }
+}
+
+/* RTL support */
+[dir="rtl"] .ar-badge-btn { right: auto; left: 12px; }
+[dir="rtl"] .shop-all-link svg { transform: scaleX(-1); }
+[dir="rtl"] .shop-all-link:hover svg { transform: scaleX(-1) translateX(-4px); }
+[dir="rtl"] .section-header { flex-direction: row-reverse; }

@@ -220,6 +220,13 @@
 }
 
 @media (max-width: 768px) {
+  .comparison-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .comparison-table {
+    min-width: 700px;
+  }
   .comparison-table th, .comparison-table td {
     padding: 16px;
   }
@@ -227,3 +234,16 @@
     height: 160px;
   }
 }
+
+/* RTL Support */
+[dir="rtl"] .comparison-table {
+  text-align: right;
+}
+[dir="rtl"] .back-btn {
+  margin-right: 0;
+  margin-left: 12px;
+}
+[dir="rtl"] .back-btn:hover {
+  transform: translateX(2px);
+}
+

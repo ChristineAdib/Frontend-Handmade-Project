@@ -1,3 +1,4 @@
+@if (!isChatPage()) {
 <!-- ANNOUNCEMENT BAR -->
 <div class="ann-bar" [class.ann-bar--hidden]="scrollState() !== 'top'">
   <div class="ann-track">
@@ -466,3 +467,4 @@
   </div>
 </div>
 <div class="mob__overlay" [class.mob__overlay--open]="mobileMenuOpen()" (click)="toggleMobileMenu()"></div>
+}
