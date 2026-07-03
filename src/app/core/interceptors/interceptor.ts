@@ -34,9 +34,29 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   return next(req).pipe(
     catchError((err: HttpErrorResponse) => {
       if (err.status === 403) {
-        const authService = injector.get(AuthService);
-        authService.forceLogoutBanned();
+        // Only force logout if the error response specifically indicates suspension/ban,
+        // or if it's the check-status polling request itself.
+        const errorMsg = typeof err.error === 'string' ? err.error : (err.error?.message || '');
+        const lowerMsg = errorMsg.toLowerCase();
+        const isSuspensionMsg = lowerMsg.includes('suspended') || lowerMsg.includes('banned');
+        const isCheckStatusUrl = req.url.includes('check-status');
+
+        if (isSuspensionMsg || isCheckStatusUrl) {
+          const authService = injector.get(AuthService);
+          authService.forceLogoutBanned();
+        }
       }
+
+      if (err.status === 401) {
+        const isBackendRequest = req.url.startsWith(environment.apiUrl) || req.url.includes('/api/');
+        if (isBackendRequest) {
+          const authService = injector.get(AuthService);
+          if (authService.isLoggedIn()) {
+            authService.logout();
+          }
+        }
+      }
+
       return throwError(() => err);
     })
   );

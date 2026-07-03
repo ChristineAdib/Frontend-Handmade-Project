@@ -28,6 +28,13 @@
     </div>
     
     <div class="header-right-section" *ngIf="isSeller() && customRequest()">
+      <button class="btn btn-outline btn-sm btn-view-workspace" *ngIf="customRequest()?.projectWorkspace && customRequest()!.projectWorkspace!.milestoneStep < 6" (click)="markAsShipped(customRequest()!.id)" title="Mark as Shipped" style="margin-right: 8px;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" style="margin-right: 4px; display: inline-block; vertical-align: middle;">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 8 12 12 14 14"></polyline>
+        </svg>
+        Mark as Shipped
+      </button>
       <button class="btn btn-outline btn-sm btn-offer-center" (click)="toggleOfferCenter()" title="Offer Center">
         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" style="margin-right: 4px; display: inline-block; vertical-align: middle;">
           <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
@@ -37,94 +44,6 @@
       </button>
     </div>
   </div>
-
-  <!-- Pinned Custom Request Context Card -->
-  @if (customRequest()) {
-    <div class="custom-request-context-card">
-      <div class="context-main-row">
-        <div class="context-thumbnail" (click)="openLightbox(getSelectedDesignImageUrl() || '')" title="Click to view full design">
-          <img [src]="resolveImageUrl(getSelectedDesignImageUrl())" alt="Design Blueprint" referrerpolicy="no-referrer" />
-          <span class="preview-zoom-badge">🔍</span>
-        </div>
-        <div class="context-info">
-          <h4 class="context-title">Handora Custom Studio - Crochet Doll</h4>
-          <p class="context-specs">
-            <span><strong>Size:</strong> {{ getDesignSummary().height || 'Standard' }}</span> | 
-            <span><strong>Archetype:</strong> {{ getDesignSummary().gender || 'Default' }}</span>
-          </p>
-          <span class="context-status-badge status-{{ getStatusNumber(customRequest().status) }}">
-            Status: {{ getRequestStatusLabel(customRequest().status) }}
-          </span>
-        </div>
-        
-        <!-- Action Buttons in Pinned Card -->
-        <div class="context-nav-actions">
-          <button class="btn btn-secondary btn-sm" (click)="openLightbox(getSelectedDesignImageUrl() || '')">
-            View Full Design
-          </button>
-          <button class="btn btn-outline btn-sm" (click)="downloadSelectedDesignImage()">
-            Download Image
-          </button>
-          <button class="btn btn-outline btn-sm" (click)="showDetailedSpecs.set(!showDetailedSpecs())">
-            {{ showDetailedSpecs() ? 'Hide Details' : 'View Design Details' }}
-          </button>
-        </div>
-
-        <div class="context-actions">
-          @if (isSellerOrAdmin()) {
-            <button class="btn btn-primary btn-sm btn-action" [disabled]="isAdmin()" (click)="toggleOfferCenter()">
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" style="margin-right: 4px; display: inline-block; vertical-align: middle;">
-                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-              </svg>
-              Offer Center
-            </button>
-            @if (getStatusNumber(customRequest().status) === 12 || getStatusNumber(customRequest().status) === 13 || getStatusNumber(customRequest().status) === 14) {
-              <button class="btn btn-secondary btn-sm btn-action" (click)="viewWorkspace(customRequest().id)">
-                View Workspace
-              </button>
-            }
-          } @else {
-            <!-- Buyer -->
-            @if (getStatusNumber(customRequest().status) === 12 || getStatusNumber(customRequest().status) === 13 || getStatusNumber(customRequest().status) === 14) {
-              <button class="btn btn-primary btn-sm btn-action" (click)="viewWorkspace(customRequest().id)">
-                View Workspace
-              </button>
-            } @else if (getStatusNumber(customRequest().status) === 8 || getStatusNumber(customRequest().status) === 9 || getStatusNumber(customRequest().status) === 10 || getStatusNumber(customRequest().status) === 11) {
-              <button class="btn btn-secondary btn-sm btn-action" (click)="viewOfferReview(customRequest().id)">
-                Review Offer
-              </button>
-            }
-          }
-        </div>
-      </div>
-
-      <!-- Collapsible Detailed Specs and Reference Photo Section -->
-      <div class="context-detail-drawer" *ngIf="showDetailedSpecs()">
-        <div class="drawer-grid">
-          <!-- Design Specs Summary -->
-          <div class="specs-summary-col">
-            <h5>Design Details</h5>
-            <div class="spec-detail-items">
-              <div class="spec-row" *ngFor="let item of getSummaryPairs()">
-                <span class="spec-label">{{ item.label }}:</span>
-                <span class="spec-val">{{ item.value }}</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Reference Photo (if uploaded) -->
-          <div class="reference-photo-col" *ngIf="getDesignSummary().referenceImage">
-            <h5>Reference Photo</h5>
-            <div class="reference-thumbnail" (click)="openLightbox(getDesignSummary().referenceImage || '')">
-              <img [src]="resolveImageUrl(getDesignSummary().referenceImage)" alt="Reference Photo" referrerpolicy="no-referrer" />
-              <span class="zoom-overlay">Click to Zoom</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  }
 
   <!-- Chat Dialogue Pane -->
   <div class="chat-dialogue-pane">
@@ -227,11 +146,7 @@
                       </button>
                     </div>
 
-                    <div class="buyer-post-accept-actions" *ngIf="!isSeller() && m.customOffer.status === 'Paid'">
-                      <button class="btn btn-success btn-sm btn-block" (click)="viewWorkspace(m.customOffer.customRequestId)">
-                        View Project Workspace
-                      </button>
-                    </div>
+
                   </div>
                 </div>
               }
@@ -241,64 +156,181 @@
                 @if (isAiDesignCard(m.content)) {
                   @if (parseAiDesignCard(m.content); as card) {
                     <div class="ai-design-card">
+                      <!-- Card Header -->
                       <div class="card-header">
-                        <svg class="card-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
-                        </svg>
-                        <span class="card-title">AI Design Specifications</span>
+                        <div class="sparkle-icon-container">
+                          <!-- Sparkle Icon SVG -->
+                          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="sparkle-icon">
+                            <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
+                            <path d="m5 3 1 2.5L8.5 6 6 7 5 9.5 4 7 1.5 6 4 5.5z" opacity="0.6"/>
+                            <path d="m19 17 1 2.5 2.5.5-2.5 1-1 2.5-1-2.5-2.5-1 2.5-1z" opacity="0.6"/>
+                          </svg>
+                        </div>
+                        <div class="header-text">
+                          <span class="card-title">AI Design Specifications</span>
+                          <span class="card-subtitle">Designed details of your handmade doll</span>
+                        </div>
                       </div>
                       
-                      <div class="design-image-wrapper" (click)="openLightbox(resolveImageUrl(card.imageUrl))">
-                        <img [src]="resolveImageUrl(card.imageUrl)" class="design-img" alt="AI Generated Design" referrerpolicy="no-referrer" />
-                        <span class="zoom-overlay">🔍 Zoom</span>
+                      <!-- Doll Image inside a large rounded card with subtle beige background and soft shadow -->
+                      <div class="design-image-container">
+                        <div class="design-image-wrapper" (click)="openLightbox(resolveImageUrl(card.imageUrl))">
+                          <img [src]="resolveImageUrl(card.imageUrl)" class="design-img" alt="AI Generated Design" referrerpolicy="no-referrer" />
+                          <span class="zoom-overlay">🔍 Zoom</span>
+                        </div>
                       </div>
 
+                      <!-- Specifications list (structured rows, soft rounded icons, pastel backgrounds, left-aligned labels/values) -->
                       <div class="design-specs-list">
                         <div class="spec-row">
+                          <div class="spec-icon-wrapper icon-gender" title="Gender">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                              <circle cx="12" cy="9" r="4" />
+                              <path d="M12 13v8M9 18h6" />
+                            </svg>
+                          </div>
                           <span class="spec-name">Gender</span>
                           <span class="spec-val">{{ card.specifications.gender }}</span>
                         </div>
+                        
                         <div class="spec-row">
+                          <div class="spec-icon-wrapper icon-size" title="Size">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                              <path d="M3 6h18v12H3z" />
+                              <path d="M7 6v4M11 6v6M15 6v4" />
+                            </svg>
+                          </div>
                           <span class="spec-name">Size</span>
                           <span class="spec-val">{{ card.specifications.size }}</span>
                         </div>
+                        
                         <div class="spec-row">
+                          <div class="spec-icon-wrapper icon-hair" title="Hair">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                              <path d="M12 2C6.48 2 2 6.48 2 12c0 3.31 1.62 6.24 4.12 8.06C6.7 18.24 8.78 17 12 17s5.3 1.24 5.88 3.06C20.38 18.24 22 13.31 22 12c0-5.52-4.48-10-10-10z" />
+                              <path d="M9 10a3 3 0 1 1 6 0" />
+                            </svg>
+                          </div>
                           <span class="spec-name">Hair</span>
                           <span class="spec-val">{{ card.specifications.hair }}</span>
                         </div>
+                        
                         <div class="spec-row">
+                          <div class="spec-icon-wrapper icon-face" title="Face Expression">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                              <circle cx="12" cy="12" r="10" />
+                              <path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01" />
+                            </svg>
+                          </div>
                           <span class="spec-name">Face Expression</span>
                           <span class="spec-val">{{ card.specifications.face }}</span>
                         </div>
+                        
                         <div class="spec-row">
+                          <div class="spec-icon-wrapper icon-skin" title="Skin Tone">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                              <path d="M12 22C17.52 22 22 17.52 22 12S17.52 2 12 2 2 6.48 2 12s4.48 10 10 10z" />
+                              <circle cx="7.5" cy="10.5" r="1.5" />
+                              <circle cx="11.5" cy="7.5" r="1.5" />
+                              <circle cx="16.5" cy="9.5" r="1.5" />
+                            </svg>
+                          </div>
                           <span class="spec-name">Skin Tone</span>
                           <span class="spec-val">{{ card.specifications.skin }}</span>
                         </div>
+                        
                         <div class="spec-row">
+                          <div class="spec-icon-wrapper icon-accessories" title="Accessories">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                              <path d="M12 12c2-3 5-3 7-1v4c-2 2-5 2-7-1c-2 3-5 3-7 1v-4c2-2 5-2 7 1z" />
+                              <circle cx="12" cy="12" r="1.5" />
+                            </svg>
+                          </div>
                           <span class="spec-name">Accessories</span>
                           <span class="spec-val">{{ card.specifications.accessories }}</span>
                         </div>
+                        
                         <div class="spec-row">
+                          <div class="spec-icon-wrapper icon-outfit" title="Outfit">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                              <path d="M20.37 8.91 15 3.36a2 2 0 0 0-2.82 0l-5.37 5.5a2 2 0 0 0-.58 1.42v10a2 2 0 0 0 2 2h7.62a2 2 0 0 0 2-2v-10c0-.55-.2-1.07-.58-1.42z" />
+                              <path d="m9 8 3-2 3 2" />
+                            </svg>
+                          </div>
                           <span class="spec-name">Outfit</span>
                           <span class="spec-val">{{ card.specifications.outfit }}</span>
                         </div>
-                        <div class="spec-row">
-                          <span class="spec-name">Personalization</span>
-                          <span class="spec-val">{{ card.specifications.personalization }}</span>
-                        </div>
-                        @if (card.specifications.referencePhoto) {
-                          <div class="spec-row">
-                            <span class="spec-name">Reference Photo</span>
-                            <span class="spec-val">
-                              <a [href]="resolveImageUrl(card.specifications.referencePhoto)" target="_blank" class="ref-link">View Photo</a>
-                            </span>
-                          </div>
-                        }
                       </div>
 
+                      <!-- Personalization Details in a highlighted information card -->
+                      <div class="personalization-highlight-card">
+                        <div class="personalization-card-header">
+                          <div class="sparkle-small-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                              <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
+                            </svg>
+                          </div>
+                          <span class="personalization-card-title">Personalization Details</span>
+                        </div>
+                        <p class="personalization-card-text">
+                          {{ card.specifications.personalization }}
+                        </p>
+                      </div>
+
+                      <!-- Reference Photo section in a dedicated card -->
+                      @if (card.specifications.referencePhoto) {
+                        <div class="reference-photo-container">
+                          <div class="ref-photo-card">
+                            <div class="ref-photo-left">
+                              <div class="ref-icon-bg">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" class="ref-image-icon">
+                                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                                  <circle cx="8.5" cy="8.5" r="1.5" />
+                                  <polyline points="21 15 16 10 5 21" />
+                                </svg>
+                              </div>
+                              <span class="ref-photo-title">Reference Photo</span>
+                            </div>
+                            <div class="ref-photo-right">
+                              <a [href]="resolveImageUrl(card.specifications.referencePhoto)" target="_blank" class="btn-view-photo">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="view-eye-icon">
+                                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                  <circle cx="12" cy="12" r="3" />
+                                </svg>
+                                <span>View Photo</span>
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+                      }
+
+                      <!-- Clean metadata footer with copy icon & clock icon -->
                       <div class="design-card-footer">
-                        <span>ID: {{ card.designId }}</span>
-                        <span>Time: {{ card.generationTime }}</span>
+                        <div class="footer-item footer-id" (click)="copyDesignId(card.designId)" title="Click to copy ID">
+                          <span class="footer-label">ID</span>
+                          <div class="id-value-wrapper">
+                            <span class="footer-val id-text">{{ card.designId }}</span>
+                            <!-- Copy icon -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="copy-icon">
+                              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                            </svg>
+                          </div>
+                        </div>
+                        
+                        <div class="footer-divider"></div>
+                        
+                        <div class="footer-item footer-time">
+                          <span class="footer-label">Generated Time</span>
+                          <div class="time-value-wrapper">
+                            <!-- Clock icon -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="clock-icon">
+                              <circle cx="12" cy="12" r="10"/>
+                              <polyline points="12 6 12 12 16 14"/>
+                            </svg>
+                            <span class="footer-val">{{ card.generationTime }}</span>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   }
@@ -353,14 +385,13 @@
         }
       </div>
     }
-
-    <!-- Completed Workspace Banner -->
+       <!-- Completed Workspace Banner -->
     @if (isWorkspaceCompleted()) {
       <div class="workspace-completed-banner">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" class="banner-icon">
           <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
         </svg>
-        <span>This workspace is completed and locked. Direct messaging has been archived.</span>
+        <span>This conversation has been closed because the custom order has been delivered.</span>
       </div>
     }
 
@@ -375,7 +406,7 @@
         [disabled]="isChatLocked() || isWorkspaceCompleted() || isAdmin()"
       >
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-          <path d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm10.648 1.864a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3a.5.5 0 0 1 .5-.5"/>
+          <path d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1zM0 2a2 2 0 0 1-2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm10.648 1.864a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3a.5.5 0 0 1 .5-.5"/>
         </svg>
       </button>
       <input 
@@ -394,7 +425,7 @@
           [ngModel]="newMessage()" 
           (ngModelChange)="newMessage.set($event)"
           name="messageText"
-          [placeholder]="isChatLocked() ? 'Chat locked until service approved' : (isWorkspaceCompleted() ? 'Direct messaging has been archived' : (isAdmin() ? 'Viewing workspace in read-only mode' : langService.translate('typeAMessage')))" 
+          [placeholder]="isChatLocked() ? 'Chat locked until service approved' : (isWorkspaceCompleted() ? 'This conversation has been closed because the custom order has been delivered.' : (isAdmin() ? 'Viewing workspace in read-only mode' : langService.translate('typeAMessage')))" 
           autocomplete="off"
           [disabled]="isChatLocked() || isWorkspaceCompleted() || isAdmin()"
         />
@@ -483,170 +514,278 @@
   <!-- Create Custom Offer Modal Overlay -->
   @if (showCreateOfferModal()) {
     <div class="modal-overlay" (click)="showCreateOfferModal.set(false)">
-      <div class="modal-card" (click)="$event.stopPropagation()">
-        <div class="modal-header">
-          <h3>{{ editingOfferId() ? 'Edit Custom Offer' : 'Create Custom Offer' }}</h3>
-          <button class="close-modal-btn" (click)="showCreateOfferModal.set(false)">&times;</button>
+      <div class="modal-card redesigned-card" (click)="$event.stopPropagation()">
+        <div class="custom-offer-header">
+          <div class="header-left">
+            <div class="brand-logo-container">
+              <svg class="brand-logo-icon" width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M16 4C16 4 13 1.5 10 1.5C7 1.5 4.5 4 4.5 7C4.5 11 8.5 15 16 19.5C23.5 15 27.5 11 27.5 7C27.5 4 25 1.5 22 1.5C19 1.5 16 4 16 4Z" stroke="#8B5E3C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M16 28C16 28 13 30.5 10 30.5C7 30.5 4.5 28 4.5 25C4.5 21 8.5 17 16 12.5C23.5 17 27.5 21 27.5 25C27.5 28 25 30.5 22 30.5C19 30.5 16 28 16 28Z" stroke="#8B5E3C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="16" cy="16" r="1.5" fill="#8B5E3C"/>
+              </svg>
+              <span class="brand-logo-text">HENDORA</span>
+            </div>
+            <div class="header-titles">
+              <h2>{{ editingOfferId() ? 'Edit Custom Offer' : 'Create Custom Offer' }}</h2>
+              <p class="header-subtitle">Create a personalized offer tailored for this buyer.</p>
+            </div>
+          </div>
+          <button class="close-circular-btn" (click)="showCreateOfferModal.set(false)" aria-label="Close">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M1 1L13 13M1 13L13 1" />
+            </svg>
+          </button>
         </div>
-        <div class="modal-body">
-          <p class="modal-instruction">Propose a tailored amigurumi customization offer for this buyer request.</p>
-          
-          <div class="form-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-            <!-- Price -->
-            <div class="form-group">
-              <label for="offerPrice">Price (EGP) <span class="required">*</span></label>
-              <div class="price-input-wrapper">
-                <span class="currency-prefix">EGP</span>
+        
+        <div class="redesigned-body">
+          <!-- Card 1: Pricing -->
+          <div class="offer-section-card pricing-card">
+            <div class="card-title-row">
+              <span class="card-title-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 2L2 12L12 22L22 12L12 2Z" />
+                  <circle cx="12" cy="12" r="3" fill="currentColor" />
+                </svg>
+              </span>
+              <h4>1. Pricing</h4>
+            </div>
+            
+            <div class="pricing-fields-grid">
+              <!-- Price -->
+              <div class="redesigned-form-group">
+                <label for="offerPrice">Price (EGP) <span class="required">*</span></label>
+                <div class="price-input-wrapper">
+                  <span class="price-currency-prefix">EGP</span>
+                  <input 
+                    id="offerPrice" 
+                    type="number" 
+                    class="redesigned-input"
+                    [ngModel]="offerPrice()" 
+                    (ngModelChange)="offerPrice.set($event)" 
+                    placeholder="0.00" 
+                    min="1"
+                  />
+                </div>
+              </div>
+
+              <!-- Delivery Days -->
+              <div class="redesigned-form-group">
+                <label for="offerDeliveryDays">Delivery Time (Days) <span class="required">*</span></label>
                 <input 
-                  id="offerPrice" 
+                  id="offerDeliveryDays" 
                   type="number" 
-                  [ngModel]="offerPrice()" 
-                  (ngModelChange)="offerPrice.set($event)" 
-                  placeholder="0.00" 
+                  class="redesigned-input"
+                  [ngModel]="offerDeliveryDays()" 
+                  (ngModelChange)="offerDeliveryDays.set($event)" 
+                  placeholder="e.g. 7" 
                   min="1"
                 />
               </div>
-            </div>
 
-            <!-- Delivery Days -->
-            <div class="form-group">
-              <label for="offerDeliveryDays">Delivery Time (Days) <span class="required">*</span></label>
-              <input 
-                id="offerDeliveryDays" 
-                type="number" 
-                [ngModel]="offerDeliveryDays()" 
-                (ngModelChange)="offerDeliveryDays.set($event)" 
-                placeholder="e.g. 7" 
-                min="1"
-              />
-            </div>
-          </div>
-
-          <!-- Included Features (Revisions) -->
-          <div class="form-group" style="margin-top: 10px;">
-            <label for="offerRevisions">Included Revisions</label>
-            <select 
-              id="offerRevisions" 
-              [ngModel]="offerRevisions()" 
-              (ngModelChange)="offerRevisions.set($event)"
-              style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid rgba(176, 110, 46, 0.15);"
-            >
-              <option [value]="1">1 Revision</option>
-              <option [value]="2">2 Revisions</option>
-              <option [value]="3">3 Revisions</option>
-              <option [value]="5">5 Revisions</option>
-              <option [value]="10">10 Revisions</option>
-            </select>
-          </div>
-
-          <!-- Description -->
-          <div class="form-group" style="margin-top: 10px;">
-            <label for="offerNotes">Description & Materials <span class="required">*</span></label>
-            <textarea 
-              id="offerNotes" 
-              [ngModel]="offerNotes()" 
-              (ngModelChange)="offerNotes.set($event)" 
-              placeholder="Describe amigurumi specifications, amigurumi size, yarn types..."
-              rows="3"
-              style="width: 100%;"
-            ></textarea>
-          </div>
-
-          <!-- Optional Notes -->
-          <div class="form-group" style="margin-top: 10px;">
-            <label for="offerOptionalNotes">Optional Notes</label>
-            <textarea 
-              id="offerOptionalNotes" 
-              [ngModel]="offerOptionalNotes()" 
-              (ngModelChange)="offerOptionalNotes.set($event)" 
-              placeholder="Add shipping terms or package details if any..."
-              rows="2"
-              style="width: 100%;"
-            ></textarea>
-          </div>
-
-          <!-- Detailed Offer Snapshot (Active Design Request) -->
-          <div class="form-group" style="margin-top: 15px;" *ngIf="getSelectedDesign()">
-            <label style="font-weight: 600; color: #b06e2e; display: block; margin-bottom: 8px;">Linked Design Snapshot (Active Request)</label>
-            
-            <div class="snapshot-container" style="background: #fdfcfb; border: 1px solid rgba(176, 110, 46, 0.15); border-radius: 12px; padding: 12px;">
-              
-              <!-- Images Section -->
-              <div class="snapshot-images" style="display: flex; gap: 12px; margin-bottom: 12px;">
-                <!-- Generated Design Image -->
-                <div style="flex: 1; text-align: center;">
-                  <span style="display: block; font-size: 0.7rem; color: #8c7b6e; font-weight: 600; margin-bottom: 4px;">AI GENERATED DOLL</span>
-                  <img [src]="resolveImageUrl(getSelectedDesignImageUrl() || '')" 
-                       alt="AI Generated Reference Doll" 
-                       style="width: 100%; height: 120px; object-fit: cover; border-radius: 8px; border: 1px solid rgba(0,0,0,0.05);" 
-                       referrerpolicy="no-referrer" />
-                </div>
-                
-                <!-- Reference Photo (if exists) -->
-                <div *ngIf="getDesignSummary().referenceImage" style="flex: 1; text-align: center;">
-                  <span style="display: block; font-size: 0.7rem; color: #8c7b6e; font-weight: 600; margin-bottom: 4px;">REFERENCE PHOTO</span>
-                  <img [src]="resolveImageUrl(getDesignSummary().referenceImage || '')" 
-                       alt="Buyer Reference Photo" 
-                       style="width: 100%; height: 120px; object-fit: cover; border-radius: 8px; border: 1px solid rgba(0,0,0,0.05);" 
-                       referrerpolicy="no-referrer" />
-                </div>
-              </div>
-
-              <!-- AI Prompt Section -->
-              <div class="snapshot-prompt" style="background: rgba(176, 110, 46, 0.03); border: 1px solid rgba(176, 110, 46, 0.08); border-radius: 6px; padding: 8px; margin-bottom: 12px;">
-                <span style="display: block; font-size: 0.7rem; color: #b06e2e; font-weight: 600; margin-bottom: 2px;">AI PROMPT</span>
-                <p style="margin: 0; font-size: 0.75rem; color: #5a4b3d; font-style: italic; line-height: 1.3;">
-                  "{{ getSelectedDesign()?.prompt }}"
-                </p>
-              </div>
-
-              <!-- Specifications Grid -->
-              <div class="snapshot-specs-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px 12px; font-size: 0.75rem;">
-                <div>
-                  <strong style="color: #8c7b6e;">Gender:</strong> 
-                  <span style="color: #2c1e14; margin-left: 4px;">{{ getDesignSummary().gender || 'Not specified' }}</span>
-                </div>
-                <div>
-                  <strong style="color: #8c7b6e;">Height/Size:</strong> 
-                  <span style="color: #2c1e14; margin-left: 4px;">{{ getDesignSummary().height || 'Not specified' }}</span>
-                </div>
-                <div>
-                  <strong style="color: #8c7b6e;">Skin Tone:</strong> 
-                  <span style="color: #2c1e14; margin-left: 4px;">{{ getDesignSummary().skinTone || 'Not specified' }}</span>
-                </div>
-                <div>
-                  <strong style="color: #8c7b6e;">Face Expression:</strong> 
-                  <span style="color: #2c1e14; margin-left: 4px;">{{ getDesignSummary().face || 'Normal' }}</span>
-                </div>
-                <div>
-                  <strong style="color: #8c7b6e;">Hair:</strong> 
-                  <span style="color: #2c1e14; margin-left: 4px;">
-                    {{ getDesignSummary().hairStyle }}{{ getDesignSummary().hairColor ? ', ' + getDesignSummary().hairColor : '' }}
+              <!-- Included Revisions -->
+              <div class="redesigned-form-group">
+                <label for="offerRevisions">Included Revisions</label>
+                <div class="custom-select-wrapper">
+                  <select 
+                    id="offerRevisions" 
+                    class="redesigned-select"
+                    [ngModel]="offerRevisions()" 
+                    (ngModelChange)="offerRevisions.set($event)"
+                  >
+                    <option [value]="1">1 Revision</option>
+                    <option [value]="2">2 Revisions</option>
+                    <option [value]="3">3 Revisions</option>
+                    <option [value]="5">5 Revisions</option>
+                    <option [value]="10">10 Revisions</option>
+                  </select>
+                  <span class="select-chevron-icon">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
                   </span>
                 </div>
-                <div>
-                  <strong style="color: #8c7b6e;">Outfit:</strong> 
-                  <span style="color: #2c1e14; margin-left: 4px;">{{ getDesignSummary().outfit || 'Not specified' }}</span>
-                </div>
-                <div style="grid-column: span 2;">
-                  <strong style="color: #8c7b6e;">Accessories:</strong> 
-                  <span style="color: #2c1e14; margin-left: 4px;">{{ getDesignSummary().accessories || 'None' }}</span>
-                </div>
-                <div style="grid-column: span 2;" *ngIf="getDesignSummary().personalization && getDesignSummary().personalization !== 'Not specified'">
-                  <strong style="color: #8c7b6e;">Personalization:</strong> 
-                  <span style="color: #2c1e14; margin-left: 4px;">{{ getDesignSummary().personalization }}</span>
-                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 2: Offer Details -->
+          <div class="offer-section-card details-card">
+            <div class="card-title-row">
+              <span class="card-title-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                  <line x1="16" y1="13" x2="8" y2="13"></line>
+                  <line x1="16" y1="17" x2="8" y2="17"></line>
+                  <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+              </span>
+              <h4>2. Offer Details</h4>
+            </div>
+
+            <!-- Description & Materials -->
+            <div class="redesigned-form-group">
+              <label for="offerNotes">Description & Materials <span class="required">*</span></label>
+              <textarea 
+                id="offerNotes" 
+                class="redesigned-textarea"
+                [ngModel]="offerNotes()" 
+                (ngModelChange)="offerNotes.set($event)" 
+                placeholder="Describe amigurumi specifications, amigurumi size, yarn types..."
+                rows="3"
+              ></textarea>
+            </div>
+
+            <!-- Optional Notes -->
+            <div class="redesigned-form-group">
+              <label for="offerOptionalNotes">Optional Notes</label>
+              <textarea 
+                id="offerOptionalNotes" 
+                class="redesigned-textarea"
+                [ngModel]="offerOptionalNotes()" 
+                (ngModelChange)="offerOptionalNotes.set($event)" 
+                placeholder="Add shipping terms or package details if any..."
+                rows="2"
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- Card 3: Linked Design Snapshot -->
+          <div class="offer-section-card snapshot-card" *ngIf="getSelectedDesign()">
+            <div class="card-title-row">
+              <span class="card-title-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                  <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                  <polyline points="21 15 16 10 5 21"></polyline>
+                </svg>
+              </span>
+              <h4>3. Linked Design Snapshot (Active Request)</h4>
+            </div>
+
+            <div class="snapshot-split-layout">
+              <!-- Left Side: Preview Images -->
+              <div class="snapshot-left-preview">
+                <img [src]="resolveImageUrl(getSelectedDesignImageUrl() || '')" 
+                     alt="AI Generated Reference Doll" 
+                     class="snapshot-preview-img"
+                     referrerpolicy="no-referrer" />
+                <img *ngIf="getDesignSummary().referenceImage" 
+                     [src]="resolveImageUrl(getDesignSummary().referenceImage || '')" 
+                     alt="Buyer Reference Photo" 
+                     class="snapshot-preview-img"
+                     referrerpolicy="no-referrer" />
               </div>
 
+              <!-- Right Side: Prompt and Specs -->
+              <div class="snapshot-right-content">
+                <!-- Specs grid -->
+                <div class="metadata-spec-grid">
+                  <!-- Gender -->
+                  <div class="spec-item-row">
+                    <span class="spec-icon-wrapper" title="Gender">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                      </svg>
+                    </span>
+                    <span class="spec-label">Gender:</span>
+                    <span class="spec-value">{{ getDesignSummary().gender || 'Not specified' }}</span>
+                  </div>
+
+                  <!-- Height/Size -->
+                  <div class="spec-item-row">
+                    <span class="spec-icon-wrapper" title="Height/Size">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 3v18M19 3v18M5 7h14M5 12h14M5 17h14"></path>
+                      </svg>
+                    </span>
+                    <span class="spec-label">Height/Size:</span>
+                    <span class="spec-value">{{ getDesignSummary().height || 'Not specified' }}</span>
+                  </div>
+
+                  <!-- Skin Tone -->
+                  <div class="spec-item-row">
+                    <span class="spec-icon-wrapper" title="Skin Tone">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                      </svg>
+                    </span>
+                    <span class="spec-label">Skin Tone:</span>
+                    <span class="spec-value">{{ getDesignSummary().skinTone || 'Not specified' }}</span>
+                  </div>
+
+                  <!-- Face Expression -->
+                  <div class="spec-item-row">
+                    <span class="spec-icon-wrapper" title="Face Expression">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"></path>
+                      </svg>
+                    </span>
+                    <span class="spec-label">Face Expression:</span>
+                    <span class="spec-value">{{ getDesignSummary().face || 'Normal' }}</span>
+                  </div>
+
+                  <!-- Hair -->
+                  <div class="spec-item-row">
+                    <span class="spec-icon-wrapper" title="Hair">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 22V4c0-.5.2-1 .6-1.4C5 2.2 5.5 2 6 2c1.7 0 3 1.3 3 3v17M20 22V4c0-.5-.2-1-.6-1.4-.4-.4-.9-.6-1.4-.6-1.7 0-3 1.3-3 3v17"></path>
+                      </svg>
+                    </span>
+                    <span class="spec-label">Hair:</span>
+                    <span class="spec-value">
+                      {{ getDesignSummary().hairStyle }}{{ getDesignSummary().hairColor ? ', ' + getDesignSummary().hairColor : '' }}
+                    </span>
+                  </div>
+
+                  <!-- Outfit -->
+                  <div class="spec-item-row">
+                    <span class="spec-icon-wrapper" title="Outfit">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20.38 3.46L16 6.14V3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3.14L3.62 3.46a1 1 0 0 0-1.42.3L.36 7.42a1 1 0 0 0 .3 1.42L5 11.5V21a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V11.5l4.34-2.66a1 1 0 0 0 .3-1.42l-1.84-3.66a1 1 0 0 0-1.42-.3z"></path>
+                      </svg>
+                    </span>
+                    <span class="spec-label">Outfit:</span>
+                    <span class="spec-value">{{ getDesignSummary().outfit || 'Not specified' }}</span>
+                  </div>
+
+                  <!-- Accessories -->
+                  <div class="spec-item-row">
+                    <span class="spec-icon-wrapper" title="Accessories">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="10" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 10V6a5 5 0 0 1 10 0v4"></path>
+                      </svg>
+                    </span>
+                    <span class="spec-label">Accessories:</span>
+                    <span class="spec-value">{{ getDesignSummary().accessories || 'None' }}</span>
+                  </div>
+                </div>
+
+                <!-- Personalization Section -->
+                <div class="personalization-section" *ngIf="getDesignSummary().personalization && getDesignSummary().personalization !== 'Not specified'">
+                  <div class="personalization-title">Personalization</div>
+                  <div class="personalization-container">
+                    {{ getDesignSummary().personalization }}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 10px; padding: 15px; border-top: 1px solid rgba(176, 110, 46, 0.1); background: #fbf8f5;">
-          <button class="btn btn-outline" style="min-width: 90px;" (click)="showCreateOfferModal.set(false)">Cancel</button>
-          <button class="btn btn-secondary" style="min-width: 110px;" [disabled]="submittingOffer()" (click)="submitCustomOffer('Draft')">Save Draft</button>
-          <button class="btn btn-primary" style="min-width: 110px;" [disabled]="submittingOffer()" (click)="submitCustomOffer('Sent')">
-            @if (submittingOffer()) { Sending... } @else { Send Offer }
+        <div class="redesigned-footer">
+          <button class="btn-cancel-ghost" (click)="showCreateOfferModal.set(false)">Cancel</button>
+          <button class="btn-draft-secondary" [disabled]="submittingOffer()" (click)="submitCustomOffer('Draft')">Save Draft</button>
+          <button class="btn-send-primary" [disabled]="submittingOffer()" (click)="submitCustomOffer('Sent')">
+            <svg *ngIf="!submittingOffer()" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="22" y1="2" x2="11" y2="13" />
+              <polygon points="22 2 15 22 11 13 2 9 22 2" />
+            </svg>
+            <span>@if (submittingOffer()) { Sending... } @else { Send Offer }</span>
           </button>
         </div>
       </div>

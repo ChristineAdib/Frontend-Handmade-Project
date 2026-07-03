@@ -126,3 +126,9 @@
     height: 70px;
   }
 }
+
+@media (max-width: 480px) {
+  .video-section {
+    height: 240px;
+  }
+}

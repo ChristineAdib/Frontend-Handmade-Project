@@ -1,42 +1,230 @@
 <div class="landing-container">
+  <!-- Decorative Baby's Breath (Left) -->
+  <div class="decorative-element left-decor">
+    <img src="/images/babys_breath_decor.jpg" alt="Baby's Breath Decor" />
+  </div>
+
+  <!-- Decorative Premium Crochet Doll (Right) -->
+  <div class="decorative-element right-decor">
+    <img src="/images/premium_crochet_doll.jpg" alt="Premium Crochet Doll" />
+  </div>
+
   <!-- Hero Section -->
   <section class="hero-section">
-    <div class="hero-overlay"></div>
     <div class="hero-content">
-      <span class="badge">Handora Custom Studio</span>
-      <h1 class="hero-title">Design Your Perfect Crochet Doll</h1>
+      <!-- Badge -->
+      <div class="badge-wrapper">
+        <span class="premium-badge">
+          <!-- Small Yarn/Crochet Hook Icon (Inline SVG for maximum reliability) -->
+          <svg class="badge-icon" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+            <path d="M2 12h20"></path>
+          </svg>
+          Handora Custom Studio
+        </span>
+      </div>
+
+      <!-- Title -->
+      <h1 class="hero-title">
+        Design Your Perfect Crochet Doll
+        <!-- Decorative leaf SVG -->
+        <svg class="leaf-icon" viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+          <path d="M17 8C15.3 5.3 12.2 4 9 4C5.1 4 2 7.1 2 11C2 13.5 3.3 15.7 5.3 17C6.1 14.1 8.2 11.7 11 10.4C10.4 11.2 10 12.1 10 13C10 15.8 12.2 18 15 18C16.9 18 18.6 17 19.5 15.3C21.1 12.6 20.2 9 17 8ZM15 16C13.3 16 12 14.7 12 13C12 11.3 13.3 10 15 10C16.7 10 18 11.3 18 13C18 14.7 16.7 16 15 16Z" opacity="0.8"/>
+        </svg>
+      </h1>
+
+      <!-- Mini heart separator -->
+      <div class="heart-separator">
+        <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor">
+          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+        </svg>
+      </div>
+
+      <!-- Subtitle -->
       <p class="hero-subtitle">
-        Express your imagination. Select a design workflow below to create your custom amigurumi doll and connect with master artisans.
+        Express your imagination. Choose a design workflow below to create your custom amigurumi doll and connect with master artisans.
       </p>
       
+      <!-- Design Modes Container -->
       <div class="design-modes-container">
         <!-- Card 1: Create from Photo -->
         <div class="mode-card photo-mode" routerLink="/custom-studio/photo">
-          <div class="mode-icon">🖼</div>
+          <div class="card-glass-glow"></div>
+          
+          <div class="icon-circle">
+            <!-- Camera/Image SVG icon -->
+            <svg class="mode-svg-icon" viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <circle cx="8.5" cy="8.5" r="1.5"></circle>
+              <polyline points="21 15 16 10 5 21"></polyline>
+            </svg>
+          </div>
+
           <div class="mode-details">
             <h3>Create from Photo</h3>
+            <div class="card-heart-separator">
+              <svg viewBox="0 0 24 24" width="8" height="8" fill="currentColor">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+              </svg>
+            </div>
             <p>Upload a real person's photo and let AI automatically generate a crochet doll that looks like them.</p>
           </div>
-          <button class="btn-mode-action">Start from Photo</button>
+          
+          <!-- Premium CTA Button -->
+          <button class="btn-premium">
+            <span class="btn-content">
+              <!-- Upload Cloud SVG -->
+              <svg class="btn-icon-left" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21.2 15c.7-1.2 1-2.5.7-3.9-.5-2-2.4-3.5-4.5-3.5h-1.2C15.5 5 13 3 10 3 6.7 3 4 5.7 4 9c0 .4.1.8.2 1.2h-.2C1.8 10.2 0 12 0 14.2 0 16.5 1.8 18.2 4 18.2h16.5c1.5 0 2.8-1.2 2.8-2.7 0-.2-.1-.4-.1-.5z"></path>
+                <polyline points="16 12 12 8 8 12"></polyline>
+                <line x1="12" y1="8" x2="12" y2="16"></line>
+              </svg>
+              Start from Photo
+            </span>
+            <!-- Arrow icon on the right -->
+            <svg class="btn-arrow-right" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </button>
         </div>
 
         <!-- Card 2: Build Your Own Doll -->
         <div class="mode-card build-mode" routerLink="/custom-studio/customize">
-          <div class="mode-icon">🎨</div>
+          <div class="card-glass-glow"></div>
+
+          <div class="icon-circle">
+            <!-- Palette SVG icon -->
+            <svg class="mode-svg-icon" viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 14.5 3 16.8 4.7 18.5C5.0 18.8 5.0 19.2 4.7 19.5C4.4 19.8 4.0 19.8 3.7 19.5C1.4 17.2 0 14.8 0 12C0 5.4 5.4 0 12 0C18.6 0 24 5.4 24 12C24 18.6 18.6 24 12 24C10.9 24 10 23.1 10 22C10 21.4 10.2 20.9 10.6 20.6C10.9 20.2 11.4 20 12 20C12.5 20 13 19.6 13 19C13 18.4 12.5 18 12 18C9.8 18 8 16.2 8 14C8 12.9 8.9 12 10 12H12"></path>
+              <circle cx="7.5" cy="10.5" r="1.5" fill="currentColor"></circle>
+              <circle cx="12" cy="7" r="1.5" fill="currentColor"></circle>
+              <circle cx="16.5" cy="10.5" r="1.5" fill="currentColor"></circle>
+              <circle cx="14.5" cy="15.5" r="1.5" fill="currentColor"></circle>
+            </svg>
+          </div>
+
           <div class="mode-details">
             <h3>Build Your Own Doll</h3>
+            <div class="card-heart-separator">
+              <svg viewBox="0 0 24 24" width="8" height="8" fill="currentColor">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+              </svg>
+            </div>
             <p>Customize every detail manually and let AI generate your perfect crochet doll.</p>
           </div>
-          <button class="btn-mode-action">Start Customizing</button>
+
+          <!-- Premium CTA Button -->
+          <button class="btn-premium">
+            <span class="btn-content">
+              <!-- Magic Wand SVG -->
+              <svg class="btn-icon-left" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M15 4V2"></path>
+                <path d="M15 16v-2"></path>
+                <path d="M8 9h2"></path>
+                <path d="M20 9h2"></path>
+                <path d="M17.8 5.2l-1.4 1.4"></path>
+                <path d="M12.2 10.8l-1.4 1.4"></path>
+                <path d="M12.2 5.2l1.4 1.4"></path>
+                <path d="M17.8 10.8l1.4-1.4"></path>
+                <path d="M2 22l8-8"></path>
+              </svg>
+              Start Customizing
+            </span>
+            <!-- Arrow icon on the right -->
+            <svg class="btn-arrow-right" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </button>
         </div>
       </div>
 
-      <!-- Saved Designs link -->
-      <div class="resume-actions">
-        <button class="btn btn-outline btn-sm" routerLink="/custom-studio/my-designs">
-          📋 My Saved Designs
-        </button>
+      <!-- Saved Designs link redesigned as a beautiful horizontal card -->
+      <div class="saved-designs-container" routerLink="/custom-studio/my-designs">
+        <div class="saved-designs-card">
+          <div class="saved-left">
+            <div class="saved-icon-circle">
+              <!-- Folder/Document SVG icon -->
+              <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+              </svg>
+            </div>
+            <div class="saved-text">
+              <h4>My Saved Designs</h4>
+              <p>View and manage your previously saved designs</p>
+            </div>
+          </div>
+          <div class="saved-right">
+            <!-- Forward Arrow -->
+            <svg class="saved-arrow" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </div>
+        </div>
       </div>
+
+      <!-- Trust Section with four premium feature blocks -->
+      <div class="trust-section">
+        <div class="trust-grid">
+          <!-- Item 1: 100% Handmade -->
+          <div class="trust-item">
+            <div class="trust-icon-wrapper">
+              <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                <path d="m9 12 2 2 4-4"></path>
+              </svg>
+            </div>
+            <div class="trust-info">
+              <h5>100% Handmade</h5>
+              <p>Crafted with care by skilled artisans</p>
+            </div>
+          </div>
+
+          <!-- Item 2: Secure & Private -->
+          <div class="trust-item">
+            <div class="trust-icon-wrapper">
+              <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+            </div>
+            <div class="trust-info">
+              <h5>Secure & Private</h5>
+              <p>Your photos and designs are safely protected</p>
+            </div>
+          </div>
+
+          <!-- Item 3: Premium Craftsmanship -->
+          <div class="trust-item">
+            <div class="trust-icon-wrapper">
+              <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+              </svg>
+            </div>
+            <div class="trust-info">
+              <h5>Premium Quality</h5>
+              <p>High-quality yarns and expert craftsmanship</p>
+            </div>
+          </div>
+
+          <!-- Item 4: Made with Love -->
+          <div class="trust-item">
+            <div class="trust-icon-wrapper">
+              <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+              </svg>
+            </div>
+            <div class="trust-info">
+              <h5>Made with Love</h5>
+              <p>Each doll is made with passion and love</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </section>
 </div>

@@ -142,3 +142,25 @@
   animation: spin 0.8s linear infinite;
   display: inline-block;
 }
+
+@media (max-width: 480px) {
+  .page-header h2 {
+    font-size: 24px;
+  }
+  .settings-card {
+    padding: 1.25rem 1rem;
+    border-radius: 12px;
+  }
+  .logo-area {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .logo-preview-wrap {
+    align-items: center;
+  }
+  .save-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

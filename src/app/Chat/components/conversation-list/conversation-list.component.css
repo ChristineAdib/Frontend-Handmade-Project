@@ -7,17 +7,124 @@
   color: #2c1e14;
 }
 
+.sidebar-brand-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 1.5rem;
+  height: 80px;
+  background: #F5F0EB;
+  border-bottom: 1px solid rgba(176, 110, 46, 0.1);
+  box-sizing: border-box;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+[dir="rtl"] .sidebar-brand-section {
+  flex-direction: row-reverse;
+}
+
+.back-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background-color: #ffffff;
+  border: 1px solid rgba(176, 110, 46, 0.15);
+  color: #c8813a;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(176, 110, 46, 0.05);
+}
+
+.back-btn:hover {
+  background-color: #F5F0EB;
+  border-color: #c8813a;
+  transform: translateY(-1px);
+}
+
+.back-btn:active {
+  transform: translateY(0);
+}
+
+.logo-wrapper {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  flex-shrink: 0;
+  width: auto;
+  margin-left: -50px;
+}
+
+[dir="rtl"] .logo-wrapper {
+  margin-left: 0;
+  margin-right: -50px;
+}
+
+.logo__mark {
+  width: 90px;
+  height: 90px;
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: visible;
+  margin-right: -15px;
+}
+
+[dir="rtl"] .logo__mark {
+  margin-right: 0;
+  margin-left: -15px;
+}
+
+.logo__img {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+  filter: brightness(0) saturate(100%) invert(35%) sepia(35%) saturate(500%) hue-rotate(350deg) brightness(0.45);
+}
+
+.logo__text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.logo__name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: #1e0e05;
+  line-height: 1;
+  letter-spacing: -0.3px;
+}
+
+.logo__tag {
+  font-family: 'Jost', sans-serif;
+  font-size: 6.5px;
+  font-weight: 500;
+  color: #c8813a;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
 .sidebar-header {
-  padding: 1.5rem;
-  border-bottom: 1px solid rgba(176, 110, 46, 0.15);
+  padding: 0.75rem 1.5rem 0.25rem 1.5rem;
 }
 
 .sidebar-header h2 {
-  font-size: 1.3rem;
+  font-size: 1.1rem;
   font-weight: 600;
   margin: 0;
   color: #B06E2E;
   letter-spacing: 0.5px;
+  line-height: 1.36;
 }
 
 .search-box {
@@ -228,3 +335,24 @@
     box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
   }
 }
+
+/* RTL Support */
+[dir="rtl"] .sidebar-container {
+  border-right: none;
+  border-left: 1px solid rgba(176, 110, 46, 0.15);
+}
+
+[dir="rtl"] .search-icon {
+  left: auto;
+  right: 12px;
+}
+
+[dir="rtl"] .search-box input {
+  padding: 0.6rem 2.2rem 0.6rem 0.6rem;
+}
+
+[dir="rtl"] .preview-text {
+  margin-right: 0;
+  margin-left: 0.5rem;
+}
+

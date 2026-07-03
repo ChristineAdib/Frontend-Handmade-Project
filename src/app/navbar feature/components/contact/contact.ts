@@ -1,12 +1,13 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { LanguageService } from '../../../core/services/language.service';
+import { LanguageService, translations } from '../../../core/services/language.service';
 
 @Component({
   selector: 'app-contact',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './contact.html',
   styleUrl: './contact.css',
 })
@@ -22,6 +23,16 @@ export class Contact {
   };
 
   isSubmitting = signal(false);
+
+  faqs: { questionKey: keyof typeof translations.en; answerKey: keyof typeof translations.en; open: boolean }[] = [
+    { questionKey: 'faqQ1', answerKey: 'faqA1', open: false },
+    { questionKey: 'faqQ2', answerKey: 'faqA2', open: false },
+    { questionKey: 'faqQ3', answerKey: 'faqA3', open: false }
+  ];
+
+  toggleFaq(index: number) {
+    this.faqs[index].open = !this.faqs[index].open;
+  }
 
   onSubmit(form: any) {
     if (form.invalid) {

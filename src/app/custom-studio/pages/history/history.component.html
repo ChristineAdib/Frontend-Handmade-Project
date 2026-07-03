@@ -33,7 +33,7 @@
         Negotiations & Bids ({{ negotiationRequests().length }})
       </button>
       <button class="tab-link" [class.active]="activeTab() === 'workspaces'" (click)="setTab('workspaces')">
-        Crafting Workspaces ({{ workspaceRequests().length }})
+        Custom Orders ({{ workspaceRequests().length }})
       </button>
       <button class="tab-link" [class.active]="activeTab() === 'completed'" (click)="setTab('completed')">
         Completed ({{ completedRequests().length }})
@@ -113,14 +113,14 @@
           <div class="card-left">
             <span class="avatar-tag">🔨</span>
             <div class="meta">
-              <h3>Artisan Active Workspace</h3>
+              <h3>Artisan Custom Order</h3>
               <p>Yarn crafting in progress | Started {{ req.createdAt | date:'shortDate' }}</p>
               <span class="badge status active">{{ req.status }}</span>
             </div>
           </div>
           <div class="card-right">
             <button class="btn btn-primary">
-              Open Workspace
+              Open Chat
             </button>
           </div>
         </div>

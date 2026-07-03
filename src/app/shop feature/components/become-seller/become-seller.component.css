@@ -209,3 +209,14 @@ textarea.form-control-custom {
 
 .font-xs { font-size: 11px !important; }
 .font-sm { font-size: 14px !important; }
+
+@media (max-width: 480px) {
+  .actions-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .btn-outline-custom, .btn-submit-custom {
+    width: 100%;
+    box-sizing: border-box;
+  }
+}

@@ -169,3 +169,58 @@
 }
 .page-link:hover { background: #f2ebe0; border-color: #c8813a; color: #c8813a; }
 .page-item.disabled .page-link { opacity: 0.4; cursor: not-allowed; }
+
+@media (max-width: 576px) {
+  .orders-page {
+    padding: 1.5rem 0.75rem;
+  }
+  .page-head {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .order-card {
+    padding: 1rem;
+  }
+  .order-card-top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .order-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  .order-card-body {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  .order-stats {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  .order-actions {
+    width: 100%;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .btn-detail, .btn-cancel {
+    text-align: center;
+    width: 100%;
+  }
+}
+
+@media (max-width: 360px) {
+  .orders-page { padding: 1rem 0.5rem; }
+  .page-head h2 { font-size: 20px; }
+  .order-card { padding: 0.875rem; }
+}
+
+/* RTL */
+[dir="rtl"] .page-head { flex-direction: row-reverse; }
+[dir="rtl"] .order-card-top { flex-direction: row-reverse; }
+[dir="rtl"] .order-actions { flex-direction: row-reverse; }
+[dir="rtl"] .order-stats { flex-direction: row-reverse; }

@@ -207,6 +207,17 @@ export class WorkspaceComponent implements OnInit, OnDestroy {
     this.customStudioService.getCustomRequestDetails(id).subscribe({
       next: async (res) => {
         if (res.success && res.data) {
+          const currentUser = this.authService.getUser();
+          const currentUserId = currentUser?.userId || '';
+          const userRoles = currentUser?.roles || [];
+          const isAdmin = userRoles.includes('Admin');
+
+          if ((res.data.buyerId === currentUserId || !res.data.projectWorkspace) && !isAdmin) {
+            this.toastr.error('Access denied. Only the assigned Seller can access this workspace.');
+            this.router.navigate(['/custom-studio']);
+            return;
+          }
+
           this.requestDetails.set(res.data);
           this.workspace.set(res.data.projectWorkspace || null);
 

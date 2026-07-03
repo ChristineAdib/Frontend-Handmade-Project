@@ -1,5 +1,5 @@
 import { Component, inject, computed, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Conversation } from '../../Models/conversation.model';
@@ -23,6 +23,15 @@ export class ConversationListComponent {
   protected langService = inject(LanguageService);
   private customStudioService = inject(CustomStudioService);
   private router = inject(Router);
+  private location = inject(Location);
+
+  goBack(): void {
+    this.location.back();
+  }
+
+  goHome(): void {
+    this.router.navigate(['/home']);
+  }
 
   resolveImageUrl(url: string | null | undefined): string {
     return this.customStudioService.resolveImageUrl(url);

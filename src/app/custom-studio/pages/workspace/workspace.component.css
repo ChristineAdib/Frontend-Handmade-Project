@@ -644,3 +644,34 @@
   font-size: 14px;
   font-weight: bold;
 }
+
+@media (max-width: 480px) {
+  .workspace-tabs-nav {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .tab-btn {
+    padding: 8px 14px;
+    font-size: 0.85rem;
+    flex-grow: 1;
+    text-align: center;
+  }
+  .chat-wrapper-card {
+    height: 480px;
+  }
+}
+
+/* RTL Support */
+[dir="rtl"] .back-btn {
+  margin-right: 0;
+  margin-left: 12px;
+}
+[dir="rtl"] .milestones-timeline {
+  padding-left: 0;
+  padding-right: 20px;
+}
+[dir="rtl"] .milestones-timeline::before {
+  left: auto;
+  right: 36px;
+}
+
