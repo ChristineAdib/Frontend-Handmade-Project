@@ -90,10 +90,10 @@
 
           <div class="product-price">
             <span class="current-price" [class.has-discount]="product.discountPrice">
-              {{ product.finalPrice }}$
+              {{ langService.currentLang() === 'ar' ? (product.finalPrice + ' ج.م') : ('EGP ' + product.finalPrice) }}
             </span>
             <span class="old-price" *ngIf="product.discountPrice">
-              {{ product.price }}$
+              {{ langService.currentLang() === 'ar' ? (product.price + ' ج.م') : ('EGP ' + product.price) }}
             </span>
           </div>
         </div>
@@ -146,7 +146,7 @@
             <span class="reviews-count">({{ selectedProduct.reviewCount }} {{ langService.currentLang() === 'ar' ? 'تقييمات' : 'Reviews' }})</span>
           </div>
 
-          <div class="modal-price">{{ selectedProduct.finalPrice }}$</div>
+          <div class="modal-price">{{ langService.currentLang() === 'ar' ? (selectedProduct.finalPrice + ' ج.م') : ('EGP ' + selectedProduct.finalPrice) }}</div>
 
           <p class="modal-description">
             {{ loadingModalDetails ? (langService.currentLang() === 'ar' ? 'جاري تحميل التفاصيل...' : 'Loading details...') : (langService.currentLang() === 'ar' ? (selectedProductDetails?.descriptionAr || selectedProductDetails?.descriptionEn || 'لا يوجد وصف للمنتج') : (selectedProductDetails?.descriptionEn || selectedProductDetails?.descriptionAr || 'No description available')) }}

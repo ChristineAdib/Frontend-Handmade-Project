@@ -75,7 +75,7 @@
           <!-- Price -->
           <p class="mt-auto mb-0 fw-bold fs-5"
             style="color: #c8813a;">
-            ${{ product.price }}
+            {{ langService.currentLang() === 'ar' ? (product.price + ' ج.م') : ('EGP ' + product.price) }}
           </p>
 
         </div>
