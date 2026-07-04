@@ -23,9 +23,9 @@ export class AuthService {
   private authTokenService = inject(AuthTokenService);
   private apiUrl = `${environment.apiUrl}/api/auth`;
 
-  activeTab  = signal<AuthTab>('login');
-  otpEmail   = signal<string>('');
-  errorMsg   = signal<string | null>(null);
+  activeTab = signal<AuthTab>('login');
+  otpEmail = signal<string>('');
+  errorMsg = signal<string | null>(null);
   readonly authChange$ = new Subject<void>();
 
   private logoutTimer: any;
@@ -49,7 +49,7 @@ export class AuthService {
       } catch (e) {
         console.warn('Failed to restore token from localStorage on startup:', e);
       }
-      
+
       if (hasToken) {
         this.silentReauthenticate().subscribe();
       } else {
@@ -65,7 +65,7 @@ export class AuthService {
     return this.http.post<ApiResponse<AuthResponse>>(
       `${this.apiUrl}/login`,
       model,
-      {withCredentials:  true}
+      { withCredentials: true }
     ).pipe(
       tap(res => {
         if (res.success && res.data) {
@@ -80,7 +80,12 @@ export class AuthService {
   loginWithGoogle(credential: string): Observable<ApiResponse<AuthResponse>> {
     return this.http.post<ApiResponse<AuthResponse>>(
       `${this.apiUrl}/google`,
-      {withCredentials:  true}
+      {
+        credential: credential
+      },
+      {
+        withCredentials: true
+      }
     ).pipe(
       tap(res => {
         if (res.success && res.data) {
@@ -98,7 +103,7 @@ export class AuthService {
 
     this.banPollingSubscription = interval(this.POLL_INTERVAL_MS).pipe(
       switchMap(() =>
-        this.http.get<ApiResponse<any>>(API_URLS.checkBanStatus, {withCredentials:  true}).pipe(
+        this.http.get<ApiResponse<any>>(API_URLS.checkBanStatus, { withCredentials: true }).pipe(
           catchError(err => of(err))
         )
       )
@@ -137,7 +142,7 @@ export class AuthService {
     // Message to user before redirect
     try {
       localStorage.setItem('banned_msg', 'true');
-    } catch {}
+    } catch { }
     window.location.href = '/login';
   }
 
@@ -280,11 +285,11 @@ export class AuthService {
 
   // ── Other endpoints ────────────────────────────────────────
   forgotPassword(email: string): Observable<ApiResponse<any>> {
-    return this.http.post<ApiResponse<any>>(`${this.apiUrl}/forgot-password`, { email }, {withCredentials:  true});
+    return this.http.post<ApiResponse<any>>(`${this.apiUrl}/forgot-password`, { email }, { withCredentials: true });
   }
 
   resetPassword(model: any): Observable<ApiResponse<any>> {
-    return this.http.post<ApiResponse<any>>(`${this.apiUrl}/reset-password`, model, {withCredentials:  true});
+    return this.http.post<ApiResponse<any>>(`${this.apiUrl}/reset-password`, model, { withCredentials: true });
   }
 
   register(model: RegisterRequest) {
@@ -298,16 +303,16 @@ export class AuthService {
     if (model.bio) formData.append('bio', model.bio);
     if (model.profileImage) formData.append('profileImage', model.profileImage);
     return this.http.post(`${this.apiUrl}/register`, formData,
-      {withCredentials:  true});
+      { withCredentials: true });
   }
 
   verifyOtp(model: any) {
     return this.http.post(`${this.apiUrl}/verify-otp`, model,
-      {withCredentials:  true});
+      { withCredentials: true });
   }
 
   resendOtp(model: any) {
-    return this.http.post(`${this.apiUrl}/resend-otp`, model, {withCredentials:  true});
+    return this.http.post(`${this.apiUrl}/resend-otp`, model, { withCredentials: true });
   }
 
   extractError(err: any, fallback: string = 'An error occurred.'): string {
