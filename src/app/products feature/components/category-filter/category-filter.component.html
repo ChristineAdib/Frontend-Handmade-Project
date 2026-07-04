@@ -1,42 +1,48 @@
-<!-- Desktop Chips (hidden on mobile) -->
-<div class="chips-wrapper d-none d-md-flex align-items-center">
-  <div class="chips-scroll">
-    <!-- "All" Chip -->
+<div class="category-filter-wrapper" *ngIf="!isLoading">
+ 
+  <!-- صف الكاتيجوري الرئيسي: بيظهر بس لو الصفحة MB مقفولة على category جاي من لينك -->
+  <div class="category-pills" *ngIf="!lockedToCategory">
     <button
       type="button"
-      class="chip-button"
-      [class.active]="selectedCategoryId === '0'"
-      (click)="selectCategory('0')"
-    >
-      {{ langService.translate('allCategories') }}
+      class="pill"
+      [class.active]="selectedParent === null"
+      (click)="selectParent(null)">
+      {{ langService.currentLang() === 'ar' ? 'كل الفئات' : 'All Categories' }}
     </button>
-
-    <!-- Dynamic Category Chips -->
-    @for (cat of categories; track cat.id) {
-      <button
-        type="button"
-        class="chip-button"
-        [class.active]="selectedCategoryId === cat.id"
-        (click)="selectCategory(cat.id)"
-      >
-        {{ langService.currentLang() === 'ar' ? (cat.nameAr || cat.nameEn) : (cat.nameEn || cat.nameAr) }}
-      </button>
-    }
+ 
+    <button
+      type="button"
+      class="pill"
+      *ngFor="let cat of categories"
+      [class.active]="selectedParent?.id === cat.id"
+      (click)="selectParent(cat)">
+      {{ displayName(cat) }}
+    </button>
+  </div>
+ 
+  <!-- عنوان الكاتيجوري لما تكون الصفحة مقفولة عليها (جاي من الهيدر / الهوم) -->
+  <div class="locked-category-title" *ngIf="lockedToCategory && selectedParent">
+    <span class="locked-label">{{ displayName(selectedParent) }}</span>
+  </div>
+ 
+  <!-- صف السب-كاتيجوري -->
+  <div class="subcategory-pills" *ngIf="hasSubcategories">
+    <button
+      type="button"
+      class="pill sub-pill"
+      [class.active]="selectedSub === null"
+      (click)="selectSub(null)">
+      {{ langService.currentLang() === 'ar' ? 'الكل' : 'All' }} {{ displayName(selectedParent!) }}
+    </button>
+ 
+    <button
+      type="button"
+      class="pill sub-pill"
+      *ngFor="let sub of selectedParent?.subCategories"
+      [class.active]="selectedSub?.id === sub.id"
+      (click)="selectSub(sub)">
+      {{ displayName(sub) }}
+    </button>
   </div>
 </div>
-
-<!-- Mobile Dropdown (hidden on desktop) -->
-<div class="dropdown-wrapper d-block d-md-none">
-  <select 
-    class="luxury-select" 
-    [value]="selectedCategoryId" 
-    (change)="onDropdownChange($event)"
-  >
-    <option value="0">{{ langService.translate('allCategories') }}</option>
-    @for (cat of categories; track cat.id) {
-      <option [value]="cat.id">
-        {{ langService.currentLang() === 'ar' ? (cat.nameAr || cat.nameEn) : (cat.nameEn || cat.nameAr) }}
-      </option>
-    }
-  </select>
-</div>
+ 
