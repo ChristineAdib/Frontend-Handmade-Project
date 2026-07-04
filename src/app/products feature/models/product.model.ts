@@ -79,6 +79,7 @@ export interface ProductQuery {
   pageIndex: number;
   pageSize: number;
   categoryId?: string;
+   categoryIds?: string[];
   search?: string;
   onlyOnePiece?: boolean;
 }
