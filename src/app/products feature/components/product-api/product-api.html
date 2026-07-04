@@ -29,7 +29,7 @@
           </p>
         </div>
         <div class="card-footer d-flex justify-content-between align-items-center">
-          <strong class="text-success">${{ product.price }}</strong>
+          <strong class="text-success">{{ langService.currentLang() === 'ar' ? (product.price + ' ج.م') : ('EGP ' + product.price) }}</strong>
           <button class="btn btn-sm btn-primary">{{ langService.translate('addToCart') }}</button>
         </div>
       </div>
