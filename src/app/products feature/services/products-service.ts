@@ -56,7 +56,12 @@ export class ProductsService {
         .set('pageNumber', query.pageIndex.toString())
         .set('pageSize', query.pageSize.toString());
 
-      if (query.categoryId && query.categoryId !== '0') {
+      // ✅ لو فيه أكتر من category id (أب + subcategories) ابعتيهم كلهم
+      if (query.categoryIds && query.categoryIds.length > 0) {
+        query.categoryIds.forEach(id => {
+          params = params.append('categoryIds', id);
+        });
+      } else if (query.categoryId && query.categoryId !== '0') {
         params = params.set('categoryId', query.categoryId);
       }
 
@@ -76,8 +81,7 @@ export class ProductsService {
         `${API_URLS.getProducts}?pageNumber=${page}&pageSize=${size}`
       );
     }
-  }
-
+}
   getProductById(id: string): Observable<ProductDetailResponse>;
   getProductById(id: number): IProduct | null;
   getProductById(id: string | number): any {

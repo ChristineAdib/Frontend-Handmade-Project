@@ -33,15 +33,14 @@ export class Products implements OnInit, OnChanges {
 
   @Input() parentSearch: string = '';
 
-  // State managed via Signals
   products = signal<Product[]>([]);
   loading = signal<boolean>(true);
   error = signal<string | null>(null);
   searchTerm = signal<string>('');
-  selectedCategory = signal<string>('0');
+  categoryIds = signal<string[]>([]);   // ✅ بدل selectedCategory
+  initialCategoryName = signal<string | null>(null); // ✅ يتبعت للـ filter component
   onlyOnePiece = signal<boolean>(false);
-  
-  // Pagination Signals
+
   pageIndex = signal<number>(1);
   pageSize = signal<number>(8);
   totalCount = signal<number>(0);
@@ -49,37 +48,24 @@ export class Products implements OnInit, OnChanges {
   hasNext = signal<boolean>(false);
   hasPrevious = signal<boolean>(false);
 
-  // Array of numbers for rendering skeletons
   skeletonArray = Array(8).fill(0);
 
   ngOnInit(): void {
-    // Subscribe to query parameters to filter by category if provided
     this.route.queryParams.subscribe(params => {
       const categoryParam = params['category'];
+      const searchParam = params['search'];
+
+      if (searchParam) {
+        this.searchTerm.set(searchParam);
+      }
+
       if (categoryParam) {
-        // Fetch categories first to match by name
-        this.productsService.getCategories().subscribe({
-          next: (categories) => {
-            const matchedCat = categories.find(
-              c => c.nameEn.toLowerCase() === categoryParam.toLowerCase()
-            );
-            if (matchedCat) {
-              this.selectedCategory.set(matchedCat.id);
-            } else {
-              this.selectedCategory.set('0');
-            }
-            this.pageIndex.set(1);
-            this.loadProducts();
-          },
-          error: () => {
-            this.selectedCategory.set('0');
-            this.loadProducts();
-          }
-        });
+        // مش بنحمل المنتجات هنا فورًا — بننتظر الـ CategoryFilterComponent
+        // يطبق الاختيار ويطلع categoryIdsChange، هو ده اللي هيستدعي loadProducts
+        this.initialCategoryName.set(categoryParam);
       } else {
-        if (!this.parentSearch) {
-          this.loadProducts();
-        }
+        this.initialCategoryName.set(null);
+        this.loadProducts();
       }
     });
   }
@@ -100,7 +86,8 @@ export class Products implements OnInit, OnChanges {
     const query: ProductQuery = {
       pageIndex: this.pageIndex(),
       pageSize: this.pageSize(),
-      categoryId: this.selectedCategory() !== '0' ? this.selectedCategory() : undefined,
+      categoryIds: this.categoryIds().length > 0 ? this.categoryIds() : undefined,
+      
       search: this.searchTerm() || undefined,
       onlyOnePiece: this.onlyOnePiece() ? true : undefined
     };
@@ -128,8 +115,9 @@ export class Products implements OnInit, OnChanges {
     this.loadProducts();
   }
 
-  onCategoryChange(categoryId: string): void {
-    this.selectedCategory.set(categoryId);
+  // ✅ بيستقبل الـ ids الجاهزة من CategoryFilterComponent (أب+subs أو sub واحد أو [])
+  onCategoryIdsChange(ids: string[]): void {
+    this.categoryIds.set(ids);
     this.pageIndex.set(1);
     this.loadProducts();
   }
@@ -147,7 +135,7 @@ export class Products implements OnInit, OnChanges {
 
   clearFilters(): void {
     this.searchTerm.set('');
-    this.selectedCategory.set('0');
+    this.categoryIds.set([]);
     this.onlyOnePiece.set(false);
     this.pageIndex.set(1);
     this.loadProducts();
@@ -158,7 +146,6 @@ export class Products implements OnInit, OnChanges {
   }
 
   onQuickView(product: Product): void {
-    // Quick View placeholder or custom modal action can go here
     console.log('Quick View Product:', product);
   }
 }
