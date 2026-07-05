@@ -16,6 +16,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { NotificationService } from '../../Notifications/Services/notification.service';
 import { parseUtcDate } from '../../core/utils/date-utils';
 import { CustomStudioService } from '../../custom-studio/services/custom-studio.service';
+import { ProductsService } from '../../products feature/services/products-service';
  
 // Static fallback — shown when backend is down or returns empty list
 const FALLBACK_CATEGORIES: CategoryResponse[] = [
@@ -42,9 +43,10 @@ export class Header implements OnInit, OnDestroy {
   private sanitizer         = inject(DomSanitizer);
   protected notificationService = inject(NotificationService);
   private customStudioService = inject(CustomStudioService);
+  private productService    = inject(ProductsService);
   private notifSub?: Subscription;
   private ngZone         = inject(NgZone);
-
+ 
   // ── Scroll state management ────────────────────────────────
   public scrollState = signal<string>('top');
   public isScrolled = signal<boolean>(false);
@@ -53,6 +55,11 @@ export class Header implements OnInit, OnDestroy {
   // ── Local signal for displayed categories ──────────────────
   displayedCategories = signal<CategoryResponse[]>([]);
   categoriesLoading   = signal<boolean>(false);
+ 
+  // ── Creative side panel (next to logo) ──────────────────────
+  creativePanelOpen = signal(false);
+  creativeProducts = signal<any[]>([]);
+  creativeProductsLoading = signal(false);
  
   // ── Icons per category (lowercase English name key) ────────
   private categoryIcons: Record<string, string> = {
@@ -132,7 +139,7 @@ export class Header implements OnInit, OnDestroy {
       }
     });
   }
-
+ 
   ngOnDestroy(): void {
     if (this.scrollCleanUpFn) {
       this.scrollCleanUpFn();
@@ -141,7 +148,7 @@ export class Header implements OnInit, OnDestroy {
       this.notifSub.unsubscribe();
     }
   }
-
+ 
   private setupScrollListener(): void {
     let lastScrollY = window.scrollY;
     
@@ -152,7 +159,7 @@ export class Header implements OnInit, OnDestroy {
         
         let newState = this.scrollState();
         let newScrolled = this.isScrolled();
-
+ 
         if (scrollY <= 0) {
           newState = 'top';
           newScrolled = false;
@@ -169,9 +176,9 @@ export class Header implements OnInit, OnDestroy {
             }
           }
         }
-
+ 
         lastScrollY = scrollY;
-
+ 
         if (newState !== this.scrollState() || newScrolled !== this.isScrolled()) {
           this.ngZone.run(() => {
             this.scrollState.set(newState);
@@ -179,14 +186,14 @@ export class Header implements OnInit, OnDestroy {
           });
         }
       };
-
+ 
       window.addEventListener('scroll', handleScroll, { passive: true });
       this.scrollCleanUpFn = () => {
         window.removeEventListener('scroll', handleScroll);
       };
     });
   }
-
+ 
   private setupNotificationListener(): void {
     if (this.notifSub) return;
     this.notifSub = this.notificationService.notificationReceived$.subscribe({
@@ -227,6 +234,28 @@ export class Header implements OnInit, OnDestroy {
     } finally {
       this.categoriesLoading.set(false);
     }
+  }
+ 
+  // ── Creative side panel logic ───────────────────────────────
+  toggleCreativePanel(): void {
+    this.creativePanelOpen.update(v => !v);
+    document.body.style.overflow = this.creativePanelOpen() ? 'hidden' : '';
+    if (this.creativePanelOpen() && this.creativeProducts().length === 0) {
+      this.loadCreativeProducts();
+    }
+  }
+ 
+  private loadCreativeProducts(): void {
+    this.creativeProductsLoading.set(true);
+    this.productService.getProducts(1, 8).subscribe({
+      next: (res: any) => {
+        this.creativeProducts.set(res.items);
+        this.creativeProductsLoading.set(false);
+      },
+      error: () => {
+        this.creativeProductsLoading.set(false);
+      }
+    });
   }
  
   // ── Computed shortcuts ─────────────────────────────────────
@@ -284,11 +313,11 @@ export class Header implements OnInit, OnDestroy {
       return user.profileImage;
     return `${environment.apiUrl}/${user.profileImage}`;
   }
-
+ 
   handleNotificationClick(notif: any): void {
     this.notificationService.markAsRead(notif.id);
     this.activeDropdown.set(null);
-
+ 
     if (notif.referenceType === 'CustomRequest' && notif.referenceId) {
       this.customStudioService.getCustomRequestDetails(notif.referenceId).subscribe({
         next: (res) => {
@@ -315,7 +344,7 @@ export class Header implements OnInit, OnDestroy {
       });
       return;
     }
-
+ 
     const type = Number(notif.type);
     
     if (type === 7) { // Message
@@ -376,7 +405,7 @@ export class Header implements OnInit, OnDestroy {
       this.router.navigate(['/']);
     }
   }
-
+ 
   getRelativeTime(createdAt: string): string {
     const created = parseUtcDate(createdAt);
     const now = new Date();
@@ -384,9 +413,9 @@ export class Header implements OnInit, OnDestroy {
     const diffMins = Math.floor(diffMs / 60000);
     const diffHours = Math.floor(diffMins / 60);
     const diffDays = Math.floor(diffHours / 24);
-
+ 
     const isAr = this.langService.currentLang() === 'ar';
-
+ 
     if (diffMins < 1) {
       return isAr ? 'الآن' : 'Just now';
     }
