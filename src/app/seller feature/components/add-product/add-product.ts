@@ -7,11 +7,12 @@ import { ShopService } from '../../../shop feature/services/shop-service';
 import { CategorySummary } from '../../../Categories/Models/CategorySummary';
 import { Input } from '@angular/core';
 import { LanguageService } from '../../../core/services/language.service';
+import { CommissionBannerComponent } from '../../../shared/components/commission-banner/commission-banner.component';
 
 @Component({
   selector: 'app-add-product',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, CommissionBannerComponent],
   templateUrl: './add-product.html',
   styleUrl: './add-product.css',
 })
