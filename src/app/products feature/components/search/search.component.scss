@@ -12,7 +12,7 @@
     color: #8B4513;
     font-size: 1.5rem;
     pointer-events: none;
-    transition: color 0.3s ease;
+    transition: color 250ms ease, transform 250ms ease;
   }
 
   .luxury-search-input {
@@ -25,21 +25,27 @@
     border: 1px solid #e0d5ce;
     border-radius: 30px;
     box-shadow: 0 4px 12px rgba(44, 24, 16, 0.04);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 250ms ease-in-out;
     outline: none;
 
     &::placeholder {
       color: #a09085;
       font-weight: 400;
+      transition: opacity 250ms ease;
     }
 
     &:focus {
       background-color: #ffffff;
-      border-color: #8B4513;
-      box-shadow: 0 4px 20px rgba(139, 69, 19, 0.12);
+      border-color: #5c4d43;
+      box-shadow: 0 4px 20px rgba(92, 77, 67, 0.15);
+
+      &::placeholder {
+        opacity: 0.5;
+      }
 
       & ~ .search-icon {
-        color: #D4AF37;
+        color: #8B4513;
+        transform: scale(1.08);
       }
     }
   }

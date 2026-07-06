@@ -1,6 +1,4 @@
 <div class="search-container">
-  <span class="material-symbols-outlined search-icon">search</span>
-  
   <input
     type="text"
     [value]="value"
@@ -8,6 +6,7 @@
     [placeholder]="placeholder || langService.translate('searchPlaceholder')"
     class="luxury-search-input"
   />
+  <span class="material-symbols-outlined search-icon">search</span>
 
   @if (value) {
     <button type="button" class="clear-button" (click)="clearSearch()" aria-label="Clear search">

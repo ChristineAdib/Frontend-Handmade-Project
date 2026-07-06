@@ -3,7 +3,28 @@
   <div class="products-header text-center">
     <div class="container py-3">
       <h1 class="page-title">{{ langService.translate('products') }}</h1>
+      
+      <!-- Elegant Handcrafted Divider -->
+      <div class="divider-container my-3" aria-hidden="true">
+        <svg class="handcrafted-divider" viewBox="0 0 300 24" width="200" height="24">
+          <path d="M 10 12 L 135 12" stroke-width="1" stroke-dasharray="2, 2" />
+          <path d="M 150 4 L 155 12 L 150 20 L 145 12 Z" fill="#D4AF37" stroke-width="0" />
+          <circle cx="139" cy="12" r="2" fill="#D4AF37" />
+          <circle cx="161" cy="12" r="2" fill="#D4AF37" />
+          <path d="M 165 12 L 290 12" stroke-width="1" stroke-dasharray="2, 2" />
+        </svg>
+      </div>
+
       <p class="page-subtitle">{{ langService.currentLang() === 'ar' ? 'استكشف مجموعتنا الفاخرة من الإبداعات الحرفية المصنوعة يدوياً بكل حب' : 'Explore our curated collections of premium artisan creations made with love' }}</p>
+      
+      <!-- Elegant Dynamic Statistics Sentence -->
+      <div class="stats-sentence-container mt-3" *ngIf="totalActiveProducts() !== null && totalActiveShops() !== null">
+        <p class="elegant-stats-sentence">
+          {{ langService.currentLang() === 'ar' ? 
+             ('استكشف ' + totalActiveProducts() + ' قطعة فريدة مصنوعة يدوياً بأيدي ' + totalActiveShops() + ' من المبدعين المصريين الموهوبين.') : 
+             ('Explore ' + totalActiveProducts() + ' unique handmade pieces crafted by ' + totalActiveShops() + ' talented Egyptian creators.') }}
+        </p>
+      </div>
     </div>
   </div>
 
@@ -86,7 +107,18 @@
       @if (products().length === 0) {
         <div class="empty-state-container text-center py-5">
           <div class="empty-state-card p-5 border-0">
-            <span class="material-symbols-outlined empty-icon mb-3">sentiment_dissatisfied</span>
+            <!-- Custom Embroidery Hoop SVG Illustration -->
+            <div class="empty-illustration-container mb-4" aria-hidden="true">
+              <svg class="empty-state-svg" viewBox="0 0 100 100" width="120" height="120" fill="none" stroke="#D4AF37" stroke-width="1.5">
+                <circle cx="50" cy="55" r="35" stroke="#8B4513" stroke-width="2" />
+                <circle cx="50" cy="55" r="32" stroke="#8B4513" stroke-dasharray="3, 3" />
+                <rect x="46" y="14" width="8" height="6" fill="#D4AF37" rx="1" />
+                <line x1="42" y1="17" x2="58" y2="17" stroke="#D4AF37" stroke-width="2" />
+                <path d="M 50 17 C 35 30, 65 40, 50 55" stroke="#D4AF37" stroke-dasharray="2, 2" />
+                <line x1="50" y1="55" x2="65" y2="40" stroke="#8a786d" stroke-width="1.5" />
+                <circle cx="51" cy="54" r="0.8" fill="#8a786d" />
+              </svg>
+            </div>
             <h2 class="empty-title mb-2">{{ langService.currentLang() === 'ar' ? 'لم يتم العثور على منتجات يدوية' : 'No handmade products found' }}</h2>
             <p class="empty-desc text-muted mb-4">{{ langService.currentLang() === 'ar' ? 'يرجى تجربة كلمات بحث أخرى أو تغيير تصفية الفئات.' : 'Try adjusting your search criteria or resetting filters to explore other works.' }}</p>
             <button class="btn btn-luxury-primary" (click)="clearFilters()">
@@ -100,8 +132,8 @@
       <!-- Grid of Cards -->
       @else {
         <div class="row g-4">
-          @for (prod of products(); track prod.id) {
-            <div class="col-12 col-md-6 col-lg-3">
+          @for (prod of products(); track prod.id; let idx = $index) {
+            <div class="col-12 col-md-6 col-lg-3" [class.card-fade-in]="isFirstLoad()" [style.--index]="idx">
               <app-product-card 
                 [product]="prod"
                 (quickView)="onQuickView($event)"
@@ -121,4 +153,15 @@
       }
     }
   </div>
+  
+  <!-- Back to Top Button -->
+  <button 
+    type="button" 
+    class="back-to-top" 
+    [class.visible]="showBackToTop()" 
+    (click)="scrollToTop()"
+    [attr.aria-label]="langService.currentLang() === 'ar' ? 'الرجوع للأعلى' : 'Back to Top'"
+  >
+    <span class="material-symbols-outlined" aria-hidden="true">arrow_upward</span>
+  </button>
 </div>
