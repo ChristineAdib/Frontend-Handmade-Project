@@ -1,7 +1,11 @@
 <div class="add-product-wrap" [dir]="langService.currentLang() === 'ar' ? 'rtl' : 'ltr'">
 
+  <!-- 1. Commission Banner (NEW) -->
+  <app-commission-banner></app-commission-banner>
+
+  <!-- Page Header -->
   <div class="page-header">
-    <div>
+    <div class="header-titles">
       <h1 class="page-title">
         {{ isEditMode() ? langService.translate('editProduct') : (langService.currentLang() === 'ar' ? 'إضافة منتج جديد' : 'Add New Product') }}
       </h1>
@@ -9,20 +13,78 @@
         {{ isEditMode() ? (langService.currentLang() === 'ar' ? 'تحديث تفاصيل منتجك' : 'Update your product details') : (langService.currentLang() === 'ar' ? 'إدراج منتج يدوي جديد' : 'List a new handmade product') }}
       </p>
     </div>
-    <button class="cancel-btn" (click)="onCancel()">
+    <button class="back-btn" (click)="onCancel()">
       {{ langService.currentLang() === 'ar' ? 'العودة للمنتجات &rarr;' : '&larr; Back to Products' }}
     </button>
   </div>
 
   <form [formGroup]="form" (ngSubmit)="onSave()">
-    <div class="form-grid">
+    
+    <!-- 2. Product Images (Move to Top) -->
+    <div class="card images-card">
+      <div class="card-header-icon-title">
+        <span class="material-symbols-outlined header-icon">photo_library</span>
+        <div>
+          <h3 class="card-title-custom">{{ langService.currentLang() === 'ar' ? 'صور المنتج' : 'Product Images' }}</h3>
+          <p class="card-sub-custom">{{ langService.currentLang() === 'ar' ? 'أضف صورًا واضحة لعرض منتجك' : 'Add clear images to showcase your product' }}</p>
+        </div>
+      </div>
+      
+      <div class="images-content-layout">
+        <!-- Left: Uploaded images + Center: Add Image -->
+        <div class="images-left-center">
+          @for (preview of imagePreviews(); track $index) {
+            <div class="img-thumb">
+              <img [src]="preview" alt="Product image" />
+              <button type="button" class="img-remove" (click)="removeImage($index)">✕</button>
+            </div>
+          }
+          <div class="img-add" (click)="imgInput.click()">
+            <span class="plus-icon">+</span>
+            <span class="add-text">{{ langService.currentLang() === 'ar' ? 'إضافة صورة' : 'Add Image' }}</span>
+            <small class="add-subtext">JPG, PNG (Max 10MB)</small>
+          </div>
+          <input #imgInput type="file" accept="image/*" multiple (change)="onImagesSelected($event)" hidden />
+        </div>
 
-      <!-- Left Column -->
-      <div class="col-main">
+        <!-- Right: AI Assistant -->
+        <div class="images-right-ai">
+          <div class="ai-assistant-card">
+            <div class="ai-card-header">
+              <span class="ai-sparkle">✨</span>
+              <h4 class="ai-title">{{ langService.currentLang() === 'ar' ? 'مساعد الذكاء الاصطناعي' : 'AI Assistant' }}</h4>
+            </div>
+            <p class="ai-desc">
+              {{ langService.currentLang() === 'ar' ? 'تحليل صور منتجك والحصول على نصائح لتحسين قائمتك.' : 'Analyze your product images and get tips to improve your listing.' }}
+            </p>
+            
+            <button
+              type="button"
+              class="agent-btn"
+              [class.loading]="isAnalyzing()"
+              (click)="analyzeWithAgent()"
+              [disabled]="isAnalyzing() || !agentImageBase64()">
+              <span class="btn-icon">✨</span>
+              @if (isAnalyzing()) {
+                {{ langService.currentLang() === 'ar' ? 'جاري التحليل...' : 'Analyzing...' }}
+              } @else {
+                {{ langService.currentLang() === 'ar' ? 'تحليل بالذكاء الاصطناعي' : 'Analyze with AI' }}
+              }
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
 
-        <!-- Titles -->
-        <div class="card">
-          <h3 class="card-title">{{ langService.translate('productTitle') }}</h3>
+    <!-- 3. Product Information (Two-column layout, titles left, price/quantity right, equal height) -->
+    <div class="product-info-row">
+      <!-- Titles Card -->
+      <div class="card info-card-equal">
+        <div class="card-header-icon-title">
+          <span class="material-symbols-outlined header-icon">edit_note</span>
+          <h3 class="card-title-custom">{{ langService.currentLang() === 'ar' ? 'تفاصيل المنتج' : 'Product Details' }}</h3>
+        </div>
+        <div class="card-inputs-grid">
           <div class="fg">
             <label class="fl">{{ langService.currentLang() === 'ar' ? 'الاسم (بالإنجليزي) *' : 'Title (English) *' }}</label>
             <input class="fi" type="text" formControlName="titleEn" [placeholder]="langService.currentLang() === 'ar' ? 'مثال: كوب سيراميك يدوي' : 'e.g. Handmade Ceramic Mug'" />
@@ -38,159 +100,111 @@
             }
           </div>
         </div>
-
-        <!-- Descriptions -->
-        <div class="card">
-          <h3 class="card-title">{{ langService.translate('description') }}</h3>
-          <div class="fg">
-            <label class="fl">{{ langService.currentLang() === 'ar' ? 'الوصف (بالإنجليزي)' : 'Description (English)' }}</label>
-            <textarea class="fi ta" formControlName="descriptionEn"
-              [placeholder]="langService.currentLang() === 'ar' ? 'اصف منتجك بالإنجليزية...' : 'Describe your product in English...'" rows="4"></textarea>
-          </div>
-          <div class="fg">
-            <label class="fl">{{ langService.currentLang() === 'ar' ? 'الوصف (بالعربي)' : 'Description (Arabic)' }}</label>
-            <textarea class="fi ta" formControlName="descriptionAr"
-              placeholder="اوصف منتجك بالعربي..." rows="4" dir="rtl"></textarea>
-          </div>
-        </div>
-
-        <!-- Images -->
-        <div class="card">
-          <h3 class="card-title">{{ langService.currentLang() === 'ar' ? 'صور المنتج' : 'Product Images' }}</h3>
-          <div class="images-grid">
-            @for (preview of imagePreviews(); track $index) {
-              <div class="img-thumb">
-                <img [src]="preview" alt="Product image" />
-                <button type="button" class="img-remove" (click)="removeImage($index)">✕</button>
-              </div>
-            }
-            <div class="img-add" (click)="imgInput.click()">
-              <span>+</span>
-              <small>{{ langService.currentLang() === 'ar' ? 'إضافة صورة' : 'Add Image' }}</small>
-            </div>
-          </div>
-          <input #imgInput type="file" accept="image/*" multiple (change)="onImagesSelected($event)" hidden />
-
-@if (agentImageBase64()) {
-  <button
-    type="button"
-    class="agent-btn"
-    [class.loading]="isAnalyzing()"
-    (click)="analyzeWithAgent()"
-    [disabled]="isAnalyzing()">
-    <span class="btn-icon">✨</span>
-    @if (isAnalyzing()) {
-      {{ langService.currentLang() === 'ar' ? 'جاري التحليل...' : 'Analyzing your product...' }}
-    } @else {
-      {{ langService.currentLang() === 'ar' ? 'تحليل بالذكاء الاصطناعي' : 'Analyze with AI' }}
-    }
-  </button>
-}
-        </div>
-
-        <!-- 3D Model -->
-        <div class="card">
-          <h3 class="card-title">
-            <span class="material-symbols-outlined" style="font-size: 20px; margin-right: 8px;">view_in_ar</span>
-            {{ langService.currentLang() === 'ar' ? 'نموذج ثلاثي الأبعاد' : '3D Model' }}
-          </h3>
-          <p class="card-description">{{ langService.currentLang() === 'ar' ? 'حمّل ملف GLB لعرض منتجك بصيغة ثلاثية الأبعاد وAR' : 'Upload a GLB file to showcase your product in 3D and AR' }}</p>
-          
-          @if (selectedGlbFile() || existingGlbUrl()) {
-            <div class="glb-preview">
-              <div class="glb-info">
-                <span class="material-symbols-outlined">check_circle</span>
-                <span>{{ selectedGlbFile() ? selectedGlbFile()!.name : 'GLB Model Loaded' }}</span>
-              </div>
-              <button type="button" class="remove-glb-btn" (click)="removeGlbFile()">
-                {{ langService.currentLang() === 'ar' ? 'إزالة' : 'Remove' }}
-              </button>
-            </div>
-          } @else {
-            <div class="glb-upload-area">
-              <button type="button" class="glb-upload-btn" (click)="glbInput.click()">
-                <span class="material-symbols-outlined">upload_file</span>
-                <span>{{ langService.currentLang() === 'ar' ? 'اختر ملف GLB' : 'Choose GLB File' }}</span>
-              </button>
-              <small>{{ langService.currentLang() === 'ar' ? 'أو اسحب الملف هنا' : 'or drag file here' }}</small>
-              <small style="color: #999;">{{ langService.currentLang() === 'ar' ? 'حد أقصى 50 ميجابايت' : 'Max 50MB' }}</small>
-            </div>
-          }
-          <input #glbInput type="file" accept=".glb,.gltf" (change)="onGlbFileSelected($event)" hidden />
-        </div>
-
       </div>
 
-      <!-- Right Column -->
-      <div class="col-side">
-
-        <!-- Pricing -->
-        <div class="card">
-          <h3 class="card-title">{{ langService.currentLang() === 'ar' ? 'التسعير والمخزون' : 'Pricing & Stock' }}</h3>
+      <!-- Pricing & Stock Card -->
+      <div class="card info-card-equal">
+        <div class="card-header-icon-title">
+          <span class="material-symbols-outlined header-icon">payments</span>
+          <h3 class="card-title-custom">{{ langService.currentLang() === 'ar' ? 'التسعير والمخزون' : 'Pricing & Stock' }}</h3>
+        </div>
+        <div class="card-inputs-grid pricing-inputs">
           <div class="fg">
-            <label class="fl">{{ langService.translate('price') }} (EGP) *</label>
+            <label class="fl">{{ langService.translate('price') || 'Price' }} (EGP) *</label>
             <input class="fi" type="number" formControlName="price" placeholder="0.00" min="0" />
             @if (form.get('price')?.invalid && form.get('price')?.touched) {
               <span class="field-err">{{ langService.currentLang() === 'ar' ? 'يرجى إدخال سعر صالح.' : 'Valid price is required.' }}</span>
             }
           </div>
           <div class="fg">
-            <label class="fl">{{ langService.translate('quantityLabel') }} *</label>
+            <label class="fl">{{ langService.translate('quantityLabel') || 'Quantity' }} *</label>
             <input class="fi" type="number" formControlName="quantity" placeholder="1" min="1" />
           </div>
         </div>
+      </div>
+    </div>
 
-        <!-- Category & Subcategory -->
-        <div class="card">
-          <h3 class="card-title">{{ langService.translate('category') }}</h3>
-          
-          <!-- Category Field -->
+    <!-- 4. Description + Category & 5. Tags -->
+    <div class="desc-cat-tags-row">
+      <!-- Description Card -->
+      <div class="card desc-card">
+        <div class="card-header-icon-title">
+          <span class="material-symbols-outlined header-icon">description</span>
+          <h3 class="card-title-custom">{{ langService.translate('description') || (langService.currentLang() === 'ar' ? 'الوصف' : 'Description') }}</h3>
+        </div>
+        <div class="card-inputs-grid">
           <div class="fg">
-            <label class="fl">{{ langService.currentLang() === 'ar' ? 'الفئة الرئيسية *' : 'Category *' }}</label>
-            <select class="fi" formControlName="categoryId" (change)="onCategoryChange($event)">
-              <option value="">{{ langService.currentLang() === 'ar' ? '-- اختر فئة --' : '-- Choose a category --' }}</option>
-              @for (cat of categories(); track cat.id) {
-                <option [value]="cat.id">
-                  {{ langService.currentLang() === 'ar' ? (cat.nameAr || cat.nameEn) : cat.nameEn }}
-                </option>
-              }
-            </select>
-            @if (form.get('categoryId')?.invalid && form.get('categoryId')?.touched) {
-              <span class="field-err">{{ langService.currentLang() === 'ar' ? 'الفئة مطلوبة.' : 'Category is required.' }}</span>
-            }
+            <label class="fl">{{ langService.currentLang() === 'ar' ? 'الوصف (بالإنجليزي)' : 'Description (English)' }}</label>
+            <textarea class="fi ta" formControlName="descriptionEn"
+              [placeholder]="langService.currentLang() === 'ar' ? 'اصف منتجك بالإنجليزية...' : 'Describe your product in English...'" rows="5"></textarea>
           </div>
+          <div class="fg">
+            <label class="fl">{{ langService.currentLang() === 'ar' ? 'الوصف (بالعربي)' : 'Description (Arabic)' }}</label>
+            <textarea class="fi ta" formControlName="descriptionAr"
+              placeholder="اوصف منتجك بالعربي..." rows="5" dir="rtl"></textarea>
+          </div>
+        </div>
+      </div>
 
-          <!-- Subcategory Field -->
-          @if (subCategories().length > 0 || isLoadingSubCategories()) {
+      <!-- Right Column: Category + Tags -->
+      <div class="side-column">
+        <!-- Category Card -->
+        <div class="card category-card">
+          <div class="card-header-icon-title">
+            <span class="material-symbols-outlined header-icon">category</span>
+            <h3 class="card-title-custom">{{ langService.translate('category') || (langService.currentLang() === 'ar' ? 'الفئة' : 'Category') }}</h3>
+          </div>
+          <div class="card-inputs-grid">
+            <!-- Category Field -->
             <div class="fg">
-              <label class="fl">{{ langService.currentLang() === 'ar' ? 'الفئة الفرعية *' : 'Subcategory *' }}</label>
-              <select class="fi" formControlName="subCategoryId">
-                <option value="">
-                  @if (isLoadingSubCategories()) {
-                    {{ langService.currentLang() === 'ar' ? 'جاري التحميل...' : 'Loading...' }}
-                  } @else {
-                    {{ langService.currentLang() === 'ar' ? '-- اختر فئة فرعية --' : '-- Choose a subcategory --' }}
-                  }
-                </option>
-                @for (sub of subCategories(); track sub.id) {
-                  <option [value]="sub.id">
-                    {{ langService.currentLang() === 'ar' ? (sub.nameAr || sub.nameEn) : sub.nameEn }}
+              <label class="fl">{{ langService.currentLang() === 'ar' ? 'الفئة الرئيسية *' : 'Category *' }}</label>
+              <select class="fi" formControlName="categoryId" (change)="onCategoryChange($event)">
+                <option value="">{{ langService.currentLang() === 'ar' ? '-- اختر فئة --' : '-- Choose a category --' }}</option>
+                @for (cat of categories(); track cat.id) {
+                  <option [value]="cat.id">
+                    {{ langService.currentLang() === 'ar' ? (cat.nameAr || cat.nameEn) : cat.nameEn }}
                   </option>
                 }
               </select>
-              @if (form.get('subCategoryId')?.invalid && form.get('subCategoryId')?.touched) {
-                <span class="field-err">
-                  {{ langService.currentLang() === 'ar' ? 'الفئة الفرعية مطلوبة.' : 'Subcategory is required.' }}
-                </span>
+              @if (form.get('categoryId')?.invalid && form.get('categoryId')?.touched) {
+                <span class="field-err">{{ langService.currentLang() === 'ar' ? 'الفئة مطلوبة.' : 'Category is required.' }}</span>
               }
             </div>
-          }
 
+            <!-- Subcategory Field -->
+            @if (subCategories().length > 0 || isLoadingSubCategories()) {
+              <div class="fg">
+                <label class="fl">{{ langService.currentLang() === 'ar' ? 'الفئة الفرعية *' : 'Subcategory *' }}</label>
+                <select class="fi" formControlName="subCategoryId">
+                  <option value="">
+                    @if (isLoadingSubCategories()) {
+                      {{ langService.currentLang() === 'ar' ? 'جاري التحميل...' : 'Loading...' }}
+                    } @else {
+                      {{ langService.currentLang() === 'ar' ? '-- اختر فئة فرعية --' : '-- Choose a subcategory --' }}
+                    }
+                  </option>
+                  @for (sub of subCategories(); track sub.id) {
+                    <option [value]="sub.id">
+                      {{ langService.currentLang() === 'ar' ? (sub.nameAr || sub.nameEn) : sub.nameEn }}
+                    </option>
+                  }
+                </select>
+                @if (form.get('subCategoryId')?.invalid && form.get('subCategoryId')?.touched) {
+                  <span class="field-err">
+                    {{ langService.currentLang() === 'ar' ? 'الفئة الفرعية مطلوبة.' : 'Subcategory is required.' }}
+                  </span>
+                }
+              </div>
+            }
+          </div>
         </div>
 
-        <!-- Tags -->
-        <div class="card">
-          <h3 class="card-title">{{ langService.currentLang() === 'ar' ? 'الوسوم' : 'Tags' }}</h3>
+        <!-- Tags Card -->
+        <div class="card tags-card">
+          <div class="card-header-icon-title">
+            <span class="material-symbols-outlined header-icon">sell</span>
+            <h3 class="card-title-custom">{{ langService.currentLang() === 'ar' ? 'الوسوم' : 'Tags' }}</h3>
+          </div>
           <div class="tag-input-wrap">
             <input class="fi" type="text" [placeholder]="langService.currentLang() === 'ar' ? 'أضف وسماً...' : 'Add a tag...'"
               [value]="tagInput()"
@@ -204,10 +218,45 @@
             }
           </div>
         </div>
-
       </div>
     </div>
 
+    <!-- 6. 3D Model (Bottom) -->
+    <div class="card ar-model-card">
+      <div class="card-header-icon-title">
+        <span class="material-symbols-outlined header-icon">view_in_ar</span>
+        <h3 class="card-title-custom">
+          {{ langService.currentLang() === 'ar' ? 'نموذج ثلاثي الأبعاد (اختياري)' : '3D Model (Optional)' }}
+        </h3>
+      </div>
+      <p class="card-description">{{ langService.currentLang() === 'ar' ? 'حمّل ملف GLB لعرض منتجك بصيغة ثلاثية الأبعاد وAR' : 'Upload a GLB file to showcase your product in 3D and AR' }}</p>
+      
+      @if (selectedGlbFile() || existingGlbUrl()) {
+        <div class="glb-preview">
+          <div class="glb-info">
+            <span class="material-symbols-outlined">check_circle</span>
+            <span class="glb-filename">{{ selectedGlbFile() ? selectedGlbFile()!.name : 'GLB Model Loaded' }}</span>
+          </div>
+          <button type="button" class="remove-glb-btn" (click)="removeGlbFile()">
+            {{ langService.currentLang() === 'ar' ? 'إزالة' : 'Remove' }}
+          </button>
+        </div>
+      } @else {
+        <div class="glb-upload-container" (click)="glbInput.click()">
+          <div class="glb-upload-dashed">
+            <span class="material-symbols-outlined upload-large-icon">upload_file</span>
+            <button type="button" class="glb-upload-btn-premium">
+              <span>{{ langService.currentLang() === 'ar' ? 'اختر ملف GLB' : 'Choose GLB File' }}</span>
+            </button>
+            <span class="drag-text">{{ langService.currentLang() === 'ar' ? 'أو اسحب الملف هنا' : 'or drag file here' }}</span>
+            <span class="max-size-text">{{ langService.currentLang() === 'ar' ? 'حد أقصى 50 ميجابايت' : 'Max 50MB' }}</span>
+          </div>
+        </div>
+      }
+      <input #glbInput type="file" accept=".glb,.gltf" (change)="onGlbFileSelected($event)" hidden />
+    </div>
+
+    <!-- Messages -->
     @if (successMsg()) {
       <div class="success-msg">✅ {{ successMsg() }}</div>
     }
@@ -215,11 +264,16 @@
       <div class="error-msg">⚠️ {{ errorMsg() }}</div>
     }
 
-    <div class="form-actions">
-      <button type="button" class="cancel-btn" (click)="onCancel()">{{ langService.translate('cancel') }}</button>
-      <button type="submit" class="save-btn" [disabled]="isSaving() || form.invalid || !shopId()">
-        @if (isSaving()) { <span class="spinner-sm"></span> {{ langService.translate('savingChanges') || 'Saving...' }} }
-        @else { {{ isEditMode() ? langService.translate('editProduct') : (langService.currentLang() === 'ar' ? 'نشر المنتج' : 'Publish Product') }} }
+    <!-- 7. Footer Buttons (Bottom Right, Publish Visually Dominant) -->
+    <div class="form-actions-bar">
+      <button type="button" class="cancel-btn-footer" (click)="onCancel()">{{ langService.translate('cancel') || 'Cancel' }}</button>
+      <button type="submit" class="save-btn-footer" [disabled]="isSaving() || form.invalid || !shopId()">
+        @if (isSaving()) { 
+          <span class="spinner-sm"></span> 
+          {{ langService.translate('savingChanges') || 'Saving...' }} 
+        } @else { 
+          {{ isEditMode() ? langService.translate('editProduct') : (langService.currentLang() === 'ar' ? 'نشر المنتج' : 'Publish Product') }} 
+        }
       </button>
     </div>
 
