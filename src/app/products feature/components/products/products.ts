@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges, inject, signal } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges, inject, signal, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
@@ -6,6 +6,7 @@ import { ActivatedRoute } from '@angular/router';
 import { ProductsService } from '../../services/products-service';
 import { LanguageService } from '../../../core/services/language.service';
 import { Product, ProductQuery } from '../../models/product.model';
+import { ShopService } from '../../../shop feature/services/shop-service';
 
 import { SearchComponent } from '../search/search.component';
 import { CategoryFilterComponent } from '../category-filter/category-filter.component';
@@ -30,6 +31,7 @@ export class Products implements OnInit, OnChanges {
   private productsService = inject(ProductsService);
   public langService = inject(LanguageService);
   private route = inject(ActivatedRoute);
+  private shopService = inject(ShopService);
 
   @Input() parentSearch: string = '';
 
@@ -48,9 +50,15 @@ export class Products implements OnInit, OnChanges {
   hasNext = signal<boolean>(false);
   hasPrevious = signal<boolean>(false);
 
+  totalActiveProducts = signal<number | null>(null);
+  totalActiveShops = signal<number | null>(null);
+  isFirstLoad = signal<boolean>(true);
+  showBackToTop = signal<boolean>(false);
+
   skeletonArray = Array(8).fill(0);
 
   ngOnInit(): void {
+    this.fetchMarketplaceStats();
     this.route.queryParams.subscribe(params => {
       const categoryParam = params['category'];
       const searchParam = params['search'];
@@ -66,6 +74,26 @@ export class Products implements OnInit, OnChanges {
       } else {
         this.initialCategoryName.set(null);
         this.loadProducts();
+      }
+    });
+  }
+
+  fetchMarketplaceStats(): void {
+    this.productsService.getProducts({ pageIndex: 1, pageSize: 1 }).subscribe({
+      next: (res) => {
+        this.totalActiveProducts.set(res.totalCount || null);
+      },
+      error: () => {
+        this.totalActiveProducts.set(null);
+      }
+    });
+
+    this.shopService.searchShops({}).subscribe({
+      next: (res) => {
+        this.totalActiveShops.set(res.length || null);
+      },
+      error: () => {
+        this.totalActiveShops.set(null);
       }
     });
   }
@@ -100,6 +128,11 @@ export class Products implements OnInit, OnChanges {
         this.hasNext.set(res.hasNext || false);
         this.hasPrevious.set(res.hasPrevious || false);
         this.loading.set(false);
+        if (this.isFirstLoad()) {
+          setTimeout(() => {
+            this.isFirstLoad.set(false);
+          }, 1500);
+        }
       },
       error: (err) => {
         console.error('Failed loading products:', err);
@@ -147,5 +180,18 @@ export class Products implements OnInit, OnChanges {
 
   onQuickView(product: Product): void {
     console.log('Quick View Product:', product);
+  }
+
+  @HostListener('window:scroll', [])
+  onWindowScroll() {
+    const scrollPosition = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+    this.showBackToTop.set(scrollPosition > 400);
+  }
+
+  scrollToTop() {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
   }
 }
