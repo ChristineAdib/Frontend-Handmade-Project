@@ -40,8 +40,7 @@ export class BestsellersComponent implements OnInit {
 
   ngOnInit() {
     this.isLoading = true;
-    this.productService.getProducts(1, 4).subscribe({
-    
+    this.productService.getProducts(1, 8).subscribe({
       next: (res: any) => {
         this.products = res.items;
         this.isLoading = false;
