@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild, ElementRef, inject, OnDestroy, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, AfterViewInit, ViewChild, ElementRef, inject, OnDestroy, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LanguageService } from '../../../core/services/language.service';
 import '@google/model-viewer';
@@ -19,9 +19,10 @@ declare global {
   styleUrl: './model-viewer.css',
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class ModelViewerComponent implements OnInit, OnDestroy {
+export class ModelViewerComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() glbUrl!: string;
   @Input() modelTitle: string = '3D Model';
+  @Output() close = new EventEmitter<void>();
   @ViewChild('modelViewerContainer') modelViewerContainer!: ElementRef;
   
   protected langService = inject(LanguageService);
@@ -39,8 +40,23 @@ export class ModelViewerComponent implements OnInit, OnDestroy {
     }
   }
 
+  ngAfterViewInit() {
+    // Attempt to launch AR immediately while user click gesture is active
+    this.launchAr();
+
+    // Fallback delayed trigger in case initialization takes a moment
+    setTimeout(() => {
+      this.launchAr();
+    }, 150);
+  }
+
   ngOnDestroy() {
     this.exitFullscreen();
+  }
+
+  onClose() {
+    this.exitFullscreen();
+    this.close.emit();
   }
 
   onModelLoad() {
