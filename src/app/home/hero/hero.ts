@@ -48,7 +48,7 @@ export class HeroComponent implements OnInit, OnDestroy {
         titleLine2: this.langService.translate('heroGiftsTitleL2'),
         subtitle: this.langService.translate('heroGiftsSubtitle'),
         btnText: this.langService.translate('heroGiftsBtn'),
-        btnRoute: '/gifts',
+        btnRoute: '/gift-assistant',
         watermark: this.langService.translate('heroGiftsWatermark'),
         image: '/images/gift.png',
         accent: '#E8913A',
