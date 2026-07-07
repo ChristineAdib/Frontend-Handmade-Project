@@ -90,7 +90,7 @@ export class RegisterComponent implements AfterViewInit {
   private getLocalizedError(msg: string): string {
     const isAr = this.langService.currentLang() === 'ar';
     const lower = msg.toLowerCase();
-    
+
     if (lower.includes('already exists')) {
       return isAr ? 'هذا البريد الإلكتروني مسجل بالفعل.' : 'This email is already registered.';
     }
@@ -128,6 +128,10 @@ export class RegisterComponent implements AfterViewInit {
   }
 
   private handleGoogleCredential(response: any) {
+
+    console.log("Google Response:", response);
+    console.log("Credential:", response.credential);
+
     this.isLoading.set(true);
     this.auth.errorMsg.set(null);
 
@@ -142,6 +146,7 @@ export class RegisterComponent implements AfterViewInit {
       },
       error: err => {
         this.isLoading.set(false);
+        console.log(err);
         this.auth.errorMsg.set(this.auth.extractError(err, 'Google authentication failed.'));
       }
     });

@@ -81,7 +81,7 @@
 /* Requests Grid */
 .requests-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
   gap: 30px;
 }
 
@@ -205,4 +205,20 @@
 
 .btn-secondary:hover {
   background-color: rgba(176, 110, 46, 0.05) !important;
+}
+
+@media (max-width: 480px) {
+  .custom-requests-container {
+    padding: 20px 12px;
+  }
+  .page-header h2 {
+    font-size: 26px;
+  }
+  .requests-grid {
+    grid-template-columns: 1fr;
+  }
+  .request-card {
+    padding: 16px;
+    border-radius: 16px;
+  }
 }

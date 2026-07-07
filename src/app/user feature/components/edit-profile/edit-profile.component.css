@@ -232,3 +232,26 @@ textarea.form-control-custom {
 
 .font-xs { font-size: 11px !important; }
 .font-sm { font-size: 14px !important; }
+
+/* Responsive Actions Row */
+@media (max-width: 480px) {
+  .actions-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+  }
+  .btn-outline-custom,
+  .btn-submit-custom {
+    width: 100% !important;
+  }
+}
+
+/* RTL Support */
+[dir="rtl"] .back-link:hover {
+  transform: translateX(4px);
+}
+[dir="rtl"] .btn-change-avatar {
+  right: auto;
+  left: 0;
+}
+

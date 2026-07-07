@@ -183,9 +183,11 @@
   color: #1a0a00;
   font-weight: 500;
   margin-bottom: 2px;
-  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
   transition: color 0.2s ease;
 }
 .wl-title:hover {
@@ -195,8 +197,6 @@
   font-size: 11px;
   color: #8b6a4a;
   margin-bottom: 8px;
-  direction: rtl;
-  text-align: left;
 }
 .wl-price {
   display: flex;
@@ -364,6 +364,11 @@
   right: 10px;
 }
 
+[dir="rtl"] .wl-badge-discount {
+  left: auto;
+  right: 10px;
+}
+
 /* Wishlist stock urgency text */
 .wl-stock-urgency {
   font-size: 11px;
@@ -379,4 +384,24 @@
 .wl-stock-urgency.only-one {
   color: #b8860b;
   background-color: #fffcf0;
+}
+
+@media (max-width: 576px) {
+  .wl-hero {
+    flex-direction: column;
+    text-align: center;
+    padding: 1.5rem;
+    gap: 1.25rem;
+  }
+  
+  .wl-hero-badge {
+    align-self: center;
+  }
+}
+
+@media (max-width: 360px) {
+  .wl-page { padding: 1rem 0.75rem 3rem; }
+  .wl-hero { padding: 1rem; }
+  .wl-hero-left h1 { font-size: 20px; }
+  .wl-grid { gap: 1rem; }
 }

@@ -1,3 +1,4 @@
+@if (!isChatPage()) {
 <!-- ANNOUNCEMENT BAR -->
 <div class="ann-bar" [class.ann-bar--hidden]="scrollState() !== 'top'">
   <div class="ann-track">
@@ -518,3 +519,4 @@
 
 </div>
 <div class="creative-panel__overlay" [class.creative-panel__overlay--open]="creativePanelOpen()" (click)="toggleCreativePanel()"></div>
+}

@@ -17,10 +17,10 @@
         ></app-search>
       </div>
       <div class="col-12 col-md-4 filter-col">
-        <app-category-filter
-          [selectedCategoryId]="selectedCategory()"
-          (categoryChange)="onCategoryChange($event)"
-        ></app-category-filter>
+       <app-category-filter
+  [initialCategoryName]="initialCategoryName()"
+  (categoryIdsChange)="onCategoryIdsChange($event)">
+</app-category-filter>
       </div>
       <div class="col-12 col-md-3 toggle-col d-flex justify-content-md-end justify-content-start">
         <div class="form-check form-switch luxury-switch">

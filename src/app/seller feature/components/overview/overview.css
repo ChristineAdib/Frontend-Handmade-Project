@@ -201,3 +201,30 @@
   .stats-grid { grid-template-columns: repeat(2, 1fr); }
   .page-header { flex-direction: column; gap: 16px; align-items: flex-start; }
 }
+
+@media (max-width: 480px) {
+  .page-header {
+    padding: 1.25rem 1rem;
+    align-items: center;
+    text-align: center;
+  }
+  .shop-identity {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .shop-owner {
+    justify-content: center;
+  }
+  .shop-rating {
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+  .stat-card {
+    padding: 1rem;
+  }
+}

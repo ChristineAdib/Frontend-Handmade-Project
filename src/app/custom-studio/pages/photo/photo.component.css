@@ -377,3 +377,39 @@ h2 {
   0%, 100% { top: 10%; }
   50% { top: 90%; }
 }
+
+@media (max-width: 480px) {
+  .photo-studio-container {
+    padding: 20px 12px;
+  }
+  h2 {
+    font-size: 26px;
+  }
+  .card-header {
+    padding: 16px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .card-body {
+    padding: 16px;
+  }
+  .upload-dropzone {
+    padding: 32px 16px;
+  }
+  .photo-info {
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-footer {
+    padding: 16px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  .card-footer .btn {
+    width: 100%;
+    margin: 0;
+  }
+}

@@ -530,3 +530,45 @@
     grid-template-columns: 1fr;
   }
 }
+
+@media (max-width: 480px) {
+  .offer-review-container {
+    padding: 20px 12px;
+  }
+  .card-inner, .checkout-card-form .card, .offer-command-panel, .summary-panel {
+    padding: 20px 16px;
+    border-radius: 16px;
+  }
+  .offer-header h2 {
+    font-size: 24px;
+  }
+  .term-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  .term-row.highlight {
+    padding: 12px;
+  }
+  .form-actions {
+    flex-direction: column;
+  }
+  .form-actions button {
+    width: 100%;
+  }
+}
+
+/* RTL Support */
+[dir="rtl"] .back-btn {
+  margin-right: 0;
+  margin-left: 12px;
+}
+[dir="rtl"] .included-panel li {
+  padding-left: 0;
+  padding-right: 22px;
+}
+[dir="rtl"] .included-panel li::before {
+  left: auto;
+  right: 0;
+}
+

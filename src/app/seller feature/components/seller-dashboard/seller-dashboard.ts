@@ -20,6 +20,7 @@ export class SellerDashboard implements OnInit {
   userName = signal<string>('Sarah Ahmed');
   shopLogo = signal<string | null>(null);
   showDropdown = signal<boolean>(false);
+  isMobileMenuOpen = signal<boolean>(false);
 
   ngOnInit() {
     const user = this.authService.getUser();
@@ -39,6 +40,10 @@ export class SellerDashboard implements OnInit {
 
   toggleDropdown() {
     this.showDropdown.update(v => !v);
+  }
+
+  toggleMobileMenu() {
+    this.isMobileMenuOpen.update(v => !v);
   }
 
   logout(): void {

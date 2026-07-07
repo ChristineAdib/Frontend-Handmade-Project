@@ -58,8 +58,11 @@ export class ChatWindowComponent implements AfterViewChecked {
   isSellerOrAdmin = computed(() => this.isSeller() || this.isAdmin());
 
   isWorkspaceCompleted = computed(() => {
+    const conv = this.activeConversation();
     const req = this.customRequest();
-    if (!req) return false;
+    if (!conv || !req) return false;
+    const isWorkspaceChat = req.projectWorkspace && req.projectWorkspace.chatConversationId === conv.id;
+    if (!isWorkspaceChat) return false;
     const statusNum = this.getStatusNumber(req.status);
     return statusNum === 14 || !!req.projectWorkspace?.isLocked;
   });
@@ -196,6 +199,13 @@ export class ChatWindowComponent implements AfterViewChecked {
     return this.customStudioService.resolveImageUrl(url);
   }
 
+  copyDesignId(id: string): void {
+    if (id) {
+      navigator.clipboard.writeText(id);
+      this.toastr.success('Design ID copied to clipboard!');
+    }
+  }
+
   getOtherParticipantName(): string {
     const c = this.activeConversation();
     if (!c) return '';
@@ -281,8 +291,10 @@ export class ChatWindowComponent implements AfterViewChecked {
       this.newMessage.set('');
       this.imageUrl.set('');
       this.shouldScrollToBottom = true;
-    } catch (err) {
+    } catch (err: any) {
       console.error('Failed to send message:', err);
+      const errorMsg = err.error?.message || err.message || 'Failed to send message.';
+      this.toastr.error(errorMsg);
     }
   }
 
@@ -335,6 +347,34 @@ export class ChatWindowComponent implements AfterViewChecked {
 
   viewWorkspace(requestId: string): void {
     this.router.navigate(['/custom-studio/workspace', requestId]);
+  }
+
+  markAsShipped(requestId: string): void {
+    if (confirm('Are you sure you want to mark this custom order as shipped?')) {
+      this.customStudioService.updateWorkspaceProgress(requestId, 6, 'SHIPPED-DIRECT').subscribe({
+        next: (res) => {
+          if (res.success) {
+            this.toastr.success('Order marked as shipped successfully!');
+            const activeConv = this.activeConversation();
+            if (activeConv) {
+              this.customStudioService.getCustomRequestByConversationId(activeConv.id).subscribe({
+                next: (resReq) => {
+                  if (resReq.success) {
+                    this.customRequest.set(resReq.data);
+                  }
+                }
+              });
+            }
+          } else {
+            this.toastr.error(res.message || 'Failed to mark order as shipped.');
+          }
+        },
+        error: (err) => {
+          this.toastr.error('Failed to mark order as shipped.');
+          console.error(err);
+        }
+      });
+    }
   }
 
   navigateToCheckout(requestId: string): void {

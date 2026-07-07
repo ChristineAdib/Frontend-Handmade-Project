@@ -1,62 +1,255 @@
 <div class="about-container" [dir]="langService.currentLang() === 'ar' ? 'rtl' : 'ltr'">
   <!-- Hero Section -->
-  <header class="about-hero">
-    <div class="hero-overlay"></div>
-    <div class="hero-content">
-      <span class="hero-tag">✦ {{ langService.currentLang() === 'ar' ? 'من نحن' : 'Who We Are' }}</span>
-      <h1 class="hero-title">{{ langService.translate('aboutHandmadeHub') }}</h1>
-      <p class="hero-subtitle">{{ langService.translate('storyAndMission') }}</p>
-    </div>
-  </header>
-
-  <!-- Core Content Grid -->
-  <div class="content-section">
-    <!-- Story Card -->
-    <div class="story-card">
-      <div class="card-icon">📖</div>
-      <h2 class="section-title">{{ langService.translate('ourStory') }}</h2>
-      <p class="story-text">{{ langService.translate('ourStoryText') }}</p>
-    </div>
-
-    <!-- Mission & Vision Cards -->
-    <div class="info-grid">
-      <div class="info-card mission-card">
-        <div class="card-icon-small">🎯</div>
-        <h3>{{ langService.translate('ourMission') }}</h3>
-        <p>{{ langService.translate('missionText') }}</p>
-      </div>
-
-      <div class="info-card who-card">
-        <div class="card-icon-small">🌍</div>
-        <h3>{{ langService.translate('whoWeAre') }}</h3>
-        <p>{{ langService.translate('whoWeAreText') }}</p>
-      </div>
-    </div>
-
-    <!-- Branches Section -->
-    <div class="branches-section">
-      <h2 class="branches-title">
-        <span>📍</span> {{ langService.translate('ourBranches') }}
-      </h2>
-      <div class="branches-grid">
-        <div class="branch-card">
-          <div class="branch-city">🏙️</div>
-          <h4>{{ langService.translate('cairoMainBranch') }}</h4>
-          <span class="status-badge active">{{ langService.currentLang() === 'ar' ? 'الفرع الرئيسي' : 'Main Branch' }}</span>
+  <section class="about-hero container-fluid reveal">
+    <div class="hero-grid">
+      <div class="hero-left">
+        <span class="section-tagline">✦ {{ langService.currentLang() === 'ar' ? 'من نحن' : 'Who We Are' }}</span>
+        <h1 class="hero-headline">
+          {{ langService.translate('aboutHeroTitle') }}
+        </h1>
+        <p class="hero-description">
+          {{ langService.translate('aboutHeroDesc') }}
+        </p>
+        <div class="hero-ctas">
+          <a routerLink="/products" class="btn btn-primary-custom">{{ langService.translate('exploreProducts') }}</a>
+          <a routerLink="/contact" class="btn btn-outline-custom">{{ langService.translate('contactUs') }}</a>
         </div>
-
-        <div class="branch-card">
-          <div class="branch-city">🌊</div>
-          <h4>{{ langService.translate('alexandria') }}</h4>
-          <span class="status-badge">{{ langService.currentLang() === 'ar' ? 'متاح' : 'Available' }}</span>
-        </div>
-
-        <div class="branch-card">
-          <div class="branch-city">☀️</div>
-          <h4>{{ langService.translate('aswan') }}</h4>
-          <span class="status-badge">{{ langService.currentLang() === 'ar' ? 'متاح' : 'Available' }}</span>
+      </div>
+      <div class="hero-right">
+        <div class="hero-img-container">
+          <img src="/images/about_hero.jpg" alt="Handmade Lifestyle" class="hero-img" />
         </div>
       </div>
     </div>
-  </div>
+  </section>
+
+  <!-- Our Story Section -->
+  <section class="our-story container-fluid reveal">
+    <div class="story-grid">
+      <div class="story-left">
+        <div class="story-img-container">
+          <img src="/images/our_story.jpg" alt="Shaping Pottery" class="story-img" />
+        </div>
+      </div>
+      <div class="story-right">
+        <span class="section-tagline">✦ {{ langService.translate('ourStory') }}</span>
+        <h2 class="story-heading" [ngClass]="{'arabic-font': langService.currentLang() === 'ar'}">
+          {{ langService.translate('ourStory') }}
+        </h2>
+        <p class="story-text" [ngClass]="{'arabic-text': langService.currentLang() === 'ar'}">
+          {{ langService.translate('ourStoryText') }}
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Mission & Vision Cards -->
+  <section class="mission-vision container-fluid reveal">
+    <div class="mv-grid">
+      <!-- Mission Card -->
+      <div class="mv-card mission-card">
+        <div class="mv-icon">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <circle cx="12" cy="12" r="6"></circle>
+            <circle cx="12" cy="12" r="2"></circle>
+          </svg>
+        </div>
+        <h3 class="mv-title">{{ langService.translate('ourMission') }}</h3>
+        <p class="mv-text">{{ langService.translate('missionText') }}</p>
+      </div>
+
+      <!-- Vision Card -->
+      <div class="mv-card vision-card">
+        <div class="mv-icon">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+        </div>
+        <h3 class="mv-title">{{ langService.translate('ourVision') }}</h3>
+        <p class="mv-text">{{ langService.translate('visionDesc') }}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why Choose Handaura -->
+  <section class="why-choose container-fluid reveal">
+    <div class="section-header">
+      <span class="section-tagline">✦ {{ langService.translate('brandName') }}</span>
+      <h2 class="section-title">{{ langService.translate('whyChooseHandaura') }}</h2>
+    </div>
+
+    <div class="why-grid">
+      <!-- Feature 1 -->
+      <div class="why-card">
+        <div class="why-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+          </svg>
+        </div>
+        <h4 class="why-card-title">{{ langService.translate('authHandmade') }}</h4>
+      </div>
+
+      <!-- Feature 2 -->
+      <div class="why-card">
+        <div class="why-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <path d="M16 10a4 4 0 0 1-8 0"></path>
+          </svg>
+        </div>
+        <h4 class="why-card-title">{{ langService.translate('trustedSellers') }}</h4>
+      </div>
+
+      <!-- Feature 3 -->
+      <div class="why-card">
+        <div class="why-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+        </div>
+        <h4 class="why-card-title">{{ langService.translate('secureShopping') }}</h4>
+      </div>
+
+      <!-- Feature 4 -->
+      <div class="why-card">
+        <div class="why-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+          </svg>
+        </div>
+        <h4 class="why-card-title">{{ langService.translate('supportLocal') }}</h4>
+      </div>
+    </div>
+  </section>
+
+  <!-- Statistics Section -->
+  <section class="stats-section container-fluid reveal">
+    <div class="stats-bg-container">
+      <div class="stats-grid">
+        @for (stat of displayStats; track stat.labelKey) {
+          <div class="stat-item">
+            <div class="stat-icon-wrapper">
+              @if (stat.labelKey === 'statArtisans') {
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+              }
+              @if (stat.labelKey === 'statProducts') {
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <polyline points="22 12 16 12 14 15 10 15 8 12 2 12"></polyline>
+                  <path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path>
+                </svg>
+              }
+              @if (stat.labelKey === 'statCustomers') {
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                  <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+              }
+              @if (stat.labelKey === 'statReviews') {
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+              }
+            </div>
+            <div class="stat-content">
+              <div class="stat-number">{{ stat.current }}{{ stat.suffix }}</div>
+              <div class="stat-label">{{ langService.translate(stat.labelKey) }}</div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Our Values Section -->
+  <section class="values-timeline container-fluid reveal">
+    <div class="section-header text-center">
+      <span class="section-tagline">✦ {{ langService.translate('ourValuesTitle') }}</span>
+      <h2 class="section-title">{{ langService.translate('ourValuesTitle') }}</h2>
+    </div>
+
+    <div class="timeline-container">
+      <div class="timeline-line"></div>
+      <div class="timeline-grid">
+        <!-- Value 1 -->
+        <div class="timeline-item">
+          <div class="timeline-badge">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+            </svg>
+          </div>
+          <h4 class="value-name">{{ langService.translate('valCreativityTitle') }}</h4>
+          <p class="value-desc">{{ langService.translate('valCreativityDesc') }}</p>
+        </div>
+
+        <!-- Value 2 -->
+        <div class="timeline-item">
+          <div class="timeline-badge">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+          </div>
+          <h4 class="value-name">{{ langService.translate('valTrustTitle') }}</h4>
+          <p class="value-desc">{{ langService.translate('valTrustDesc') }}</p>
+        </div>
+
+        <!-- Value 3 -->
+        <div class="timeline-item">
+          <div class="timeline-badge">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M12 2v20"></path>
+              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+            </svg>
+          </div>
+          <h4 class="value-name">{{ langService.translate('valSustainabilityTitle') }}</h4>
+          <p class="value-desc">{{ langService.translate('valSustainabilityDesc') }}</p>
+        </div>
+
+        <!-- Value 4 -->
+        <div class="timeline-item">
+          <div class="timeline-badge">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+            </svg>
+          </div>
+          <h4 class="value-name">{{ langService.translate('valQualityTitle') }}</h4>
+          <p class="value-desc">{{ langService.translate('valQualityDesc') }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA Section -->
+  <section class="final-cta container-fluid reveal">
+    <div class="cta-banner">
+      <div class="cta-decor-left">
+        <svg width="120" height="150" viewBox="0 0 100 150" fill="none">
+          <path d="M10 140 C 20 100, 40 50, 80 10" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+          <path d="M80 10 C 60 40, 50 80, 50 120" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+          <path d="M25 90 C 35 70, 60 60, 75 70" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+        </svg>
+      </div>
+      <div class="cta-content">
+        <h2 class="cta-title">{{ langService.translate('finalCtaTitle') }}</h2>
+        <a routerLink="/products" class="btn btn-light-custom">
+          {{ langService.translate('finalCtaBtn') }}
+          <span class="arrow-icon">→</span>
+        </a>
+      </div>
+    </div>
+  </section>
 </div>

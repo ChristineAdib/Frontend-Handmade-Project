@@ -1,8 +1,14 @@
 .chat-layout-wrapper {
   display: flex;
-  height: calc(100vh - 67px); /* Fills screen below the navbar */
+  height: 100vh; /* Fills screen completely as header is hidden */
   background: #F5F0EB;
   overflow: hidden;
+}
+
+@media (max-width: 640px) {
+  .chat-layout-wrapper {
+    height: 100vh; /* Fills screen completely as header is hidden */
+  }
 }
 
 .chat-sidebar-pane {
@@ -16,6 +22,12 @@
   height: 100%;
   border-left: 1px solid rgba(176, 110, 46, 0.15);
 }
+
+[dir="rtl"] .chat-main-pane {
+  border-left: none;
+  border-right: 1px solid rgba(176, 110, 46, 0.15);
+}
+
 
 /* Fallback/Welcome Screen */
 .welcome-screen {
@@ -87,6 +99,7 @@
 @media (max-width: 768px) {
   .chat-sidebar-pane {
     width: 100%;
+    min-width: 0;
     height: 100%;
   }
 

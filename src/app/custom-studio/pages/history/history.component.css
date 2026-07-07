@@ -261,3 +261,33 @@
     justify-content: flex-end;
   }
 }
+
+@media (max-width: 480px) {
+  .history-page-container {
+    padding: 20px 12px;
+  }
+  .history-header h2 {
+    font-size: 26px;
+  }
+  .card-left {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 12px;
+  }
+  .card-right {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  .card-right button {
+    width: 100%;
+  }
+}
+
+/* RTL Support */
+[dir="rtl"] .back-btn {
+  margin-right: 0;
+  margin-left: 12px;
+}
+

@@ -87,3 +87,45 @@
     }
   }
 }
+
+@media (max-width: 400px) {
+  .pagination-container {
+    gap: 8px;
+    .nav-btn, .page-btn {
+      width: 36px;
+      height: 36px;
+      font-size: 0.85rem;
+    }
+  }
+}
+
+@media (max-width: 360px) {
+  .pagination-container {
+    gap: 4px;
+    margin: 1.5rem 0;
+    .nav-btn, .page-btn {
+      width: 30px;
+      height: 30px;
+      font-size: 0.8rem;
+    }
+    .pages-list {
+      gap: 4px;
+    }
+  }
+}
+
+@media (max-width: 280px) {
+  .pagination-container {
+    gap: 2px;
+    .nav-btn, .page-btn {
+      width: 26px;
+      height: 26px;
+      font-size: 0.75rem;
+    }
+    .pages-list {
+      gap: 2px;
+    }
+  }
+}
+
+

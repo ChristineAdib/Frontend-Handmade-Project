@@ -1,4 +1,23 @@
 <div class="sidebar-container">
+  <!-- Sidebar Branding Section -->
+  <div class="sidebar-brand-section">
+    <button class="back-btn" (click)="goBack()" aria-label="Back">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
+    </button>
+    <div class="logo-wrapper" (click)="goHome()">
+      <div class="logo__mark">
+        <img src="images/logo.png" alt="Handaura Logo" class="logo__img" />
+      </div>
+      <div class="logo__text">
+        <span class="logo__name">Handaura</span>
+        <span class="logo__tag">{{ langService.currentLang() === 'ar' ? 'مشغولات يدوية مصرية ✦' : 'Handmade in Egypt ✦' }}</span>
+      </div>
+    </div>
+  </div>
+
   <!-- Sidebar Header -->
   <div class="sidebar-header">
     <h2>{{ langService.translate('conversationsTitle') }}</h2>

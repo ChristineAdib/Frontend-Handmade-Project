@@ -288,14 +288,24 @@
 
 @media (max-width: 640px) {
   .dashboard-container {
-    padding-top: 162px;
+    padding-top: 152px;
   }
   .mobile-top-bar {
-    top: 102px;
+    top: 92px;
   }
   .dashboard-sidebar {
-    top: 162px;
-    height: calc(100vh - 162px);
+    top: 152px;
+    height: calc(100vh - 152px);
+  }
+}
+
+@media (max-width: 360px) {
+  .dashboard-main {
+    padding: 0.75rem !important;
+  }
+  .welcome-banner {
+    padding: 24px 16px;
+    border-radius: 16px;
   }
 }
 

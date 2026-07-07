@@ -174,7 +174,7 @@
   opacity: 0;
   font-style: italic;
   line-height: 1.15;
-  white-space: nowrap;
+  /* removed white-space: nowrap — it causes clipping on mobile */
 }
 
 .hero__content.active .line2 {
@@ -648,7 +648,7 @@
    ============================================================ */
 @media (max-width: 580px) {
   .hero {
-    min-height: 760px;
+    min-height: min(760px, 100svh);
   }
 
   .hero__inner {
@@ -740,26 +740,18 @@
   }
 
   .hero__watermark {
-    font-size: clamp(85px, 11vw, 150px);
+    font-size: clamp(60px, 11vw, 100px);
     opacity: 0.035;
-
+    top: 78%;
   }
-.hero__watermark {
-  position: absolute;
-  top: 78%;
-  left: 0;
-
-  white-space: nowrap;
-  pointer-events: none;
-  z-index: 1;
-
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(85px, 11vw, 150px);
-  font-weight: 700;
-
-  color: rgba(0,0,0,0.08);
-
-  animation: watermarkMove 26s linear infinite;
 }
 
+@media (max-width: 360px) {
+  .hero__title {
+    font-size: clamp(24px, 8.5vw, 36px) !important;
+  }
+  .hero__btn {
+    padding: 12px 28px;
+    font-size: 11px;
+  }
 }
