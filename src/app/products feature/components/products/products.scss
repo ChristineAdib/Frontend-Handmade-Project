@@ -317,11 +317,13 @@
   .luxury-switch {
     display: inline-flex;
     align-items: center;
+    gap: 0.5rem;
     font-size: 0.95rem;
     font-weight: 600;
     color: #5c4d43;
     cursor: pointer;
     margin: 0;
+    padding: 0 !important; /* Override Bootstrap's form-check padding */
 
     .form-check-input {
       cursor: pointer;
@@ -330,7 +332,8 @@
       height: 1.6em;
       width: 2.95em;
       border-radius: 2em;
-      margin-top: 0;
+      margin: 0 !important;
+      float: none;
       transition: background-position 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 
       &:focus {
@@ -348,7 +351,7 @@
       cursor: pointer;
       user-select: none;
       transition: color 0.2s ease;
-      margin-left: 0.5rem;
+      margin: 0;
       
       &:hover {
         color: #8B4513;
