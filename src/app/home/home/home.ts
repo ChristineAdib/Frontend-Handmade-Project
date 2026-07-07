@@ -7,17 +7,18 @@ import { VideoComponent } from '../video/video';
 import { FooterComponent } from '../footer/footer';
 import { SubscribeComponent } from '../subscribe/subscribe';
 
-import { BestsellersComponent } from '../bestsellers/bestsellers'; 
+import { BestsellersComponent } from '../bestsellers/bestsellers';
 import { TopShopsComponent } from '../top-shops/top-shops';
 import { ReviewsComponent } from '../reviews/reviews';
+import { MobileApp } from '../mobile-app/mobile-app';
 
 
 @Component({
   selector: 'app-home',
   standalone: true,
   imports: [HeroComponent, CategoriesComponent, BestsellersComponent, ValuesComponent, VideoComponent,
-     FooterComponent, SubscribeComponent, TopShopsComponent, ReviewsComponent],
+    FooterComponent, SubscribeComponent, TopShopsComponent, ReviewsComponent, MobileApp],
   templateUrl: './home.html',
   styleUrl: './home.css'
 })
-export class HomeComponent {}
+export class HomeComponent { }
