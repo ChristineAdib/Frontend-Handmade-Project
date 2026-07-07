@@ -1,0 +1,21 @@
+<div class="commission-banner" [dir]="langService.currentLang() === 'ar' ? 'rtl' : 'ltr'">
+  <div class="banner-left">
+    <div class="icon-circle">
+      <span class="material-symbols-outlined">storefront</span>
+    </div>
+    <div class="banner-text">
+      <h4 class="banner-title">
+        {{ langService.currentLang() === 'ar' ? 'عادل وشفاف' : 'Fair & Transparent' }}
+      </h4>
+      <p class="banner-desc">
+        {{ langService.currentLang() === 'ar' ? 'تأخذ هاندورا رسوم خدمة بنسبة 10% على كل طلب تتلقاه.' : 'Handora takes a 10% service fee on every order you receive.' }}
+      </p>
+    </div>
+  </div>
+  <div class="banner-right">
+    <span class="percentage">10%</span>
+    <span class="pct-label">
+      {{ langService.currentLang() === 'ar' ? 'من كل طلب' : 'of every order' }}
+    </span>
+  </div>
+</div>

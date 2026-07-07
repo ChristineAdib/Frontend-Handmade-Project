@@ -531,7 +531,7 @@
   justify-content: flex-end;
   gap: 12px;
   flex-shrink: 0;
-  margin-left: auto;
+  margin-inline-start: auto;
 }
 
 /* Icon Buttons Compact Size & SVG Center Overrides */
@@ -1390,7 +1390,7 @@
 }
 
 /* RTL support for Arabic alignment */
-:host-context([dir="rtl"]) .notif__content {
+:host([dir="rtl"]) .notif__content {
   text-align: right;
 }
 
