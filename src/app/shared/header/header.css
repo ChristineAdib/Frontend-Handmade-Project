@@ -103,7 +103,7 @@
   text-decoration: none;
   flex-shrink: 0;
   width: 280px;
-  margin-left: -90px;
+  margin-inline-start: -90px;
 }
 
 .logo__mark {
@@ -117,7 +117,7 @@
   justify-content: center;
   flex-shrink: 0;
   overflow: visible;
-  margin-right: -25px;
+  margin-inline-end: -25px;
 }
 
 .logo__img {
@@ -503,7 +503,7 @@
   justify-content: flex-end;
   gap: 12px;
   flex-shrink: 0;
-  margin-left: auto;
+  margin-inline-start: auto;
 }
 
 /* Icon Buttons Compact Size & SVG Center Overrides */
@@ -1362,7 +1362,7 @@
 }
 
 /* RTL support for Arabic alignment */
-:host-context([dir="rtl"]) .notif__content {
+:host([dir="rtl"]) .notif__content {
   text-align: right;
 }
 
@@ -1455,13 +1455,13 @@
     display: flex;
     align-items: flex-start;
     justify-content: space-around;
-    height: calc(64px + env(safe-area-inset-bottom, 0px));
+    height: calc(74px + env(safe-area-inset-bottom, 0px));
     padding-bottom: env(safe-area-inset-bottom, 0px);
-    background: rgba(255, 253, 249, 0.88);
+    background: rgba(255, 253, 249, 0.92);
     backdrop-filter: blur(24px) saturate(180%);
     -webkit-backdrop-filter: blur(24px) saturate(180%);
-    border-top: 1px solid rgba(180, 120, 60, 0.1);
-    box-shadow: 0 -4px 30px rgba(30, 14, 5, 0.06), 0 -1px 8px rgba(30, 14, 5, 0.03);
+    border-top: 1px solid rgba(180, 120, 60, 0.12);
+    box-shadow: 0 -4px 30px rgba(30, 14, 5, 0.08), 0 -1px 8px rgba(30, 14, 5, 0.04);
     transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
@@ -1476,9 +1476,9 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 2px;
+    gap: 4px;
     flex: 1;
-    padding: 8px 0 4px;
+    padding: 10px 0 6px;
     color: #8a7060;
     text-decoration: none;
     background: none;
@@ -1515,8 +1515,8 @@
 
   /* ── Icon ── */
   .btm-nav__icon {
-    width: 22px;
-    height: 22px;
+    width: 24px;
+    height: 24px;
     transition: transform 0.25s ease;
     display: block;
   }
@@ -1537,11 +1537,11 @@
   /* ── Label ── */
   .btm-nav__label {
     font-family: 'Jost', sans-serif;
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 500;
     letter-spacing: 0.2px;
     line-height: 1;
-    max-width: 64px;
+    max-width: 72px;
     text-align: center;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1578,12 +1578,12 @@
   /* ── Center Button (Gift Finder) ── */
   .btm-nav__item--center {
     position: relative;
-    margin-top: -18px;
+    margin-top: -22px;
   }
 
   .btm-nav__center-ring {
-    width: 48px;
-    height: 48px;
+    width: 52px;
+    height: 52px;
     border-radius: 50%;
     background: linear-gradient(135deg, #c8813a, #a0642a);
     color: #fff;
@@ -1668,8 +1668,8 @@
   .logo__mark {
     width: 100px;
     height: 100px;
-    margin-left: 0;
-    margin-right: -15px;
+    margin-inline-start: 0;
+    margin-inline-end: -15px;
   }
 
   .logo__img {
@@ -1678,7 +1678,7 @@
   }
 
   .logo {
-    margin-left: -40px;
+    margin-inline-start: -40px;
   }
 
   /* ═══════════════════════════════════════
@@ -1686,28 +1686,28 @@
      Prevent content from being hidden
   ═══════════════════════════════════════ */
   :host {
-    --btm-nav-height: calc(64px + env(safe-area-inset-bottom, 0px));
+    --btm-nav-height: calc(74px + env(safe-area-inset-bottom, 0px));
   }
 }
 
-/* Smaller screens — even more compact */
+/* Smaller screens — slightly more compact */
 @media (max-width: 640px) {
   .btm-nav {
-    height: calc(60px + env(safe-area-inset-bottom, 0px));
+    height: calc(68px + env(safe-area-inset-bottom, 0px));
   }
 
   .btm-nav__icon {
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
   }
 
   .btm-nav__label {
-    font-size: 9px;
+    font-size: 10px;
   }
 
   .btm-nav__center-ring {
-    width: 44px;
-    height: 44px;
+    width: 48px;
+    height: 48px;
   }
 
   .btm-nav__center-ring svg {
@@ -1716,18 +1716,18 @@
   }
 
   .btm-nav__item--center {
-    margin-top: -14px;
+    margin-top: -18px;
   }
 
   /* Fix logo sizing on small screens */
   .logo {
-    margin-left: -20px;
+    margin-inline-start: -20px;
   }
 
   .logo__mark {
     width: 80px;
     height: 80px;
-    margin-right: -10px;
+    margin-inline-end: -10px;
   }
 
   .logo__img {
@@ -1738,12 +1738,12 @@
 
 @media (max-width: 400px) {
   .btm-nav__label {
-    font-size: 8.5px;
-    max-width: 56px;
+    font-size: 9px;
+    max-width: 60px;
   }
 
   .logo {
-    margin-left: -10px;
+    margin-inline-start: -10px;
   }
 
   .logo__mark {
@@ -1754,5 +1754,256 @@
   .logo__img {
     width: 90px;
     height: 90px;
+  }
+}
+
+/* ═══════════════════════════════════════
+   RTL (ARABIC) SUPPORT
+   Mirrors the layout for right-to-left
+═══════════════════════════════════════ */
+
+/* ── Announcement bar RTL ── */
+:host([dir="rtl"]) .ann-track {
+  animation: ann-rtl 40s linear infinite;
+}
+
+@keyframes ann-rtl {
+  from { transform: translateX(0); }
+  to   { transform: translateX(50%); }
+}
+
+/* ── Nav inner: reverse flex for RTL ── */
+:host([dir="rtl"]) .nav__inner {
+  flex-direction: row-reverse;
+}
+
+/* ── Logo: flip layout ── */
+:host([dir="rtl"]) .logo {
+  flex-direction: row-reverse;
+}
+
+:host([dir="rtl"]) .logo__text {
+  align-items: flex-end;
+  text-align: right;
+}
+
+/* ── Nav links: reverse order ── */
+:host([dir="rtl"]) .nav__links {
+  flex-direction: row-reverse;
+}
+
+/* ── Link underline RTL ── */
+:host([dir="rtl"]) .nav__link::after {
+  transform-origin: center;
+}
+
+/* ── Icons wrapper: flip to left in RTL ── */
+:host([dir="rtl"]) .nav__icons-wrapper {
+  flex-direction: row-reverse;
+}
+
+:host([dir="rtl"]) .nav__icons-group {
+  flex-direction: row-reverse;
+}
+
+/* ── Dropdown positioning RTL ── */
+:host([dir="rtl"]) .nav__drop--right {
+  right: auto;
+  left: 0;
+}
+
+/* ── Drop item text alignment ── */
+:host([dir="rtl"]) .nav__drop-item {
+  text-align: right;
+  flex-direction: row-reverse;
+}
+
+:host([dir="rtl"]) .nav__drop-user {
+  flex-direction: row-reverse;
+}
+
+/* ── Category dropdown RTL ── */
+:host([dir="rtl"]) .nav__drop-cat {
+  flex-direction: row-reverse;
+  text-align: right;
+}
+
+:host([dir="rtl"]) .nav__drop-cat:hover {
+  transform: translateX(-6px);
+}
+
+:host([dir="rtl"]) .nav__drop-cat-info {
+  align-items: flex-end;
+}
+
+:host([dir="rtl"]) .nav__drop-cat-arrow {
+  transform: translateX(6px) scaleX(-1);
+}
+
+:host([dir="rtl"]) .nav__drop-cat:hover .nav__drop-cat-arrow {
+  transform: translateX(0) scaleX(-1);
+}
+
+/* ── Featured buttons RTL ── */
+:host([dir="rtl"]) .nav__featured-buttons {
+  flex-direction: row-reverse;
+}
+
+:host([dir="rtl"]) .nav__gift-btn {
+  flex-direction: row-reverse;
+}
+
+/* ── Become seller button RTL ── */
+:host([dir="rtl"]) .nav__become-seller-btn {
+  flex-direction: row-reverse;
+}
+
+/* ── Search bar RTL ── */
+:host([dir="rtl"]) .nav__search-inner {
+  flex-direction: row-reverse;
+  padding: 8px 22px 8px 8px;
+}
+
+:host([dir="rtl"]) .nav__search-input {
+  text-align: right;
+}
+
+:host([dir="rtl"]) .nav__search-tags {
+  flex-direction: row-reverse;
+}
+
+/* ── Badge position RTL ── */
+:host([dir="rtl"]) .nav__badge {
+  right: auto;
+  left: -2px;
+}
+
+/* ── Mobile slide menu: flip to left side ── */
+:host([dir="rtl"]) .mob {
+  right: auto;
+  left: -100%;
+}
+
+:host([dir="rtl"]) .mob--open {
+  left: 0;
+}
+
+:host([dir="rtl"]) .mob__inner {
+  direction: rtl;
+  text-align: right;
+}
+
+:host([dir="rtl"]) .mob__link {
+  flex-direction: row-reverse;
+  text-align: right;
+}
+
+:host([dir="rtl"]) .mob__link:hover {
+  transform: translateX(-4px);
+}
+
+:host([dir="rtl"]) .mob__link--cat {
+  padding-left: 0;
+  padding-right: 18px;
+}
+
+/* ── Bottom nav RTL ── */
+:host([dir="rtl"]) .btm-nav {
+  flex-direction: row-reverse;
+}
+
+:host([dir="rtl"]) .btm-nav__badge {
+  right: auto;
+  left: -8px;
+}
+
+/* ── Notification dropdown RTL ── */
+:host([dir="rtl"]) .notif__item {
+  flex-direction: row-reverse;
+}
+
+:host([dir="rtl"]) .notif__header {
+  flex-direction: row-reverse;
+}
+
+:host([dir="rtl"]) .notif__content {
+  text-align: right;
+  align-items: flex-end;
+}
+
+/* ═══════════════════════════════════════
+   TABLET-SPECIFIC IMPROVEMENTS
+   Better use of space on 768px–960px
+═══════════════════════════════════════ */
+@media (min-width: 641px) and (max-width: 960px) {
+  .nav__inner {
+    height: 80px;
+    padding: 0 24px;
+  }
+
+  /* Show search icon on tablets */
+  .nav__search-icon {
+    display: flex !important;
+  }
+
+  /* Bigger bottom nav on tablets */
+  .btm-nav {
+    height: calc(76px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .btm-nav__icon {
+    width: 26px;
+    height: 26px;
+  }
+
+  .btm-nav__label {
+    font-size: 12px;
+    max-width: 80px;
+  }
+
+  .btm-nav__center-ring {
+    width: 56px;
+    height: 56px;
+  }
+
+  .btm-nav__center-ring svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .btm-nav__item--center {
+    margin-top: -24px;
+  }
+
+  .btm-nav__item {
+    padding: 12px 0 8px;
+  }
+
+  .btm-nav__avatar {
+    width: 28px;
+    height: 28px;
+  }
+
+  /* Better logo sizing on tablet */
+  .logo {
+    margin-inline-start: -50px;
+  }
+
+  .logo__mark {
+    width: 110px;
+    height: 110px;
+  }
+
+  .logo__img {
+    width: 140px;
+    height: 140px;
+  }
+
+  .logo__name {
+    font-size: 28px;
+  }
+
+  .logo__tag {
+    display: block;
   }
 }

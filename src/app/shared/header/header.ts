@@ -29,6 +29,9 @@ const FALLBACK_CATEGORIES: CategoryResponse[] = [
   imports: [RouterLink, RouterLinkActive, CommonModule, FormsModule],
   templateUrl: './header.html',
   styleUrl: './header.css',
+  host: {
+    '[attr.dir]': 'langService.currentLang() === "ar" ? "rtl" : "ltr"',
+  },
 })
 export class Header implements OnInit, OnDestroy {
   private authService    = inject(AuthService);
