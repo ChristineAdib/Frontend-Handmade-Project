@@ -1772,39 +1772,8 @@
   to   { transform: translateX(50%); }
 }
 
-/* ── Nav inner: reverse flex for RTL ── */
-:host([dir="rtl"]) .nav__inner {
-  flex-direction: row-reverse;
-}
-
-/* ── Logo: flip layout ── */
-:host([dir="rtl"]) .logo {
-  flex-direction: row-reverse;
-}
-
-:host([dir="rtl"]) .logo__text {
-  align-items: flex-end;
-  text-align: right;
-}
-
-/* ── Nav links: reverse order ── */
-:host([dir="rtl"]) .nav__links {
-  flex-direction: row-reverse;
-}
-
-/* ── Link underline RTL ── */
-:host([dir="rtl"]) .nav__link::after {
-  transform-origin: center;
-}
-
-/* ── Icons wrapper: flip to left in RTL ── */
-:host([dir="rtl"]) .nav__icons-wrapper {
-  flex-direction: row-reverse;
-}
-
-:host([dir="rtl"]) .nav__icons-group {
-  flex-direction: row-reverse;
-}
+/* ── RTL specific overrides ── */
+/* Note: dir="rtl" natively flips flex-direction, so we don't need row-reverse. We only need to adjust positioning, text-align, and specific transforms. */
 
 /* ── Dropdown positioning RTL ── */
 :host([dir="rtl"]) .nav__drop--right {
@@ -1815,25 +1784,15 @@
 /* ── Drop item text alignment ── */
 :host([dir="rtl"]) .nav__drop-item {
   text-align: right;
-  flex-direction: row-reverse;
-}
-
-:host([dir="rtl"]) .nav__drop-user {
-  flex-direction: row-reverse;
 }
 
 /* ── Category dropdown RTL ── */
 :host([dir="rtl"]) .nav__drop-cat {
-  flex-direction: row-reverse;
   text-align: right;
 }
 
 :host([dir="rtl"]) .nav__drop-cat:hover {
   transform: translateX(-6px);
-}
-
-:host([dir="rtl"]) .nav__drop-cat-info {
-  align-items: flex-end;
 }
 
 :host([dir="rtl"]) .nav__drop-cat-arrow {
@@ -1844,32 +1803,13 @@
   transform: translateX(0) scaleX(-1);
 }
 
-/* ── Featured buttons RTL ── */
-:host([dir="rtl"]) .nav__featured-buttons {
-  flex-direction: row-reverse;
-}
-
-:host([dir="rtl"]) .nav__gift-btn {
-  flex-direction: row-reverse;
-}
-
-/* ── Become seller button RTL ── */
-:host([dir="rtl"]) .nav__become-seller-btn {
-  flex-direction: row-reverse;
-}
-
 /* ── Search bar RTL ── */
 :host([dir="rtl"]) .nav__search-inner {
-  flex-direction: row-reverse;
   padding: 8px 22px 8px 8px;
 }
 
 :host([dir="rtl"]) .nav__search-input {
   text-align: right;
-}
-
-:host([dir="rtl"]) .nav__search-tags {
-  flex-direction: row-reverse;
 }
 
 /* ── Badge position RTL ── */
@@ -1878,7 +1818,12 @@
   left: -2px;
 }
 
-/* ── Mobile slide menu: flip to left side ── */
+:host([dir="rtl"]) .btm-nav__badge {
+  right: auto;
+  left: -8px;
+}
+
+/* ── Mobile slide menu RTL ── */
 :host([dir="rtl"]) .mob {
   right: auto;
   left: -100%;
@@ -1889,12 +1834,10 @@
 }
 
 :host([dir="rtl"]) .mob__inner {
-  direction: rtl;
   text-align: right;
 }
 
 :host([dir="rtl"]) .mob__link {
-  flex-direction: row-reverse;
   text-align: right;
 }
 
@@ -1907,28 +1850,9 @@
   padding-right: 18px;
 }
 
-/* ── Bottom nav RTL ── */
-:host([dir="rtl"]) .btm-nav {
-  flex-direction: row-reverse;
-}
-
-:host([dir="rtl"]) .btm-nav__badge {
-  right: auto;
-  left: -8px;
-}
-
 /* ── Notification dropdown RTL ── */
-:host([dir="rtl"]) .notif__item {
-  flex-direction: row-reverse;
-}
-
-:host([dir="rtl"]) .notif__header {
-  flex-direction: row-reverse;
-}
-
 :host([dir="rtl"]) .notif__content {
   text-align: right;
-  align-items: flex-end;
 }
 
 /* ═══════════════════════════════════════
