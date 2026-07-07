@@ -76,3 +76,20 @@ table {
   outline-offset: 2px;
   border-radius: 4px;
 }
+
+/* ============================================================
+   MOBILE BOTTOM NAV — body spacing
+   Prevents content/footer from being hidden behind the
+   fixed bottom navigation bar on mobile devices.
+   ============================================================ */
+@media (max-width: 960px) {
+  body {
+    padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+@media (max-width: 640px) {
+  body {
+    padding-bottom: calc(60px + env(safe-area-inset-bottom, 0px));
+  }
+}
