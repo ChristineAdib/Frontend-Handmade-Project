@@ -1,0 +1,115 @@
+@if (!isWebView()) {
+<section class="mobile-app-section" [dir]="langService.currentLang() === 'ar' ? 'rtl' : 'ltr'">
+  <div class="container">
+    <div class="app-grid">
+      <!-- Content side -->
+      <div class="app-content">
+        <span class="app-badge" id="app-badge-id">
+          <span class="pulse-dot"></span>
+          {{ langService.currentLang() === 'ar' ? 'تطبيق الموبايل الجديد ✦' : 'New Mobile App ✦' }}
+        </span>
+        
+        <h2 class="app-title" id="app-title-id">
+          {{ langService.currentLang() === 'ar' ? 'تسوّق من هاندأورا مباشرة من هاتفك' : 'Shop HandAura Directly from Your Phone' }}
+        </h2>
+        
+        <p class="app-desc" id="app-desc-id">
+          {{ langService.currentLang() === 'ar' 
+            ? 'تصفح آلاف المنتجات اليدوية الفريدة، تواصل مع الحرفيين مباشرة، وتابع طلباتك لحظة بلحظة مع تطبيق الموبايل السريع والمريح.' 
+            : 'Browse thousands of unique handmade products, chat directly with artisans, and track your orders in real-time with our fast and convenient mobile app.' 
+          }}
+        </p>
+
+        <!-- Feature List -->
+        <ul class="app-features">
+          <li>
+            <span class="feat-icon">✨</span>
+            <span class="feat-text">
+              {{ langService.currentLang() === 'ar' ? 'عروض حصرية لمستخدمي التطبيق فقط' : 'Exclusive app-only deals and offers' }}
+            </span>
+          </li>
+          <li>
+            <span class="feat-icon">🔔</span>
+            <span class="feat-text">
+              {{ langService.currentLang() === 'ar' ? 'تنبيهات فورية عند شحن وتوصيل طلبك' : 'Instant push notifications for your orders' }}
+            </span>
+          </li>
+          <li>
+            <span class="feat-icon">💬</span>
+            <span class="feat-text">
+              {{ langService.currentLang() === 'ar' ? 'محادثة مباشرة وسهلة مع البائعين' : 'Direct, real-time chat with artisans' }}
+            </span>
+          </li>
+        </ul>
+
+        <div class="download-container">
+          <!-- Direct Android APK Download Button (Highlighted) -->
+          <a href="/handmade_app.apk" download="HandAura.apk" class="apk-download-btn" id="apk-download-btn-id">
+            <span class="apk-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M16.634 18.232l1.393 2.413c.092.16.037.362-.123.454-.16.092-.362.037-.454-.123l-1.408-2.438c-1.393.593-2.928.921-4.543.921-1.615 0-3.15-.328-4.543-.921l-1.408 2.438c-.092.16-.294.215-.454.123-.16-.092-.215-.294-.123-.454l1.393-2.413c-3.109-1.921-5.184-5.328-5.328-9.232h19.868c-.144 3.904-2.219 7.311-5.328 9.232zm-8.634-7.232c-.552 0-1 .448-1 1s.448 1 1 1 1-.448 1-1-.448-1-1-1zm8 0c-.552 0-1 .448-1 1s.448 1 1 1 1-.448 1-1-.448-1-1-1z"/>
+              </svg>
+            </span>
+            <div class="btn-text-wrapper">
+              <span class="btn-subtitle">{{ langService.currentLang() === 'ar' ? 'تحميل مباشر للأندرويد' : 'Direct Download for Android' }}</span>
+              <span class="btn-title">Download APK</span>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Visual side -->
+      <div class="app-visual">
+        <div class="blob-wrapper">
+          <div class="blob blob-1"></div>
+          <div class="blob blob-2"></div>
+        </div>
+        
+        <!-- Premium Phone Mockup -->
+        <div class="phone-mockup-wrapper">
+          <div class="phone-device shadow-lg">
+            <div class="phone-speaker"></div>
+            <div class="phone-screen-container">
+              <!-- Mobile App Screen mockup -->
+              <div class="phone-screen-content">
+                <div class="screen-header">
+                  <span class="app-logo-text">HandAura</span>
+                  <span class="bell-icon">🔔</span>
+                </div>
+                <div class="screen-hero">
+                  <h3>{{ langService.currentLang() === 'ar' ? 'المنتجات اليدوية المميزة' : 'Featured Handmade' }}</h3>
+                  <div class="search-bar-mock">🔍 {{ langService.currentLang() === 'ar' ? 'ابحث عن قطع فريدة...' : 'Search unique crafts...' }}</div>
+                </div>
+                <div class="screen-categories">
+                  <div class="cat-pill active">✨ {{ langService.currentLang() === 'ar' ? 'الكل' : 'All' }}</div>
+                  <div class="cat-pill">🏺 {{ langService.currentLang() === 'ar' ? 'فخار' : 'Clay' }}</div>
+                  <div class="cat-pill">🧶 {{ langService.currentLang() === 'ar' ? 'كروشيه' : 'Crochet' }}</div>
+                </div>
+                <div class="screen-cards">
+                  <div class="mock-card">
+                    <div class="mock-card-img img-pottery"></div>
+                    <div class="mock-card-title">{{ langService.currentLang() === 'ar' ? 'إناء فخاري يدوي' : 'Handmade Clay Pot' }}</div>
+                    <div class="mock-card-price">EGP 350</div>
+                  </div>
+                  <div class="mock-card">
+                    <div class="mock-card-img img-bag"></div>
+                    <div class="mock-card-title">{{ langService.currentLang() === 'ar' ? 'حقيبة كروشيه أنيقة' : 'Elegant Crochet Bag' }}</div>
+                    <div class="mock-card-price">EGP 420</div>
+                  </div>
+                </div>
+                <div class="screen-navbar">
+                  <span class="nav-item active">🏠</span>
+                  <span class="nav-item">🛍️</span>
+                  <span class="nav-item">💬</span>
+                  <span class="nav-item">👤</span>
+                </div>
+              </div>
+            </div>
+            <div class="phone-home-button"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+}
