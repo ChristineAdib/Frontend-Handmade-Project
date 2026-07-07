@@ -72,7 +72,7 @@
     @if (loading()) {
       <div class="row g-4">
         @for (item of skeletonArray; track $index) {
-          <div class="col-12 col-md-6 col-lg-3">
+          <div class="col-6 col-md-6 col-lg-3">
             <div class="skeleton-card">
               <div class="skeleton-image placeholder-shimmer"></div>
               <div class="skeleton-body">
@@ -133,7 +133,7 @@
       @else {
         <div class="row g-4">
           @for (prod of products(); track prod.id; let idx = $index) {
-            <div class="col-12 col-md-6 col-lg-3" [class.card-fade-in]="isFirstLoad()" [style.--index]="idx">
+            <div class="col-6 col-md-6 col-lg-3" [class.card-fade-in]="isFirstLoad()" [style.--index]="idx">
               <app-product-card 
                 [product]="prod"
                 (quickView)="onQuickView($event)"

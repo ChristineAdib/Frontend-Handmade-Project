@@ -577,7 +577,8 @@
 
 @media (max-width: 480px) {
   .products-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px 12px;
   }
   
   .section-header {
@@ -595,13 +596,27 @@
   }
   
   .action-btn {
-    width: 42px;
-    height: 42px;
+    width: 32px;
+    height: 32px;
+  }
+
+  .action-btn svg {
+    width: 14px;
+    height: 14px;
   }
   
   .hover-image-container {
     width: 85%;
     height: 85%;
+  }
+
+  .product-name {
+    font-size: 13px;
+    margin-bottom: 4px;
+  }
+
+  .current-price, .old-price {
+    font-size: 12px;
   }
 }
 

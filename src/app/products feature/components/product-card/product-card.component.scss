@@ -380,3 +380,47 @@
   }
 }
 
+@media (max-width: 480px) {
+  .luxury-card {
+    border-radius: 12px;
+    
+    .card-details {
+      padding: 12px;
+      
+      .meta-row {
+        font-size: 0.75rem;
+        
+        .shop-name .icon-shop { font-size: 0.85rem; }
+        .rating-stars .stars span { font-size: 0.8rem; }
+      }
+      
+      .product-title {
+        font-size: 0.85rem;
+        margin-bottom: 8px;
+        height: 2.6em;
+      }
+      
+      .price-section {
+        .price-final, .price-discount {
+          font-size: 1rem;
+        }
+        .price-original {
+          font-size: 0.75rem;
+        }
+      }
+    }
+    
+    .image-wrapper {
+      .badge-discount, .badge-unique {
+        padding: 4px 8px;
+        font-size: 0.65rem;
+      }
+      
+      .hover-actions-bar .action-icon-btn {
+        width: 32px;
+        height: 32px;
+        span { font-size: 1.1rem; }
+      }
+    }
+  }
+}

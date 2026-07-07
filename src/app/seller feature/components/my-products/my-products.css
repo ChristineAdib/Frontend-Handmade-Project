@@ -181,6 +181,16 @@
     padding: 10px 12px;
     font-size: 13px;
   }
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  .product-info { padding: 8px; }
+  .product-title { font-size: 12px; }
+  .product-cat { font-size: 10px; }
+  .price-final { font-size: 12px; }
+  .edit-btn, .delete-btn { font-size: 11px; padding: 4px; }
+  .agent-btn { font-size: 12px; padding: 8px; }
   .pagination {
     gap: 8px;
   }
