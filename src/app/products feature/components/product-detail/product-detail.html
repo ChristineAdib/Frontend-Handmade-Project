@@ -490,7 +490,8 @@
         <div class="model-viewer-modal" (click)="$event.stopPropagation()">
           <app-model-viewer 
             [glbUrl]="prod.arModelUrl"
-            [modelTitle]="langService.currentLang() === 'ar' ? (prod.titleAr || prod.titleEn) : (prod.titleEn || prod.titleAr)">
+            [modelTitle]="langService.currentLang() === 'ar' ? (prod.titleAr || prod.titleEn) : (prod.titleEn || prod.titleAr)"
+            (close)="closeModelViewer()">
           </app-model-viewer>
         </div>
       </div>
